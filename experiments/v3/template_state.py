@@ -125,7 +125,11 @@ def _bases(D, g, tol=1e-12):
     lam = np.linalg.solve(mats, np.broadcast_to(g, (len(trip), 3))[..., None])[..., 0]
     keep = np.all(lam >= -tol, axis=1)
     trip, lam = trip[keep], np.maximum(lam[keep], 0.0)
-    res = np.array([_exact_residual(g, l, D[t]) for t, l in zip(trip, lam)])
+    # |g - sum lam_j d_j|_1, computed in float plus a bound on that computation's own rounding error
+    terms = lam[..., None] * D[trip]                                   # [T, 3 directions, 3 coords]
+    r = np.abs(g[None, :] - terms.sum(axis=1)).sum(axis=1)
+    err = 8 * EPS * (np.abs(g).sum() + np.abs(terms).sum(axis=(1, 2)))
+    res = np.nextafter(r + err, np.inf)
     return trip, lam, np.abs(lam).sum(axis=1), res
 
 
