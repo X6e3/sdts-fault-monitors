@@ -93,6 +93,18 @@ def directions(kind, L=0, N=0):
                 for _ in range(L):
                     g = M.T @ g
                     D += [_unit(g), -_unit(g)]
+    elif kind == "window":                    # inv(N) + the normals of the last L measurements, transported:
+        D = list(directions("inv", N=N))      # (M^-T)^j e2, j = 1..L. This orbit is closed under M^T (it shifts).
+        Minv_T = np.linalg.inv(M).T
+        g = E[1].copy()
+        for _ in range(L):
+            g = Minv_T @ g
+            D += [_unit(g), -_unit(g)]
+    elif kind == "cyl":                       # inv(N) + K directions orthogonal to e3 (faces made by the
+        D = list(directions("inv", N=N))      # Minkowski sum with the TA segment have such normals)
+        for i in range(L):
+            a = math.pi * i / L
+            D += [np.array([math.cos(a), math.sin(a), 0.0]), -np.array([math.cos(a), math.sin(a), 0.0])]
     elif kind == "sphere":                    # quasi-uniform (Fibonacci) directions, both signs
         D = base + diff
         for i in range(N):
