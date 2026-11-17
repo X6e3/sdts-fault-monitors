@@ -36,6 +36,9 @@ History of this file, before any result was kept:
   - Checking the solver's path against the rate bound at 1e-9 rejected paths that are within the solver's
     own tolerance (about 1e-7); the path is now projected instead of rejected.
 So only IPM and dual simplex without presolve are used. A "consistent" verdict needs only d_up.
+  - The CAL rehearsal of the FINAL runner (2026-11-17) left two ablation LPs undetermined on x86_64 with
+    both no-presolve methods at HiGHS status 4. With per-process isolation, presolve is safe as a last
+    fallback and decided both, matching arm64. See ATTEMPTS.
 
 All temperatures are shifted by -25 C inside the LP. The dynamics are shift invariant (A·1 + B_T = 1),
 so this changes nothing but the conditioning.
@@ -72,7 +75,10 @@ assert T.DT == 1.0
 SHIFT = 25.0
 DUAL_TOL = 1e-7
 EPS = np.finfo(float).eps
-ATTEMPTS = (("highs-ds", False), ("highs-ipm", False))
+# The first two decide almost every LP. Presolve runs only as a last resort: it used to crash the process,
+# but every attempt now runs in its own process (c04305a), and every answer is certified independently,
+# so an extra attempt can only turn "undetermined" into a decision; it can not change one.
+ATTEMPTS = (("highs-ds", False), ("highs-ipm", False), ("highs-ds", True), ("highs-ipm", True))
 HERE = Path(__file__).resolve()
 DEFAULT_ATTEMPT_DIR = HERE.parents[2] / "results" / "tmp" / "highs-attempts"
 DEFAULT_TIMEOUT = 120

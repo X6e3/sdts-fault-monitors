@@ -49,6 +49,24 @@ class Isolation(unittest.TestCase):
             self.assertEqual(O.verdict([25.0]), ("undetermined", 0.0, float("inf")))
 
 
+class Attempts(unittest.TestCase):
+    def test_no_presolve_methods_come_first_and_presolve_only_as_fallback(self):
+        self.assertEqual(O.ATTEMPTS[:2], (("highs-ds", False), ("highs-ipm", False)))
+        self.assertTrue(all(presolve for _, presolve in O.ATTEMPTS[2:]))
+
+    def test_a_fallback_attempt_runs_only_when_the_verdict_is_open(self):
+        calls = []
+        real = O._attempt
+
+        def spy(*args):
+            calls.append(args[6:8])
+            return real(*args)
+
+        with tempfile.TemporaryDirectory() as out, patch.object(O, "_attempt", side_effect=spy):
+            O.verdict([25.0] * 8, attempt_dir=out)
+        self.assertEqual(calls, [("highs-ds", False)])
+
+
 class Certificates(unittest.TestCase):
     def test_constant_measurement_offset_enclosure(self):
         # With z=25 and a fixed ambient in [23, 27], the exact interval is ±2.3 °C.
