@@ -149,6 +149,12 @@ Lag is the total over 1082 runs. Pruning uses selection sets disjoint from the e
 - **Generic dense directions (sphere30)** reach a similar total lag but match the oracle exactly less often
   (850): they spend budget on directions that do not matter.
 - **The largest single lag (2880 s, drift_0.0005 ramp)** survives every bounded state tried. It is OPEN.
+  - Diagnostic for 430010 at k = 690, five samples before t* = 695: the cyl24 state holds the ambient lower bound
+    0.023 °C looser than the exact X_k. Every top gap is a −TA-dominated direction.
+  - For a fault this close to the detectability boundary (0.0005 °C/s), 0.023 °C of set looseness costs 2880 s
+    of latency.
+  - **Latency is a very ill-conditioned function of representation error near the boundary.** Budget studies
+    should also report set tightness (support gaps), not only latency.
 
 ## 7. Honest summary
 

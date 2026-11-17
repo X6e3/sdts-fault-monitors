@@ -197,6 +197,11 @@ No novelty is claimed without a literature check. What is specific here:
 - Is the facet count of X_k bounded for this plant? How many directions does exact agreement need?
 - Choice of D: is there a principled minimal set (orbits, invariants) that matches the oracle on a fault
   class?
+  - DEV says the decisive lost information is the ambient lower bound (−TA directions, 0.02–0.06 °C looser than
+    exact).
+  - Faces orthogonal to TA help: cyl16 gives −38 % total lag.
+  - Transported past-measurement normals do not help.
+  - Near the detectability boundary, small looseness becomes thousands of seconds.
 - Alternative explanations as extra dimensions: b (4-D) and drift (5-D). Theorem 4 says certification of the
   sensor error fails once drift is in the class. What remains certifiable?
 - Uncertain plant parameters: X_k becomes non-convex (bilinear). Is there a sound bounded state?
