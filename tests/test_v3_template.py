@@ -113,3 +113,19 @@ class Scenarios(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+
+class Pruning(unittest.TestCase):
+    def test_pruned_tables_stay_sound_and_never_detect_earlier_than_the_full_tables(self):
+        full = V.Template(V.directions("inv", N=4), invariant=True)
+        sel = [(r["y"], r["P"]) for r in (S.run(430090, CELL[c], "E0") for c in ("healthy", "drift_0.002", "jump_0.2"))]
+        tiny = V.pruned(full, V.usage(full, sel), keep_top=1)
+        self.assertLess(tiny.table_entries, full.table_entries)
+        for cell in ("healthy", "drift_0.002", "drift_0.005", "jump_0.5"):
+            for arm in T.ARMS:
+                r = S.run(430091, CELL[cell], arm, "ramp", "edge" if cell == "healthy" else "uniform")
+                a, b = V.first_inconsistent(full, r["y"], r["P"]), V.first_inconsistent(tiny, r["y"], r["P"])
+                if cell == "healthy":
+                    self.assertIsNone(b)
+                else:
+                    self.assertTrue(b is None or (a is not None and b >= a), (cell, arm, a, b))

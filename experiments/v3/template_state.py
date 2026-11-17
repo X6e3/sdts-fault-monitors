@@ -232,6 +232,7 @@ class TemplateMachine:
                 h[self.t.ip[1]] = min(h[self.t.ip[1]], hi)
                 h[self.t.im[1]] = min(h[self.t.im[1]], -lo)
                 self.as_range = (max(bottom, lo), min(top, hi))
+                self._last_tightened = h
                 self.h = self.t.predict(h)
         self.k += 1
         return self.inconsistent
@@ -243,3 +244,51 @@ def first_inconsistent(template, y, P):
         if m.observe(yk, pk):
             return k
     return None
+
+
+# ---- flash budget: pruning the basis tables ------------------------------------------------------------
+# Any subset of a direction's bases still gives an upper bound (min over fewer candidates), so pruning keeps
+# soundness and can only loosen the state. Bases that make the template dominate v2 are always kept:
+# for the +-e2 prediction groups, the basis containing +-e2 and the as-velocity direction.
+
+def usage(template, runs):
+    """How often each table entry is the argmin, over the given (y, P) runs (selection set)."""
+    groups = template.pred + template.supp_as
+    counts = [np.zeros(len(g[0]), dtype=int) for g in groups]
+    for y, P in runs:
+        m = TemplateMachine(template)
+        for yk, pk in zip(y, P):
+            if m.inconsistent:
+                break
+            h_before = m.h.copy()
+            for gi, g in zip((len(template.pred), len(template.pred) + 1), template.supp_as):
+                counts[gi][int(np.argmin((g[1] * h_before[g[0]]).sum(axis=1)))] += 1
+            m.observe(yk, pk)
+            if not m.inconsistent:
+                h = m._last_tightened
+                for gi, g in enumerate(template.pred):
+                    counts[gi][int(np.argmin((g[1] * h[g[0]]).sum(axis=1)))] += 1
+    return counts
+
+
+def pruned(template, counts, keep_top=None):
+    """A copy that keeps, per group, the entries ever used (or the keep_top most used) plus the v2 bases."""
+    import copy
+    t = copy.copy(template)
+    v_dirs = [i for i, d in enumerate(template.D) if abs(abs(np.dot(d, _unit(M.T @ E[1] - E[1]))) - 1) < 1e-12]
+    groups = template.pred + template.supp_as
+    new = []
+    for gi, (g, c) in enumerate(zip(groups, counts)):
+        order = np.argsort(-c, kind="stable")
+        keep = set(order[: (keep_top if keep_top else len(order))][c[order[: (keep_top if keep_top else len(order))]] > 0].tolist())
+        if gi in (template.ip[1], template.im[1]):   # prediction of +-e2: keep every basis using e2 and v
+            e2 = template.ip[1] if gi == template.ip[1] else template.im[1]
+            keep |= {j for j, tri in enumerate(g[0]) if e2 in tri and any(v in tri for v in v_dirs)}
+        if not keep:
+            keep = {int(order[0])}
+        k = np.array(sorted(keep))
+        new.append(tuple(x[k] for x in g))
+    t.pred, t.supp_as = new[: template.n], new[template.n:]
+    t._flat = t._flatten(t.pred)
+    t.table_entries = int(sum(len(b[0]) for b in t.pred + t.supp_as))
+    return t
