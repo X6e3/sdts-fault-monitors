@@ -1,0 +1,98 @@
+{
+ "rule": "addendum A1.2/A1.3: 1.05 x max TRAIN healthy statistic per arm, then checked directly",
+ "source": {
+  "git_head": "1bcdc3f50632a6d25fe3ee3d0cbe37a12853d138",
+  "git_dirty_tracked": false,
+  "recorded": "at start"
+ },
+ "env": {
+  "python": "3.12.13",
+  "implementation": "CPython",
+  "numpy": "2.5.5",
+  "scipy": "1.18.1",
+  "highs": "1.12.0",
+  "platform": "macOS-27.0-arm64-arm-64bit",
+  "machine": "arm64",
+  "executable": "/Users/x6e3/Downloads/dmreda-sdts-research-main/.venv/bin/python",
+  "numpy_record_sha256": "81d26ebe03981a7caaf79860653d7b462b2342c61e7fd871fc6c16b90b49776b",
+  "scipy_record_sha256": "d95b7aa2c03940de0bec301021a5753ff3577b5b7ce28e6342d59f9d8556258a"
+ },
+ "dmreda_reference_sha256": "0b8bffc7466b7dc67f353415a610edc668c50ac21db0d239fe885c49bbceef3e",
+ "train_seeds": [
+  400000,
+  400199
+ ],
+ "runs_per_arm": 200,
+ "evaluation_from": 300,
+ "seconds": 1717.2,
+ "thresholds": {
+  "cusum_a0": {
+   "role": "primary",
+   "E0": {
+    "threshold": 0.859524982283627,
+    "max_statistic": 0.8185952212225018,
+    "argmax_seed": 400131,
+    "raise_steps": 0,
+    "train_alarms_at_threshold": 0
+   },
+   "E1": {
+    "threshold": 33.03861361211689,
+    "max_statistic": 31.465346297254182,
+    "argmax_seed": 400135,
+    "raise_steps": 0,
+    "train_alarms_at_threshold": 0
+   }
+  },
+  "cusum_rhoA": {
+   "role": "secondary",
+   "E0": {
+    "threshold": 0.6269903379577312,
+    "max_statistic": 0.5971336551978392,
+    "argmax_seed": 400077,
+    "raise_steps": 0,
+    "train_alarms_at_threshold": 0
+   },
+   "E1": {
+    "threshold": 31.74065371923805,
+    "max_statistic": 30.22919401832195,
+    "argmax_seed": 400135,
+    "raise_steps": 0,
+    "train_alarms_at_threshold": 0
+   }
+  },
+  "dmreda_native": {
+   "role": "primary",
+   "E0": {
+    "threshold": 1.7111076259410487,
+    "max_statistic": 1.6296263104200464,
+    "argmax_seed": 400151,
+    "raise_steps": 0,
+    "train_alarms_at_threshold": 0
+   },
+   "E1": {
+    "threshold": 4.3121486987417095,
+    "max_statistic": 4.106808284515914,
+    "argmax_seed": 400097,
+    "raise_steps": 0,
+    "train_alarms_at_threshold": 0
+   }
+  },
+  "dmreda_fast_gate": {
+   "role": "ablation",
+   "E0": {
+    "threshold": 2.709419078360317,
+    "max_statistic": 2.5803991222479206,
+    "argmax_seed": 400067,
+    "raise_steps": 0,
+    "train_alarms_at_threshold": 0
+   },
+   "E1": {
+    "threshold": 5.204786313211662,
+    "max_statistic": 4.956939345915869,
+    "argmax_seed": 400164,
+    "raise_steps": 0,
+    "train_alarms_at_threshold": 0
+   }
+  }
+ }
+}
