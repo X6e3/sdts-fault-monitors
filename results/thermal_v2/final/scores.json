@@ -1,0 +1,2695 @@
+{
+ "meta": {
+  "kind": "final",
+  "git_head": "da6e4a056a51808db6318ea98a1171d07bc3fa13",
+  "thresholds_sha256": "7cb86186a5d0e36fbc0438c087e0e02b03150ffe6da230e89cfa043994578e22",
+  "runs": 1540,
+  "twin_pairs": 300,
+  "seconds": 3796.3
+ },
+ "P1": {
+  "pairs": 300,
+  "max_abs_y_diff": 6.394884621840902e-14,
+  "differing_verdicts": {
+   "oracle": 0,
+   "machine": 0,
+   "cusum_a0@E0": 0,
+   "cusum_a0@E1": 0,
+   "cusum_rhoA@E0": 0,
+   "cusum_rhoA@E1": 0,
+   "dmreda_native@E0": 0,
+   "dmreda_native@E1": 0,
+   "dmreda_fast_gate@E0": 0,
+   "dmreda_fast_gate@E1": 0
+  },
+  "holds": true
+ },
+ "P2": {
+  "pairs": 450,
+  "oracle_differing": 0,
+  "machine_differing": 0,
+  "oracle_undetermined_pairs": 0,
+  "holds": true
+ },
+ "P3": {
+  "healthy_runs": 460,
+  "healthy_TUTARSIZ": 0,
+  "TUTARLI_contradicted": {},
+  "TUTARLI_corroborated": {
+   "3": 294,
+   "1": 14
+  },
+  "TUTARLI_not_checkable": {},
+  "holds": true
+ },
+ "P4": {
+  "runs": 120,
+  "failing": [],
+  "holds": true
+ },
+ "P5": {
+  "runs": 120,
+  "failing": [],
+  "holds": true
+ },
+ "P6": {
+  "1": {
+   "table": {
+    "-1|not_certifiable": 460
+   },
+   "scored": 460,
+   "agree": 460,
+   "boundary": 0
+  },
+  "3": {
+   "table": {
+    "-1|not_certifiable": 180,
+    "0|certifiable": 64,
+    "0|not_certifiable": 74,
+    "1|certifiable": 142
+   },
+   "scored": 322,
+   "agree": 322,
+   "boundary": 138
+  },
+  "holds": true
+ },
+ "P7": {
+  "E0": {
+   "runs": 30,
+   "consistent": 30,
+   "holds": true
+  },
+  "E1": {
+   "runs": 30,
+   "without_a_5W_change": 0,
+   "deadline_reading": {
+    "inconsistent_by_k_plus_30": 30,
+    "fraction": 1.0,
+    "meets_95": true
+   },
+   "window_reading": {
+    "first_inconsistency_in_k_to_k_plus_30": 6,
+    "fraction": 0.2,
+    "meets_95": false
+   },
+   "already_inconsistent_before_k": 24,
+   "note": "both readings reported (A1.6); the Proposition 3 E1 timing clause was falsified on CAL"
+  }
+ },
+ "P8": {
+  "by_variant_arm": {
+   "cusum_a0/E0": {
+    "runs": 90,
+    "flagged": 90,
+    "fraction": 1.0,
+    "per_cell": {
+     "drift_0.0005": 30,
+     "drift_0.001": 30,
+     "drift_0.002": 30
+    },
+    "pre_onset_alarms": 0
+   },
+   "cusum_a0/E1": {
+    "runs": 90,
+    "flagged": 0,
+    "fraction": 0.0,
+    "per_cell": {
+     "drift_0.0005": 0,
+     "drift_0.001": 0,
+     "drift_0.002": 0
+    },
+    "pre_onset_alarms": 0
+   },
+   "cusum_rhoA/E0": {
+    "runs": 90,
+    "flagged": 25,
+    "fraction": 0.2777777777777778,
+    "per_cell": {
+     "drift_0.0005": 0,
+     "drift_0.001": 0,
+     "drift_0.002": 25
+    },
+    "pre_onset_alarms": 0
+   },
+   "cusum_rhoA/E1": {
+    "runs": 90,
+    "flagged": 0,
+    "fraction": 0.0,
+    "per_cell": {
+     "drift_0.0005": 0,
+     "drift_0.001": 0,
+     "drift_0.002": 0
+    },
+    "pre_onset_alarms": 0
+   },
+   "dmreda_fast_gate/E0": {
+    "runs": 90,
+    "flagged": 0,
+    "fraction": 0.0,
+    "per_cell": {
+     "drift_0.0005": 0,
+     "drift_0.001": 0,
+     "drift_0.002": 0
+    },
+    "pre_onset_alarms": 0
+   },
+   "dmreda_fast_gate/E1": {
+    "runs": 90,
+    "flagged": 0,
+    "fraction": 0.0,
+    "per_cell": {
+     "drift_0.0005": 0,
+     "drift_0.001": 0,
+     "drift_0.002": 0
+    },
+    "pre_onset_alarms": 0
+   },
+   "dmreda_native/E0": {
+    "runs": 90,
+    "flagged": 0,
+    "fraction": 0.0,
+    "per_cell": {
+     "drift_0.0005": 0,
+     "drift_0.001": 0,
+     "drift_0.002": 0
+    },
+    "pre_onset_alarms": 0
+   },
+   "dmreda_native/E1": {
+    "runs": 90,
+    "flagged": 0,
+    "fraction": 0.0,
+    "per_cell": {
+     "drift_0.0005": 0,
+     "drift_0.001": 0,
+     "drift_0.002": 0
+    },
+    "pre_onset_alarms": 0
+   }
+  },
+  "scored_on": [
+   "cusum_a0",
+   "dmreda_native"
+  ],
+  "holds": false,
+  "clause_2": "category statement, recorded not scored (A1.4)"
+ },
+ "reported": {
+  "drift_0.0005/E0": {
+   "oracle_full": {
+    "consistent": 16,
+    "inconsistent": 14
+   },
+   "oracle_no_b": {
+    "consistent": 16,
+    "inconsistent": 14
+   },
+   "oracle_no_c": {
+    "consistent": 30
+   },
+   "oracle_no_d": {
+    "consistent": 30
+   },
+   "oracle_latency": {
+    "n": 14,
+    "min": 148,
+    "median": 1264.5,
+    "max": 3054
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 14,
+   "machine_lag_vs_oracle": {
+    "n": 14,
+    "min": 0,
+    "median": 30.0,
+    "max": 138
+   },
+   "machine_no_b_inconsistent": 14,
+   "machine_no_c_inconsistent": 0,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 16
+   },
+   "TUTARLI_true_end_error": {
+    "n": 16,
+    "min": 1.510499999999999,
+    "median": 1.5832500000000023,
+    "max": 1.6459999999999981
+   },
+   "cusum_a0": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 414,
+     "median": 562.5,
+     "max": 694
+    }
+   },
+   "cusum_rhoA": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_fast_gate": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_native": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   }
+  },
+  "drift_0.0005/E1": {
+   "oracle_full": {
+    "consistent": 16,
+    "inconsistent": 14
+   },
+   "oracle_no_b": {
+    "consistent": 16,
+    "inconsistent": 14
+   },
+   "oracle_no_c": {
+    "consistent": 30
+   },
+   "oracle_no_d": {
+    "consistent": 29,
+    "inconsistent": 1
+   },
+   "oracle_latency": {
+    "n": 14,
+    "min": 148,
+    "median": 1264.5,
+    "max": 3054
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 14,
+   "machine_lag_vs_oracle": {
+    "n": 14,
+    "min": 0,
+    "median": 30.0,
+    "max": 138
+   },
+   "machine_no_b_inconsistent": 14,
+   "machine_no_c_inconsistent": 0,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 16
+   },
+   "TUTARLI_true_end_error": {
+    "n": 16,
+    "min": 1.510499999999999,
+    "median": 1.5832500000000023,
+    "max": 1.6459999999999981
+   },
+   "cusum_a0": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "cusum_rhoA": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_fast_gate": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_native": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   }
+  },
+  "drift_0.001/E0": {
+   "oracle_full": {
+    "inconsistent": 24,
+    "consistent": 6
+   },
+   "oracle_no_b": {
+    "inconsistent": 24,
+    "consistent": 6
+   },
+   "oracle_no_c": {
+    "consistent": 30
+   },
+   "oracle_no_d": {
+    "consistent": 30
+   },
+   "oracle_latency": {
+    "n": 24,
+    "min": 60,
+    "median": 1262.0,
+    "max": 3220
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 23,
+   "machine_lag_vs_oracle": {
+    "n": 23,
+    "min": 0,
+    "median": 17,
+    "max": 73
+   },
+   "machine_no_b_inconsistent": 23,
+   "machine_no_c_inconsistent": 0,
+   "TUTARLI": {
+    "R1": 7,
+    "R3": 7
+   },
+   "TUTARLI_true_end_error": {
+    "n": 7,
+    "min": 3.0630000000000024,
+    "median": 3.1820000000000004,
+    "max": 3.291999999999999
+   },
+   "cusum_a0": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 213,
+     "median": 286.0,
+     "max": 343
+    }
+   },
+   "cusum_rhoA": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_fast_gate": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_native": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   }
+  },
+  "drift_0.001/E1": {
+   "oracle_full": {
+    "inconsistent": 24,
+    "consistent": 6
+   },
+   "oracle_no_b": {
+    "inconsistent": 24,
+    "consistent": 6
+   },
+   "oracle_no_c": {
+    "consistent": 30
+   },
+   "oracle_no_d": {
+    "consistent": 22,
+    "inconsistent": 8
+   },
+   "oracle_latency": {
+    "n": 24,
+    "min": 60,
+    "median": 1262.0,
+    "max": 3220
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 23,
+   "machine_lag_vs_oracle": {
+    "n": 23,
+    "min": 0,
+    "median": 17,
+    "max": 73
+   },
+   "machine_no_b_inconsistent": 23,
+   "machine_no_c_inconsistent": 0,
+   "TUTARLI": {
+    "R1": 7,
+    "R3": 7
+   },
+   "TUTARLI_true_end_error": {
+    "n": 7,
+    "min": 3.0630000000000024,
+    "median": 3.1820000000000004,
+    "max": 3.291999999999999
+   },
+   "cusum_a0": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "cusum_rhoA": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_fast_gate": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_native": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   }
+  },
+  "drift_0.002/E0": {
+   "oracle_full": {
+    "inconsistent": 30
+   },
+   "oracle_no_b": {
+    "inconsistent": 30
+   },
+   "oracle_no_c": {
+    "inconsistent": 30
+   },
+   "oracle_no_d": {
+    "consistent": 30
+   },
+   "oracle_latency": {
+    "n": 30,
+    "min": 18,
+    "median": 56.5,
+    "max": 360
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 30,
+   "machine_lag_vs_oracle": {
+    "n": 30,
+    "min": 0,
+    "median": 338.0,
+    "max": 1617
+   },
+   "machine_no_b_inconsistent": 30,
+   "machine_no_c_inconsistent": 30,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 0
+   },
+   "cusum_a0": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 108,
+     "median": 148.5,
+     "max": 175
+    }
+   },
+   "cusum_rhoA": {
+    "alarm": 25,
+    "flagged": 25,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 25,
+     "min": 342,
+     "median": 1435,
+     "max": 3221
+    }
+   },
+   "dmreda_fast_gate": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_native": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   }
+  },
+  "drift_0.002/E1": {
+   "oracle_full": {
+    "inconsistent": 30
+   },
+   "oracle_no_b": {
+    "inconsistent": 30
+   },
+   "oracle_no_c": {
+    "inconsistent": 30
+   },
+   "oracle_no_d": {
+    "consistent": 5,
+    "inconsistent": 25
+   },
+   "oracle_latency": {
+    "n": 30,
+    "min": 18,
+    "median": 56.5,
+    "max": 360
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 30,
+   "machine_lag_vs_oracle": {
+    "n": 30,
+    "min": 0,
+    "median": 338.0,
+    "max": 1617
+   },
+   "machine_no_b_inconsistent": 30,
+   "machine_no_c_inconsistent": 30,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 0
+   },
+   "cusum_a0": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "cusum_rhoA": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_fast_gate": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_native": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   }
+  },
+  "drift_0.005/E0": {
+   "oracle_full": {
+    "inconsistent": 30
+   },
+   "oracle_no_b": {
+    "inconsistent": 30
+   },
+   "oracle_no_c": {
+    "inconsistent": 30
+   },
+   "oracle_no_d": {
+    "consistent": 30
+   },
+   "oracle_latency": {
+    "n": 30,
+    "min": 5,
+    "median": 25.0,
+    "max": 41
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 30,
+   "machine_lag_vs_oracle": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 30
+   },
+   "machine_no_b_inconsistent": 30,
+   "machine_no_c_inconsistent": 30,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 0
+   },
+   "cusum_a0": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 49,
+     "median": 62.5,
+     "max": 76
+    }
+   },
+   "cusum_rhoA": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 18,
+     "median": 32.0,
+     "max": 56
+    }
+   },
+   "dmreda_fast_gate": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_native": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   }
+  },
+  "drift_0.005/E1": {
+   "oracle_full": {
+    "inconsistent": 30
+   },
+   "oracle_no_b": {
+    "inconsistent": 30
+   },
+   "oracle_no_c": {
+    "inconsistent": 30
+   },
+   "oracle_no_d": {
+    "inconsistent": 30
+   },
+   "oracle_latency": {
+    "n": 30,
+    "min": 5,
+    "median": 25.0,
+    "max": 41
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 30,
+   "machine_lag_vs_oracle": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 30
+   },
+   "machine_no_b_inconsistent": 30,
+   "machine_no_c_inconsistent": 30,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 0
+   },
+   "cusum_a0": {
+    "alarm": 17,
+    "flagged": 17,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 17,
+     "min": 1566,
+     "median": 2616,
+     "max": 3106
+    }
+   },
+   "cusum_rhoA": {
+    "alarm": 6,
+    "flagged": 6,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 6,
+     "min": 1952,
+     "median": 2487.0,
+     "max": 2928
+    }
+   },
+   "dmreda_fast_gate": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_native": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   }
+  },
+  "drift_0.02/E0": {
+   "oracle_full": {
+    "inconsistent": 30
+   },
+   "oracle_no_b": {
+    "inconsistent": 30
+   },
+   "oracle_no_c": {
+    "inconsistent": 30
+   },
+   "oracle_no_d": {
+    "inconsistent": 30
+   },
+   "oracle_latency": {
+    "n": 30,
+    "min": 4,
+    "median": 8.0,
+    "max": 16
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 30,
+   "machine_lag_vs_oracle": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 9
+   },
+   "machine_no_b_inconsistent": 30,
+   "machine_no_c_inconsistent": 30,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 0
+   },
+   "cusum_a0": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 14,
+     "median": 20.0,
+     "max": 25
+    }
+   },
+   "cusum_rhoA": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 5,
+     "median": 9.5,
+     "max": 23
+    }
+   },
+   "dmreda_fast_gate": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_native": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   }
+  },
+  "drift_0.02/E1": {
+   "oracle_full": {
+    "inconsistent": 30
+   },
+   "oracle_no_b": {
+    "inconsistent": 30
+   },
+   "oracle_no_c": {
+    "inconsistent": 30
+   },
+   "oracle_no_d": {
+    "inconsistent": 30
+   },
+   "oracle_latency": {
+    "n": 30,
+    "min": 4,
+    "median": 8.0,
+    "max": 16
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 30,
+   "machine_lag_vs_oracle": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 9
+   },
+   "machine_no_b_inconsistent": 30,
+   "machine_no_c_inconsistent": 30,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 0
+   },
+   "cusum_a0": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 670,
+     "median": 1044.0,
+     "max": 1324
+    }
+   },
+   "cusum_rhoA": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 675,
+     "median": 1092.0,
+     "max": 1340
+    }
+   },
+   "dmreda_fast_gate": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_native": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   }
+  },
+  "drift_0.1/E0": {
+   "oracle_full": {
+    "inconsistent": 30
+   },
+   "oracle_no_b": {
+    "inconsistent": 30
+   },
+   "oracle_no_c": {
+    "inconsistent": 30
+   },
+   "oracle_no_d": {
+    "inconsistent": 30
+   },
+   "oracle_latency": {
+    "n": 30,
+    "min": 1,
+    "median": 3.0,
+    "max": 6
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 30,
+   "machine_lag_vs_oracle": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 4
+   },
+   "machine_no_b_inconsistent": 30,
+   "machine_no_c_inconsistent": 30,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 0
+   },
+   "cusum_a0": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 4,
+     "median": 5.0,
+     "max": 9
+    }
+   },
+   "cusum_rhoA": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 1,
+     "median": 4.0,
+     "max": 7
+    }
+   },
+   "dmreda_fast_gate": {
+    "alarm": 14,
+    "flagged": 14,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 14,
+     "min": 10,
+     "median": 16.0,
+     "max": 21
+    }
+   },
+   "dmreda_native": {
+    "alarm": 29,
+    "flagged": 29,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 29,
+     "min": 11,
+     "median": 18,
+     "max": 28
+    }
+   }
+  },
+  "drift_0.1/E1": {
+   "oracle_full": {
+    "inconsistent": 30
+   },
+   "oracle_no_b": {
+    "inconsistent": 30
+   },
+   "oracle_no_c": {
+    "inconsistent": 30
+   },
+   "oracle_no_d": {
+    "inconsistent": 30
+   },
+   "oracle_latency": {
+    "n": 30,
+    "min": 1,
+    "median": 3.0,
+    "max": 6
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 30,
+   "machine_lag_vs_oracle": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 4
+   },
+   "machine_no_b_inconsistent": 30,
+   "machine_no_c_inconsistent": 30,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 0
+   },
+   "cusum_a0": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 165,
+     "median": 247.0,
+     "max": 340
+    }
+   },
+   "cusum_rhoA": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 161,
+     "median": 246.5,
+     "max": 340
+    }
+   },
+   "dmreda_fast_gate": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_native": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   }
+  },
+  "gain_0.01/E0": {
+   "oracle_full": {
+    "inconsistent": 30
+   },
+   "oracle_no_b": {
+    "consistent": 14,
+    "inconsistent": 16
+   },
+   "oracle_no_c": {
+    "inconsistent": 30
+   },
+   "oracle_no_d": {
+    "consistent": 26,
+    "inconsistent": 4
+   },
+   "oracle_latency": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 3
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 30,
+   "machine_lag_vs_oracle": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 0
+   },
+   "machine_no_b_inconsistent": 4,
+   "machine_no_c_inconsistent": 30,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 0
+   },
+   "cusum_a0": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 0,
+     "median": 1.0,
+     "max": 8
+    }
+   },
+   "cusum_rhoA": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 0,
+     "median": 0.0,
+     "max": 3
+    }
+   },
+   "dmreda_fast_gate": {
+    "alarm": 1,
+    "flagged": 1,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 1,
+     "min": 2,
+     "median": 2,
+     "max": 2
+    }
+   },
+   "dmreda_native": {
+    "alarm": 1,
+    "flagged": 1,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 1,
+     "min": 6,
+     "median": 6,
+     "max": 6
+    }
+   }
+  },
+  "gain_0.01/E1": {
+   "oracle_full": {
+    "inconsistent": 30
+   },
+   "oracle_no_b": {
+    "consistent": 14,
+    "inconsistent": 16
+   },
+   "oracle_no_c": {
+    "inconsistent": 30
+   },
+   "oracle_no_d": {
+    "consistent": 22,
+    "inconsistent": 8
+   },
+   "oracle_latency": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 3
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 30,
+   "machine_lag_vs_oracle": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 0
+   },
+   "machine_no_b_inconsistent": 8,
+   "machine_no_c_inconsistent": 30,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 0
+   },
+   "cusum_a0": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "cusum_rhoA": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_fast_gate": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_native": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   }
+  },
+  "gain_0.05/E0": {
+   "oracle_full": {
+    "inconsistent": 30
+   },
+   "oracle_no_b": {
+    "inconsistent": 30
+   },
+   "oracle_no_c": {
+    "inconsistent": 30
+   },
+   "oracle_no_d": {
+    "inconsistent": 30
+   },
+   "oracle_latency": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 0
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 30,
+   "machine_lag_vs_oracle": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 0
+   },
+   "machine_no_b_inconsistent": 19,
+   "machine_no_c_inconsistent": 30,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 0
+   },
+   "cusum_a0": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 0,
+     "median": 0.0,
+     "max": 0
+    }
+   },
+   "cusum_rhoA": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 0,
+     "median": 0.0,
+     "max": 0
+    }
+   },
+   "dmreda_fast_gate": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 0,
+     "median": 0.0,
+     "max": 1
+    }
+   },
+   "dmreda_native": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 5,
+     "median": 5.0,
+     "max": 5
+    }
+   }
+  },
+  "gain_0.05/E1": {
+   "oracle_full": {
+    "inconsistent": 30
+   },
+   "oracle_no_b": {
+    "inconsistent": 30
+   },
+   "oracle_no_c": {
+    "inconsistent": 30
+   },
+   "oracle_no_d": {
+    "inconsistent": 30
+   },
+   "oracle_latency": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 0
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 30,
+   "machine_lag_vs_oracle": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 0
+   },
+   "machine_no_b_inconsistent": 23,
+   "machine_no_c_inconsistent": 30,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 0
+   },
+   "cusum_a0": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "cusum_rhoA": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_fast_gate": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_native": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   }
+  },
+  "healthy/E0": {
+   "oracle_full": {
+    "consistent": 230
+   },
+   "oracle_no_b": {
+    "consistent": 230
+   },
+   "oracle_no_c": {
+    "consistent": 230
+   },
+   "oracle_no_d": {
+    "consistent": 230
+   },
+   "oracle_latency": null,
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 0,
+   "machine_lag_vs_oracle": null,
+   "machine_no_b_inconsistent": 0,
+   "machine_no_c_inconsistent": 0,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 103
+   },
+   "cusum_a0": {
+    "alarm": 0
+   },
+   "cusum_rhoA": {
+    "alarm": 0
+   },
+   "dmreda_fast_gate": {
+    "alarm": 0
+   },
+   "dmreda_native": {
+    "alarm": 0
+   }
+  },
+  "healthy/E1": {
+   "oracle_full": {
+    "consistent": 230
+   },
+   "oracle_no_b": {
+    "consistent": 230
+   },
+   "oracle_no_c": {
+    "consistent": 230
+   },
+   "oracle_no_d": {
+    "consistent": 230
+   },
+   "oracle_latency": null,
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 0,
+   "machine_lag_vs_oracle": null,
+   "machine_no_b_inconsistent": 0,
+   "machine_no_c_inconsistent": 0,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 103
+   },
+   "cusum_a0": {
+    "alarm": 1
+   },
+   "cusum_rhoA": {
+    "alarm": 1
+   },
+   "dmreda_fast_gate": {
+    "alarm": 0
+   },
+   "dmreda_native": {
+    "alarm": 0
+   }
+  },
+  "jump_0.2/E0": {
+   "oracle_full": {
+    "inconsistent": 30
+   },
+   "oracle_no_b": {
+    "consistent": 26,
+    "inconsistent": 4
+   },
+   "oracle_no_c": {
+    "inconsistent": 30
+   },
+   "oracle_no_d": {
+    "consistent": 30
+   },
+   "oracle_latency": {
+    "n": 30,
+    "min": 0,
+    "median": 2.0,
+    "max": 14
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 30,
+   "machine_lag_vs_oracle": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 8
+   },
+   "machine_no_b_inconsistent": 4,
+   "machine_no_c_inconsistent": 30,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 0
+   },
+   "cusum_a0": {
+    "alarm": 10,
+    "flagged": 10,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 10,
+     "min": 213,
+     "median": 1215.0,
+     "max": 2948
+    }
+   },
+   "cusum_rhoA": {
+    "alarm": 29,
+    "flagged": 29,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 29,
+     "min": 0,
+     "median": 2,
+     "max": 23
+    }
+   },
+   "dmreda_fast_gate": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_native": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   }
+  },
+  "jump_0.2/E1": {
+   "oracle_full": {
+    "inconsistent": 30
+   },
+   "oracle_no_b": {
+    "consistent": 26,
+    "inconsistent": 4
+   },
+   "oracle_no_c": {
+    "inconsistent": 30
+   },
+   "oracle_no_d": {
+    "consistent": 29,
+    "inconsistent": 1
+   },
+   "oracle_latency": {
+    "n": 30,
+    "min": 0,
+    "median": 2.0,
+    "max": 14
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 30,
+   "machine_lag_vs_oracle": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 8
+   },
+   "machine_no_b_inconsistent": 4,
+   "machine_no_c_inconsistent": 30,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 0
+   },
+   "cusum_a0": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "cusum_rhoA": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_fast_gate": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_native": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   }
+  },
+  "jump_0.5/E0": {
+   "oracle_full": {
+    "inconsistent": 30
+   },
+   "oracle_no_b": {
+    "consistent": 14,
+    "inconsistent": 16
+   },
+   "oracle_no_c": {
+    "inconsistent": 30
+   },
+   "oracle_no_d": {
+    "consistent": 25,
+    "inconsistent": 5
+   },
+   "oracle_latency": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 3
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 30,
+   "machine_lag_vs_oracle": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 1
+   },
+   "machine_no_b_inconsistent": 4,
+   "machine_no_c_inconsistent": 30,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 0
+   },
+   "cusum_a0": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 0,
+     "median": 1.0,
+     "max": 8
+    }
+   },
+   "cusum_rhoA": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 0,
+     "median": 0.0,
+     "max": 3
+    }
+   },
+   "dmreda_fast_gate": {
+    "alarm": 1,
+    "flagged": 1,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 1,
+     "min": 2,
+     "median": 2,
+     "max": 2
+    }
+   },
+   "dmreda_native": {
+    "alarm": 1,
+    "flagged": 1,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 1,
+     "min": 6,
+     "median": 6,
+     "max": 6
+    }
+   }
+  },
+  "jump_0.5/E1": {
+   "oracle_full": {
+    "inconsistent": 30
+   },
+   "oracle_no_b": {
+    "consistent": 14,
+    "inconsistent": 16
+   },
+   "oracle_no_c": {
+    "inconsistent": 30
+   },
+   "oracle_no_d": {
+    "consistent": 23,
+    "inconsistent": 7
+   },
+   "oracle_latency": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 3
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 30,
+   "machine_lag_vs_oracle": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 1
+   },
+   "machine_no_b_inconsistent": 4,
+   "machine_no_c_inconsistent": 30,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 0
+   },
+   "cusum_a0": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "cusum_rhoA": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_fast_gate": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_native": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   }
+  },
+  "jump_1/E0": {
+   "oracle_full": {
+    "inconsistent": 30
+   },
+   "oracle_no_b": {
+    "inconsistent": 29,
+    "consistent": 1
+   },
+   "oracle_no_c": {
+    "inconsistent": 30
+   },
+   "oracle_no_d": {
+    "consistent": 11,
+    "inconsistent": 19
+   },
+   "oracle_latency": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 0
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 30,
+   "machine_lag_vs_oracle": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 0
+   },
+   "machine_no_b_inconsistent": 9,
+   "machine_no_c_inconsistent": 30,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 0
+   },
+   "cusum_a0": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 0,
+     "median": 0.0,
+     "max": 0
+    }
+   },
+   "cusum_rhoA": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 0,
+     "median": 0.0,
+     "max": 0
+    }
+   },
+   "dmreda_fast_gate": {
+    "alarm": 28,
+    "flagged": 28,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 28,
+     "min": 1,
+     "median": 2.5,
+     "max": 4
+    }
+   },
+   "dmreda_native": {
+    "alarm": 27,
+    "flagged": 27,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 27,
+     "min": 5,
+     "median": 7,
+     "max": 15
+    }
+   }
+  },
+  "jump_1/E1": {
+   "oracle_full": {
+    "inconsistent": 30
+   },
+   "oracle_no_b": {
+    "inconsistent": 29,
+    "consistent": 1
+   },
+   "oracle_no_c": {
+    "inconsistent": 30
+   },
+   "oracle_no_d": {
+    "consistent": 6,
+    "inconsistent": 24
+   },
+   "oracle_latency": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 0
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 30,
+   "machine_lag_vs_oracle": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 0
+   },
+   "machine_no_b_inconsistent": 9,
+   "machine_no_c_inconsistent": 30,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 0
+   },
+   "cusum_a0": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "cusum_rhoA": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_fast_gate": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_native": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   }
+  },
+  "jump_2/E0": {
+   "oracle_full": {
+    "inconsistent": 30
+   },
+   "oracle_no_b": {
+    "inconsistent": 30
+   },
+   "oracle_no_c": {
+    "inconsistent": 30
+   },
+   "oracle_no_d": {
+    "inconsistent": 30
+   },
+   "oracle_latency": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 0
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 30,
+   "machine_lag_vs_oracle": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 0
+   },
+   "machine_no_b_inconsistent": 15,
+   "machine_no_c_inconsistent": 30,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 0
+   },
+   "cusum_a0": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 0,
+     "median": 0.0,
+     "max": 0
+    }
+   },
+   "cusum_rhoA": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 0,
+     "median": 0.0,
+     "max": 0
+    }
+   },
+   "dmreda_fast_gate": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 0,
+     "median": 1.0,
+     "max": 1
+    }
+   },
+   "dmreda_native": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 5,
+     "median": 5.0,
+     "max": 6
+    }
+   }
+  },
+  "jump_2/E1": {
+   "oracle_full": {
+    "inconsistent": 30
+   },
+   "oracle_no_b": {
+    "inconsistent": 30
+   },
+   "oracle_no_c": {
+    "inconsistent": 30
+   },
+   "oracle_no_d": {
+    "inconsistent": 30
+   },
+   "oracle_latency": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 0
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 30,
+   "machine_lag_vs_oracle": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 0
+   },
+   "machine_no_b_inconsistent": 15,
+   "machine_no_c_inconsistent": 30,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 0
+   },
+   "cusum_a0": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "cusum_rhoA": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_fast_gate": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_native": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   }
+  },
+  "jump_5/E0": {
+   "oracle_full": {
+    "inconsistent": 30
+   },
+   "oracle_no_b": {
+    "inconsistent": 30
+   },
+   "oracle_no_c": {
+    "inconsistent": 30
+   },
+   "oracle_no_d": {
+    "inconsistent": 30
+   },
+   "oracle_latency": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 0
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 30,
+   "machine_lag_vs_oracle": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 0
+   },
+   "machine_no_b_inconsistent": 30,
+   "machine_no_c_inconsistent": 30,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 0
+   },
+   "cusum_a0": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 0,
+     "median": 0.0,
+     "max": 0
+    }
+   },
+   "cusum_rhoA": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 0,
+     "median": 0.0,
+     "max": 0
+    }
+   },
+   "dmreda_fast_gate": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 0,
+     "median": 0.0,
+     "max": 0
+    }
+   },
+   "dmreda_native": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 5,
+     "median": 5.0,
+     "max": 5
+    }
+   }
+  },
+  "jump_5/E1": {
+   "oracle_full": {
+    "inconsistent": 30
+   },
+   "oracle_no_b": {
+    "inconsistent": 30
+   },
+   "oracle_no_c": {
+    "inconsistent": 30
+   },
+   "oracle_no_d": {
+    "inconsistent": 30
+   },
+   "oracle_latency": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 0
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 30,
+   "machine_lag_vs_oracle": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 0
+   },
+   "machine_no_b_inconsistent": 30,
+   "machine_no_c_inconsistent": 30,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 0
+   },
+   "cusum_a0": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "cusum_rhoA": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_fast_gate": {
+    "alarm": 2,
+    "flagged": 2,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 2,
+     "min": 3,
+     "median": 4.0,
+     "max": 5
+    }
+   },
+   "dmreda_native": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   }
+  },
+  "noise_x2/E0": {
+   "oracle_full": {
+    "inconsistent": 30
+   },
+   "oracle_no_b": {
+    "inconsistent": 30
+   },
+   "oracle_no_c": {
+    "inconsistent": 30
+   },
+   "oracle_no_d": {
+    "inconsistent": 30
+   },
+   "oracle_latency": {
+    "n": 30,
+    "min": 0,
+    "median": 1.0,
+    "max": 7
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 30,
+   "machine_lag_vs_oracle": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 10
+   },
+   "machine_no_b_inconsistent": 6,
+   "machine_no_c_inconsistent": 30,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 0
+   },
+   "cusum_a0": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 0,
+     "median": 5.0,
+     "max": 15
+    }
+   },
+   "cusum_rhoA": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 0,
+     "median": 1.0,
+     "max": 10
+    }
+   },
+   "dmreda_fast_gate": {
+    "alarm": 5,
+    "flagged": 5,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 5,
+     "min": 4,
+     "median": 11,
+     "max": 23
+    }
+   },
+   "dmreda_native": {
+    "alarm": 20,
+    "flagged": 20,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 20,
+     "min": 9,
+     "median": 17.5,
+     "max": 25
+    }
+   }
+  },
+  "noise_x2/E1": {
+   "oracle_full": {
+    "inconsistent": 30
+   },
+   "oracle_no_b": {
+    "inconsistent": 30
+   },
+   "oracle_no_c": {
+    "inconsistent": 30
+   },
+   "oracle_no_d": {
+    "inconsistent": 30
+   },
+   "oracle_latency": {
+    "n": 30,
+    "min": 0,
+    "median": 1.0,
+    "max": 7
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 30,
+   "machine_lag_vs_oracle": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 10
+   },
+   "machine_no_b_inconsistent": 6,
+   "machine_no_c_inconsistent": 30,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 0
+   },
+   "cusum_a0": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "cusum_rhoA": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_fast_gate": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_native": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   }
+  },
+  "noise_x4/E0": {
+   "oracle_full": {
+    "inconsistent": 30
+   },
+   "oracle_no_b": {
+    "inconsistent": 30
+   },
+   "oracle_no_c": {
+    "inconsistent": 30
+   },
+   "oracle_no_d": {
+    "inconsistent": 30
+   },
+   "oracle_latency": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 2
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 30,
+   "machine_lag_vs_oracle": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 2
+   },
+   "machine_no_b_inconsistent": 17,
+   "machine_no_c_inconsistent": 30,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 0
+   },
+   "cusum_a0": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 0,
+     "median": 0.5,
+     "max": 5
+    }
+   },
+   "cusum_rhoA": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 0,
+     "median": 0.0,
+     "max": 3
+    }
+   },
+   "dmreda_fast_gate": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 1,
+     "median": 4.0,
+     "max": 12
+    }
+   },
+   "dmreda_native": {
+    "alarm": 30,
+    "flagged": 30,
+    "pre_onset_alarm": 0,
+    "latency": {
+     "n": 30,
+     "min": 5,
+     "median": 8.0,
+     "max": 15
+    }
+   }
+  },
+  "noise_x4/E1": {
+   "oracle_full": {
+    "inconsistent": 30
+   },
+   "oracle_no_b": {
+    "inconsistent": 30
+   },
+   "oracle_no_c": {
+    "inconsistent": 30
+   },
+   "oracle_no_d": {
+    "inconsistent": 30
+   },
+   "oracle_latency": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 2
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 30,
+   "machine_lag_vs_oracle": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 2
+   },
+   "machine_no_b_inconsistent": 17,
+   "machine_no_c_inconsistent": 30,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 0
+   },
+   "cusum_a0": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "cusum_rhoA": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_fast_gate": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_native": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   }
+  },
+  "offset_1/E0": {
+   "oracle_full": {
+    "consistent": 21,
+    "inconsistent": 9
+   },
+   "oracle_no_b": {
+    "consistent": 21,
+    "inconsistent": 9
+   },
+   "oracle_no_c": {
+    "consistent": 30
+   },
+   "oracle_no_d": {
+    "consistent": 22,
+    "inconsistent": 8
+   },
+   "oracle_latency": {
+    "n": 9,
+    "min": -572,
+    "median": -450,
+    "max": -313
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 9,
+   "machine_lag_vs_oracle": {
+    "n": 9,
+    "min": 0,
+    "median": 0,
+    "max": 0
+   },
+   "machine_no_b_inconsistent": 9,
+   "machine_no_c_inconsistent": 0,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 15
+   },
+   "TUTARLI_true_end_error": {
+    "n": 15,
+    "min": 0.9999999999999967,
+    "median": 0.9999999999999996,
+    "max": 1.000000000000003
+   },
+   "cusum_a0": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "cusum_rhoA": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_fast_gate": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_native": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   }
+  },
+  "offset_1/E1": {
+   "oracle_full": {
+    "consistent": 21,
+    "inconsistent": 9
+   },
+   "oracle_no_b": {
+    "consistent": 21,
+    "inconsistent": 9
+   },
+   "oracle_no_c": {
+    "consistent": 30
+   },
+   "oracle_no_d": {
+    "consistent": 22,
+    "inconsistent": 8
+   },
+   "oracle_latency": {
+    "n": 9,
+    "min": -572,
+    "median": -450,
+    "max": -313
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 9,
+   "machine_lag_vs_oracle": {
+    "n": 9,
+    "min": 0,
+    "median": 0,
+    "max": 0
+   },
+   "machine_no_b_inconsistent": 9,
+   "machine_no_c_inconsistent": 0,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 15
+   },
+   "TUTARLI_true_end_error": {
+    "n": 15,
+    "min": 0.9999999999999967,
+    "median": 0.9999999999999996,
+    "max": 1.000000000000003
+   },
+   "cusum_a0": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "cusum_rhoA": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_fast_gate": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_native": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   }
+  },
+  "offset_3/E0": {
+   "oracle_full": {
+    "inconsistent": 22,
+    "consistent": 8
+   },
+   "oracle_no_b": {
+    "inconsistent": 22,
+    "consistent": 8
+   },
+   "oracle_no_c": {
+    "consistent": 30
+   },
+   "oracle_no_d": {
+    "inconsistent": 21,
+    "consistent": 9
+   },
+   "oracle_latency": {
+    "n": 22,
+    "min": -578,
+    "median": -420.5,
+    "max": 1419
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 22,
+   "machine_lag_vs_oracle": {
+    "n": 22,
+    "min": 0,
+    "median": 0.0,
+    "max": 0
+   },
+   "machine_no_b_inconsistent": 22,
+   "machine_no_c_inconsistent": 0,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 0
+   },
+   "cusum_a0": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "cusum_rhoA": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_fast_gate": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_native": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   }
+  },
+  "offset_3/E1": {
+   "oracle_full": {
+    "inconsistent": 22,
+    "consistent": 8
+   },
+   "oracle_no_b": {
+    "inconsistent": 22,
+    "consistent": 8
+   },
+   "oracle_no_c": {
+    "consistent": 30
+   },
+   "oracle_no_d": {
+    "inconsistent": 21,
+    "consistent": 9
+   },
+   "oracle_latency": {
+    "n": 22,
+    "min": -578,
+    "median": -420.5,
+    "max": 1419
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 22,
+   "machine_lag_vs_oracle": {
+    "n": 22,
+    "min": 0,
+    "median": 0.0,
+    "max": 0
+   },
+   "machine_no_b_inconsistent": 22,
+   "machine_no_c_inconsistent": 0,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 0
+   },
+   "cusum_a0": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "cusum_rhoA": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_fast_gate": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_native": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   }
+  },
+  "stuck/E0": {
+   "oracle_full": {
+    "consistent": 30
+   },
+   "oracle_no_b": {
+    "consistent": 30
+   },
+   "oracle_no_c": {
+    "consistent": 30
+   },
+   "oracle_no_d": {
+    "consistent": 30
+   },
+   "oracle_latency": null,
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 0,
+   "machine_lag_vs_oracle": null,
+   "machine_no_b_inconsistent": 0,
+   "machine_no_c_inconsistent": 0,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 12
+   },
+   "TUTARLI_true_end_error": {
+    "n": 12,
+    "min": 0.010401072881027151,
+    "median": 0.06391595164656139,
+    "max": 0.13523586879331934
+   },
+   "cusum_a0": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "cusum_rhoA": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_fast_gate": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_native": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   }
+  },
+  "stuck/E1": {
+   "oracle_full": {
+    "inconsistent": 30
+   },
+   "oracle_no_b": {
+    "inconsistent": 30
+   },
+   "oracle_no_c": {
+    "inconsistent": 30
+   },
+   "oracle_no_d": {
+    "consistent": 30
+   },
+   "oracle_latency": {
+    "n": 30,
+    "min": 1,
+    "median": 2.0,
+    "max": 18
+   },
+   "oracle_latency_uncertified": 0,
+   "machine_inconsistent": 30,
+   "machine_lag_vs_oracle": {
+    "n": 30,
+    "min": 0,
+    "median": 0.0,
+    "max": 8
+   },
+   "machine_no_b_inconsistent": 30,
+   "machine_no_c_inconsistent": 30,
+   "TUTARLI": {
+    "R1": 0,
+    "R3": 0
+   },
+   "cusum_a0": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "cusum_rhoA": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_fast_gate": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   },
+   "dmreda_native": {
+    "alarm": 0,
+    "flagged": 0,
+    "pre_onset_alarm": 0,
+    "latency": null
+   }
+  }
+ }
+}

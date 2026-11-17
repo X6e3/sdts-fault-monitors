@@ -1,0 +1,43 @@
+{
+ "kind": "final",
+ "git_head": "da6e4a056a51808db6318ea98a1171d07bc3fa13",
+ "git_dirty_tracked": false,
+ "env": {
+  "python": "3.12.13",
+  "implementation": "CPython",
+  "numpy": "2.5.5",
+  "scipy": "1.18.1",
+  "highs": "1.12.0",
+  "platform": "Linux-7.3.4-arch1-2-x86_64-with-glibc2.44",
+  "machine": "x86_64",
+  "executable": "/home/x6e3/Research/sdts-final-da6e4a0/.venv/bin/python",
+  "numpy_record_sha256": "96c6d84c4bc880099440c51e48e272fc69b573d71e46a45650914492e24ace45",
+  "scipy_record_sha256": "cda958e21648ffe0b8528473532ef59f89db82bf1fa7d4a9a47161785046e979"
+ },
+ "thresholds_file": "results/thermal_v2/train/thresholds.json",
+ "thresholds_sha256": "7cb86186a5d0e36fbc0438c087e0e02b03150ffe6da230e89cfa043994578e22",
+ "dmreda_reference_sha256": "0b8bffc7466b7dc67f353415a610edc668c50ac21db0d239fe885c49bbceef3e",
+ "seeds": {
+  "cells": [
+   420000,
+   420029
+  ],
+  "healthy": [
+   420100,
+   420299
+  ],
+  "twins": [
+   420000,
+   420029
+  ]
+ },
+ "runs": 1540,
+ "twin_pairs": 300,
+ "started": "2026-11-18T00:02:29+0300",
+ "seconds": 3796.3,
+ "finished": "2026-11-18T01:05:46+0300",
+ "result_sha256": {
+  "runs.jsonl": "a2b5ddd29fd511b11222d771ee17ff95bbc9597049ce8c7db64cbfb984f533c3",
+  "twins.jsonl": "ca3d00387d70a8d847183d41038051c4ba9a79f7b3bd103a439682333ff83a4f"
+ }
+}
