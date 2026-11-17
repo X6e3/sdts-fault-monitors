@@ -12,6 +12,7 @@ P1 twin pairs on the first seed block. Scoring is separate (score_final.py).
 usage: python -B run_final.py OUT --thresholds FILE (--rehearsal | --final) [--workers 8]
 """
 import argparse
+import hashlib
 import json
 import os
 import subprocess
@@ -145,14 +146,19 @@ def main():
             raise SystemExit("FINAL refused: tracked files differ from HEAD")
         if not git("ls-files", str(rel)):
             raise SystemExit("FINAL refused: the thresholds file is not committed")
-    thresholds = json.loads(thresholds_path.read_text())["thresholds"]
+    calibration = json.loads(thresholds_path.read_text())
+    if a.final and calibration["source"]["git_dirty_tracked"]:
+        raise SystemExit("FINAL refused: the thresholds were calibrated from a dirty tree")
+    thresholds = calibration["thresholds"]
     a.out.mkdir(parents=True, exist_ok=False)
     seeds = SEEDS[kind]
     tasks = ([(s, c.name, arm) for c in T.CELLS for arm in T.ARMS for s in seeds["cells"]]
              + [(s, "healthy", arm) for arm in T.ARMS for s in seeds["healthy"]])
     twins = list(thermal_twins.pairs(T, seeds["twins"]))
-    meta = {"kind": kind, "git_head": git("rev-parse", "HEAD"), "env": env, "thresholds_file": str(rel),
-            "thresholds_sha256": __import__("hashlib").sha256(thresholds_path.read_bytes()).hexdigest(),
+    dirty = bool(subprocess.run(["git", "diff", "--quiet", "HEAD"], cwd=ROOT).returncode)
+    meta = {"kind": kind, "git_head": git("rev-parse", "HEAD"), "git_dirty_tracked": dirty, "env": env,
+            "thresholds_file": str(rel),
+            "thresholds_sha256": hashlib.sha256(thresholds_path.read_bytes()).hexdigest(),
             "dmreda_reference_sha256": B.verify_reference(),
             "seeds": {k: [v[0], v[-1]] for k, v in seeds.items()}, "runs": len(tasks), "twin_pairs": len(twins),
             "started": time.strftime("%Y-%m-%dT%H:%M:%S%z")}
@@ -168,6 +174,7 @@ def main():
             tw.flush()
     meta["seconds"] = round(time.monotonic() - t0, 1)
     meta["finished"] = time.strftime("%Y-%m-%dT%H:%M:%S%z")
+    meta["result_sha256"] = {n: hashlib.sha256((a.out / n).read_bytes()).hexdigest() for n in ("runs.jsonl", "twins.jsonl")}
     (a.out / "meta.json").write_text(json.dumps(meta, indent=1) + "\n")
     print(json.dumps({k: meta[k] for k in ("kind", "runs", "twin_pairs", "seconds")}))
 
