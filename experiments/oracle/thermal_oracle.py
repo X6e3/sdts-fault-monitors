@@ -39,6 +39,14 @@ So only IPM and dual simplex without presolve are used. A "consistent" verdict n
 
 All temperatures are shifted by -25 C inside the LP. The dynamics are shift invariant (A·1 + B_T = 1),
 so this changes nothing but the conditioning.
+
+Ablations (addendum A1.5): `verdict(..., rate=False)` drops (b), `verdict(..., box=False)` drops (c), and
+`verdict_free_command(y)` drops (d). The (d) model works on y with the full plant:
+  - the command P[k] is a decision variable in [P_LO, P_HI] at every sample;
+  - (e) fixes the P0 steady state at TA[0];
+  - the box is kept.
+It carries the same two certificates. The caps for its dual bound follow from the plant being a positive
+system: every state lies between the steady states for (P_LO, TA_LO) and (P_HI, TA_HI).
 """
 import json
 import math
@@ -59,6 +67,8 @@ import thermal as T  # noqa: E402
 
 A11, A12 = 1.0 - T.K / T.CC, T.K / T.CC
 A21, A22, B2 = T.K / T.CS, 1.0 - (T.K + T.H) / T.CS, T.H / T.CS
+BP = 1.0 / T.CC                     # command input to the core node; like A11..B2 this assumes DT = 1
+assert T.DT == 1.0
 SHIFT = 25.0
 DUAL_TOL = 1e-7
 EPS = np.finfo(float).eps
@@ -69,6 +79,8 @@ DEFAULT_TIMEOUT = 120
 
 
 def _build(z, m, box, rate, mode, sense):
+    if mode == "free_command":
+        return _build_free_command(z, m, box, rate)
     z = np.asarray(z[:m], dtype=float) - SHIFT
     iTA, iac, ias, ib, idd = 0, m, 2 * m, 3 * m, 3 * m + 1
     nv = 3 * m + 2
@@ -104,6 +116,90 @@ def _build(z, m, box, rate, mode, sense):
     else:
         c[ib] = sense
     return c, Aub, np.array(ub), Aeq, beq, bounds, z
+
+
+def _build_free_command(y, m, box, rate, p_bounds=None):
+    """(d) ablation on y: variables TA, P, Tc, Ts, b (fixed 0), d. p_bounds fixes P per sample (tests)."""
+    if not box:
+        raise ValueError("the (d) ablation keeps the ambient box")
+    ys = np.asarray(y[:m], dtype=float) - SHIFT
+    iTA, iP, iTc, iTs, ib, idd = 0, m, 2 * m, 3 * m, 4 * m, 4 * m + 1
+    nv = 4 * m + 2
+    er, ec, ev, beq = [], [], [], []
+    row = 0
+    er += [row, row]; ec += [iTc, iTA]; ev += [1.0, -1.0]; beq.append(T.P0 / T.H + T.P0 / T.K); row += 1
+    er += [row, row]; ec += [iTs, iTA]; ev += [1.0, -1.0]; beq.append(T.P0 / T.H); row += 1
+    for k in range(m - 1):
+        er += [row] * 4; ec += [iTc + k + 1, iTc + k, iTs + k, iP + k]; ev += [1.0, -A11, -A12, -BP]
+        beq.append(0.0); row += 1
+        er += [row] * 4; ec += [iTs + k + 1, iTc + k, iTs + k, iTA + k]; ev += [1.0, -A21, -A22, -B2]
+        beq.append(0.0); row += 1
+    Aeq = coo_matrix((ev, (er, ec)), shape=(row, nv)).tocsr()
+    ur, uc, uv, ub = [], [], [], []
+    row = 0
+    for k in range(m):              # Ts + b - d <= y ; -Ts - b - d <= -y
+        ur += [row] * 3; uc += [iTs + k, ib, idd]; uv += [1.0, 1.0, -1.0]; ub.append(ys[k]); row += 1
+        ur += [row] * 3; uc += [iTs + k, ib, idd]; uv += [-1.0, -1.0, -1.0]; ub.append(-ys[k]); row += 1
+    if rate:
+        for k in range(m - 1):
+            ur += [row, row]; uc += [iTA + k + 1, iTA + k]; uv += [1.0, -1.0]; ub.append(T.RHO_A); row += 1
+            ur += [row, row]; uc += [iTA + k + 1, iTA + k]; uv += [-1.0, 1.0]; ub.append(T.RHO_A); row += 1
+    Aub = coo_matrix((uv, (ur, uc)), shape=(row, nv)).tocsr()
+    p = [(T.P_LO, T.P_HI)] * m if p_bounds is None else [(float(v), float(v)) for v in p_bounds[:m]]
+    bounds = ([(T.TA_LO - SHIFT, T.TA_HI - SHIFT)] * m + p + [(None, None)] * (2 * m)
+              + [(0.0, 0.0), (0.0, None)])
+    c = np.zeros(nv)
+    c[idd] = 1.0
+    return c, Aub, np.array(ub), Aeq, np.array(beq), bounds, ys
+
+
+def _free_command_caps(ys, m):
+    """|x| bounds at an optimum of the (d) LP, in variable order (shifted temperatures)."""
+    ambient = max(abs(T.TA_LO - SHIFT), abs(T.TA_HI - SHIFT))
+    ts_hi = T.TA_HI - SHIFT + T.P_HI / T.H
+    tc_hi = ts_hi + T.P_HI / T.K
+    low = abs(T.TA_LO - SHIFT)
+    grow = 1 + 8 * EPS * (m + 1)
+    # TA = 25 C and P = P0 throughout is admissible and gives Ts = 25 + P0/H, so d* <= max |y - Ts| there.
+    noise = float(np.max(np.abs(ys - T.P0 / T.H)))
+    caps = ([ambient] * m + [max(abs(T.P_LO), abs(T.P_HI))] * m + [max(low, tc_hi) * grow] * m
+            + [max(low, ts_hi) * grow] * m + [0.0, noise])
+    return np.array(caps) * (1 + 8 * EPS)
+
+
+def _residual_range_free(TA_shifted, P, ys, rate):
+    """Enclose y - Ts after projecting TA, clipping P and simulating the full plant from (e)."""
+    TA = _project(TA_shifted, True, rate)
+    P = np.clip(np.asarray(P, dtype=float), T.P_LO, T.P_HI)
+    tc, ts = TA[0] + T.P0 / T.H + T.P0 / T.K, TA[0] + T.P0 / T.H
+    low, high, big = math.inf, -math.inf, 1.0
+    for k in range(len(TA)):
+        residual = ys[k] - ts
+        low, high = min(low, residual), max(high, residual)
+        big = max(big, abs(tc), abs(ts))
+        tc, ts = A11 * tc + A12 * ts + BP * P[k], A21 * tc + A22 * ts + B2 * TA[k]
+    pad = 32 * EPS * (len(TA) + 1) * max(big, float(np.max(np.abs(ys))), T.P_HI)
+    return low - pad, high + pad
+
+
+def _margin_free_command(y, m, rate, attempt_dir):
+    if m == 0:
+        return 0.0, 0.0
+    c, Aub, bub, Aeq, beq, bounds, ys = _build_free_command(y, m, True, rate)
+    caps = _free_command_caps(ys, m)
+    best_lo, best_up = 0.0, np.inf
+    for method, presolve in ATTEMPTS:
+        res = _attempt(y, m, True, rate, "free_command", 0.0, method, presolve, attempt_dir)
+        if res is None or res.status != 0 or not np.all(np.isfinite(res.x)):
+            continue
+        low, high = _residual_range_free(res.x[:m], res.x[m:2 * m], ys, rate)
+        best_up = min(best_up, math.nextafter(max(abs(low), abs(high)), math.inf))
+        d_lo = _dual_bound(res, c, Aub, bub, Aeq, beq, bounds, caps)
+        if d_lo is not None and d_lo <= best_up:
+            best_lo = max(best_lo, d_lo)
+            if best_up <= T.DELTA or best_lo > T.DELTA:
+                break
+    return best_lo, best_up
 
 
 def _worker(result_path):
@@ -307,6 +403,13 @@ def _verdict(d_lo, d_up):
 
 def verdict(z, m=None, box=True, rate=True, *, attempt_dir=None):
     d_lo, d_up = margin(z, m, box, rate, attempt_dir=attempt_dir)
+    return _verdict(d_lo, d_up), d_lo, d_up
+
+
+def verdict_free_command(y, m=None, *, rate=True, attempt_dir=None):
+    """(d) ablation: the verdict on the raw measurement y when the command is unknown in [P_LO, P_HI]."""
+    m = len(y) if m is None else m
+    d_lo, d_up = _margin_free_command(y, m, rate, attempt_dir)
     return _verdict(d_lo, d_up), d_lo, d_up
 
 
