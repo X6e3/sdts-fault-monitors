@@ -18,8 +18,8 @@ Every answer carries two certificates:
         each step to the rate bound, then to the box, so both hold exactly) and run forward through the
         plant independently of the LP: the largest |z - as| it leaves. That projected path is admissible,
         so d* <= d_up.
-  d_lo  a weak-duality lower bound from the solver's dual multipliers. It is accepted only if the dual
-        stationarity residual is below DUAL_TOL; otherwise d_lo = 0 (no lower bound).
+  d_lo  a weak-duality lower bound from sign-corrected multipliers. The stationarity residual must
+        be below DUAL_TOL, and its worst-case contribution over an enclosing box is subtracted.
 
   verdict "consistent"    if d_up <= DELTA
           "inconsistent"  if d_lo >  DELTA
@@ -38,11 +38,18 @@ So only IPM and dual simplex without presolve are used. A "consistent" verdict n
 All temperatures are shifted by -25 C inside the LP. The dynamics are shift invariant (A·1 + B_T = 1),
 so this changes nothing but the conditioning.
 """
+import json
+import math
 import os
+import pickle
+import signal
+import subprocess
 import sys
+import tempfile
+import time
+from pathlib import Path
 
 import numpy as np
-from scipy.optimize import linprog
 from scipy.sparse import coo_matrix
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "generators"))
@@ -52,11 +59,11 @@ A11, A12 = 1.0 - T.K / T.CC, T.K / T.CC
 A21, A22, B2 = T.K / T.CS, 1.0 - (T.K + T.H) / T.CS, T.H / T.CS
 SHIFT = 25.0
 DUAL_TOL = 1e-7
-ATTEMPTS = (("highs-ds", False), ("highs-ipm", False))   # presolve can crash the process: never used; IPM segfaulted on CAL 410197 healthy E0
-
-
-class OracleError(RuntimeError):
-    pass
+EPS = np.finfo(float).eps
+ATTEMPTS = (("highs-ds", False), ("highs-ipm", False))
+HERE = Path(__file__).resolve()
+DEFAULT_ATTEMPT_DIR = HERE.parents[2] / "results" / "tmp" / "highs-attempts"
+DEFAULT_TIMEOUT = 120
 
 
 def _build(z, m, box, rate, mode, sense):
@@ -97,16 +104,105 @@ def _build(z, m, box, rate, mode, sense):
     return c, Aub, np.array(ub), Aeq, beq, bounds, z
 
 
-def _dual_bound(res, c, Aub, bub, Aeq, beq, bounds):
-    """Weak-duality bound from scipy's multipliers; None if stationarity does not hold to DUAL_TOL."""
-    y_ub, y_eq = res.ineqlin.marginals, res.eqlin.marginals
-    lam_l, lam_u = res.lower.marginals, res.upper.marginals
-    resid = c - (Aub.T @ y_ub + Aeq.T @ y_eq + lam_l + lam_u)
-    if np.max(np.abs(resid)) > DUAL_TOL:
+def _worker(result_path):
+    from scipy.optimize import linprog
+
+    z, m, box, rate, mode, sense, method, presolve = pickle.load(sys.stdin.buffer)
+    c, Aub, bub, Aeq, beq, bounds, _ = _build(z, m, box, rate, mode, sense)
+    result = linprog(c, A_ub=Aub, b_ub=bub, A_eq=Aeq, b_eq=beq, bounds=bounds,
+                     method=method, options={"presolve": presolve})
+    with open(result_path, "wb") as stream:
+        pickle.dump(result, stream, protocol=pickle.HIGHEST_PROTOCOL)
+
+
+def _attempt(z, m, box, rate, mode, sense, method, presolve, attempt_dir):
+    """Run one solver in a fresh interpreter and keep its OS and solver diagnostics."""
+    log_root = Path(attempt_dir) if attempt_dir is not None else DEFAULT_ATTEMPT_DIR
+    log_root.mkdir(parents=True, exist_ok=True)
+    log = Path(tempfile.mkdtemp(prefix=f"{mode}-{m}-{method}-", dir=log_root))
+    result_path = log / "result.pkl"
+    command = [sys.executable, "-B", "-u", "-X", "faulthandler", str(HERE), str(result_path)]
+    payload = pickle.dumps((np.asarray(z[:m], dtype=float), m, box, rate, mode, sense,
+                            method, presolve), protocol=pickle.HIGHEST_PROTOCOL)
+    timeout = float(os.environ.get("SDTS_HIGHS_TIMEOUT", DEFAULT_TIMEOUT))
+    audit = {"method": method, "presolve": presolve, "problem": mode, "samples": m,
+             "box": box, "rate": rate, "objective_sense": sense, "timeout_seconds": timeout,
+             "exit_code": None, "signal": None, "solver_status": None, "solver_message": None,
+             "outcome": "started"}
+    metadata = log / "attempt.json"
+    metadata.write_text(json.dumps(audit, indent=2) + "\n")
+    t0 = time.monotonic()
+    result = None
+    try:
+        with (log / "stdout.txt").open("wb") as stdout, (log / "stderr.txt").open("wb") as stderr:
+            with subprocess.Popen(command, stdin=subprocess.PIPE, stdout=stdout, stderr=stderr) as child:
+                audit["pid"] = child.pid
+                try:
+                    child.communicate(input=payload, timeout=timeout)
+                except subprocess.TimeoutExpired:
+                    child.kill()
+                    child.communicate()
+                    audit["outcome"] = "timeout"
+                audit["exit_code"] = child.returncode
+        if audit["exit_code"] < 0:
+            audit["signal"] = signal.Signals(-audit["exit_code"]).name
+        if audit["outcome"] == "timeout":
+            return None
+        if audit["exit_code"] != 0:
+            audit["outcome"] = "signal" if audit["signal"] else "worker_error"
+            return None
+        with result_path.open("rb") as stream:
+            result = pickle.load(stream)
+        audit["solver_status"] = int(result.status)
+        audit["solver_message"] = str(result.message)
+        audit["outcome"] = "returned"
+    except (OSError, EOFError, pickle.UnpicklingError) as exc:
+        audit["outcome"] = "process_io_error"
+        audit["error"] = repr(exc)
+    finally:
+        audit["elapsed_seconds"] = round(time.monotonic() - t0, 6)
+        completed = log / "attempt.json.tmp"
+        completed.write_text(json.dumps(audit, indent=2) + "\n")
+        completed.replace(metadata)
+        result_path.unlink(missing_ok=True)
+    return result
+
+
+def _dual_bound(res, c, Aub, bub, Aeq, beq, bounds, caps):
+    """Lower bound on c @ x using dual signs and |x| <= caps at an optimum."""
+    if caps is None:
         return None
-    lo = np.array([b[0] if b[0] is not None else 0.0 for b in bounds])
-    up = np.array([b[1] if b[1] is not None else 0.0 for b in bounds])
-    return float(bub @ y_ub + beq @ y_eq + lo @ lam_l + up @ lam_u)
+    lo = np.array([b[0] if b[0] is not None else -np.inf for b in bounds])
+    up = np.array([b[1] if b[1] is not None else np.inf for b in bounds])
+    y_ub, y_eq = np.minimum(res.ineqlin.marginals, 0.0), res.eqlin.marginals
+    lam_l = np.where(np.isfinite(lo), np.maximum(res.lower.marginals, 0.0), 0.0)
+    lam_u = np.where(np.isfinite(up), np.minimum(res.upper.marginals, 0.0), 0.0)
+    resid = c - (Aub.T @ y_ub + Aeq.T @ y_eq + lam_l + lam_u)
+    if not np.all(np.isfinite(resid)) or np.max(np.abs(resid)) > DUAL_TOL:
+        return None
+    terms = np.concatenate((bub * y_ub, beq * y_eq,
+                            np.where(np.isfinite(lo), lo, 0.0) * lam_l,
+                            np.where(np.isfinite(up), up, 0.0) * lam_u))
+    scale = abs(c) + abs(Aub).T @ abs(y_ub) + abs(Aeq).T @ abs(y_eq) + abs(lam_l) + abs(lam_u)
+    rounding = 8 * EPS * (len(terms) + 1)
+    correction = (abs(resid) + rounding * scale) @ caps
+    lower = terms.sum() - correction - rounding * (abs(terms).sum() + correction)
+    return math.nextafter(lower, -math.inf) if np.isfinite(lower) else None
+
+
+def _optimum_caps(zs, box, rate, mode):
+    """Absolute bounds on TA, the states, b and d, in LP variable order."""
+    m = len(zs)
+    if box:
+        ambient = max(abs(T.TA_LO - SHIFT), abs(T.TA_HI - SHIFT))
+    elif rate and mode == "margin":
+        ambient = abs(zs[0]) + max(abs(zs)) + (m - 1) * T.RHO_A
+    else:
+        return None
+    # Zero shifted ambient is admissible, so min d <= max |zs|. At sample zero as[0] = TA[0].
+    offset, noise = (0.0, max(abs(zs))) if mode == "margin" else (abs(zs[0]) + ambient + T.DELTA, T.DELTA)
+    state = ambient * (1 + 8 * EPS * (m + 1))
+    return np.array([ambient] * m + [state] * (2 * m) + [offset, noise]) * (1 + 8 * EPS)
 
 
 def _project(TA_shifted, box, rate):
@@ -118,68 +214,87 @@ def _project(TA_shifted, box, rate):
     for k in range(1, len(TA)):
         x = TA[k]
         if rate:
-            x = min(TA[k - 1] + T.RHO_A, max(TA[k - 1] - T.RHO_A, x))
+            prev = TA[k - 1]
+            lower = math.nextafter(prev - T.RHO_A, prev)
+            upper = math.nextafter(prev + T.RHO_A, prev)
+            x = min(upper, max(lower, x))
         TA[k] = min(hi, max(lo, x))
     return TA
 
 
-def _forward(TA_shifted, z_shifted, b, box, rate):
-    """Project the solver's ambient path, run it through the plant here, return the noise level it needs."""
+def _residual_range(TA_shifted, z_shifted, box, rate):
+    """Enclose z - as after projecting the candidate and simulating the plant."""
     TA = _project(TA_shifted, box, rate)
     ac = as_ = TA[0]
-    worst = 0.0
+    low, high = math.inf, -math.inf
     for k in range(len(TA)):
-        worst = max(worst, abs(z_shifted[k] - as_ - b))
+        residual = z_shifted[k] - as_
+        low, high = min(low, residual), max(high, residual)
         ac, as_ = A11 * ac + A12 * as_, A21 * ac + A22 * as_ + B2 * TA[k]
-    return worst
+    scale = max(1.0, max(abs(TA)), max(abs(z_shifted)))
+    pad = 32 * EPS * (len(TA) + 1) * scale
+    return low - pad, high + pad
 
 
-def margin(z, m=None, box=True, rate=True):
-    """(d_lo, d_up): certified bounds on d*, the smallest noise bound explaining z[0:m].
-    d_lo is 0.0 when no attempt produced a dual bound that passes the stationarity check."""
+def _forward(TA_shifted, z_shifted, b, box, rate):
+    low, high = _residual_range(TA_shifted, z_shifted, box, rate)
+    return math.nextafter(max(abs(low - b), abs(high - b)), math.inf)
+
+
+def _margin(z, m, box, rate, attempt_dir):
     m = len(z) if m is None else m
     if m == 0:
-        return 0.0, 0.0
+        return 0.0, 0.0, None
     c, Aub, bub, Aeq, beq, bounds, zs = _build(z, m, box, rate, "margin", 0.0)
-    best_lo, best_up, last = 0.0, np.inf, None
+    caps = _optimum_caps(zs, box, rate, "margin")
+    best_lo, best_up, best_path = 0.0, np.inf, None
     for method, presolve in ATTEMPTS:
-        res = linprog(c, A_ub=Aub, b_ub=bub, A_eq=Aeq, b_eq=beq, bounds=bounds, method=method,
-                      options={"presolve": presolve})
-        last = res
-        if res.status != 0:
+        res = _attempt(z, m, box, rate, "margin", 0.0, method, presolve, attempt_dir)
+        if res is None or res.status != 0 or not np.all(np.isfinite(res.x)):
             continue
-        best_up = min(best_up, _forward(res.x[:m], zs, 0.0, box, rate))
-        d_lo = _dual_bound(res, c, Aub, bub, Aeq, beq, bounds)
-        if d_lo is not None and d_lo <= best_up + 1e-6:
+        upper = _forward(res.x[:m], zs, 0.0, box, rate)
+        if upper < best_up:
+            best_up, best_path = upper, res.x[:m]
+        d_lo = _dual_bound(res, c, Aub, bub, Aeq, beq, bounds, caps)
+        if d_lo is not None and d_lo <= best_up:
             best_lo = max(best_lo, d_lo)
-            return best_lo, best_up
-    if np.isfinite(best_up):
-        return best_lo, best_up
-    raise OracleError(f"no solution (m={m}); last status {last.status}: {last.message}")
+            if best_up <= T.DELTA or best_lo > T.DELTA:
+                break
+    return best_lo, best_up, best_path
 
 
-def verdict(z, m=None, box=True, rate=True):
-    d_lo, d_up = margin(z, m, box, rate)
+def margin(z, m=None, box=True, rate=True, *, attempt_dir=None):
+    """Certified bounds on d*, the smallest noise bound explaining z[0:m]."""
+    d_lo, d_up, _ = _margin(z, m, box, rate, attempt_dir)
+    return d_lo, d_up
+
+
+def _verdict(d_lo, d_up):
     if d_up <= T.DELTA:
-        return "consistent", d_lo, d_up
+        return "consistent"
     if d_lo > T.DELTA:
-        return "inconsistent", d_lo, d_up
-    return "undetermined", d_lo, d_up
+        return "inconsistent"
+    return "undetermined"
 
 
-def first_inconsistent(z, box=True, rate=True):
+def verdict(z, m=None, box=True, rate=True, *, attempt_dir=None):
+    d_lo, d_up = margin(z, m, box, rate, attempt_dir=attempt_dir)
+    return _verdict(d_lo, d_up), d_lo, d_up
+
+
+def first_inconsistent(z, box=True, rate=True, *, attempt_dir=None):
     """(t*, status). t* is the smallest index with z[0:t*+1] certified inconsistent; None if the whole run
     is certified consistent. status is "certified", or "undetermined" when a certificate along the search
     could not separate the bound from DELTA (t* is then the search's best estimate, reported as such)."""
     n = len(z)
-    v, _, _ = verdict(z, n, box, rate)
+    v, _, _ = verdict(z, n, box, rate, attempt_dir=attempt_dir)
     if v == "consistent":
         return None, "certified"
     status = "certified" if v == "inconsistent" else "undetermined"
     lo, hi = 0, n
     while hi - lo > 1:
         mid = (lo + hi) // 2
-        v, _, _ = verdict(z, mid, box, rate)
+        v, _, _ = verdict(z, mid, box, rate, attempt_dir=attempt_dir)
         if v == "undetermined":
             status = "undetermined"
         if v == "consistent":
@@ -189,24 +304,68 @@ def first_inconsistent(z, box=True, rate=True):
     return hi - 1, status
 
 
-def offset_interval(z, box=True, rate=True):
-    """Constant sensor offsets the whole run can not exclude, as (b_min, b_max) from the solver; each end
-    is checked by running its ambient path forward (an inner bound). None if no offset is consistent."""
-    out = []
-    for sense in (1.0, -1.0):
-        c, Aub, bub, Aeq, beq, bounds, zs = _build(z, len(z), box, rate, "offset", sense)
-        got = None
+def _witness_interval(lo, hi):
+    lo_b = math.nextafter(hi - T.DELTA, math.inf)
+    hi_b = math.nextafter(lo + T.DELTA, -math.inf)
+    return (lo_b, hi_b) if lo_b <= hi_b else None
+
+
+def offset_enclosure(z, box=True, rate=True, *, attempt_dir=None, reference=None):
+    """Return (witness interval, enclosing interval). Either may be unavailable."""
+    if len(z) == 0:
+        return None, None
+    zs = np.asarray(z, dtype=float) - SHIFT
+    outer = None
+    if box:
+        # States are positive combinations of bounded ambient values, up to LP coefficient roundoff.
+        pad = 32 * EPS * (len(z) + 1) * max(1.0, max(abs(zs)))
+        outer = [float(max(zs) - (T.TA_HI - SHIFT) - T.DELTA - pad),
+                 float(min(zs) - (T.TA_LO - SHIFT) + T.DELTA + pad)]
+    caps = _optimum_caps(zs, box, rate, "offset")
+    inner = None
+    if reference is not None:
+        ref_path, ref_up = reference
+        ref_path = _project(ref_path, box, rate)
+    for end, sense in enumerate((1.0, -1.0)):
+        c, Aub, bub, Aeq, beq, bounds, _ = _build(z, len(z), box, rate, "offset", sense)
         for method, presolve in ATTEMPTS:
-            res = linprog(c, A_ub=Aub, b_ub=bub, A_eq=Aeq, b_eq=beq, bounds=bounds, method=method,
-                          options={"presolve": presolve})
-            if res.status == 2:
-                return None
-            if res.status == 0:
-                b = float(res.x[3 * len(z)])
-                if _forward(res.x[:len(z)], zs, b, box, rate) <= T.DELTA + 1e-7:
-                    got = b
+            res = _attempt(z, len(z), box, rate, "offset", sense, method, presolve, attempt_dir)
+            if res is None or res.status != 0 or not np.all(np.isfinite(res.x)):
+                continue
+            path, offset = res.x[:len(z)], res.x[3 * len(z)]
+            lo, hi = _residual_range(path, zs, box, rate)
+            witness = _witness_interval(lo, hi)
+            if witness is None and reference is not None and ref_up < T.DELTA:
+                # Mix a near-boundary path with the checked zero-offset path, then verify again.
+                need = max(abs(lo - offset), abs(hi - offset))
+                fraction = 0.999 * (T.DELTA - ref_up) / (need - ref_up)
+                mixed = (1 - fraction) * ref_path + fraction * _project(path, box, rate)
+                witness = _witness_interval(*_residual_range(mixed, zs, box, rate))
+            if witness is not None:
+                inner = witness if inner is None else (min(inner[0], witness[0]), max(inner[1], witness[1]))
+            dual = _dual_bound(res, c, Aub, bub, Aeq, beq, bounds, caps)
+            if dual is not None:
+                outer[end] = max(outer[end], dual) if end == 0 else min(outer[end], -dual)
+                if witness is not None:
                     break
-        if got is None:
-            raise OracleError("offset interval: no verified solution")
-        out.append(got)
-    return out[0], out[1]
+    if outer is not None and (outer[0] > outer[1] or (inner and (inner[0] < outer[0] or inner[1] > outer[1]))):
+        outer = None
+    return inner, tuple(outer) if outer is not None else None
+
+
+def offset_interval(z, box=True, rate=True, *, attempt_dir=None):
+    """Constant offsets verified by projected ambient paths, as an inner bound."""
+    return offset_enclosure(z, box, rate, attempt_dir=attempt_dir)[0]
+
+
+def verdict_and_offsets(z, *, attempt_dir=None):
+    """A zero-offset verdict and, when consistent, the checked offset enclosure."""
+    d_lo, d_up, path = _margin(z, None, True, True, attempt_dir)
+    v = _verdict(d_lo, d_up)
+    reference = (path, d_up) if path is not None else None
+    inner, outer = offset_enclosure(z, attempt_dir=attempt_dir, reference=reference) if v == "consistent" else (None, None)
+    return v, d_lo, d_up, inner, outer
+
+
+if __name__ == "__main__":
+    _worker(sys.argv[1])

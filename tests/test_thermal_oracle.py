@@ -1,0 +1,67 @@
+"""Regression tests for process isolation and independent LP certificates."""
+import json
+import signal
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+from unittest.mock import patch
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "experiments" / "oracle"))
+import thermal_oracle as O
+
+
+class Isolation(unittest.TestCase):
+    def test_signal_is_logged_and_next_method_solves(self):
+        popen = O.subprocess.Popen
+        crashing_script = (
+            "import os, resource, signal, sys; "
+            "resource.setrlimit(resource.RLIMIT_CORE, (0, 0)); "
+            "print('before signal', flush=True); "
+            "print('worker stderr', file=sys.stderr, flush=True); "
+            "os.kill(os.getpid(), signal.SIGSEGV)"
+        )
+        with tempfile.TemporaryDirectory() as out:
+            def launch(command, **kwargs):
+                worker = [sys.executable, "-c", crashing_script] if launch.first else command
+                launch.first = False
+                return popen(worker, **kwargs)
+
+            launch.first = True
+            with patch.object(O.subprocess, "Popen", side_effect=launch):
+                verdict, lower, upper = O.verdict([25.0] * 8, attempt_dir=out)
+            self.assertEqual(verdict, "consistent")
+            self.assertLessEqual(lower, upper)
+            failed, = Path(out).glob("*-highs-ds-*")
+            recovered, = Path(out).glob("*-highs-ipm-*")
+            fail = json.loads((failed / "attempt.json").read_text())
+            recover = json.loads((recovered / "attempt.json").read_text())
+            self.assertEqual(fail["exit_code"], -signal.SIGSEGV)
+            self.assertEqual(fail["signal"], "SIGSEGV")
+            self.assertIsNone(fail["solver_status"])
+            self.assertIn("before signal", (failed / "stdout.txt").read_text())
+            self.assertIn("worker stderr", (failed / "stderr.txt").read_text())
+            self.assertEqual(recover["exit_code"], 0)
+            self.assertEqual(recover["solver_status"], 0)
+
+    def test_no_solver_evidence_is_undetermined(self):
+        with patch.object(O, "_attempt", return_value=None):
+            self.assertEqual(O.verdict([25.0]), ("undetermined", 0.0, float("inf")))
+
+
+class Certificates(unittest.TestCase):
+    def test_constant_measurement_offset_enclosure(self):
+        # With z=25 and a fixed ambient in [23, 27], the exact interval is ±2.3 °C.
+        with tempfile.TemporaryDirectory() as out:
+            inner, outer = O.offset_enclosure([25.0] * 8, attempt_dir=out)
+        self.assertLessEqual(outer[0], -2.3)
+        self.assertGreaterEqual(outer[1], 2.3)
+        self.assertAlmostEqual(inner[0], -2.3, places=7)
+        self.assertAlmostEqual(inner[1], 2.3, places=7)
+
+    def test_two_degree_jump_has_dual_lower_bound(self):
+        with tempfile.TemporaryDirectory() as out:
+            verdict, lower, upper = O.verdict([25.0, 27.0], attempt_dir=out)
+        self.assertEqual(verdict, "inconsistent")
+        self.assertLessEqual(lower, 1.0)
+        self.assertGreaterEqual(upper, 1.0)
