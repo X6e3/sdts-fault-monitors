@@ -1,0 +1,118 @@
+{
+ "selection_seeds": [
+  430050,
+  430069
+ ],
+ "results": {
+  "inv4 full": {
+   "entries": 1384,
+   "flash_bytes_float32": 20952,
+   "state_numbers": 16,
+   "unsound": 0,
+   "equal": 864,
+   "miss": 6,
+   "lag_sum": 28096,
+   "lag_p90": 30,
+   "lag_max": 2880
+  },
+  "inv4 pruned top=used": {
+   "entries": 231,
+   "flash_bytes_float32": 3657,
+   "state_numbers": 16,
+   "unsound": 0,
+   "equal": 864,
+   "miss": 6,
+   "lag_sum": 28096,
+   "lag_p90": 30,
+   "lag_max": 2880
+  },
+  "inv4 pruned top=3": {
+   "entries": 74,
+   "flash_bytes_float32": 1302,
+   "state_numbers": 16,
+   "unsound": 0,
+   "equal": 843,
+   "miss": 8,
+   "lag_sum": 31309,
+   "lag_p90": 34,
+   "lag_max": 2880
+  },
+  "inv4 pruned top=2": {
+   "entries": 58,
+   "flash_bytes_float32": 1062,
+   "state_numbers": 16,
+   "unsound": 0,
+   "equal": 841,
+   "miss": 8,
+   "lag_sum": 31695,
+   "lag_p90": 43,
+   "lag_max": 2880
+  },
+  "inv4 pruned top=1": {
+   "entries": 40,
+   "flash_bytes_float32": 792,
+   "state_numbers": 16,
+   "unsound": 0,
+   "equal": 807,
+   "miss": 8,
+   "lag_sum": 32947,
+   "lag_p90": 49,
+   "lag_max": 2880
+  },
+  "inv8 full": {
+   "entries": 6184,
+   "flash_bytes_float32": 93048,
+   "state_numbers": 24,
+   "unsound": 0,
+   "equal": 864,
+   "miss": 6,
+   "lag_sum": 28096,
+   "lag_p90": 30,
+   "lag_max": 2880
+  },
+  "inv8 pruned top=used": {
+   "entries": 692,
+   "flash_bytes_float32": 10668,
+   "state_numbers": 24,
+   "unsound": 0,
+   "equal": 864,
+   "miss": 6,
+   "lag_sum": 28096,
+   "lag_p90": 30,
+   "lag_max": 2880
+  },
+  "inv8 pruned top=3": {
+   "entries": 114,
+   "flash_bytes_float32": 1998,
+   "state_numbers": 24,
+   "unsound": 0,
+   "equal": 843,
+   "miss": 8,
+   "lag_sum": 31309,
+   "lag_p90": 34,
+   "lag_max": 2880
+  },
+  "inv8 pruned top=2": {
+   "entries": 90,
+   "flash_bytes_float32": 1638,
+   "state_numbers": 24,
+   "unsound": 0,
+   "equal": 841,
+   "miss": 8,
+   "lag_sum": 31695,
+   "lag_p90": 43,
+   "lag_max": 2880
+  },
+  "inv8 pruned top=1": {
+   "entries": 64,
+   "flash_bytes_float32": 1248,
+   "state_numbers": 24,
+   "unsound": 0,
+   "equal": 807,
+   "miss": 8,
+   "lag_sum": 32947,
+   "lag_p90": 49,
+   "lag_max": 2880
+  }
+ }
+}

@@ -1,0 +1,63 @@
+{
+ "selection_seeds": [
+  430050,
+  430069
+ ],
+ "results": {
+  "cyl4L16 full": {
+   "entries": 38966,
+   "flash_bytes_float32": 584994,
+   "state_numbers": 42,
+   "unsound": 0,
+   "equal": 898,
+   "miss": 4,
+   "lag_sum": 20386,
+   "lag_p90": 19,
+   "lag_max": 2880
+  },
+  "cyl4L16 pruned top=used": {
+   "entries": 1318,
+   "flash_bytes_float32": 20274,
+   "state_numbers": 42,
+   "unsound": 0,
+   "equal": 898,
+   "miss": 4,
+   "lag_sum": 20386,
+   "lag_p90": 19,
+   "lag_max": 2880
+  },
+  "cyl4L16 pruned top=3": {
+   "entries": 201,
+   "flash_bytes_float32": 3519,
+   "state_numbers": 42,
+   "unsound": 0,
+   "equal": 807,
+   "miss": 8,
+   "lag_sum": 32885,
+   "lag_p90": 49,
+   "lag_max": 2880
+  },
+  "cyl4L16 pruned top=2": {
+   "entries": 160,
+   "flash_bytes_float32": 2904,
+   "state_numbers": 42,
+   "unsound": 0,
+   "equal": 807,
+   "miss": 8,
+   "lag_sum": 32947,
+   "lag_p90": 49,
+   "lag_max": 2880
+  },
+  "cyl4L16 pruned top=1": {
+   "entries": 118,
+   "flash_bytes_float32": 2274,
+   "state_numbers": 42,
+   "unsound": 0,
+   "equal": 807,
+   "miss": 8,
+   "lag_sum": 32947,
+   "lag_p90": 49,
+   "lag_max": 2880
+  }
+ }
+}

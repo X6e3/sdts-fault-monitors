@@ -68,7 +68,11 @@ Unsound events (a healthy run flagged, or a detection earlier than the oracle) a
 | inv16 + I / inv8 + orbit4 + I | 40 | 35–62k | 0.8–1.4 MB | 0.1–0.2 M | 864–866 | 6 | 30 | 28072–28096 |
 | cyl8 + inv4 + I | 26 | 8110 | 187 KB | 24k | 880 | 6 | 27 | 25224 |
 | cyl16 + inv4 + I | 42 | 38966 | 896 KB | 117k | 898 | 4 | 19 | 20386 |
-| cyl24, window8, sphere30 | | | | | see section 6 | | | |
+| cyl16 + inv4 + I, pruned to used bases (selection: 120 DEV runs, 430050–052) | 42 | 1318 | 20 KB | 4k | 898 | 4 | 19 | 20386 |
+| cyl16 + inv4 + I, pruned top-3 per direction | 42 | 201 | 3.5 KB | 0.6k | 807 | 8 | 49 | 32885 |
+| cyl24 + inv4 + I | 58 | 107966 | 2.5 MB | 324k | 904 | 2 | 19 | 20188 |
+| window8 + inv4 + I (past-measurement normals) | 32 | 26224 | 0.6 MB | 79k | 866 | 6 | 30 | 28016 |
+| sphere30 (generic dense directions) | 70 | 478378 | 11 MB | 1.4M | 850 | 2 | 25 | 20095 |
 
 What the table says:
 - **Structure beats size.**
@@ -128,13 +132,23 @@ by any method, with any memory.
 - The v2 "drift certificate" is a property of the hypothesis class, not of compression.
 - What compression does add (v2 FINAL 420004): a certificate on a run that full information refutes.
 
-## 6. Pending at the time of writing
+## 6. The budget curve, after pruning
 
-Arch was still running when this was written:
-- cyl24, window8 and sphere30 on all DEV rows → `templates_more.json`;
-- pruning of cyl16 (selection: 120 DEV runs) → `pruning_cyl16.json`.
+Lag is the total over 1082 runs. Pruning uses selection sets disjoint from the evaluation seeds.
 
-They are appended below when they finish.
+| point | RAM state | flash (float32) | = oracle | missed | total lag |
+|---|---|---|---|---|---|
+| v2 | 2 numbers | — | 805 | 8 | 32953 s |
+| inv4 + I, used bases | 16 numbers | ~3–4 KB (C build ~2.9 KB) | 864 | 6 | 28096 s (−15 %) |
+| cyl16 + inv4 + I, used bases | 42 numbers | ~20 KB | 898 | 4 | 20386 s (−38 %) |
+| cyl24 + inv4 + I, not pruned | 58 numbers | 2.5 MB | 904 | 2 | 20188 s (−39 %) |
+
+- **The curve is real:** more of the *right* shape (faces orthogonal to TA) buys accuracy.
+- **Pruning to the bases actually used costs nothing measurable** on DEV and shrinks flash 6–30×.
+- **Pruning harder collapses to v2**: top-k per direction loses the rarely used but decisive bases.
+- **Generic dense directions (sphere30)** reach a similar total lag but match the oracle exactly less often
+  (850): they spend budget on directions that do not matter.
+- **The largest single lag (2880 s, drift_0.0005 ramp)** survives every bounded state tried. It is OPEN.
 
 ## 7. Honest summary
 
@@ -143,8 +157,8 @@ They are appended below when they finish.
 - Its exact description is too large for an MCU: thousands of vertices.
 - A sound, LP-free, fixed-memory state of 16 numbers, ~3 KB flash and ~500 MAC per sample is never later
   than v2 (proof) and closer to the oracle on DEV.
-- Better directions (orthogonal to TA) move it further towards the oracle, at a flash cost that pruning has
-  not yet been measured for.
+- Better directions (orthogonal to TA) move it further towards the oracle: 42 numbers and ~20 KB flash give
+  −38 % total lag and half of v2's misses.
 
 **Not shown:**
 - that any bounded template reaches the oracle in general: a residual of hundreds of seconds remains on some
