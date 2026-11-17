@@ -20,8 +20,25 @@ sys.path.insert(0, os.path.dirname(__file__))
 import template_state as V  # noqa: E402
 
 
-def build(kind, N, L, real):
+def selection_runs():
+    """The DEV selection set used for pruning (never the evaluation seeds 430000-430049)."""
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "generators"))
+    import dev_scenarios as S
+    cells = [c for c in V.T.CELLS if c.name in ("healthy", "jump_0.2", "jump_0.5", "drift_0.0005", "drift_0.001",
+                                                 "drift_0.002", "drift_0.005", "noise_x2", "stuck", "gain_0.01")]
+    return [(r["y"], r["P"]) for s in range(430050, 430056) for c in cells for arm in V.T.ARMS for al in ("rw", "ramp")
+            for r in [S.run(s, c, arm, al, "uniform")]]
+
+
+def make_template(kind, N, L, prune):
     tp = V.Template(V.directions(kind, N=N, L=L), invariant=True)
+    if prune:
+        tp = V.pruned(tp, V.usage(tp, selection_runs()))
+    return tp
+
+
+def build(kind, N, L, real, prune=False):
+    tp = make_template(kind, N, L, prune)
     eps = np.finfo(np.float32 if real == "float" else np.float64).eps
     gamma = 6 * eps / (1 - 6 * eps)
     caps = tp.cap_inv.copy()
@@ -91,11 +108,12 @@ def main():
     ap.add_argument("--L", type=int, default=0)
     ap.add_argument("--real", choices=("float", "double"), default="float")
     ap.add_argument("--out", type=Path, required=True)
+    ap.add_argument("--prune", action="store_true", help="keep only bases used on the DEV selection set")
     a = ap.parse_args()
-    tp, hmax, idx, lam, starts, pads = build(a.kind, a.N, a.L, a.real)
+    tp, hmax, idx, lam, starts, pads = build(a.kind, a.N, a.L, a.real, a.prune)
     if max(max(r) for r in idx) > 255 or starts[-1] > 65535:
         raise SystemExit("table too large for uint8/uint16 indices")
-    a.out.write_text(emit(tp, hmax, idx, lam, starts, pads, a.real, f"{a.kind} N={a.N} L={a.L} {a.real}"))
+    a.out.write_text(emit(tp, hmax, idx, lam, starts, pads, a.real, f"{a.kind} N={a.N} L={a.L} {a.real}{' pruned' if a.prune else ''}"))
     flash = len(idx) * (3 + 3 * (4 if a.real == "float" else 8)) + (len(starts) * 2) + (len(pads) + 3 * tp.n) * (4 if a.real == "float" else 8)
     print(f"n={tp.n} entries={len(idx)} flash~{flash} B  state RAM={tp.n * (4 if a.real == 'float' else 8)} B + S (2 doubles)")
 

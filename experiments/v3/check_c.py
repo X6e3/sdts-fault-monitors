@@ -32,8 +32,10 @@ def main():
     ap.add_argument("bin_float")
     ap.add_argument("bin_double")
     ap.add_argument("--seeds", type=int, nargs=2, default=(430030, 430039))
+    ap.add_argument("--prune", action="store_true")
     a = ap.parse_args()
-    tp = V.Template(V.directions("inv", N=4), invariant=True)
+    import codegen_c
+    tp = codegen_c.make_template("inv", 4, 0, a.prune)
     stats, problems = Counter(), []
     for seed in range(a.seeds[0], a.seeds[1] + 1):
         for name in CELLS:
