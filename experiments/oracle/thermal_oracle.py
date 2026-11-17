@@ -20,6 +20,8 @@ Every answer carries two certificates:
         so d* <= d_up.
   d_lo  a weak-duality lower bound from sign-corrected multipliers. The stationarity residual must
         be below DUAL_TOL, and its worst-case contribution over an enclosing box is subtracted.
+        If both LP attempts leave the verdict open, an adjacent-sample rate inequality can also
+        give a lower bound, when the rate constraint is enabled.
 
   verdict "consistent"    if d_up <= DELTA
           "inconsistent"  if d_lo >  DELTA
@@ -241,6 +243,17 @@ def _forward(TA_shifted, z_shifted, b, box, rate):
     return math.nextafter(max(abs(low - b), abs(high - b)), math.inf)
 
 
+def _adjacent_rate_bound(zs, caps):
+    """2 d >= |z[k] - z[k-1]| - RHO_A because the ambient filter preserves rate."""
+    steps = np.abs(np.diff(zs))
+    edge = int(np.argmax(steps))
+    scale = max(1.0, float(np.max(caps)))
+    # Cover the shifted LP's floating-point state coefficients over the full prefix.
+    pad = 64 * EPS * (len(zs) + 1) * scale
+    lower = math.nextafter((steps[edge] - T.RHO_A - pad) / 2, -math.inf)
+    return lower, edge + 1, float(steps[edge]), pad
+
+
 def _margin(z, m, box, rate, attempt_dir):
     m = len(z) if m is None else m
     if m == 0:
@@ -260,6 +273,21 @@ def _margin(z, m, box, rate, attempt_dir):
             best_lo = max(best_lo, d_lo)
             if best_up <= T.DELTA or best_lo > T.DELTA:
                 break
+    if best_lo <= T.DELTA < best_up and rate and m > 1:
+        lower, sample, step, pad = _adjacent_rate_bound(zs, caps)
+        if lower > T.DELTA:
+            best_lo = lower
+            # The all-zero shifted ambient path is a feasible primal witness at this cap.
+            zero_upper = float(np.max(np.abs(zs)))
+            if zero_upper < best_up:
+                best_up, best_path = zero_upper, np.zeros(m)
+            log_root = Path(attempt_dir) if attempt_dir is not None else DEFAULT_ATTEMPT_DIR
+            certificate = {"source": "adjacent_rate", "samples": m, "sample": sample, "step": step,
+                           "rho": T.RHO_A, "rounding_padding": pad, "d_lo": best_lo, "d_up": best_up}
+            with tempfile.NamedTemporaryFile(mode="w", dir=log_root, prefix=f"certificate-{m}-",
+                                             suffix=".json", delete=False) as log:
+                json.dump(certificate, log, indent=2)
+                log.write("\n")
     return best_lo, best_up, best_path
 
 

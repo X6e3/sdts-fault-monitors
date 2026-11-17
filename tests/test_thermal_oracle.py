@@ -65,3 +65,15 @@ class Certificates(unittest.TestCase):
         self.assertEqual(verdict, "inconsistent")
         self.assertLessEqual(lower, 1.0)
         self.assertGreaterEqual(upper, 1.0)
+
+    def test_adjacent_rate_certificate_after_both_attempts_fail(self):
+        with tempfile.TemporaryDirectory() as out, patch.object(O, "_attempt", return_value=None):
+            verdict, lower, upper = O.verdict([25.0, 27.0], attempt_dir=out)
+            certificate, = Path(out).glob("certificate-*.json")
+            self.assertEqual(json.loads(certificate.read_text())["sample"], 1)
+            without_rate = O.verdict([25.0, 27.0], rate=False, attempt_dir=out)[0]
+        self.assertEqual(verdict, "inconsistent")
+        self.assertGreater(lower, O.T.DELTA)
+        self.assertLessEqual(lower, 1.0)
+        self.assertEqual(upper, 2.0)
+        self.assertEqual(without_rate, "undetermined")
