@@ -129,3 +129,18 @@ class Pruning(unittest.TestCase):
                     self.assertIsNone(b)
                 else:
                     self.assertTrue(b is None or (a is not None and b >= a), (cell, arm, a, b))
+
+
+class Offset4D(unittest.TestCase):
+    def test_offset_interval_contains_the_truth_and_healthy_runs_stay_consistent(self):
+        sys.path.insert(0, str(ROOT / "experiments" / "v3"))
+        import template_offset as W
+        tp = W.OffsetTemplate(W.directions(N=4))
+        for cell, truth in (("healthy", 0.0), ("offset_1", 1.0), ("offset_3", 3.0)):
+            for arm in T.ARMS:
+                r = S.run(430092, CELL[cell], arm, "ramp", "edge")
+                m = W.OffsetMachine(tp)
+                for y, p in zip(r["y"], r["P"]):
+                    self.assertFalse(m.observe(y, p), (cell, arm))
+                lo, hi = m.offset()
+                self.assertTrue(lo <= truth <= hi, (cell, arm, lo, hi))

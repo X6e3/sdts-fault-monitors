@@ -1,0 +1,5737 @@
+{
+ "summary": {
+  "runs": 200,
+  "oracle_consistent": 89,
+  "excess_width_over_oracle_outer": {
+   "v2": {
+    "max": 0.09312529518668677,
+    "mean": 0.01992840963084706
+   },
+   "v3_4d": {
+    "max": 0.09061695765985342,
+    "mean": 0.017138912625246736
+   }
+  },
+  "certification_agrees_with_oracle_outer_R1_R3": {
+   "v2": 89,
+   "v3_4d": 89
+  }
+ },
+ "rows": [
+  {
+   "seed": 430060,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -2.2045405220677305,
+    1.7553566043274782
+   ],
+   "oracle_outer": [
+    -2.2067433887556223,
+    1.757109581907575
+   ],
+   "v2": [
+    -2.2072487200498725,
+    1.7573706249161811
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -2.2072476563911265,
+    1.7573512867340488
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430060,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -2.4790283889408693,
+    0.02585484646909569
+   ],
+   "oracle_outer": [
+    -2.4815062680623967,
+    0.025877252307217533
+   ],
+   "v2": [
+    -2.5242720271245145,
+    0.058226756952489474
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -2.510452692706749,
+    0.053279063457259815
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430060,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -1.2055405343108447,
+    2.7543565921908715
+   ],
+   "oracle_outer": [
+    -1.2067433164892791,
+    2.7571095820078964
+   ],
+   "v2": [
+    -1.2072487200498723,
+    2.7573706249161813
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -1.2072476563948953,
+    2.7573512867380137
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430060,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -1.4800284078223669,
+    1.0248551096040168
+   ],
+   "oracle_outer": [
+    -1.4815062528707603,
+    1.0258772518299264
+   ],
+   "v2": [
+    -1.5242720271245143,
+    1.0582267569524897
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -1.5104526926972215,
+    1.0532790634546219
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430060,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.7927512799501278,
+    4.757370624916182
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.7927523435832855,
+    4.757351286750236
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430060,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.4757279728754859,
+    3.05822675695249
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.4895473072901325,
+    3.053279063460346
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430060,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.6881716649375437,
+    1.7730956633423007
+   ],
+   "oracle_outer": [
+    -0.6888563124356444,
+    1.7748662776696735
+   ],
+   "v2": [
+    -0.6947130812101855,
+    1.7748662776286077
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.6947130812104813,
+    1.7748662776624058
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430060,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430060,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.8458106666619222,
+    1.7748662776286077
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.8458106666618295,
+    1.774866277662284
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430060,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430061,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -3.7054012469915367,
+    0.23236664947318655
+   ],
+   "oracle_outer": [
+    -3.7091082468255094,
+    0.23259686753395636
+   ],
+   "v2": [
+    -3.7091816428700537,
+    0.23259759093647506
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -3.70918164158167,
+    0.23259758755870943
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430061,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -1.860385921133286,
+    0.028036096312257005
+   ],
+   "oracle_outer": [
+    -1.8622460484069212,
+    0.02805849094647272
+   ],
+   "v2": [
+    -1.88703322728367,
+    0.042244453365388075
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -1.8844953129110085,
+    0.04223488222784651
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430061,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -2.706401273518009,
+    1.2313666271245671
+   ],
+   "oracle_outer": [
+    -2.709108212661052,
+    1.2325968673076595
+   ],
+   "v2": [
+    -2.7091816428700537,
+    1.2325975909364753
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -2.7091816415739944,
+    1.2325975875565536
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430061,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.8613846271021429,
+    1.0270379278854462
+   ],
+   "oracle_outer": [
+    -0.8622460455508949,
+    1.028058490452939
+   ],
+   "v2": [
+    -0.88703322728367,
+    1.0422444533653883
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.884495312910967,
+    1.0422348822226457
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430061,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.708401315956016,
+    3.2293665820955013
+   ],
+   "oracle_outer": [
+    -0.7091082077153646,
+    3.232596867311655
+   ],
+   "v2": [
+    -0.7091816428700534,
+    3.2325975909364755
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.7091816415754935,
+    3.2325975875583306
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430061,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    1.11296677271633,
+    3.0422444533653885
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    1.115504687088555,
+    3.042234882239545
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430061,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -2.2702171317648863,
+    0.2671268642178797
+   ],
+   "oracle_outer": [
+    -2.2724874760361016,
+    0.26739191179868854
+   ],
+   "v2": [
+    -2.276340195921659,
+    0.2673919117466888
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -2.2763401959221055,
+    0.267391911799265
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430061,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430061,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.7490144341368373,
+    0.2671267917912281
+   ],
+   "oracle_outer": [
+    -0.7498140957786993,
+    0.26739191179868854
+   ],
+   "v2": [
+    -0.7663401959216537,
+    0.2673919117466888
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.7663401959220179,
+    0.2673919117922048
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARLI",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "TUTARLI",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430061,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430062,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -1.0634379853155733,
+    2.8765238807011735
+   ],
+   "oracle_outer": [
+    -1.0645001340735192,
+    2.87940094435714
+   ],
+   "v2": [
+    -1.0646491189987624,
+    2.880456251652586
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -1.064649119041361,
+    2.8804562437054066
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430062,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.01985046021223674,
+    0.9088185781189903
+   ],
+   "oracle_outer": [
+    -0.01986881552923888,
+    0.9097269347781272
+   ],
+   "v2": [
+    -0.05594851928133338,
+    0.9450776173431344
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.033668658138559245,
+    0.9442697589585075
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARLI",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "TUTARLI",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430062,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.06443800568745288,
+    3.875523849848125
+   ],
+   "oracle_outer": [
+    -0.06450013431135443,
+    3.8794009446011266
+   ],
+   "v2": [
+    -0.06464911899876215,
+    3.880456251652586
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.06464911905359169,
+    3.8804562437137733
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430062,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.9440514807186665,
+    1.9450776173431346
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.9663313418500084,
+    1.9442697589589
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430062,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    1.9353508810012376,
+    5.8804562516525865
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    1.9353508809151359,
+    5.880456243730505
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430062,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    2.944051480718666,
+    3.945077617343135
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    2.9663313418203487,
+    3.9442697589630686
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430062,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.40834260245357606,
+    2.9242241950731693
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.40834260245355414,
+    2.924224195125509
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430062,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430062,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    1.9223426024535717,
+    2.9242241950731693
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    1.9224049087700514,
+    2.924224195125509
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430062,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430063,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -1.6846674962223185,
+    2.1623028219468514
+   ],
+   "oracle_outer": [
+    -1.686352415306497,
+    2.164465790928918
+   ],
+   "v2": [
+    -1.687144207693262,
+    2.1645146449522454
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -1.687144171263494,
+    2.164512747244076
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430063,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.052576337465863064,
+    1.537097767443524
+   ],
+   "oracle_outer": [
+    -0.05262748174268817,
+    1.538634872772515
+   ],
+   "v2": [
+    -0.09172174247334298,
+    1.592665907228547
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.08921357508460236,
+    1.5926657370904542
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430063,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.6856675293405684,
+    3.1613027901810367
+   ],
+   "oracle_outer": [
+    -0.6863524236697703,
+    3.164465791183644
+   ],
+   "v2": [
+    -0.6871442076932618,
+    3.1645146449522454
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.6871441712640443,
+    3.164512747260211
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430063,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.9082782575266569,
+    2.592665907228547
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.910786424905573,
+    2.5926657370907304
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430063,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    1.312855792306738,
+    5.164514644952246
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    1.3128558287347334,
+    5.164512747293807
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430063,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    2.9082782575266566,
+    4.592665907228548
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    2.910786424884699,
+    4.592665737091506
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430063,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.18193837886265476,
+    2.1685189659103195
+   ],
+   "oracle_outer": [
+    -0.18211925722815717,
+    2.1706897876123485
+   ],
+   "v2": [
+    -0.18583443978841888,
+    2.1707042998761037
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.18583443978847466,
+    2.170697712838835
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430063,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430063,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    1.332665560211577,
+    2.1707042998761037
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    1.3326655602115154,
+    2.1706977128389835
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430063,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430064,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -3.393173248834956,
+    0.5332671289697968
+   ],
+   "oracle_outer": [
+    -3.3965677645095815,
+    0.533800470718067
+   ],
+   "v2": [
+    -3.3972351456791228,
+    0.5343809796431779
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -3.3969689618296273,
+    0.534380859549856
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430064,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.027291513445957535,
+    1.3755825793125445
+   ],
+   "oracle_outer": [
+    -0.027318575085880266,
+    1.3769594161725365
+   ],
+   "v2": [
+    -0.05590400427552212,
+    1.4004501226466355
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.044695241647578154,
+    1.4004494516371675
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430064,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -2.394173352676221,
+    1.5322670299381544
+   ],
+   "oracle_outer": [
+    -2.396567821558271,
+    1.5338004592176473
+   ],
+   "v2": [
+    -2.3972351456791228,
+    1.534380979643178
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -2.396968961818311,
+    1.5343808595462556
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430064,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.9440959957244778,
+    2.4004501226466357
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.9553047583409847,
+    2.400449451637295
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430064,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.39617356810358983,
+    3.5302668397588364
+   ],
+   "oracle_outer": [
+    -0.39656774330030736,
+    3.5338004584529727
+   ],
+   "v2": [
+    -0.3972351456791224,
+    3.534380979643178
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.396968961828515,
+    3.534380859551841
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430064,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    2.9440959957244774,
+    4.400450122646636
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    2.9553047583160166,
+    4.400449451637817
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430064,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -1.9357408867604733,
+    0.5872652149446087
+   ],
+   "oracle_outer": [
+    -1.937678114171945,
+    0.5878561781421543
+   ],
+   "v2": [
+    -1.947671698129373,
+    0.5879932275651251
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -1.9476716981294369,
+    0.5879932276062755
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430064,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430064,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.4239860295041659,
+    0.5872688439622823
+   ],
+   "oracle_outer": [
+    -0.4244099405602976,
+    0.5878561781421574
+   ],
+   "v2": [
+    -0.45067169812937286,
+    0.5879932275651251
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.4506716963767898,
+    0.5879932276013119
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARLI",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "TUTARLI",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430064,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430065,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -2.8325027086863406,
+    1.0779377945373168
+   ],
+   "oracle_outer": [
+    -2.8353351367378647,
+    1.0790138602288764
+   ],
+   "v2": [
+    -2.8359314242060916,
+    1.0792632672687257
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -2.8359293301105515,
+    1.0792632673075204
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430065,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -1.631727340672976,
+    0.6833143362179038
+   ],
+   "oracle_outer": [
+    -1.6334147265194718,
+    0.6839967780458103
+   ],
+   "v2": [
+    -1.6649471807985814,
+    0.7147749926315293
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -1.6552922917992998,
+    0.7147071273255662
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430065,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -1.8335027280980194,
+    2.0769187248054553
+   ],
+   "oracle_outer": [
+    -1.8353351359645562,
+    2.07901386007192
+   ],
+   "v2": [
+    -1.8359314242060913,
+    2.079263267268726
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -1.8359293301018835,
+    2.079263267299847
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430065,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.6327828689288123,
+    1.68212226763807
+   ],
+   "oracle_outer": [
+    -0.6334147396857654,
+    1.6839967764539812
+   ],
+   "v2": [
+    -0.6649471807985813,
+    1.7147749926315294
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.6552922917990772,
+    1.714707127324899
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430065,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.16406857579390885,
+    4.079263267268726
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.16407066988147623,
+    4.079263267328487
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430065,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    1.3350528192014186,
+    3.7147749926315297
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    1.3447077081825967,
+    3.714707127353199
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430065,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -1.320836568389987,
+    1.093170029139413
+   ],
+   "oracle_outer": [
+    -1.3221701957879433,
+    1.0942615379473926
+   ],
+   "v2": [
+    -1.337196115667876,
+    1.0943337720498472
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -1.3371961156685213,
+    1.094333772084166
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430065,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430065,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.17066985340052906,
+    1.0963337720498425
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.17066985340023305,
+    1.096333772082463
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430065,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430066,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.1909797424198449,
+    3.719643652715533
+   ],
+   "oracle_outer": [
+    -0.1911652145119585,
+    3.7233650998865317
+   ],
+   "v2": [
+    -0.19143759366897586,
+    3.7236265756358873
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.19141898011952063,
+    3.723626575672515
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430066,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.9879973120732434,
+    1.3362355416688847
+   ],
+   "oracle_outer": [
+    -0.9889843255389116,
+    1.337571064119092
+   ],
+   "v2": [
+    -1.0400730190140417,
+    1.3375710640868628
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -1.0349030131040644,
+    1.3375710641221328
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430066,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.808562406331024,
+    4.723626575635888
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.8085810198795381,
+    4.723626575682506
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430066,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    -0.040073019014041485,
+    2.337571064086863
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.03490301310692098,
+    2.337571064131543
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430066,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    2.8085624063310237,
+    6.723626575635888
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    2.808581019877518,
+    6.723626575700825
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430066,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    1.9599269809859583,
+    4.337571064086863
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    1.965096986880107,
+    4.337571064166657
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430066,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    1.4159335144678413,
+    3.799171579112095
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    1.4159335144672502,
+    3.799171579179069
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430066,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430066,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    3.044987650913025,
+    3.799171579112095
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    3.044987674173154,
+    3.799171579179069
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430066,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430067,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -1.1567489738434373,
+    2.75172557769151
+   ],
+   "oracle_outer": [
+    -1.1567489739275718,
+    2.75447786977107
+   ],
+   "v2": [
+    -1.1567489738983279,
+    2.755702609882914
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -1.1567489739470744,
+    2.755684125594117
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430067,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.36971926209798883,
+    1.647294352095786
+   ],
+   "oracle_outer": [
+    -0.3700874401683002,
+    1.6489414008344445
+   ],
+   "v2": [
+    -0.40595881047064003,
+    1.6809132238030424
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.3902189010890663,
+    1.6753889030485496
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430067,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.1567489738325677,
+    3.7507255481903807
+   ],
+   "oracle_outer": [
+    -0.15674897395315843,
+    3.7544778709094198
+   ],
+   "v2": [
+    -0.15674897389832768,
+    3.755702609882914
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.1567489739618846,
+    3.7556841256027322
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430067,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.5940411895293599,
+    2.6809132238030426
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.6097810988977803,
+    2.675388903053324
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430067,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    1.8432510261016721,
+    5.755702609882914
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    1.843251026001167,
+    5.7556841256214835
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430067,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    2.5940411895293596,
+    4.680913223803043
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    2.609781098867232,
+    4.67538890306379
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430067,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.33471920365176183,
+    2.826681121731266
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.33471920365136426,
+    2.8266811217796333
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430067,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.06665140869306539,
+    2.8444132238030417
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430067,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    1.9002192036517618,
+    2.826681121731266
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    1.9002192036513414,
+    2.8266811217796333
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430067,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430068,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -3.4616705063437525,
+    0.4937905117924502
+   ],
+   "oracle_outer": [
+    -3.4651341122013197,
+    0.49428300862796554
+   ],
+   "v2": [
+    -3.4670955709830378,
+    0.49428300858177115
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -3.467051557441821,
+    0.49428300863932556
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430068,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.8808565373836476,
+    0.07940465420859587
+   ],
+   "oracle_outer": [
+    -0.8817367567150521,
+    0.07948259822957697
+   ],
+   "v2": [
+    -0.8974137877361167,
+    0.10146816332430221
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.8974137877689334,
+    0.1004520573238224
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARLI",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "TUTARLI",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430068,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -2.46267053282415,
+    1.4927904833870778
+   ],
+   "oracle_outer": [
+    -2.4651341781987255,
+    1.49428300860735
+   ],
+   "v2": [
+    -2.4670955709830378,
+    1.4942830085817713
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -2.4670515574402394,
+    1.4942830086247134
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430068,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.10258621226388341,
+    1.1014681633243024
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.10258621222647765,
+    1.100452057324888
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430068,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.4646705915446263,
+    3.4907904265764307
+   ],
+   "oracle_outer": [
+    -0.46513412573633556,
+    3.494283008628661
+   ],
+   "v2": [
+    -0.4670955709830374,
+    3.4942830085817715
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.4670515574414322,
+    3.494283008645398
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430068,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    2.102586212263883,
+    3.1014681633243026
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    2.1025862121930694,
+    3.100452057334905
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430068,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -1.8831662200855592,
+    0.4937905659814289
+   ],
+   "oracle_outer": [
+    -1.8860303826705718,
+    0.49428300862796554
+   ],
+   "v2": [
+    -1.8911886833211649,
+    0.49428300858177115
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -1.8911886833212601,
+    0.4942830086279516
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430068,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430068,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.2703463696625288,
+    0.4937905318492104
+   ],
+   "oracle_outer": [
+    -0.2706151931724358,
+    0.49428300863312363
+   ],
+   "v2": [
+    -0.2926886833211633,
+    0.49428300858177115
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.2926886833198187,
+    0.49428300862267094
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARLI",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "TUTARLI",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430068,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430069,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -1.6306200145630187,
+    2.28028273516072
+   ],
+   "oracle_outer": [
+    -1.6322490938855088,
+    2.282562213202172
+   ],
+   "v2": [
+    -1.6339147026961565,
+    2.282803676154256
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -1.6335911348933947,
+    2.2828028042980337
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430069,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.6449477080868473,
+    0.05174685073793094
+   ],
+   "oracle_outer": [
+    -0.644947708212618,
+    0.051795028608876824
+   ],
+   "v2": [
+    -0.6449477081553675,
+    0.062173277392194144
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.644947708194581,
+    0.062173277380359264
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARLI",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "TUTARLI",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430069,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.631620030270111,
+    3.27928279981988
+   ],
+   "oracle_outer": [
+    -0.6322490937202966,
+    3.2825622134547174
+   ],
+   "v2": [
+    -0.6339147026961564,
+    3.282803676154256
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.6335911348997795,
+    3.2828028042994024
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430069,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.35505229184463255,
+    1.0621732773921944
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.3550522917963602,
+    1.0621732773805
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430069,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    1.3660852973038435,
+    5.2828036761542565
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    1.3664088650855113,
+    5.282802804302549
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430069,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    2.355052291844632,
+    3.0621732773921946
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    2.355052291761898,
+    3.062173277382169
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430069,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.22169126690929095,
+    2.2868457953138144
+   ],
+   "oracle_outer": [
+    -0.2219105692645196,
+    2.2891317046191526
+   ],
+   "v2": [
+    -0.23063748985358148,
+    2.289131704566213
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.23063748985378146,
+    2.2891317046089497
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430069,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    -0.6449477081553675,
+    1.4486797945803398
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.6449477081954459,
+    1.4486797945665284
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430069,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    1.2663625101464182,
+    2.289131704566213
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    1.2663625101462008,
+    2.2891317046089497
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430069,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430070,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.5400186578810885,
+    3.400053939403961
+   ],
+   "oracle_outer": [
+    -0.5405547835010449,
+    3.403453028470489
+   ],
+   "v2": [
+    -0.54055757034023,
+    3.403574072281114
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.540557459837389,
+    3.403573968301804
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430070,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -2.2966222323013334,
+    0.03284707090541227
+   ],
+   "oracle_outer": [
+    -2.298927774187546,
+    0.03289797610933911
+   ],
+   "v2": [
+    -2.3182935573096555,
+    0.050695434210165764
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -2.318293557352221,
+    0.05033260471215924
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430070,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.45944242965977006,
+    4.403574072281114
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.4594425401489697,
+    4.403573968315668
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430070,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -1.297617454299518,
+    1.0318689857998524
+   ],
+   "oracle_outer": [
+    -1.2989277742501235,
+    1.0328979733404684
+   ],
+   "v2": [
+    -1.3182935573096553,
+    1.050695434210166
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -1.3182935573426844,
+    1.0503326047077846
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430070,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    2.4594424296597697,
+    6.403574072281114
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    2.4594425401185616,
+    6.403573968337564
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430070,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.6817064426903449,
+    3.050695434210166
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.6817064426343532,
+    3.0503326047210404
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430070,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.982270582684844,
+    3.452739330013554
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.9822705826844996,
+    3.452728040943513
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430070,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -1.8463805231258876,
+    0.6452774772670572
+   ],
+   "oracle_outer": [
+    -1.8482272191073452,
+    0.6459219035301383
+   ],
+   "v2": [
+    -1.886190907422222,
+    0.6963333456227226
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -1.871232164215819,
+    0.6962262814651534
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430070,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    2.5517705826848487,
+    3.452739330013554
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    2.5517705826937265,
+    3.452728040943513
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430070,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430071,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -1.2810944721919024,
+    2.646308890464105
+   ],
+   "oracle_outer": [
+    -1.2823733203632253,
+    2.6494477801291203
+   ],
+   "v2": [
+    -1.2823974222852892,
+    2.6504196417650445
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -1.2823927077254333,
+    2.650419641251786
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430071,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.46031605932471725,
+    1.578201365807004
+   ],
+   "oracle_outer": [
+    -0.4607750281857863,
+    1.5797794161840013
+   ],
+   "v2": [
+    -0.4900485329452771,
+    1.6137872823437187
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.47735191494794055,
+    1.6115560976418075
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430071,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.28209448597380177,
+    3.645801889623884
+   ],
+   "oracle_outer": [
+    -0.2823733463991301,
+    3.6494477412042965
+   ],
+   "v2": [
+    -0.282397422285289,
+    3.6504196417650445
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.2823927077342973,
+    3.650419641254166
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430071,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.5099514670547228,
+    2.613787282343719
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.5226480850388787,
+    2.6115560976433607
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430071,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    1.7176025777147108,
+    5.650419641765045
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    1.7176072922437973,
+    5.6504196412595045
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430071,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    2.5099514670547225,
+    4.613787282343719
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    2.52264808500745,
+    4.6115560976471865
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430071,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.16116120049030155,
+    2.6946307040003217
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.1611612004902053,
+    2.694630704049727
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430071,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430071,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    1.6836612004903022,
+    2.6946307040003217
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    1.6836612004902003,
+    2.694630704049727
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430071,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430072,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -1.681784853507194,
+    2.251439753105059
+   ],
+   "oracle_outer": [
+    -1.683465394957281,
+    2.2536904673354057
+   ],
+   "v2": [
+    -1.683921115052197,
+    2.253739117991739
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -1.683880926203881,
+    2.253739118031861
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430072,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.14620404108448007,
+    2.2422418574339154
+   ],
+   "oracle_outer": [
+    -0.14634818559015408,
+    2.2444844962230865
+   ],
+   "v2": [
+    -0.1905212031564041,
+    2.272480068275048
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.1905212032007225,
+    2.271988056922427
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430072,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.6827848705425295,
+    3.2504397327530863
+   ],
+   "oracle_outer": [
+    -0.683465401502333,
+    3.253690467583619
+   ],
+   "v2": [
+    -0.683921115052197,
+    3.253739117991739
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.6838809262069684,
+    3.253739118048211
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430072,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.8094787968435958,
+    3.272480068275048
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.8094787967825113,
+    3.2719880569227673
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430072,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    1.316078884947803,
+    5.253739117991739
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    1.316119073786203,
+    5.2537391180868545
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430072,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    2.8094787968435955,
+    5.272480068275049
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    2.809478796746789,
+    5.271988056923473
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430072,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.194215021141625,
+    2.2514398603686976
+   ],
+   "oracle_outer": [
+    -0.19440634879850588,
+    2.2536904673354083
+   ],
+   "v2": [
+    -0.20435106352678292,
+    2.253739117991739
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.20435106352688337,
+    2.253739118031861
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430072,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430072,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    1.2996489364732218,
+    2.253739117991739
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    1.2996489364731127,
+    2.253739118031861
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430072,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430073,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -3.422244106993632,
+    0.4116478000561623
+   ],
+   "oracle_outer": [
+    -3.4256671369412013,
+    0.41205698960788323
+   ],
+   "v2": [
+    -3.4265353924800164,
+    0.4122194226483665
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -3.4265318345501155,
+    0.4122194226565952
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430073,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -2.591041185560865,
+    0.03550243350160736
+   ],
+   "oracle_outer": [
+    -2.5936329294638107,
+    0.0355360789834362
+   ],
+   "v2": [
+    -2.62587474529067,
+    0.0565860174763806
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -2.6258003853950664,
+    0.041580852243353165
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430073,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -2.4232441245443717,
+    1.4106477826074029
+   ],
+   "oracle_outer": [
+    -2.425667143517461,
+    1.4120569891278458
+   ],
+   "v2": [
+    -2.4265353924800164,
+    1.4122194226483666
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -2.4265318345358007,
+    1.4122194226545624
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430073,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -1.5920397815127434,
+    1.0345024080823724
+   ],
+   "oracle_outer": [
+    -1.5936329288385482,
+    1.035536055295426
+   ],
+   "v2": [
+    -1.6258747452906699,
+    1.0565860174763808
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -1.6258003853948368,
+    1.0415808522381265
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430073,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.4252441596530033,
+    3.4086477471169796
+   ],
+   "oracle_outer": [
+    -0.42566698624641935,
+    3.4120569892660653
+   ],
+   "v2": [
+    -0.426535392480016,
+    3.412219422648367
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.42653183454670845,
+    3.4122194226573814
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430073,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.3741252547093303,
+    3.056586017476381
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.374199614604844,
+    3.0415808522451293
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430073,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -2.0229349534174514,
+    0.5352657423567022
+   ],
+   "oracle_outer": [
+    -2.0249571207709876,
+    0.535799988592189
+   ],
+   "v2": [
+    -2.0292150567977285,
+    0.5376013485864101
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -2.0292150567977516,
+    0.537501452757678
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430073,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430073,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.46321354158435296,
+    0.5352642039553558
+   ],
+   "oracle_outer": [
+    -0.46367471472620786,
+    0.5357999885921856
+   ],
+   "v2": [
+    -0.4787150567977286,
+    0.5376013485864101
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.4787150567977511,
+    0.5375014527519641
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARLI",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "TUTARLI",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430073,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430074,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -3.942140618023534,
+    0.007152181097174914
+   ],
+   "oracle_outer": [
+    -3.946085015944977,
+    0.007157410691175171
+   ],
+   "v2": [
+    -3.94608720316683,
+    0.007551277598853546
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -3.946087201771148,
+    0.007441507906403697
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430074,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.04625187646808231,
+    1.3746124155491513
+   ],
+   "oracle_outer": [
+    -0.04629610674649718,
+    1.3759895236504838
+   ],
+   "v2": [
+    -0.07308416458447554,
+    1.4289977846439224
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.05315261568767089,
+    1.4107960544581803
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430074,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -2.9431414819432984,
+    1.0061529519353407
+   ],
+   "oracle_outer": [
+    -2.9460849858839597,
+    1.0071574104451202
+   ],
+   "v2": [
+    -2.94608720316683,
+    1.0075512775988538
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -2.94608720176307,
+    1.0074415078940957
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430074,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.9269158354155244,
+    2.4289977846439226
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.9468473843115485,
+    2.4107960544665676
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430074,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.9451415192982572,
+    3.0041529255233357
+   ],
+   "oracle_outer": [
+    -0.9460849829579331,
+    3.007157410399199
+   ],
+   "v2": [
+    -0.9460872031668296,
+    3.007551277598854
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.9460872017616155,
+    3.007441507898778
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430074,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    2.926915835415524,
+    4.428997784643923
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    2.946847384308643,
+    4.410796054506551
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430074,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -2.456163304431038,
+    0.012351679304801409
+   ],
+   "oracle_outer": [
+    -2.4586190232902565,
+    0.012361040242802704
+   ],
+   "v2": [
+    -2.4743106446282295,
+    0.01236104018427753
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -2.4743106446283494,
+    0.012361040240378766
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430074,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430074,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.9358597823029277,
+    0.012351743347764342
+   ],
+   "oracle_outer": [
+    -0.936913559556716,
+    0.012361040242802704
+   ],
+   "v2": [
+    -0.9718106446282243,
+    0.01236104018427753
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.9711393650992445,
+    0.012361040232262074
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARLI",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "TUTARLI",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430074,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430075,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -1.390901067867027,
+    2.5252366775825634
+   ],
+   "oracle_outer": [
+    -1.3922900764485613,
+    2.527761115316106
+   ],
+   "v2": [
+    -1.3925479370624567,
+    2.5277611152905277
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -1.3925479370824967,
+    2.5277611153342696
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430075,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.04180256365212769,
+    0.7166886683538666
+   ],
+   "oracle_outer": [
+    -0.041841503895868125,
+    0.7174031292188365
+   ],
+   "v2": [
+    -0.05771625354763544,
+    0.7174031291614719
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.05771598528772489,
+    0.7174031291979149
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARLI",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "TUTARLI",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430075,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.39190108371128024,
+    3.524236660962198
+   ],
+   "oracle_outer": [
+    -0.39229009291212225,
+    3.5277611153393247
+   ],
+   "v2": [
+    -0.39254793706245655,
+    3.5277611152905277
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.39254793708891783,
+    3.52776111535177
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430075,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.9422837464523645,
+    1.717403129161472
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.9422840147116929,
+    1.7174031291973828
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430075,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    1.6074520629375433,
+    5.527761115290528
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    1.607452062895342,
+    5.52776111538677
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430075,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    2.942283746452364,
+    3.717403129161472
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    2.942284014704651,
+    3.717403129231005
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430075,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.058303835352123905,
+    2.5277611152905277
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.05830383535205857,
+    2.5277611153342696
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430075,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430075,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    1.5718038353521242,
+    2.5277611152905277
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    1.5718038353520543,
+    2.527761115334296
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430075,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430076,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -3.5548222609185127,
+    0.2960071918915962
+   ],
+   "oracle_outer": [
+    -3.5583774654633586,
+    0.29629995673901344
+   ],
+   "v2": [
+    -3.558542269988355,
+    0.2963469269428139
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -3.558539115615966,
+    0.2963469269967376
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430076,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.36336554934176934,
+    0.3719644125354414
+   ],
+   "oracle_outer": [
+    -0.36372730294063516,
+    0.37233484727826827
+   ],
+   "v2": [
+    -0.38657122391340343,
+    0.3987707628845563
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.38657122395136445,
+    0.3978895483242305
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARLI",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "TUTARLI",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430076,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -2.555822304020727,
+    1.2950071246473636
+   ],
+   "oracle_outer": [
+    -2.558377383252061,
+    1.2962999565026623
+   ],
+   "v2": [
+    -2.558542269988355,
+    1.296346926942814
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -2.5585391156127772,
+    1.2963469269841454
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430076,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.6134287760865965,
+    1.3987707628845565
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.6134287760400865,
+    1.3978895483242408
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430076,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.5578223332916149,
+    3.2930071466824615
+   ],
+   "oracle_outer": [
+    -0.5583772176286904,
+    3.2962999565849307
+   ],
+   "v2": [
+    -0.5585422699883545,
+    3.2963469269428143
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.5585391156142436,
+    3.296346926996334
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430076,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    2.613428776086596,
+    3.3987707628845567
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    2.61342877600421,
+    3.397889548324738
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430076,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -2.050929575062586,
+    0.2960070542191132
+   ],
+   "oracle_outer": [
+    -2.05297929520808,
+    0.2962999567390759
+   ],
+   "v2": [
+    -2.0601631529663575,
+    0.2963469269428139
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -2.0601631529669238,
+    0.29634692698566983
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430076,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.3633650441157654,
+    1.8570240753949139
+   ],
+   "oracle_outer": [
+    -0.3637273029406853,
+    1.8588815795041767
+   ],
+   "v2": [
+    -0.38657122391340343,
+    1.8718074043812332
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.38657122395285864,
+    1.8667804520621003
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430076,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.4972799003653935,
+    0.2960067644604004
+   ],
+   "oracle_outer": [
+    -0.49777457257266966,
+    0.296299956739078
+   ],
+   "v2": [
+    -0.5221631529663534,
+    0.2963469269428139
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.5221631529668683,
+    0.29634692697976067
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARLI",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "TUTARLI",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430076,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430077,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.8382348278766257,
+    3.080232471754286
+   ],
+   "oracle_outer": [
+    -0.8390699412008531,
+    3.0833117271059676
+   ],
+   "v2": [
+    -0.8390814396466447,
+    3.0833331131831057
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.8390783683496126,
+    3.083333088274837
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430077,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -1.0966800601366038,
+    0.48110866228913524
+   ],
+   "oracle_outer": [
+    -1.0977746689189203,
+    0.48158708127245226
+   ],
+   "v2": [
+    -1.1241990592181248,
+    0.5039482541805321
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -1.124199059251822,
+    0.5018154334704509
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430077,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.16091856035335536,
+    4.083333113183106
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.16092163163898962,
+    4.0833330882805985
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430077,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.09777464777784424,
+    1.4801052655879738
+   ],
+   "oracle_outer": [
+    -0.09777466947650318,
+    1.481587081492266
+   ],
+   "v2": [
+    -0.12419905921812459,
+    1.5039482541805322
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.12419905925512838,
+    1.5018154334720992
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430077,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    2.160918560353355,
+    6.083333113183106
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    2.160921631611383,
+    6.08333308829312
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430077,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    1.8758009407818752,
+    3.5039482541805325
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    1.8758009407106875,
+    3.501815433485927
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430077,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.762563936008373,
+    3.142505070737361
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.7625639360082734,
+    3.142505070795518
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430077,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430077,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    2.4000639360083684,
+    3.142505070737361
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    2.400063936008263,
+    3.142505070795518
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430077,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430078,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -1.5539823502049885,
+    2.3995549331045325
+   ],
+   "oracle_outer": [
+    -1.555534029784887,
+    2.4019498960661436
+   ],
+   "v2": [
+    -1.5585721601059854,
+    2.4028550304931753
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -1.5576965996701173,
+    2.402854125176582
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430078,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.03684336506784513,
+    0.3498934238246963
+   ],
+   "oracle_outer": [
+    -0.036877803381194,
+    2.6174767019783687
+   ],
+   "v2": [
+    -0.08489179151698424,
+    2.6174767019217
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.07741391726778589,
+    2.617476701972735
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430078,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.5549823637823029,
+    3.3985518296495774
+   ],
+   "oracle_outer": [
+    -0.5555340302384675,
+    3.401949896377035
+   ],
+   "v2": [
+    -0.5585721601059853,
+    3.4028550304931753
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.5576965996735465,
+    3.402854125181553
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430078,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.9151082084830157,
+    3.6174767019217
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.9225860827267589,
+    3.6174767019902823
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430078,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    1.4414278398940146,
+    5.402855030493176
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    1.4423034003183455,
+    5.402854125192282
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430078,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    2.9151082084830153,
+    5.6174767019217
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    2.9225860827157404,
+    5.617476702026971
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430078,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.04955390513014989,
+    2.410194922312162
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.049553905129885056,
+    2.4101949223552515
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430078,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430078,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    1.6645539051301446,
+    2.410194922312162
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    1.6645539051298508,
+    2.4101949223553163
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430078,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430079,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -1.962707179055693,
+    1.9377830944831083
+   ],
+   "oracle_outer": [
+    -1.964667271520158,
+    1.9397211735897502
+   ],
+   "v2": [
+    -1.9649045825114835,
+    1.939746174766466
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -1.964893661512006,
+    1.9397461745888747
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430079,
+   "cell": "healthy",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.4407796610527338,
+    0.15736345686309733
+   ],
+   "oracle_outer": [
+    -0.44121900081327187,
+    0.15751904889642868
+   ],
+   "v2": [
+    -0.4685931078846473,
+    0.15751904884161763
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.4685931076405382,
+    0.15751904888312254
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARLI",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "TUTARLI",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430079,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.9637041428759187,
+    2.936783064349471
+   ],
+   "oracle_outer": [
+    -0.9646672746103832,
+    2.939721173764652
+   ],
+   "v2": [
+    -0.9649045825114834,
+    2.939746174766466
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.9648936615202967,
+    2.939746174591901
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430079,
+   "cell": "offset_1",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    0.5314068921153526,
+    1.1575190488416178
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    0.5314068923594452,
+    1.1575190488790477
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430079,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    1.0350954174885165,
+    4.939746174766467
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    1.0351063384599686,
+    4.939746174597979
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430079,
+   "cell": "offset_3",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    2.5314068921153523,
+    3.157519048841618
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    2.5314068923572393,
+    3.157519048900748
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "AYIRT ED\u0130LEMEZ"
+   ]
+  },
+  {
+   "seed": 430079,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "consistent",
+   "oracle_inner": [
+    -0.4513816178613606,
+    2.0080429493364997
+   ],
+   "oracle_outer": [
+    -0.4518317386703861,
+    2.010051269360674
+   ],
+   "v2": [
+    -0.4569791926065215,
+    2.0100512717821784
+   ],
+   "v2_inconsistent": false,
+   "v3_4d": [
+    -0.45697919260656344,
+    2.0100512718163603
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430079,
+   "cell": "drift_0.0005",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  },
+  {
+   "seed": 430079,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "rw",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": [
+    1.14752080739348,
+    2.0130512717821785
+   ],
+   "v2_inconsistent": true,
+   "v3_4d": [
+    1.1475208073934335,
+    2.013051271816446
+   ],
+   "v3_4d_inconsistent": false,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "AYIRT ED\u0130LEMEZ",
+    "TUTARLI"
+   ]
+  },
+  {
+   "seed": 430079,
+   "cell": "drift_0.001",
+   "arm": "E0",
+   "law": "ramp",
+   "oracle_verdict": "inconsistent",
+   "oracle_inner": null,
+   "oracle_outer": null,
+   "v2": null,
+   "v2_inconsistent": true,
+   "v3_4d": null,
+   "v3_4d_inconsistent": true,
+   "v2_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ],
+   "v3_R": [
+    "TUTARSIZ",
+    "TUTARSIZ"
+   ]
+  }
+ ]
+}
