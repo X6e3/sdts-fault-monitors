@@ -1,0 +1,7 @@
+# experiments/v3/exact_vrep.py (diagnostic, float, not certified), DEV runs, 2026-11-18
+# exact online information state by vertex enumeration vs the certified oracle t* (run_dev rows)
+430007 drift_0.002 E0 rw: first empty k = 673 (oracle t* 673, v2 1142, inv4+I 1142); vertices median 7190, p90 10645, max 14484
+430019 drift_0.001 E0 ramp: first empty k = 393 (oracle t* 393, v2 1086, inv4+I 1086); vertices median 5376, p90 11586, max 16066
+430027 drift_0.002 E0 rw: first empty k = 579 (oracle t* 579, v2 1429, inv4+I 1429); vertices median 5463, p90 10602, max 15015
+430010 drift_0.0005 E0 ramp: first empty k = 695 (oracle t* 695, v2 3575, inv4+I 3575); vertices median 3156, p90 7026, max 9198
+430002 jump_0.2 E0 rw: first empty k = 467 (oracle t* 467, v2 467, inv4+I 467); vertices median 7001, p90 12368, max 15405

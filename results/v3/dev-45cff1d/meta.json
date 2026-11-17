@@ -1,0 +1,113 @@
+{
+ "git_head": "45cff1df74a8c65cda213b1eeac53cec87a06c84",
+ "git_dirty_tracked": false,
+ "env": {
+  "python": "3.12.13",
+  "implementation": "CPython",
+  "numpy": "2.5.5",
+  "scipy": "1.18.1",
+  "highs": "1.12.0",
+  "platform": "Linux-7.3.4-arch1-2-x86_64-with-glibc2.44",
+  "machine": "x86_64",
+  "executable": "/home/x6e3/Research/sdts-v3-45cff1d/.venv/bin/python",
+  "numpy_record_sha256": "ff1cee041784df714b5a5521619920dbfd4ff462e1108a82d45606eca277a524",
+  "scipy_record_sha256": "cda958e21648ffe0b8528473532ef59f89db82bf1fa7d4a9a47161785046e979"
+ },
+ "seeds": [
+  430000,
+  430029
+ ],
+ "cells": [
+  "healthy",
+  "jump_0.2",
+  "jump_0.5",
+  "drift_0.0005",
+  "drift_0.001",
+  "drift_0.002",
+  "drift_0.005",
+  "drift_0.02",
+  "noise_x2",
+  "stuck",
+  "gain_0.01"
+ ],
+ "laws": [
+  [
+   "rw",
+   "uniform"
+  ],
+  [
+   "ramp",
+   "uniform"
+  ]
+ ],
+ "specs": [
+  "box",
+  "box+diff",
+  "box+diff+I",
+  "inv2+I",
+  "inv4+I",
+  "inv8+I",
+  "inv16+I",
+  "inv4+orbit2+I",
+  "inv8+orbit4+I"
+ ],
+ "costs": {
+  "box": {
+   "state_floats": 6,
+   "table_entries": 22,
+   "mac_per_sample": 66,
+   "flash_bytes_float32": 530
+  },
+  "box+diff": {
+   "state_floats": 10,
+   "table_entries": 186,
+   "mac_per_sample": 558,
+   "flash_bytes_float32": 4318
+  },
+  "box+diff+I": {
+   "state_floats": 10,
+   "table_entries": 186,
+   "mac_per_sample": 558,
+   "flash_bytes_float32": 4318
+  },
+  "inv2+I": {
+   "state_floats": 14,
+   "table_entries": 814,
+   "mac_per_sample": 2442,
+   "flash_bytes_float32": 18778
+  },
+  "inv4+I": {
+   "state_floats": 16,
+   "table_entries": 1384,
+   "mac_per_sample": 4152,
+   "flash_bytes_float32": 31896
+  },
+  "inv8+I": {
+   "state_floats": 24,
+   "table_entries": 6184,
+   "mac_per_sample": 18552,
+   "flash_bytes_float32": 142328
+  },
+  "inv16+I": {
+   "state_floats": 40,
+   "table_entries": 35368,
+   "mac_per_sample": 106104,
+   "flash_bytes_float32": 813624
+  },
+  "inv4+orbit2+I": {
+   "state_floats": 24,
+   "table_entries": 8222,
+   "mac_per_sample": 24666,
+   "flash_bytes_float32": 189202
+  },
+  "inv8+orbit4+I": {
+   "state_floats": 40,
+   "table_entries": 62114,
+   "mac_per_sample": 186342,
+   "flash_bytes_float32": 1428782
+  }
+ },
+ "started": "2026-11-18T01:06:20+0300",
+ "seconds": 2067.2,
+ "finished": "2026-11-18T01:40:47+0300"
+}
