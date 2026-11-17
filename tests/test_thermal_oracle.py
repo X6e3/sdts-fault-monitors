@@ -77,3 +77,14 @@ class Certificates(unittest.TestCase):
         self.assertLessEqual(lower, 1.0)
         self.assertEqual(upper, 2.0)
         self.assertEqual(without_rate, "undetermined")
+
+    def test_certified_prefix_pair_supersedes_an_unknown_probe(self):
+        decisions = {8: "inconsistent", 4: "undetermined", 2: "consistent", 3: "inconsistent"}
+
+        def verdict(z, m, *args, **kwargs):
+            return decisions[m], 0.0, float("inf")
+
+        with patch.object(O, "verdict", side_effect=verdict):
+            self.assertEqual(O.first_inconsistent([25.0] * 8), (2, "certified"))
+            decisions[3] = "undetermined"
+            self.assertEqual(O.first_inconsistent([25.0] * 8), (2, "undetermined"))

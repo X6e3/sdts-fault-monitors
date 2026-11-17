@@ -312,8 +312,8 @@ def verdict(z, m=None, box=True, rate=True, *, attempt_dir=None):
 
 def first_inconsistent(z, box=True, rate=True, *, attempt_dir=None):
     """(t*, status). t* is the smallest index with z[0:t*+1] certified inconsistent; None if the whole run
-    is certified consistent. status is "certified", or "undetermined" when a certificate along the search
-    could not separate the bound from DELTA (t* is then the search's best estimate, reported as such)."""
+    is certified consistent. Adjacent certified prefixes fix t* even if an earlier probe was unknown.
+    When the final upper prefix is unknown, t* is an estimate."""
     n = len(z)
     v, _, _ = verdict(z, n, box, rate, attempt_dir=attempt_dir)
     if v == "consistent":
@@ -323,12 +323,11 @@ def first_inconsistent(z, box=True, rate=True, *, attempt_dir=None):
     while hi - lo > 1:
         mid = (lo + hi) // 2
         v, _, _ = verdict(z, mid, box, rate, attempt_dir=attempt_dir)
-        if v == "undetermined":
-            status = "undetermined"
         if v == "consistent":
             lo = mid
         else:
             hi = mid
+            status = "certified" if v == "inconsistent" else "undetermined"
     return hi - 1, status
 
 
