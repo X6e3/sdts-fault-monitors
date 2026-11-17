@@ -2,7 +2,7 @@
 
 Selection: DEV 430050-430069 (all cells/arms/laws below). Evaluation: the run_dev.py rows (DEV 430000-430029),
 whose certified oracle t* are reused. Same decision as everywhere: first sample with no explanation at b = 0.
-usage: python -B eval_pruned.py RUN_DEV_DIR
+usage: python -B eval_pruned.py RUN_DEV_DIR [KIND N L SEL_SEEDS OUT_NAME]
 """
 import json
 import sys
@@ -41,12 +41,19 @@ def main():
     sel = [(r["y"], r["P"]) for s in SEL_SEEDS for c in SEL_CELLS for arm in T.ARMS for al in ("rw", "ramp")
            for r in [S.run(s, CELL[c], arm, al, "uniform")]]
     results = {}
-    for kind, kw in (("inv", {"N": 4}), ("inv", {"N": 8})):
+    families = (("inv", {"N": 4}), ("inv", {"N": 8}))
+    out_name = "pruning.json"
+    if len(sys.argv) > 2:                       # one family, smaller selection set (usage() is slow for big tables)
+        kind, N, L, nsel, out_name = sys.argv[2], int(sys.argv[3]), int(sys.argv[4]), int(sys.argv[5]), sys.argv[6]
+        families = ((kind, {"N": N, "L": L}),)
+        sel = sel[: nsel]
+    for kind, kw in families:
         full = V.Template(V.directions(kind, **kw), invariant=True)
         counts = V.usage(full, sel)
-        variants = {f"{kind}{kw['N']} full": full}
+        tag = f"{kind}{kw['N']}" + (f"L{kw['L']}" if "L" in kw else "")
+        variants = {f"{tag} full": full}
         for top in (None, 3, 2, 1):
-            variants[f"{kind}{kw['N']} pruned top={top or 'used'}"] = V.pruned(full, counts, keep_top=top)
+            variants[f"{tag} pruned top={top or 'used'}"] = V.pruned(full, counts, keep_top=top)
         for name, tp in variants.items():
             stat, lags = Counter(), []
             with ProcessPoolExecutor(7, initializer=_init, initargs=(tp,)) as pool:
@@ -68,7 +75,7 @@ def main():
                              "state_numbers": tp.n, **stat, "lag_sum": sum(lags),
                              "lag_p90": lags[int(0.9 * (len(lags) - 1))] if lags else None, "lag_max": lags[-1] if lags else None}
             print(name, json.dumps(results[name]))
-    (d / "pruning.json").write_text(json.dumps({"selection_seeds": [SEL_SEEDS[0], SEL_SEEDS[-1]], "results": results}, indent=1) + "\n")
+    (d / out_name).write_text(json.dumps({"selection_seeds": [SEL_SEEDS[0], SEL_SEEDS[-1]], "results": results}, indent=1) + "\n")
 
 
 if __name__ == "__main__":
