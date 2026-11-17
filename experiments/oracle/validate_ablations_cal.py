@@ -90,6 +90,9 @@ def main():
     if not (410000 <= lo <= hi <= 410199):
         raise SystemExit("CAL seeds only (410000-410199)")
     env = thermal_v2_env.check()
+    source = {"git_head": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
+              "git_dirty_tracked": bool(subprocess.run(["git", "diff", "--quiet", "HEAD"]).returncode),
+              "recorded": "at start"}
     a.out.mkdir(parents=True, exist_ok=False)
     reference = None
     if a.reference:
@@ -113,8 +116,7 @@ def main():
         for v in ("full", "no_b", "no_c"):
             t.setdefault(f"machine_{v}_inconsistent", 0)
             t[f"machine_{v}_inconsistent"] += int(r["machine"][v]["inconsistent"])
-    summary = {"git_head": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
-               "git_dirty_tracked": bool(subprocess.run(["git", "diff", "--quiet", "HEAD"]).returncode),
+    summary = {"source": source,
                "env": env, "seeds": [lo, hi], "runs": len(rows), "seconds": round(time.monotonic() - t0, 1),
                "undetermined": {v: sum(r["oracle"][v]["verdict"] == "undetermined" for r in rows) for v in VARIANTS},
                "check_failures": [[list(k), msg] for k, msg in bad], "by_cell": table}

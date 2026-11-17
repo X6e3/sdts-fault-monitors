@@ -23,10 +23,10 @@ def closed_run(T, ambient, noise, offset):
     return samples, command
 
 
-def pairs(T):
+def pairs(T, seeds=range(410000, 410200)):
     open_rng = random.Random('P1-offsets')
     closed_rng = random.Random('P1-closed')
-    for seed in range(410000, 410200):
+    for seed in seeds:
         ambient, noise = T.ambient(seed), T.noise(seed)
         for arm in T.ARMS:
             for draw, b in enumerate((1.0, 3.0, open_rng.uniform(-5, 5))):

@@ -46,6 +46,11 @@ def main():
     ap.add_argument("--workers", type=int, default=8)
     a = ap.parse_args()
     env = thermal_v2_env.check()
+    source = {"git_head": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
+              "git_dirty_tracked": bool(subprocess.run(["git", "diff", "--quiet", "HEAD"]).returncode),
+              "recorded": "at start"}
+    if source["git_dirty_tracked"]:
+        raise SystemExit("TRAIN calibration refused: tracked files differ from HEAD")
     digest = B.verify_reference()
     a.out.mkdir(parents=True, exist_ok=False)
     t0 = time.monotonic()
@@ -70,8 +75,7 @@ def main():
                     "threshold": threshold, "max_statistic": top["statistic"][variant],
                     "argmax_seed": top["seed"], "raise_steps": steps, "train_alarms_at_threshold": 0}
     out = {"rule": "addendum A1.2/A1.3: 1.05 x max TRAIN healthy statistic per arm, then checked directly",
-           "git_head": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
-           "git_dirty_tracked": bool(subprocess.run(["git", "diff", "--quiet", "HEAD"]).returncode),
+           "source": source,
            "env": env, "dmreda_reference_sha256": digest, "train_seeds": [TRAIN[0], TRAIN[-1]],
            "runs_per_arm": len(TRAIN), "evaluation_from": B.EVAL_FROM, "seconds": round(time.monotonic() - t0, 1),
            "thresholds": thresholds}
