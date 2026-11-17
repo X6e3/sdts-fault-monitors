@@ -14,9 +14,10 @@ dynamics for the ambient part (so the plant's smoothness is included):
 The oracle solves d* = min d, an LP that is always feasible, and does not take the solver's word for it.
 Every answer carries two certificates:
 
-  d_up  the solver's ambient path TA, clipped to the box, run forward through the plant here, independently
-        of the LP: the largest |z - as| it leaves, after any rate violation is checked. An admissible path
-        reaching d_up exists, so d* <= d_up.
+  d_up  the solver's ambient path TA, projected onto the admissible set here (a forward pass that clips
+        each step to the rate bound, then to the box, so both hold exactly) and run forward through the
+        plant independently of the LP: the largest |z - as| it leaves. That projected path is admissible,
+        so d* <= d_up.
   d_lo  a weak-duality lower bound from the solver's dual multipliers. It is accepted only if the dual
         stationarity residual is below DUAL_TOL; otherwise d_lo = 0 (no lower bound).
 
@@ -29,7 +30,10 @@ History of this file, before any result was kept:
   - With d free, HiGHS's presolve failed on about 6 % of full runs (degenerate LPs, many active rate
     constraints).
   - Without presolve, IPM and dual simplex agree on those runs.
-So the solvers are tried without presolve first.
+  - With presolve on, HiGHS also crashed a worker process outright.
+  - Checking the solver's path against the rate bound at 1e-9 rejected paths that are within the solver's
+    own tolerance (about 1e-7); the path is now projected instead of rejected.
+So only IPM and dual simplex without presolve are used. A "consistent" verdict needs only d_up.
 
 All temperatures are shifted by -25 C inside the LP. The dynamics are shift invariant (A·1 + B_T = 1),
 so this changes nothing but the conditioning.
@@ -48,8 +52,7 @@ A11, A12 = 1.0 - T.K / T.CC, T.K / T.CC
 A21, A22, B2 = T.K / T.CS, 1.0 - (T.K + T.H) / T.CS, T.H / T.CS
 SHIFT = 25.0
 DUAL_TOL = 1e-7
-RATE_TOL = 1e-9
-ATTEMPTS = (("highs-ipm", False), ("highs-ds", False), ("highs-ipm", True), ("highs-ds", True))
+ATTEMPTS = (("highs-ds", False), ("highs-ipm", False))   # presolve can crash the process: never used; IPM segfaulted on CAL 410197 healthy E0
 
 
 class OracleError(RuntimeError):
@@ -106,13 +109,23 @@ def _dual_bound(res, c, Aub, bub, Aeq, beq, bounds):
     return float(bub @ y_ub + beq @ y_eq + lo @ lam_l + up @ lam_u)
 
 
+def _project(TA_shifted, box, rate):
+    """The nearest-in-spirit admissible path: each step clipped to the rate bound, then to the box. Starting
+    inside the box, the two clips always intersect, so the result satisfies (b) and (c) exactly."""
+    TA = np.asarray(TA_shifted, dtype=float).copy()
+    lo, hi = (T.TA_LO - SHIFT, T.TA_HI - SHIFT) if box else (-np.inf, np.inf)
+    TA[0] = min(hi, max(lo, TA[0]))
+    for k in range(1, len(TA)):
+        x = TA[k]
+        if rate:
+            x = min(TA[k - 1] + T.RHO_A, max(TA[k - 1] - T.RHO_A, x))
+        TA[k] = min(hi, max(lo, x))
+    return TA
+
+
 def _forward(TA_shifted, z_shifted, b, box, rate):
-    """Run the solver's ambient path through the plant here; return the noise level it needs."""
-    TA = np.asarray(TA_shifted, dtype=float)
-    if box:
-        TA = np.clip(TA, T.TA_LO - SHIFT, T.TA_HI - SHIFT)
-    if rate and len(TA) > 1 and np.max(np.abs(np.diff(TA))) > T.RHO_A + RATE_TOL:
-        return np.inf
+    """Project the solver's ambient path, run it through the plant here, return the noise level it needs."""
+    TA = _project(TA_shifted, box, rate)
     ac = as_ = TA[0]
     worst = 0.0
     for k in range(len(TA)):
@@ -122,23 +135,27 @@ def _forward(TA_shifted, z_shifted, b, box, rate):
 
 
 def margin(z, m=None, box=True, rate=True):
-    """(d_lo, d_up): certified bounds on d*, the smallest noise bound explaining z[0:m]."""
+    """(d_lo, d_up): certified bounds on d*, the smallest noise bound explaining z[0:m].
+    d_lo is 0.0 when no attempt produced a dual bound that passes the stationarity check."""
     m = len(z) if m is None else m
     if m == 0:
         return 0.0, 0.0
     c, Aub, bub, Aeq, beq, bounds, zs = _build(z, m, box, rate, "margin", 0.0)
-    last = None
+    best_lo, best_up, last = 0.0, np.inf, None
     for method, presolve in ATTEMPTS:
         res = linprog(c, A_ub=Aub, b_ub=bub, A_eq=Aeq, b_eq=beq, bounds=bounds, method=method,
                       options={"presolve": presolve})
         last = res
         if res.status != 0:
             continue
-        d_up = _forward(res.x[:m], zs, 0.0, box, rate)
+        best_up = min(best_up, _forward(res.x[:m], zs, 0.0, box, rate))
         d_lo = _dual_bound(res, c, Aub, bub, Aeq, beq, bounds)
-        if np.isfinite(d_up) and d_lo is not None and d_lo <= d_up + 1e-6:
-            return max(0.0, d_lo), d_up
-    raise OracleError(f"no certified solution (m={m}); last status {last.status}: {last.message}")
+        if d_lo is not None and d_lo <= best_up + 1e-6:
+            best_lo = max(best_lo, d_lo)
+            return best_lo, best_up
+    if np.isfinite(best_up):
+        return best_lo, best_up
+    raise OracleError(f"no solution (m={m}); last status {last.status}: {last.message}")
 
 
 def verdict(z, m=None, box=True, rate=True):
