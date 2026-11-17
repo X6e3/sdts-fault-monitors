@@ -11,11 +11,25 @@ dynamics for the ambient part (so the plant's smoothness is included):
     |TA[k+1] - TA[k]| <= RHO_A                               (b), optional
     TA_LO <= TA[k] <= TA_HI                                  (c), optional
 
-Consistency is decided through the smallest noise bound that explains the data, d* = min d. That LP is
-always feasible, so no verdict rests on the solver declaring infeasibility. The run (or prefix) is
-consistent iff d* <= DELTA. |d* - DELTA| <= BORDER marks a borderline verdict, which is reported.
-(A first version asked HiGHS for feasibility at d = DELTA directly. Near the boundary it returned
-"model status unknown" on some prefixes, so it was replaced before any result was kept.)
+The oracle solves d* = min d, an LP that is always feasible, and does not take the solver's word for it.
+Every answer carries two certificates:
+
+  d_up  the solver's ambient path TA, clipped to the box, run forward through the plant here, independently
+        of the LP: the largest |z - as| it leaves, after any rate violation is checked. An admissible path
+        reaching d_up exists, so d* <= d_up.
+  d_lo  a weak-duality lower bound from the solver's dual multipliers. It is accepted only if the dual
+        stationarity residual is below DUAL_TOL; otherwise d_lo = 0 (no lower bound).
+
+  verdict "consistent"    if d_up <= DELTA
+          "inconsistent"  if d_lo >  DELTA
+          "undetermined"  otherwise (reported, never guessed)
+
+History of this file, before any result was kept:
+  - Asking HiGHS for feasibility at d = DELTA gave "model status unknown" on some prefixes.
+  - With d free, HiGHS's presolve failed on about 6 % of full runs (degenerate LPs, many active rate
+    constraints).
+  - Without presolve, IPM and dual simplex agree on those runs.
+So the solvers are tried without presolve first.
 
 All temperatures are shifted by -25 C inside the LP. The dynamics are shift invariant (A·1 + B_T = 1),
 so this changes nothing but the conditioning.
@@ -33,15 +47,16 @@ import thermal as T  # noqa: E402
 A11, A12 = 1.0 - T.K / T.CC, T.K / T.CC
 A21, A22, B2 = T.K / T.CS, 1.0 - (T.K + T.H) / T.CS, T.H / T.CS
 SHIFT = 25.0
-BORDER = 1e-6
+DUAL_TOL = 1e-7
+RATE_TOL = 1e-9
+ATTEMPTS = (("highs-ipm", False), ("highs-ds", False), ("highs-ipm", True), ("highs-ds", True))
 
 
 class OracleError(RuntimeError):
     pass
 
 
-def _solve(z, m, box, rate, mode, sense=0.0):
-    """mode "margin": minimize d (b = 0). mode "offset": d = DELTA, b free, objective sense*b."""
+def _build(z, m, box, rate, mode, sense):
     z = np.asarray(z[:m], dtype=float) - SHIFT
     iTA, iac, ias, ib, idd = 0, m, 2 * m, 3 * m, 3 * m + 1
     nv = 3 * m + 2
@@ -55,7 +70,6 @@ def _solve(z, m, box, rate, mode, sense=0.0):
         ev += [1.0, -A21, -A22, -B2]; row += 1
     Aeq = coo_matrix((ev, (er, ec)), shape=(row, nv)).tocsr()
     beq = np.zeros(row)
-
     ur, uc, uv, ub = [], [], [], []
     row = 0
     for k in range(m):              # as + b - d <= z ; -as - b - d <= -z
@@ -66,7 +80,6 @@ def _solve(z, m, box, rate, mode, sense=0.0):
             ur += [row, row]; uc += [iTA + k + 1, iTA + k]; uv += [1.0, -1.0]; ub.append(T.RHO_A); row += 1
             ur += [row, row]; uc += [iTA + k + 1, iTA + k]; uv += [-1.0, 1.0]; ub.append(T.RHO_A); row += 1
     Aub = coo_matrix((uv, (ur, uc)), shape=(row, nv)).tocsr()
-
     ta_b = (T.TA_LO - SHIFT, T.TA_HI - SHIFT) if box else (None, None)
     if mode == "margin":
         bb, db = (0.0, 0.0), (0.0, None)
@@ -78,45 +91,105 @@ def _solve(z, m, box, rate, mode, sense=0.0):
         c[idd] = 1.0
     else:
         c[ib] = sense
-    for method in ("highs", "highs-ipm", "highs-ds"):
-        res = linprog(c, A_ub=Aub, b_ub=np.array(ub), A_eq=Aeq, b_eq=beq, bounds=bounds, method=method)
-        if res.status == 0 or (mode == "offset" and res.status == 2):
-            return res
-    raise OracleError(f"LP status {res.status} ({mode}, m={m}): {res.message}")
+    return c, Aub, np.array(ub), Aeq, beq, bounds, z
+
+
+def _dual_bound(res, c, Aub, bub, Aeq, beq, bounds):
+    """Weak-duality bound from scipy's multipliers; None if stationarity does not hold to DUAL_TOL."""
+    y_ub, y_eq = res.ineqlin.marginals, res.eqlin.marginals
+    lam_l, lam_u = res.lower.marginals, res.upper.marginals
+    resid = c - (Aub.T @ y_ub + Aeq.T @ y_eq + lam_l + lam_u)
+    if np.max(np.abs(resid)) > DUAL_TOL:
+        return None
+    lo = np.array([b[0] if b[0] is not None else 0.0 for b in bounds])
+    up = np.array([b[1] if b[1] is not None else 0.0 for b in bounds])
+    return float(bub @ y_ub + beq @ y_eq + lo @ lam_l + up @ lam_u)
+
+
+def _forward(TA_shifted, z_shifted, b, box, rate):
+    """Run the solver's ambient path through the plant here; return the noise level it needs."""
+    TA = np.asarray(TA_shifted, dtype=float)
+    if box:
+        TA = np.clip(TA, T.TA_LO - SHIFT, T.TA_HI - SHIFT)
+    if rate and len(TA) > 1 and np.max(np.abs(np.diff(TA))) > T.RHO_A + RATE_TOL:
+        return np.inf
+    ac = as_ = TA[0]
+    worst = 0.0
+    for k in range(len(TA)):
+        worst = max(worst, abs(z_shifted[k] - as_ - b))
+        ac, as_ = A11 * ac + A12 * as_, A21 * ac + A22 * as_ + B2 * TA[k]
+    return worst
 
 
 def margin(z, m=None, box=True, rate=True):
-    """d*: the smallest noise bound under which z[0:m] has an admissible explanation."""
-    return float(_solve(z, len(z) if m is None else m, box, rate, "margin").fun)
+    """(d_lo, d_up): certified bounds on d*, the smallest noise bound explaining z[0:m]."""
+    m = len(z) if m is None else m
+    if m == 0:
+        return 0.0, 0.0
+    c, Aub, bub, Aeq, beq, bounds, zs = _build(z, m, box, rate, "margin", 0.0)
+    last = None
+    for method, presolve in ATTEMPTS:
+        res = linprog(c, A_ub=Aub, b_ub=bub, A_eq=Aeq, b_eq=beq, bounds=bounds, method=method,
+                      options={"presolve": presolve})
+        last = res
+        if res.status != 0:
+            continue
+        d_up = _forward(res.x[:m], zs, 0.0, box, rate)
+        d_lo = _dual_bound(res, c, Aub, bub, Aeq, beq, bounds)
+        if np.isfinite(d_up) and d_lo is not None and d_lo <= d_up + 1e-6:
+            return max(0.0, d_lo), d_up
+    raise OracleError(f"no certified solution (m={m}); last status {last.status}: {last.message}")
 
 
-def consistent(z, m=None, box=True, rate=True):
-    return margin(z, m, box, rate) <= T.DELTA
+def verdict(z, m=None, box=True, rate=True):
+    d_lo, d_up = margin(z, m, box, rate)
+    if d_up <= T.DELTA:
+        return "consistent", d_lo, d_up
+    if d_lo > T.DELTA:
+        return "inconsistent", d_lo, d_up
+    return "undetermined", d_lo, d_up
 
 
 def first_inconsistent(z, box=True, rate=True):
-    """(t*, d*_at_t*, borderline). t* is the smallest index with d*(z[0:t*+1]) > DELTA, None if the whole
-    run is consistent. d* is monotone in the prefix length, so the binary search is exact."""
+    """(t*, status). t* is the smallest index with z[0:t*+1] certified inconsistent; None if the whole run
+    is certified consistent. status is "certified", or "undetermined" when a certificate along the search
+    could not separate the bound from DELTA (t* is then the search's best estimate, reported as such)."""
     n = len(z)
-    d_full = margin(z, n, box, rate)
-    if d_full <= T.DELTA:
-        return None, d_full, abs(d_full - T.DELTA) <= BORDER
-    lo, hi, d_hi = 0, n, d_full          # prefix lo consistent (empty prefix), prefix hi inconsistent
+    v, _, _ = verdict(z, n, box, rate)
+    if v == "consistent":
+        return None, "certified"
+    status = "certified" if v == "inconsistent" else "undetermined"
+    lo, hi = 0, n
     while hi - lo > 1:
         mid = (lo + hi) // 2
-        d = margin(z, mid, box, rate)
-        if d <= T.DELTA:
+        v, _, _ = verdict(z, mid, box, rate)
+        if v == "undetermined":
+            status = "undetermined"
+        if v == "consistent":
             lo = mid
         else:
-            hi, d_hi = mid, d
-    d_lo = margin(z, lo, box, rate) if lo > 0 else 0.0
-    return hi - 1, d_hi, min(abs(d_hi - T.DELTA), abs(d_lo - T.DELTA)) <= BORDER
+            hi = mid
+    return hi - 1, status
 
 
 def offset_interval(z, box=True, rate=True):
-    """[b_min, b_max]: the constant sensor offsets the whole run can not exclude; None if none."""
-    lo = _solve(z, len(z), box, rate, "offset", sense=1.0)
-    if lo.status != 0:
-        return None
-    hi = _solve(z, len(z), box, rate, "offset", sense=-1.0)
-    return float(lo.x[3 * len(z)]), float(hi.x[3 * len(z)])
+    """Constant sensor offsets the whole run can not exclude, as (b_min, b_max) from the solver; each end
+    is checked by running its ambient path forward (an inner bound). None if no offset is consistent."""
+    out = []
+    for sense in (1.0, -1.0):
+        c, Aub, bub, Aeq, beq, bounds, zs = _build(z, len(z), box, rate, "offset", sense)
+        got = None
+        for method, presolve in ATTEMPTS:
+            res = linprog(c, A_ub=Aub, b_ub=bub, A_eq=Aeq, b_eq=beq, bounds=bounds, method=method,
+                          options={"presolve": presolve})
+            if res.status == 2:
+                return None
+            if res.status == 0:
+                b = float(res.x[3 * len(z)])
+                if _forward(res.x[:len(z)], zs, b, box, rate) <= T.DELTA + 1e-7:
+                    got = b
+                    break
+        if got is None:
+            raise OracleError("offset interval: no verified solution")
+        out.append(got)
+    return out[0], out[1]
