@@ -1,6 +1,7 @@
 """Check the streaming machine on CAL only, with oracle offset evidence for P3."""
 import argparse
 import json
+import math
 import os
 import subprocess
 from collections import Counter
@@ -32,6 +33,11 @@ def job(args):
     row = {"seed": seed, "cell": name, "arm": arm, "t_f": run["t_f"],
            "first_inconsistent": first, "first_scored_alarm": max(first, T.T_WARM) if first is not None else None,
            "offset_outer": machine.offset_outer, "verdicts": {str(r): machine.verdict(r) for r in RADII}}
+    if name != "healthy" and "TUTARLI" in row["verdicts"].values():
+        # A feasible plant offset must fit every sample using A[k] inside the ambient box.
+        lo_z, hi_z = min(run["z"]), max(run["z"])
+        pad = 32 * math.ulp(1.0) * (len(run["z"]) + 1) * max(1.0, abs(lo_z), abs(hi_z))
+        row["box_only_offset_enclosure"] = (hi_z - T.TA_HI - T.DELTA - pad, lo_z - T.TA_LO + T.DELTA + pad)
     if seed < 410050 and CELLS[name].kind == "offset":
         row["inconsistent_without_box"] = replay(run["y"], run["P"], box=False)[0].inconsistent
     return row
@@ -70,6 +76,7 @@ def main():
     parser.add_argument("oracle_out", type=Path)
     parser.add_argument("--workers", type=int, default=min(4, os.cpu_count() or 1))
     args = parser.parse_args()
+    git_head = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
     args.out.mkdir(parents=True, exist_ok=False)
     oracle_summary = json.loads((args.oracle_out / "summary.json").read_text())
     oracle_rows = [json.loads(line) for line in (args.oracle_out / "V0_P6.jsonl").read_text().splitlines()]
@@ -94,17 +101,26 @@ def main():
             p2.append({"seed": seed, "cell": name, "match": same_time and same_verdict})
     write_rows(args.out, "P2", p2)
 
-    p3 = [{"seed": r["seed"], "arm": r["arm"], "radius": radius,
+    p3 = [{"seed": r["seed"], "cell": r["cell"], "arm": r["arm"], "radius": radius,
            "offset_check": offset_check(r, oracle[r["seed"], r["arm"]], radius),
            "healthy_inconsistent": r["first_inconsistent"] is not None}
           for r in items if r["cell"] == "healthy" for radius in RADII]
+    for row in items:
+        if "box_only_offset_enclosure" not in row:
+            continue
+        lo, hi = row["box_only_offset_enclosure"]
+        for radius in RADII:
+            if row["verdicts"][str(radius)] == "TUTARLI":
+                status = "corroborated_by_box_bound" if -radius <= lo <= hi <= radius else "oracle_undetermined"
+                p3.append({"seed": row["seed"], "cell": row["cell"], "arm": row["arm"], "radius": radius,
+                           "offset_check": status})
     p4 = [{**r, "at_fault_onset": r["first_inconsistent"] == r["t_f"]}
           for r in items if r["cell"] in ("jump_2", "jump_5")]
     p5 = [r for r in items if "inconsistent_without_box" in r]
     for name, result in (("P3", p3), ("P4", p4), ("P5", p5)):
         write_rows(args.out, name, result)
     summary = {
-        "git_head": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
+        "git_head": git_head,
         "oracle_git_head": oracle_summary["source"]["git_head"],
         "cal_seed_range": [CAL.start, CAL.stop - 1],
         "runs": len(items),
