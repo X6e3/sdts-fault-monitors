@@ -31,6 +31,18 @@ class Machine(unittest.TestCase):
             self.assertFalse(machine.observe(150.0, T.P0))
         self.assertEqual(machine.verdict(3), "AYIRT EDİLEMEZ")
 
+    def test_consistent_bounds_constant_offsets_not_sensor_error(self):
+        """CAL 410000/E0, drift 0.001 °C/s from t_f: TUTARLI at R = 1 while the sensor error ends above 3 °C.
+        A drift the ambient rate can follow is an ambient twin until the box is used up, so TUTARLI(R)
+        bounds constant-offset explanations only (review record 2026-11-17, section 3)."""
+        cell = next(c for c in T.CELLS if c.name == "drift_0.001")
+        run = T.run(410000, cell, "E0")
+        machine = ThermalMachine()
+        for y, command in zip(run["y"], run["P"], strict=True):
+            self.assertFalse(machine.observe(y, command))
+        self.assertEqual(machine.verdict(1), "TUTARLI")
+        self.assertGreater(run["y"][-1] - run["Ts"][-1] - run["v"][-1], 3.0)
+
     def test_command_updates_the_state_for_the_next_measurement(self):
         run = T.run(410197, T.CELLS[0], "E1")
         machine = ThermalMachine()
