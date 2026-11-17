@@ -7,6 +7,7 @@ usage: python -B eval_pruned.py RUN_DEV_DIR
 import json
 import sys
 from collections import Counter
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -19,6 +20,19 @@ CELL = {c.name: c for c in T.CELLS}
 SEL_SEEDS = range(430050, 430070)
 SEL_CELLS = ("healthy", "jump_0.2", "jump_0.5", "drift_0.0005", "drift_0.001", "drift_0.002", "drift_0.005", "noise_x2",
              "stuck", "gain_0.01")
+
+
+TP = None
+
+
+def _init(tp):
+    global TP
+    TP = tp
+
+
+def _first(r):
+    run = S.run(r["seed"], CELL[r["cell"]], r["arm"], r["ambient"], r["noise"])
+    return V.first_inconsistent(TP, run["y"], run["P"])
 
 
 def main():
@@ -35,9 +49,10 @@ def main():
             variants[f"{kind}{kw['N']} pruned top={top or 'used'}"] = V.pruned(full, counts, keep_top=top)
         for name, tp in variants.items():
             stat, lags = Counter(), []
-            for r in rows:
-                run = S.run(r["seed"], CELL[r["cell"]], r["arm"], r["ambient"], r["noise"])
-                f, t = V.first_inconsistent(tp, run["y"], run["P"]), r["oracle"]["t_star"]
+            with ProcessPoolExecutor(7, initializer=_init, initargs=(tp,)) as pool:
+                firsts = list(pool.map(_first, rows, chunksize=8))
+            for r, f in zip(rows, firsts):
+                t = r["oracle"]["t_star"]
                 if r["cell"] == "healthy" or t is None:
                     stat["unsound"] += f is not None
                     continue
