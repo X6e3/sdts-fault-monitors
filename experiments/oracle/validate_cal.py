@@ -38,8 +38,9 @@ CELL = {c.name: c for c in T.CELLS}
 def job_map(args):
     seed, name, arm = args
     r = T.run(seed, CELL[name], arm)
-    return {"seed": seed, "cell": name, "arm": arm, "t_f": r["t_f"], "t_star": O.first_inconsistent(r["z"]),
-            "z": None}
+    t, d, border = O.first_inconsistent(r["z"])
+    return {"seed": seed, "cell": name, "arm": arm, "t_f": r["t_f"], "t_star": t, "d_star": d,
+            "borderline": border}
 
 
 def job_z_pair(args):
@@ -54,7 +55,8 @@ def job_healthy(args):
     r = T.run(seed, CELL["healthy"], arm)
     A = T.ambient_part(r["TA"])
     iv = O.offset_interval(r["z"])
-    return {"seed": seed, "arm": arm, "consistent": O.feasible(r["z"]), "interval": iv,
+    d = O.margin(r["z"])
+    return {"seed": seed, "arm": arm, "consistent": d <= T.DELTA, "d_star": d, "interval": iv,
             "A_min": min(A), "A_max": max(A)}
 
 
@@ -62,16 +64,16 @@ def job_jump(args):
     seed, name, arm = args
     r = T.run(seed, CELL[name], arm)
     t_f = r["t_f"]
-    before = O.feasible(r["z"], t_f)          # samples 0..t_f-1
-    at = O.feasible(r["z"], t_f + 1)          # samples 0..t_f
+    before = O.consistent(r["z"], t_f)        # samples 0..t_f-1
+    at = O.consistent(r["z"], t_f + 1)        # samples 0..t_f
     return {"seed": seed, "cell": name, "arm": arm, "ok": before and not at}
 
 
 def job_nobox(args):
     seed, name, arm = args
     r = T.run(seed, CELL[name], arm)
-    return {"seed": seed, "cell": name, "arm": arm, "consistent_without_box": O.feasible(r["z"], box=False),
-            "consistent_with_box": O.feasible(r["z"])}
+    return {"seed": seed, "cell": name, "arm": arm, "consistent_without_box": O.consistent(r["z"], box=False),
+            "consistent_with_box": O.consistent(r["z"])}
 
 
 def first_big_change(P, t_f):
@@ -170,12 +172,14 @@ def main(out):
         "source": {
             "git_head": subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True,
                                        cwd=HERE).stdout.strip(),
-            "git_dirty": bool(subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True,
-                                             cwd=HERE).stdout.strip()),
+            "git_dirty_tracked": bool(subprocess.run(["git", "status", "--porcelain", "--untracked-files=no"],
+                                                     capture_output=True, text=True, cwd=HERE).stdout.strip()),
             "thermal.py": sha(os.path.join(HERE, "..", "generators", "thermal.py")),
             "thermal_oracle.py": sha(os.path.join(HERE, "thermal_oracle.py")),
             "validate_cal.py": sha(os.path.abspath(__file__))},
         "V0_healthy_consistent": [sum(h["consistent"] for h in res["healthy"]), len(res["healthy"])],
+        "V0_healthy_max_d_star": max(h["d_star"] for h in res["healthy"]),
+        "map_borderline_verdicts": [sum(m["borderline"] for m in res["map"]), len(res["map"])],
         "P2_max_abs_z_E0_minus_E1": res["zdiff"],
         "P2_tstar_pairs_differing": [len(p2_diff), len(p2_pairs), p2_diff[:10]],
         "P4_jump_tstar_equals_tf": [sum(j["ok"] for j in res["jumps"]), len(res["jumps"])],
@@ -191,9 +195,10 @@ def main(out):
     }
     json.dump(out_doc, open(os.path.join(out, "summary.json"), "w"), indent=1)
     with open(os.path.join(out, "map.csv"), "w") as f:
-        f.write("seed,cell,arm,t_f,t_star\n")
+        f.write("seed,cell,arm,t_f,t_star,d_star,borderline\n")
         for m in res["map"]:
-            f.write(f'{m["seed"]},{m["cell"]},{m["arm"]},{m["t_f"]},{"" if m["t_star"] is None else m["t_star"]}\n')
+            t = "" if m["t_star"] is None else m["t_star"]
+            f.write(f'{m["seed"]},{m["cell"]},{m["arm"]},{m["t_f"]},{t},{m["d_star"]:.9f},{int(m["borderline"])}\n')
     with open(os.path.join(out, "healthy.csv"), "w") as f:
         f.write("seed,arm,consistent,b_min,b_max,A_min,A_max\n")
         for h in res["healthy"]:

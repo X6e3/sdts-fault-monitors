@@ -7,11 +7,18 @@ dynamics for the ambient part (so the plant's smoothness is included):
     ac[0] = as[0] = TA[0]                                    (e) steady state at the unknown ambient
     ac[k+1] = (1 - K/CC) ac[k] + (K/CC) as[k]
     as[k+1] = (K/CS) ac[k] + (1 - (K+H)/CS) as[k] + (H/CS) TA[k]
-    |z[k] - as[k] - b| <= DELTA                              (a), b = 0 unless an offset is asked for
+    |z[k] - as[k] - b| <= d                                  (a)
     |TA[k+1] - TA[k]| <= RHO_A                               (b), optional
     TA_LO <= TA[k] <= TA_HI                                  (c), optional
 
-Solved with scipy's HiGHS. A status other than optimal or infeasible raises.
+Consistency is decided through the smallest noise bound that explains the data, d* = min d. That LP is
+always feasible, so no verdict rests on the solver declaring infeasibility. The run (or prefix) is
+consistent iff d* <= DELTA. |d* - DELTA| <= BORDER marks a borderline verdict, which is reported.
+(A first version asked HiGHS for feasibility at d = DELTA directly. Near the boundary it returned
+"model status unknown" on some prefixes, so it was replaced before any result was kept.)
+
+All temperatures are shifted by -25 C inside the LP. The dynamics are shift invariant (A·1 + B_T = 1),
+so this changes nothing but the conditioning.
 """
 import os
 import sys
@@ -25,76 +32,91 @@ import thermal as T  # noqa: E402
 
 A11, A12 = 1.0 - T.K / T.CC, T.K / T.CC
 A21, A22, B2 = T.K / T.CS, 1.0 - (T.K + T.H) / T.CS, T.H / T.CS
+SHIFT = 25.0
+BORDER = 1e-6
 
 
-def _lp(z, m, box=True, rate=True, offset="zero", sense=0.0):
-    """Build and solve the LP on z[0:m]. offset: "zero" (b = 0) or "free" (b is a variable).
-    sense: objective coefficient on b (0 feasibility, +1 minimize b, -1 maximize b)."""
-    z = np.asarray(z[:m], dtype=float)
-    iTA, iac, ias, ib = 0, m, 2 * m, 3 * m
-    nv = 3 * m + 1
-    er, ec, ev, eb = [], [], [], []
+class OracleError(RuntimeError):
+    pass
+
+
+def _solve(z, m, box, rate, mode, sense=0.0):
+    """mode "margin": minimize d (b = 0). mode "offset": d = DELTA, b free, objective sense*b."""
+    z = np.asarray(z[:m], dtype=float) - SHIFT
+    iTA, iac, ias, ib, idd = 0, m, 2 * m, 3 * m, 3 * m + 1
+    nv = 3 * m + 2
+    er, ec, ev = [], [], []
     row = 0
-    # initial condition
     for idx in (iac, ias):
-        er += [row, row]; ec += [idx, iTA]; ev += [1.0, -1.0]; eb.append(0.0); row += 1
-    # dynamics
+        er += [row, row]; ec += [idx, iTA]; ev += [1.0, -1.0]; row += 1
     for k in range(m - 1):
-        er += [row, row, row]; ec += [iac + k + 1, iac + k, ias + k]; ev += [1.0, -A11, -A12]
-        eb.append(0.0); row += 1
+        er += [row, row, row]; ec += [iac + k + 1, iac + k, ias + k]; ev += [1.0, -A11, -A12]; row += 1
         er += [row, row, row, row]; ec += [ias + k + 1, iac + k, ias + k, iTA + k]
-        ev += [1.0, -A21, -A22, -B2]; eb.append(0.0); row += 1
+        ev += [1.0, -A21, -A22, -B2]; row += 1
     Aeq = coo_matrix((ev, (er, ec)), shape=(row, nv)).tocsr()
+    beq = np.zeros(row)
 
     ur, uc, uv, ub = [], [], [], []
     row = 0
-    for k in range(m):                       # (a): as + b <= z + d ; -as - b <= -(z - d)
-        ur += [row, row]; uc += [ias + k, ib]; uv += [1.0, 1.0]; ub.append(z[k] + T.DELTA); row += 1
-        ur += [row, row]; uc += [ias + k, ib]; uv += [-1.0, -1.0]; ub.append(-(z[k] - T.DELTA)); row += 1
-    if rate:                                 # (b)
+    for k in range(m):              # as + b - d <= z ; -as - b - d <= -z
+        ur += [row, row, row]; uc += [ias + k, ib, idd]; uv += [1.0, 1.0, -1.0]; ub.append(z[k]); row += 1
+        ur += [row, row, row]; uc += [ias + k, ib, idd]; uv += [-1.0, -1.0, -1.0]; ub.append(-z[k]); row += 1
+    if rate:
         for k in range(m - 1):
             ur += [row, row]; uc += [iTA + k + 1, iTA + k]; uv += [1.0, -1.0]; ub.append(T.RHO_A); row += 1
             ur += [row, row]; uc += [iTA + k + 1, iTA + k]; uv += [-1.0, 1.0]; ub.append(T.RHO_A); row += 1
     Aub = coo_matrix((uv, (ur, uc)), shape=(row, nv)).tocsr()
 
-    bounds = ([(T.TA_LO, T.TA_HI) if box else (None, None)] * m
-              + [(None, None)] * (2 * m)
-              + [(0.0, 0.0) if offset == "zero" else (None, None)])
+    ta_b = (T.TA_LO - SHIFT, T.TA_HI - SHIFT) if box else (None, None)
+    if mode == "margin":
+        bb, db = (0.0, 0.0), (0.0, None)
+    else:
+        bb, db = (None, None), (T.DELTA, T.DELTA)
+    bounds = [ta_b] * m + [(None, None)] * (2 * m) + [bb, db]
     c = np.zeros(nv)
-    c[ib] = sense
-    res = linprog(c, A_ub=Aub, b_ub=np.array(ub), A_eq=Aeq, b_eq=np.array(eb), bounds=bounds,
-                  method="highs")
-    if res.status not in (0, 2):
-        raise RuntimeError(f"LP status {res.status}: {res.message}")
-    return res
+    if mode == "margin":
+        c[idd] = 1.0
+    else:
+        c[ib] = sense
+    for method in ("highs", "highs-ipm", "highs-ds"):
+        res = linprog(c, A_ub=Aub, b_ub=np.array(ub), A_eq=Aeq, b_eq=beq, bounds=bounds, method=method)
+        if res.status == 0 or (mode == "offset" and res.status == 2):
+            return res
+    raise OracleError(f"LP status {res.status} ({mode}, m={m}): {res.message}")
 
 
-def feasible(z, m=None, box=True, rate=True):
-    return _lp(z, len(z) if m is None else m, box, rate).status == 0
+def margin(z, m=None, box=True, rate=True):
+    """d*: the smallest noise bound under which z[0:m] has an admissible explanation."""
+    return float(_solve(z, len(z) if m is None else m, box, rate, "margin").fun)
 
 
-def first_inconsistent(z, box=True, rate=True, lo=1):
-    """Smallest sample index t such that z[0:t+1] has no admissible explanation; None if the whole run
-    is consistent. Feasibility is monotone in the prefix length, so a binary search is exact."""
+def consistent(z, m=None, box=True, rate=True):
+    return margin(z, m, box, rate) <= T.DELTA
+
+
+def first_inconsistent(z, box=True, rate=True):
+    """(t*, d*_at_t*, borderline). t* is the smallest index with d*(z[0:t*+1]) > DELTA, None if the whole
+    run is consistent. d* is monotone in the prefix length, so the binary search is exact."""
     n = len(z)
-    if feasible(z, n, box, rate):
-        return None
-    lo_m, hi_m = lo, n                       # prefix lo_m feasible (assumed), hi_m infeasible
-    if not feasible(z, lo_m, box, rate):
-        return lo_m - 1
-    while hi_m - lo_m > 1:
-        mid = (lo_m + hi_m) // 2
-        if feasible(z, mid, box, rate):
-            lo_m = mid
+    d_full = margin(z, n, box, rate)
+    if d_full <= T.DELTA:
+        return None, d_full, abs(d_full - T.DELTA) <= BORDER
+    lo, hi, d_hi = 0, n, d_full          # prefix lo consistent (empty prefix), prefix hi inconsistent
+    while hi - lo > 1:
+        mid = (lo + hi) // 2
+        d = margin(z, mid, box, rate)
+        if d <= T.DELTA:
+            lo = mid
         else:
-            hi_m = mid
-    return hi_m - 1
+            hi, d_hi = mid, d
+    d_lo = margin(z, lo, box, rate) if lo > 0 else 0.0
+    return hi - 1, d_hi, min(abs(d_hi - T.DELTA), abs(d_lo - T.DELTA)) <= BORDER
 
 
 def offset_interval(z, box=True, rate=True):
     """[b_min, b_max]: the constant sensor offsets the whole run can not exclude; None if none."""
-    lo = _lp(z, len(z), box, rate, offset="free", sense=1.0)
+    lo = _solve(z, len(z), box, rate, "offset", sense=1.0)
     if lo.status != 0:
         return None
-    hi = _lp(z, len(z), box, rate, offset="free", sense=-1.0)
-    return float(lo.x[-1]), float(hi.x[-1])
+    hi = _solve(z, len(z), box, rate, "offset", sense=-1.0)
+    return float(lo.x[3 * len(z)]), float(hi.x[3 * len(z)])
