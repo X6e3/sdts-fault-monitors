@@ -295,26 +295,46 @@ def job(args):
     return seed, var, det, t_star, res["seconds"]
 
 
+def _fold_with(win, tau2, vals):
+    win.tau, win.base = tau2, win.tp.clamp(np.array(vals, dtype=float) + PAD)
+    win.zs = {j: z for j, z in win.zs.items() if j >= tau2}
+
+
 def check_job(args):
-    """lockstep up to t*: diag3.Window (phase 1, pad fold) against E with every measurement and the same fold rule"""
+    """lockstep: diag3.Window (phase 1, pad fold) against E with every measurement and the same fold rule. The
+    measurements are added up to t* - 1 and the as-range is compared up to t*, as in the runs (the measurement at t*
+    is the alarm). Every fold support is also bounded by its dual certificate, on both sides."""
     seed, cell, amb, out = args
     t_star, _, zs, cy = _run_info(seed, cell, amb)
     a, e = W3.Window(cy, W, smooth=True), Compressed(cy, True, cert=False)
     a.zs[0] = e.zs[0] = zs[0]
-    d_range, d_fold, n_fold = 0.0, 0.0, 0
+    d_range, d_fold, n_fold, worst, short = 0.0, 0.0, 0, None, {"dense": 0, "E": 0}
     for t in range(1, t_star + 1):
         ra, re = a.as_range(t), e.as_range(t)
         d_range = max(d_range, abs(ra[0] - re[0]), abs(ra[1] - re[1]))
+        if t == t_star:
+            break
         a.zs[t] = e.zs[t] = zs[t]
         if t - a.tau > W + B:
-            a.fold(t)
-            e.fold(t)
-            d_fold, n_fold = max(d_fold, float(np.max(np.abs(a.base - e.base)))), n_fold + 1
+            tau2, va, vb = a.tau + B, [], []
+            for d in a.D:
+                x, ux = a.lp(t, t, tau2, d), certified_max()
+                y, uy = e.lp(t, t, tau2, d), certified_max()
+                short["dense"] += ux > x + PAD
+                short["E"] += uy > y + PAD
+                if abs(x - y) > d_fold:
+                    d_fold, worst = abs(x - y), {"t": t, "direction": list(map(float, d)), "dense": x,
+                                                 "dense_dual_bound": ux, "E": y, "E_dual_bound": uy}
+                va.append(x), vb.append(y)
+            _fold_with(a, tau2, va)
+            _fold_with(e, tau2, vb)
+            n_fold += 1
     res = {"seed": seed, "cell": cell, "ambient": amb, "steps": t_star, "folds": n_fold,
-           "max_abs_diff_as_range_C": d_range, "max_abs_diff_fold_C": d_fold,
+           "max_abs_diff_as_range_C": d_range, "max_abs_diff_fold_C": d_fold, "largest_fold_diff": worst,
+           "fold_supports_short_of_dual_bound_by_more_than_pad": short,
            "dense_max_vars_rows": [a.max_vars, a.max_rows], "E_max_vars_rows": [e.max_vars, e.max_rows]}
     (Path(out) / f"check-{seed}.json").write_text(json.dumps(res, indent=1) + "\n")
-    return res
+    return seed, d_range, d_fold, short
 
 
 def summary(out):
