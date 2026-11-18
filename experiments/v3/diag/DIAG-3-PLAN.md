@@ -267,3 +267,45 @@ as-range and the fold supports must agree within 1e-6 °C.
 - **N as the MCU form.** N is taken as the MCU form only if it detects no later than E on every row. Otherwise the TA
   box between nodes stays, as in E or with its rows added only where TA can reach the wall.
 - **Not a freeze.** Seeds 440200+ stay untouched.
+
+## Amendment 5: lazy TA rows (L), and the window length (2026-11-18 evening, written before any result of it)
+
+**Status:** run on Can's go, after amendment 4.
+
+**L: N plus only the TA box rows that the solution needs.**
+- **Each LP:** solve N's LP, reconstruct the TA path between nodes from the solution, and add the box rows it
+  violates (by more than 1e-9 °C). Repeat until none is violated.
+- **Rows found once stay** while their sample is in the window.
+- **Why it is exact:** every LP on the way is a relaxation of E's LP, so it is sound. The last optimum is feasible for
+  E's LP, so it is E's optimum.
+- **Everything else is as E:** certified folds, measurements redundant at arrival dropped, no K limit.
+- **Smoke test** (two healthy ramp runs outside the evaluation rows, 430037 and 430030, with TA at the wall):
+  - L equals E within 7e-8 °C;
+  - N is off by up to 10 mC there;
+  - up to 148 lazy rows were needed.
+
+**The window length:** E with W = 64, 128 and 192, with B = 16 as before. This gives the size–loss curve of the exact
+compressed window, next to W = 256 from amendment 4.
+
+**Rows:** all 1320 DEV rows, as in amendments 1 and 4.
+
+**Machines:**
+- **L:** the Mac, 8 workers. It is compared with amendment 4's E, which ran on the same machine.
+- **The W curve:** Arch, 14 workers. E at W = 128 is compared with 2a's S128, which also ran on Arch.
+
+**Criteria (fixed now):**
+- **L1:** L's detection equals E's (amendment 4) on every row.
+- **L2:** no soundness finding for L, and every alarm certified.
+- **W1:** E at W = 128 detects as 2a's S128 does, on every row. Any row that differs is listed.
+- **W2:** no soundness finding for any W, and every alarm certified.
+
+**Reported:**
+- **For L:** rows (largest), lazy rows (largest), re-solves per LP, and step times, against E and N on the Mac.
+- **For each W:** D_paired, misses, by cell, bootstrap, kept measurements, size and time.
+
+**Reading rule:**
+- **If L1 and L2 pass,** L is the exact form at the lowest cost so far, and the formulation that the MCU work starts
+  from.
+- **The W curve is descriptive.** It shows how much of the oracle's gain each window length keeps. The choice of W for
+  a candidate is made later, at a freeze.
+- **Not a freeze.** Seeds 440200+ stay untouched.

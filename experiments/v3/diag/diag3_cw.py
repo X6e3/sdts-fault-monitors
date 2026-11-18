@@ -43,6 +43,7 @@ T3A_430010 = (695, -0.2855352673387656)        # the certified replay of the ind
 CHECK_TOL = 1e-6                                # degC
 MARGIN_TOL_E = 1e-3                             # mC
 MARGIN_TOL_A = 1e-2                             # mC
+LAZY_TOL, LAZY_MAX = 1e-9, 100                  # degC; re-solves per LP
 
 
 def _powers(n):
@@ -164,10 +165,12 @@ class Dense(Stats, W3.Window):
 
 
 class Compressed(Stats):
-    def __init__(self, tp, ta_path, cert=True):
-        self.tp, self.D, self.ta_path, self.cert, self.smooth = tp, tp.D, ta_path, cert, True
+    def __init__(self, tp, ta_path, cert=True, lazy=False):
+        assert not (lazy and ta_path)
+        self.tp, self.D, self.ta_path, self.cert, self.smooth, self.lazy = tp, tp.D, ta_path, cert, True, lazy
         self.tau, self.base, self.zs = 0, None, {}
         self.n_lp, self.max_vars, self.max_rows, self.lp_seconds, self.n_retry = 0, 0, 0, 0.0, 0
+        self.ta_rows, self.n_resolve, self.max_ta_rows = set(), 0, 0
         self._init_stats()
 
     def lp(self, t_end, meas_upto, obj_state, obj_vec):
@@ -232,9 +235,54 @@ class Compressed(Stats):
             A_ub, b_ub = sp.csr_matrix((iv, (ir, ic)), shape=(q, nv)), np.asarray(self.base, dtype=float)
         cvec = np.zeros(nv)
         cvec[list(idx[obj_state])] = -np.asarray(obj_vec, dtype=float)
+        if self.lazy:
+            self.max_nodes = max(self.max_nodes, len(nodes))
+            return self._lazy(nodes, idx, w0, nv, cvec, A_ub, b_ub, A_eq, b_eq, np.c_[lb, ub], r + q)
         self.max_vars, self.max_rows = max(self.max_vars, nv), max(self.max_rows, r + q)
         self.max_nodes = max(self.max_nodes, len(nodes))
         return solve(self, cvec, A_ub=A_ub, b_ub=b_ub, A_eq=A_eq, b_eq=b_eq, bounds=np.c_[lb, ub])
+
+    def _lazy(self, nodes, idx, w0, nv, cvec, A_ub, b_ub, A_eq, b_eq, bounds, nrows):
+        """N plus only the TA box rows between nodes that the solution needs: solve, add the violated rows, solve
+        again. Every LP on the way is a relaxation of E's LP (so sound); the last one's optimum is feasible for E's
+        LP, so it is E's optimum. Rows found once are kept while their sample is in the window."""
+        tau = self.tau
+        prev = {j: a for a, b in zip(nodes, nodes[1:]) for j in range(a + 1, b)}
+        self.ta_rows = {x for x in self.ta_rows if x[0] > tau}
+        for _ in range(LAZY_MAX):
+            rows = sorted(x for x in self.ta_rows if x[0] in prev)
+            Au, bu = A_ub, b_ub
+            if rows:
+                ir, ic, iv, rhs = [], [], [], []
+                for k, (j, sg) in enumerate(rows):
+                    a = prev[j]
+                    ir.append(k), ic.append(idx[a][2]), iv.append(float(sg))
+                    for i in range(a, j):
+                        ir.append(k), ic.append(w0 + (i - tau)), iv.append(float(sg))
+                    rhs.append(HI if sg > 0 else -LO)
+                Lm = sp.csr_matrix((iv, (ir, ic)), shape=(len(rows), nv))
+                Au = Lm if A_ub is None else sp.vstack([A_ub, Lm]).tocsr()
+                bu = np.asarray(rhs) if b_ub is None else np.concatenate([b_ub, rhs])
+            self.max_vars, self.max_rows = max(self.max_vars, nv), max(self.max_rows, nrows + len(rows))
+            self.max_ta_rows = max(self.max_ta_rows, len(rows))
+            v = solve(self, cvec, A_ub=Au, b_ub=bu, A_eq=A_eq, b_eq=b_eq, bounds=bounds)
+            if v is None:
+                return None
+            x, new = Rec.last[2].x, set()
+            for a, b in zip(nodes, nodes[1:]):
+                ta = x[idx[a][2]]
+                for j in range(a + 1, b):
+                    ta += x[w0 + (j - 1 - tau)]
+                    if ta > HI + LAZY_TOL:
+                        new.add((j, 1))
+                    elif ta < LO - LAZY_TOL:
+                        new.add((j, -1))
+            new -= self.ta_rows
+            if not new:
+                return v
+            self.ta_rows |= new
+            self.n_resolve += 1
+        raise RuntimeError("lazy TA rows did not settle")
 
     def as_range(self, t):
         up = self.lp(t, t - 1, t, (0, 1.0, 0))
@@ -243,7 +291,8 @@ class Compressed(Stats):
 
 
 def make(var, cy):
-    return {"A": lambda: Dense(cy), "E": lambda: Compressed(cy, True), "N": lambda: Compressed(cy, False)}[var]()
+    return {"A": lambda: Dense(cy), "E": lambda: Compressed(cy, True), "N": lambda: Compressed(cy, False),
+            "L": lambda: Compressed(cy, False, lazy=True)}[var]()
 
 
 def _run_info(seed, cell, amb):

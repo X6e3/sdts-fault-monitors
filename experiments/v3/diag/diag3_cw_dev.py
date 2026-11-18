@@ -3,8 +3,10 @@
 The window code is diag3_cw's (Compressed, certified folds); the rows and the scoring are diag3_dev's.
 
 usage:
-  python -B diag3_cw_dev.py run OUT_DIR [--workers 8]
-  python -B diag3_cw_dev.py summary OUT_DIR [--ref 2A_OUT_DIR]
+  python -B diag3_cw_dev.py run OUT_DIR [--workers 8] [--variants E N] [--W 256]
+  python -B diag3_cw_dev.py summary OUT_DIR [--ref 2A_OUT_DIR]                  # amendment 4 (E and N, W = 256)
+  python -B diag3_cw_dev.py score OUT.json --src LABEL=DIR:VAR ... [--pair A,B ...]
+      VAR is a cw variant (E, N, L) in a cw run directory, or S128, S256 or cyl16p in the 2a directory.
 """
 import argparse
 import json
@@ -29,7 +31,7 @@ VARIANTS = ("E", "N")
 
 
 def job(args):
-    r, var, out, horizon = args
+    r, var, out, horizon, W = args
     path = Path(out) / f"cwdev-{D.key(r)}-{var}.json"
     if path.exists():
         return D.key(r), var, "done before"
@@ -60,10 +62,11 @@ def job(args):
         (folds if folded else steps).append(time.monotonic() - t0)
     ms = 1e3 * np.array(steps) if steps else np.zeros(1)
     fs = 1e3 * np.array(folds) if folds else np.zeros(1)
-    res = {"key": D.key(r), "variant": var, "detect": det, "margin_at_detect_mC": m_det, "margin_at_t_star_mC": m_ts,
+    res = {"key": D.key(r), "variant": var, "W": W, "detect": det, "margin_at_detect_mC": m_det, "margin_at_t_star_mC": m_ts,
            "alarm_certificate": cert, "folds_raised_to_dual_bound": w.n_short, "largest_raise_C": w.max_short,
            "max_kept": w.max_kept, "max_nodes": w.max_nodes, "max_vars": w.max_vars, "max_rows": w.max_rows,
-           "n_lp": w.n_lp, "n_retry": w.n_retry, "steps": len(steps) + len(folds),
+           "n_lp": w.n_lp, "n_retry": w.n_retry, "n_resolve": w.n_resolve, "max_ta_rows": w.max_ta_rows,
+           "steps": len(steps) + len(folds),
            "step_ms": {"median": float(np.median(ms)), "p95": float(np.percentile(ms, 95)), "max": float(ms.max())},
            "fold_step_ms": {"median": float(np.median(fs)), "max": float(fs.max())},
            "seconds": round(time.monotonic() - t00, 1)}
@@ -156,13 +159,69 @@ def summary(out, ref):
     return rep
 
 
+def score(srcs, pairs):
+    """scores and row-by-row comparisons of any cw runs and 2a arms, over every DEV row"""
+    rows = [json.loads(l) for l in D.ROWS.read_text().splitlines() if l.strip()]
+    det, extra = {}, {}
+    for spec in srcs:
+        label, rest = spec.split("=", 1)
+        d, var = rest.rsplit(":", 1)
+        d, vals, ext = Path(d), {}, {}
+        for r in rows:
+            k = D.key(r)
+            if var in ("S128", "S256", "cyl16p"):
+                x = json.loads((d / f"dev-{k}.json").read_text())
+                vals[k] = x["cyl16p"] if var == "cyl16p" else x[var]["detect"]
+            else:
+                x = json.loads((d / f"cwdev-{k}-{var}.json").read_text())
+                vals[k], ext[k] = x["detect"], x
+        det[label], extra[label] = vals, ext
+    getters = {"v2": lambda r: r["v2"]}
+    for label in det:
+        getters[label] = (lambda lb: lambda r: det[lb][D.key(r)])(label)
+    rep = {"rows": len(rows), "sources": srcs, "score": _score(rows, getters), "pairs": {}, "cost": {}}
+    for pr in pairs:
+        x, y = pr.split(",")
+        diff = [[D.key(r), det[x][D.key(r)], det[y][D.key(r)]] for r in rows if det[x][D.key(r)] != det[y][D.key(r)]]
+        rep["pairs"][pr] = {"rows_differ": len(diff), "differ": diff}
+    for label, ext in extra.items():
+        if not ext:
+            continue
+        xs = list(ext.values())
+        kept = np.array([x["max_kept"] for x in xs])
+        unc = [k for k, x in ext.items() if x["detect"] is not None and not x["alarm_certificate"]["certified"]]
+        rep["cost"][label] = {
+            "W": xs[0].get("W"), "uncertified_alarms": unc,
+            "max_kept": {"median": float(np.median(kept)), "p95": float(np.percentile(kept, 95)), "max": int(kept.max())},
+            "max_nodes": int(max(x["max_nodes"] for x in xs)), "max_vars": int(max(x["max_vars"] for x in xs)),
+            "max_rows": int(max(x["max_rows"] for x in xs)),
+            "max_ta_rows": int(max(x.get("max_ta_rows", 0) for x in xs)),
+            "resolves_per_lp": float(sum(x.get("n_resolve", 0) for x in xs) / max(1, sum(x["n_lp"] for x in xs))),
+            "step_ms_median_of_medians": float(np.median([x["step_ms"]["median"] for x in xs])),
+            "step_ms_p95_max": float(max(x["step_ms"]["p95"] for x in xs)),
+            "fold_step_ms_max": float(max(x["fold_step_ms"]["max"] for x in xs)),
+            "cpu_seconds": float(sum(x["seconds"] for x in xs)),
+            "folds_raised": int(sum(x["folds_raised_to_dual_bound"] for x in xs)),
+            "n_retry": int(sum(x["n_retry"] for x in xs))}
+    return rep
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("cmd", choices=("run", "summary", "smoke"))
+    ap.add_argument("cmd", choices=("run", "summary", "smoke", "score"))
     ap.add_argument("out", type=Path)
     ap.add_argument("--workers", type=int, default=8)
     ap.add_argument("--ref", type=Path)
+    ap.add_argument("--variants", nargs="+", default=list(VARIANTS))
+    ap.add_argument("--W", type=int, default=W)
+    ap.add_argument("--src", action="append", default=[])
+    ap.add_argument("--pair", action="append", default=[])
     a = ap.parse_args()
+    if a.cmd == "score":
+        rep = score(a.src, a.pair)
+        a.out.write_text(json.dumps(rep, indent=1, default=str) + "\n")
+        print(json.dumps({k: rep[k] for k in ("sources", "pairs")}, indent=1, default=str))
+        return
     if a.cmd == "summary":
         rep = summary(a.out, a.ref)
         (a.out / "summary.json").write_text(json.dumps(rep, indent=1, default=str) + "\n")
@@ -172,19 +231,20 @@ def main():
     if a.cmd == "smoke":                              # a seed outside the evaluation rows, 300 steps, nothing written
         r = {"seed": 430050, "cell": "drift_0.002", "arm": "E1", "ambient": "ramp", "noise": "uniform",
              "oracle": {"t_star": None}}
-        for v in VARIANTS:
-            print(job((r, v, str(a.out), 300)))
+        for v in a.variants:
+            print(job((r, v, str(a.out), 300, a.W)))
         return
     import scipy
     head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=G.ROOT, text=True).strip()
     dirty = subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=no"], cwd=G.ROOT, text=True)
-    meta = {"git_head": head, "git_dirty_tracked": bool(dirty), "W": W, "B": B, "pad": C.PAD,
+    meta = {"git_head": head, "git_dirty_tracked": bool(dirty), "W": a.W, "B": B, "pad": C.PAD,
+            "variants": a.variants,
             "machine": platform.machine(), "platform": platform.platform(), "python": platform.python_version(),
             "numpy": np.__version__, "scipy": scipy.__version__, "started": time.strftime("%Y-%m-%dT%H:%M:%S%z")}
     (a.out / "meta.json").write_text(json.dumps(meta, indent=1) + "\n")
     rows = [json.loads(l) for l in D.ROWS.read_text().splitlines() if l.strip()]
     rows.sort(key=lambda r: r["oracle"].get("t_star") is None)          # the rows that stop early first
-    jobs = [(r, v, str(a.out), None) for r in rows for v in VARIANTS]
+    jobs = [(r, v, str(a.out), None, a.W) for r in rows for v in a.variants]
     with ProcessPoolExecutor(a.workers) as pool:
         for x in pool.map(job, jobs):
             print(x, flush=True)
