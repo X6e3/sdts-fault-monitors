@@ -1,0 +1,33 @@
+{
+ "seed": 430007,
+ "cell": "drift_0.002",
+ "ambient": "rw",
+ "steps": 673,
+ "folds": 25,
+ "max_abs_diff_as_range_C": 7.897302811699092e-10,
+ "max_abs_diff_fold_C": 1.7986932943081513e-08,
+ "largest_fold_diff": {
+  "t": 433,
+  "direction": [
+   0.0,
+   0.7071067811865475,
+   -0.7071067811865475
+  ],
+  "dense": 0.03223106114480839,
+  "dense_dual_bound": 0.03223106114622609,
+  "E": 0.03223104315787545,
+  "E_dual_bound": 0.03223104315929264
+ },
+ "fold_supports_short_of_dual_bound_by_more_than_pad": {
+  "dense": 0,
+  "E": 0
+ },
+ "dense_max_vars_rows": [
+  822,
+  1134
+ ],
+ "E_max_vars_rows": [
+  1095,
+  861
+ ]
+}

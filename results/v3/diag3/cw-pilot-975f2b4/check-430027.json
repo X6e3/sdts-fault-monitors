@@ -1,0 +1,17 @@
+{
+ "seed": 430027,
+ "cell": "drift_0.002",
+ "ambient": "rw",
+ "steps": 579,
+ "folds": 20,
+ "max_abs_diff_as_range_C": 8.52282884267197e-08,
+ "max_abs_diff_fold_C": 2.1847691744625308e-07,
+ "dense_max_vars_rows": [
+  822,
+  1134
+ ],
+ "E_max_vars_rows": [
+  1095,
+  861
+ ]
+}

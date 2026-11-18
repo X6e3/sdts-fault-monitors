@@ -1,0 +1,14 @@
+{
+ "cmd": "check",
+ "git_head": "975f2b42bb36ee09343fd9203d05f6e60a23d32d",
+ "git_dirty_tracked": false,
+ "W": 256,
+ "B": 16,
+ "pad": 1e-06,
+ "machine": "arm64",
+ "platform": "macOS-27.0-arm64-arm-64bit",
+ "python": "3.12.13",
+ "numpy": "2.5.5",
+ "scipy": "1.18.1",
+ "started": "2026-11-18T15:53:03+0300"
+}

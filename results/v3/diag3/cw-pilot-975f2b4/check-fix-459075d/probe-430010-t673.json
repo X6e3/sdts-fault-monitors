@@ -1,0 +1,21 @@
+{
+ "base_max_abs_diff_before": 2.6938680279808835e-06,
+ "dense": {
+  "value": -0.013671727648536969,
+  "max_eq_residual": 6.187300404891793e-05,
+  "max_ub_violation": 1.6673565834991744e-06,
+  "max_bound_violation": 0.0,
+  "value_tight_tol": -0.013674526706250578,
+  "status_tight": 0,
+  "dual_bound_tight": -0.013671982519284922
+ },
+ "E": {
+  "value": -0.013674577373542052,
+  "max_eq_residual": 4.8867160318266656e-15,
+  "max_ub_violation": 2.6038199374411874e-15,
+  "max_bound_violation": 0.0,
+  "value_tight_tol": -0.013674577373550934,
+  "status_tight": 0,
+  "dual_bound_tight": -0.013674577364913364
+ }
+}

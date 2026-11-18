@@ -1,0 +1,38 @@
+{
+ "seed": 430000,
+ "cell": "drift_0.001",
+ "ambient": "ramp",
+ "variant": "A",
+ "W": 256,
+ "B": 16,
+ "t_star": 849,
+ "t_cyl16p": 2048,
+ "detect": 849,
+ "censored_at": null,
+ "margin_at_t_star_mC": -4.624924462576452,
+ "margin_at_detect_mC": -4.624924462576452,
+ "alarm_certificate": {
+  "certified": true,
+  "certified_margin_mC": -4.624813411109319
+ },
+ "folds_raised_to_dual_bound": 0,
+ "largest_raise_C": 0.0,
+ "measurements_dropped": 0,
+ "max_kept": 274,
+ "max_nodes": null,
+ "max_vars": 822,
+ "max_rows": 1134,
+ "n_lp": 3212,
+ "n_retry": 0,
+ "lp_seconds": 70.73,
+ "step_ms": {
+  "median": 49.570958499316475,
+  "p95": 71.241497948904,
+  "max": 80.75766699766973
+ },
+ "fold_step_ms": {
+  "median": 940.48306249897,
+  "max": 1381.250499998714
+ },
+ "seconds": 74.3
+}
