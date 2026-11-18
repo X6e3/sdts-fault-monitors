@@ -113,3 +113,32 @@ the oracle, 0 at cyl16p, and negative when worse.
 - If S256 reaches D_paired ≥ 0.80 with no soundness finding, an 80 % gain is reachable at the architecture level, on
   DEV.
 - This is not a freeze. Seeds 440200+ stay untouched, and any candidate still needs its own freeze and validation.
+
+## Amendment 2: the 2a rows on a second platform (2026-11-18, written before any result of it)
+
+**Question:** do 2a's results depend on the machine? The method is meant to be deterministic, so the same code on the
+same rows should give the same detections on a different CPU and OS.
+
+**Machines:**
+- **Reference:** the 2a run itself, on Arch (x86-64, Linux), at `6c1190f`.
+- **Second:** a MacBook Air (Apple M4, arm64, macOS).
+- **Both:** Python 3.12.13, numpy 2.5.5 and scipy 1.18.1, so the same bundled HiGHS. The compilers, the BLAS and the
+  floating-point contraction can differ.
+
+**Rows:** the 264 rows of the 2a set with (seed − 430000) mod 5 = 0. That is six seeds in each of the 44 strata (cell ×
+arm × ambient). The rule is fixed now.
+
+**Run:** `diag3_platform.py run`. It calls `diag3_dev.job` unchanged, from a clean checkout of this commit; the code
+that computes is the same as at `6c1190f`. The outputs stay on the Mac, apart from the reference run.
+
+**Criteria (fixed now):**
+- **Detections:** the same for cyl16p, S128 and S256 on every row of the subset.
+- **Margins** at detection and at t*: any difference above 1e-3 mC (the 1e-6 °C fold pad) is a finding. The largest
+  difference is reported either way.
+- **LP counts:** n_lp should agree. n_retry is reported, because the fallback can depend on the solver's path.
+
+**Reading rule:**
+- **Pass:** every detection the same and no margin finding.
+- **Otherwise:** each difference is recorded and looked at before 2b (is it a near tie? a fallback?). Determinism
+  across platforms is then an open requirement for any candidate.
+- The 2a score is the reference run alone. This check does not change it, and the second machine's rows never enter it.
