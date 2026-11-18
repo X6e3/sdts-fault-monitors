@@ -81,9 +81,11 @@ def _colnnz(A):
     return int(np.diff(A.tocsc().indptr).max()) if A.nnz else 0
 
 
-def certified_max():
+def certified_max(harden=False):
     """a rigorous upper bound on max (-c) x of the last LP: weak duality with the solver's multipliers, every
-    variable boxed, float rounding bounded explicitly"""
+    variable boxed, float rounding bounded explicitly. harden: also enclose the rounding of the LP coefficients
+    themselves (each one correctly rounded from its exact value, so off by less than 2u |a|), so that the bound holds
+    for the LP with the exact coefficients (exact powers of M), not only for its float64 copy."""
     c, kw, res = Rec.last
     bnd = kw["bounds"]
     lb, ub = bnd[:, 0], bnd[:, 1]
@@ -101,10 +103,41 @@ def certified_max():
         k += _colnnz(A)
         parts.append(nu * kw["b_eq"])
     parts.append(-np.minimum(s * lb, s * ub))
-    parts.append(2 * _gam(k + 1) * sa * np.maximum(np.abs(lb), np.abs(ub)))
+    xm = np.maximum(np.abs(lb), np.abs(ub))
+    parts.append(2 * _gam(k + 1) * sa * xm)
+    if harden:
+        parts.append(2 * U * (sa - np.abs(c)) * xm)
     p = np.concatenate(parts)
     tot = math.fsum(p)
     return tot + 4 * (_gam(4) * math.fsum(np.abs(p)) + U * abs(tot))
+
+
+def exact_bound():
+    """the same bound as certified_max(harden=True), evaluated in exact rational arithmetic on the float data and the
+    same multipliers; an audit of the float evaluation"""
+    c, kw, res = Rec.last
+    F = Fraction
+    lb, ub = kw["bounds"][:, 0], kw["bounds"][:, 1]
+    s = [F(float(x)) for x in c]
+    ca = [F(0)] * len(c)
+    tot = F(0)
+    for A, b, m in ((kw.get("A_ub"), kw.get("b_ub"), None if kw.get("A_ub") is None else
+                     np.maximum(0.0, -np.asarray(res.ineqlin.marginals))),
+                    (kw.get("A_eq"), kw.get("b_eq"), None if kw.get("A_eq") is None else
+                     -np.asarray(res.eqlin.marginals))):
+        if A is None:
+            continue
+        mq = [F(float(x)) for x in m]
+        tot += sum(mi * F(float(bi)) for mi, bi in zip(mq, b))
+        co = A.tocoo()
+        for i, j, a in zip(co.row, co.col, co.data):
+            s[j] += F(float(a)) * mq[i]
+            ca[j] += abs(F(float(a)) * mq[i])
+    two_u = F(2, 2 ** 53)
+    for j in range(len(c)):
+        l, u = F(float(lb[j])), F(float(ub[j]))
+        tot += -min(s[j] * l, s[j] * u) + two_u * ca[j] * max(abs(l), abs(u))
+    return tot
 
 
 def solve(win, cvec, **kw):
@@ -130,7 +163,7 @@ class Stats:
 
     def lp_cert(self, *a):
         v = self.lp(*a)
-        return (None, None) if v is None else (v, certified_max())
+        return (None, None) if v is None else (v, certified_max(getattr(self, "harden", False)))
 
     def fold(self, t):
         tau2 = self.tau + B
@@ -165,9 +198,10 @@ class Dense(Stats, W3.Window):
 
 
 class Compressed(Stats):
-    def __init__(self, tp, ta_path, cert=True, lazy=False):
+    def __init__(self, tp, ta_path, cert=True, lazy=False, harden=False, track=False):
         assert not (lazy and ta_path)
         self.tp, self.D, self.ta_path, self.cert, self.smooth, self.lazy = tp, tp.D, ta_path, cert, True, lazy
+        self.harden, self.track, self.now, self.last_active, self.n_evict = harden, track, 0, {}, 0
         self.tau, self.base, self.zs = 0, None, {}
         self.n_lp, self.max_vars, self.max_rows, self.lp_seconds, self.n_retry = 0, 0, 0, 0.0, 0
         self.ta_rows, self.n_resolve, self.max_ta_rows = set(), 0, 0
@@ -193,7 +227,10 @@ class Compressed(Stats):
         lb[w0:], ub[w0:] = -RHO, RHO
         for j in meas:
             i = idx[j][1]
-            lb[i], ub[i] = max(lb[i], self.zs[j] - DELTA), min(ub[i], self.zs[j] + DELTA)
+            zl, zu = self.zs[j] - DELTA, self.zs[j] + DELTA
+            if self.harden:                                        # round the slab outward
+                zl, zu = np.nextafter(zl, -np.inf), np.nextafter(zu, np.inf)
+            lb[i], ub[i] = max(lb[i], zl), min(ub[i], zu)
         if np.any(lb > ub):
             return None
         er, ec, ev, r = [], [], [], 0
@@ -237,10 +274,29 @@ class Compressed(Stats):
         cvec[list(idx[obj_state])] = -np.asarray(obj_vec, dtype=float)
         if self.lazy:
             self.max_nodes = max(self.max_nodes, len(nodes))
-            return self._lazy(nodes, idx, w0, nv, cvec, A_ub, b_ub, A_eq, b_eq, np.c_[lb, ub], r + q)
-        self.max_vars, self.max_rows = max(self.max_vars, nv), max(self.max_rows, r + q)
-        self.max_nodes = max(self.max_nodes, len(nodes))
-        return solve(self, cvec, A_ub=A_ub, b_ub=b_ub, A_eq=A_eq, b_eq=b_eq, bounds=np.c_[lb, ub])
+            v = self._lazy(nodes, idx, w0, nv, cvec, A_ub, b_ub, A_eq, b_eq, np.c_[lb, ub], r + q)
+        else:
+            self.max_vars, self.max_rows = max(self.max_vars, nv), max(self.max_rows, r + q)
+            self.max_nodes = max(self.max_nodes, len(nodes))
+            v = solve(self, cvec, A_ub=A_ub, b_ub=b_ub, A_eq=A_eq, b_eq=b_eq, bounds=np.c_[lb, ub])
+        if self.track and v is not None:                           # a measurement is active if its bound binds
+            res = Rec.last[2]
+            for j in meas:
+                i = idx[j][1]
+                if abs(res.lower.marginals[i]) > 1e-12 or abs(res.upper.marginals[i]) > 1e-12:
+                    self.last_active[j] = self.now
+        return v
+
+    def keep(self, t, z):
+        self.zs[t] = z
+        self.last_active[t] = t                                    # it cut the predicted range when it arrived
+
+    def evict(self):
+        """drop the kept measurement that has been inactive the longest (ties: the oldest). Dropping is sound."""
+        j = min((j for j in self.zs if j > self.tau), key=lambda j: (self.last_active.get(j, -1), j))
+        del self.zs[j]
+        self.last_active.pop(j, None)
+        self.n_evict += 1
 
     def _lazy(self, nodes, idx, w0, nv, cvec, A_ub, b_ub, A_eq, b_eq, bounds, nrows):
         """N plus only the TA box rows between nodes that the solution needs: solve, add the violated rows, solve
@@ -290,9 +346,49 @@ class Compressed(Stats):
         return (None, None) if up is None or dn is None else (-dn, up)
 
 
+class Audited(Compressed):
+    """F (E with the hardened certificate), with every fold and alarm bound, and every 8th as-range bound, also
+    evaluated exactly (exact_bound) and compared with its float evaluation"""
+
+    def __init__(self, tp):
+        super().__init__(tp, True, harden=True)
+        self.audit = {"n": 0, "min_slack_C": math.inf, "violations": 0, "max_gap_to_value_C": 0.0,
+                      "max_coefficient_term_C": 0.0}
+
+    def _check(self, v, cub):
+        ex = exact_bound()
+        slack = Fraction(cub) - ex
+        a = self.audit
+        a["n"] += 1
+        a["min_slack_C"] = min(a["min_slack_C"], float(slack))
+        a["violations"] += slack < 0
+        a["max_gap_to_value_C"] = max(a["max_gap_to_value_C"], cub - v)
+        a["max_coefficient_term_C"] = max(a["max_coefficient_term_C"], cub - certified_max(False))
+
+    def lp_cert(self, *args):
+        v = self.lp(*args)
+        if v is None:
+            return None, None
+        cub = certified_max(True)
+        self._check(v, cub)
+        return v, cub
+
+    def as_range(self, t):
+        out = []
+        for vec in ((0, 1.0, 0), (0, -1.0, 0)):
+            v = self.lp(t, t - 1, t, vec)
+            if v is None:
+                return None, None
+            if t % 8 == 0:
+                self._check(v, certified_max(True))
+            out.append(v)
+        return -out[1], out[0]
+
+
 def make(var, cy):
     return {"A": lambda: Dense(cy), "E": lambda: Compressed(cy, True), "N": lambda: Compressed(cy, False),
-            "L": lambda: Compressed(cy, False, lazy=True)}[var]()
+            "L": lambda: Compressed(cy, False, lazy=True),
+            "F": lambda: Compressed(cy, True, harden=True, track=True), "Fa": lambda: Audited(cy)}[var]()
 
 
 def _run_info(seed, cell, amb):
@@ -338,7 +434,7 @@ def job(args):
            "n_lp": w.n_lp, "n_retry": w.n_retry, "lp_seconds": round(w.lp_seconds, 2),
            "step_ms": {"median": float(np.median(ms)), "p95": float(np.percentile(ms, 95)), "max": float(ms.max())},
            "fold_step_ms": {"median": float(np.median(fs)), "max": float(fs.max())},
-           "seconds": round(time.monotonic() - t00, 1)}
+           "audit": getattr(w, "audit", None), "seconds": round(time.monotonic() - t00, 1)}
     (Path(out) / f"cw-{seed}-{cell}-{amb}-{var}.json").write_text(json.dumps(res, indent=1) + "\n")
     np.save(Path(out) / f"cw-{seed}-{cell}-{amb}-{var}-margins.npy", np.array(sorted(margins.items())))
     return seed, var, det, t_star, res["seconds"]

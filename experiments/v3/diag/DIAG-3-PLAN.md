@@ -309,3 +309,52 @@ compressed window, next to W = 256 from amendment 4.
 - **The W curve is descriptive.** It shows how much of the oracle's gain each window length keeps. The choice of W for
   a candidate is made later, at a freeze.
 - **Not a freeze.** Seeds 440200+ stay untouched.
+
+## Amendment 6: the freeze-candidate code (F) and a cap on kept measurements (2026-11-18 night, written before any result of it)
+
+**Why:**
+- **The certificate.** A review pointed out that it covers the float64 copy of the LP. The compressed coefficients
+  (powers of M) are rounded, so it does not cover the LP with exact coefficients.
+- **K.** DEV's 45 kept measurements are an observation, not a bound. A fixed-memory candidate needs a cap, and a
+  deterministic rule for what happens when the cap is reached.
+
+**F = E, plus:**
+- **A coefficient term in the certificate.** Each coefficient is correctly rounded from its exact value, so it is off
+  by less than 2u|a|. The bound adds Σ_j max|x_j| · 2u (|A|ᵀ|λ|)_j, and so holds for the LP with exact coefficients.
+- **Measurement slabs rounded outward,** by one ulp each side.
+- **A cap K on the kept measurements in the window** (τ itself is not counted). When the cap is exceeded, the
+  measurement that has been inactive longest is evicted.
+  - A measurement is active in an LP when its bound has a nonzero multiplier.
+  - A newly kept measurement counts as active at arrival. Ties go to the oldest.
+  - Evicting a measurement is always sound.
+
+**The audit (`diag3_cw.py` variant Fa):**
+- F with no cap, on the five diagnosis runs.
+- Every fold bound, every alarm bound, and every eighth as-range bound is also evaluated exactly: rational arithmetic
+  on the float data, with the same multipliers and the coefficient enclosure.
+
+**DEV runs (`diag3_cw_dev.py --variants F --K ...`):**
+- K = 64 on Arch, after the W curve.
+- K = 40 and K = 32 on the Mac, after L.
+
+**Criteria (fixed now):**
+- **A1:** on every audited LP, the float bound is at least the exact one.
+- **A2:** F with no cap detects as amendment 3's E on the five runs, with margins at t* within 1e-3 mC, and every alarm
+  certified.
+- **K1:** F with K = 64 detects as amendment 4's E on every DEV row. Evictions are reported.
+- **K2:** no soundness finding for any K, and every alarm certified.
+
+**Reported:** for K = 40 and 32: D_paired, misses, rows later than E, rows with evictions, and the eviction count.
+
+**Smoke test** (430037, healthy ramp, outside the rows, 309 samples):
+- 202 audited bounds, with a smallest slack of 7e-15 °C and no violation;
+- the coefficient term at most 3e-14 °C;
+- F = E within 3.4e-12 °C.
+
+It ran as a single process for about a minute, during amendment 5's L run, so L's timings may be very slightly
+affected.
+
+**Reading rule:**
+- **If A1, A2, K1 and K2 pass,** F with K = 64 is the freeze candidate. It is written up as FREEZE-V2 for Can's
+  approval.
+- **K = 40 and 32** show how much margin K = 64 has, and what the eviction rule costs.

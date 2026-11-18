@@ -31,7 +31,8 @@ VARIANTS = ("E", "N")
 
 
 def job(args):
-    r, var, out, horizon, W = args
+    r, var, out, horizon, W, *rest = args
+    K = rest[0] if rest else None                     # the cap on kept measurements (None: no cap)
     path = Path(out) / f"cwdev-{D.key(r)}-{var}.json"
     if path.exists():
         return D.key(r), var, "done before"
@@ -44,6 +45,7 @@ def job(args):
     w.zs[0] = zs[0]
     for t in range(1, last + 1):
         t0 = time.monotonic()
+        w.now = t
         lower, upper = w.as_range(t)                  # measurements up to t - 1 only
         if lower is None:
             raise RuntimeError(f"{D.key(r)} {var}: window LP infeasible before measurement {t}")
@@ -54,7 +56,12 @@ def job(args):
             det, m_det, cert = t, 1e3 * m, w.certify_alarm(t, zs[t])
             break
         if not (lower >= zs[t] - DELTA and upper <= zs[t] + DELTA):
-            w.zs[t] = zs[t]
+            if getattr(w, "track", False):
+                w.keep(t, zs[t])
+            else:
+                w.zs[t] = zs[t]
+            if K is not None and sum(1 for j in w.zs if j > w.tau) > K:
+                w.evict()
         w.max_kept = max(w.max_kept, len(w.zs))
         folded = t - w.tau > W + B
         if folded:
@@ -62,7 +69,7 @@ def job(args):
         (folds if folded else steps).append(time.monotonic() - t0)
     ms = 1e3 * np.array(steps) if steps else np.zeros(1)
     fs = 1e3 * np.array(folds) if folds else np.zeros(1)
-    res = {"key": D.key(r), "variant": var, "W": W, "detect": det, "margin_at_detect_mC": m_det, "margin_at_t_star_mC": m_ts,
+    res = {"key": D.key(r), "variant": var, "W": W, "K": K, "evictions": getattr(w, "n_evict", 0), "detect": det, "margin_at_detect_mC": m_det, "margin_at_t_star_mC": m_ts,
            "alarm_certificate": cert, "folds_raised_to_dual_bound": w.n_short, "largest_raise_C": w.max_short,
            "max_kept": w.max_kept, "max_nodes": w.max_nodes, "max_vars": w.max_vars, "max_rows": w.max_rows,
            "n_lp": w.n_lp, "n_retry": w.n_retry, "n_resolve": w.n_resolve, "max_ta_rows": w.max_ta_rows,
@@ -191,7 +198,8 @@ def score(srcs, pairs):
         kept = np.array([x["max_kept"] for x in xs])
         unc = [k for k, x in ext.items() if x["detect"] is not None and not x["alarm_certificate"]["certified"]]
         rep["cost"][label] = {
-            "W": xs[0].get("W"), "uncertified_alarms": unc,
+            "W": xs[0].get("W"), "K": xs[0].get("K"), "evictions": int(sum(x.get("evictions", 0) for x in xs)),
+            "rows_with_evictions": int(sum(1 for x in xs if x.get("evictions", 0))), "uncertified_alarms": unc,
             "max_kept": {"median": float(np.median(kept)), "p95": float(np.percentile(kept, 95)), "max": int(kept.max())},
             "max_nodes": int(max(x["max_nodes"] for x in xs)), "max_vars": int(max(x["max_vars"] for x in xs)),
             "max_rows": int(max(x["max_rows"] for x in xs)),
@@ -214,6 +222,7 @@ def main():
     ap.add_argument("--ref", type=Path)
     ap.add_argument("--variants", nargs="+", default=list(VARIANTS))
     ap.add_argument("--W", type=int, default=W)
+    ap.add_argument("--K", type=int)
     ap.add_argument("--src", action="append", default=[])
     ap.add_argument("--pair", action="append", default=[])
     a = ap.parse_args()
@@ -232,19 +241,19 @@ def main():
         r = {"seed": 430050, "cell": "drift_0.002", "arm": "E1", "ambient": "ramp", "noise": "uniform",
              "oracle": {"t_star": None}}
         for v in a.variants:
-            print(job((r, v, str(a.out), 300, a.W)))
+            print(job((r, v, str(a.out), 300, a.W, a.K)))
         return
     import scipy
     head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=G.ROOT, text=True).strip()
     dirty = subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=no"], cwd=G.ROOT, text=True)
-    meta = {"git_head": head, "git_dirty_tracked": bool(dirty), "W": a.W, "B": B, "pad": C.PAD,
+    meta = {"git_head": head, "git_dirty_tracked": bool(dirty), "W": a.W, "K": a.K, "B": B, "pad": C.PAD,
             "variants": a.variants,
             "machine": platform.machine(), "platform": platform.platform(), "python": platform.python_version(),
             "numpy": np.__version__, "scipy": scipy.__version__, "started": time.strftime("%Y-%m-%dT%H:%M:%S%z")}
     (a.out / "meta.json").write_text(json.dumps(meta, indent=1) + "\n")
     rows = [json.loads(l) for l in D.ROWS.read_text().splitlines() if l.strip()]
     rows.sort(key=lambda r: r["oracle"].get("t_star") is None)          # the rows that stop early first
-    jobs = [(r, v, str(a.out), None, a.W) for r in rows for v in a.variants]
+    jobs = [(r, v, str(a.out), None, a.W, a.K) for r in rows for v in a.variants]
     with ProcessPoolExecutor(a.workers) as pool:
         for x in pool.map(job, jobs):
             print(x, flush=True)
