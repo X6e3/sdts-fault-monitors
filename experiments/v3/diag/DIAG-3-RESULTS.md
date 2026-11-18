@@ -352,3 +352,32 @@ its 6,104 samples.
 - The closest are 430009 drift_0.001 ramp (−0.0235 mC) and 430026 drift_0.0005 ramp (−0.0385 mC), both arms each.
 - E detects all of them at the same samples, and E's alarms are certified (amendment 4). So none of these 18 rests on
   the dense LP's tolerance.
+
+## Amendment 5, part 1: L (lazy TA rows) on all DEV rows (OBSERVED; 2026-11-18/19, Mac)
+
+**Run:**
+- `diag3_cw_dev.py --variants L` at `3c0917c`, from a clean checkout, 8 workers, 23:09–00:11.
+- Outputs are in `results/v3/diag3/cwdev-L-3c0917c/`; `score-L.json` compares L with amendment 4's E and N.
+- Two short single-process smoke tests ran on the same Mac during the run, so the timings may be slightly high.
+
+**The criteria:**
+- **L1 passes.** L's detection equals E's on all 1320 rows.
+- **L2 passes.** There is no soundness finding and no uncertified alarm. D_paired is 0.99921, the same as E's.
+
+**Cost** (the same Mac; E and N from amendment 4):
+
+| | rows, max | lazy rows, max | re-solves per LP | step, median of row medians (ms) | step p95, worst row (ms) | fold step, max (ms) | CPU (s) |
+|---|---|---|---|---|---|---|---|
+| E | 409 | – | – | 15.3 | 23.8 | 574 | 52,833 |
+| **L** | **373** | **253** | **0.0086** | **8.8** | **29.5** | **505** | **29,379** |
+| N (not exact) | 183 | – | – | 7.2 | 13.1 | 376 | 26,446 |
+
+### What it shows (INFERRED)
+
+- **L gives E's result at close to N's average cost:** 44 % less CPU than E, and only 11 % more than N.
+- **The worst case is another matter.**
+  - When TA rides the wall, up to 253 lazy rows are needed. L's largest LP (373 rows) is then nearly E's (409).
+  - L's worst p95 step time (29.5 ms) is higher than E's (23.8 ms), because of the re-solves.
+  - For a fixed worst-case time on an MCU, L is not clearly better than E. This is what the review predicted.
+- **The choice between E and L** for an MCU is a question of worst-case time and memory, not of the result. Both give
+  the same result on DEV.
