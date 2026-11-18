@@ -358,3 +358,19 @@ affected.
 - **If A1, A2, K1 and K2 pass,** F with K = 64 is the freeze candidate. It is written up as FREEZE-V2 for Can's
   approval.
 - **K = 40 and 32** show how much margin K = 64 has, and what the eviction rule costs.
+
+## Amendment 7: F on edge noise (2026-11-18 night, written before any result of it)
+
+**Why:**
+- The validation design (freeze 1's, kept for freeze 2) includes healthy runs with edge noise, |noise| = δ exactly.
+  Every measurement then sits on its slab's boundary.
+- No compressed window has been run on such data. It is the hardest case for a false alarm.
+
+**Runs:** `diag3_cw_edge.py`, F with W = 256 and K = 64.
+- Healthy, edge noise, DEV seeds 430070–430089, arms E0 and E1, ambient rw and ramp: 80 runs.
+- None of these seeds has been used by the DEV rows, the pruning set (430050–430069) or the smoke tests.
+- Every run is admissible by construction.
+
+**Criterion E1 (fixed now):** no F alarm on any of the 80 runs.
+
+**Reading:** E1 is a precondition of the freeze. A failure is a soundness bug, to be found before anything else.
