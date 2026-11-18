@@ -149,3 +149,39 @@ The aim is to verify the exact supports by a method that shares no code with the
 
 Float32 (freeze 1: inv4p float32 D 0.004, cyl16p float32 D 0.212) is its own track and is not mixed into this
 diagnosis. The window LP and the bounded online adaptive state stay as candidates for after it.
+
+## Amendment 1 (2026-11-18, ~10:50, written before any arm result)
+
+**What was found when T1 started.**
+- Measured on the frozen tables:
+
+  | run | cyl16p lag behind the oracle | v2 lag |
+  |---|---|---|
+  | 430007 / drift_0.002 / rw / E0 | 119 | 469 |
+  | 430019 / drift_0.001 / ramp / E0 | **0** (cyl16p detects at t* = 393) | 693 |
+  | 430010 / drift_0.0005 / ramp / E0 | 2880 | 2880 |
+
+- So 430019 is not a case where cyl16p loses anything. The three runs had been named from v2's and inv4's lags.
+
+**The selection table** (`select_runs.py` at `246091f`, Arch: `~/Research/sdts-runs/v3-diag1/selection.json`):
+- It covers cyl16p and inv4p on every DEV evaluation row of the three cells (430000–430029, uniform noise, certified
+  t*).
+- E0 and E1 give identical results in every row. The known command cancels out of z for these cells, so E0 alone is
+  used.
+- On 53 of the 88 E0 rows, cyl16p's lag equals v2's exactly.
+
+**The rule.** Keep the three named runs, with 430019 as a control (no loss to explain). Add, per cell, the E0 row
+with the largest cyl16p lag:
+
+| cell | run | t* | cyl16p lag | v2 lag |
+|---|---|---|---|---|
+| drift_0.002 / rw | 430027 | 579 | 850 | 850 |
+| drift_0.001 / ramp | 430000 | 849 | 1199 | 1199 |
+| drift_0.0005 / ramp | 430010 (already named) | 695 | 2880 | 2880 |
+
+The diagnosis runs on 5 runs: 430007, 430019 (control), 430010, 430027 and 430000. The LP check (T2) is wanted for
+430027 and 430000 too, at the same points.
+
+**One more output** (Hydrogen, H1): for each separating facet normal n, |n·e3| (age 0) and |n·(1,1,1)|/√3
+(age ∞) are reported next to the best-matching age j. Directions orthogonal to both e3 and (1,1,1) match at both
+ends, so argmin_j alone would mislead.
