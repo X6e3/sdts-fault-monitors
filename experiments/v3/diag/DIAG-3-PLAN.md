@@ -86,3 +86,30 @@ the oracle, 0 at cyl16p, and negative when worse.
   - the resources (RAM, flash, worst-case time per sample, numerical margins).
 - **If it does not pass:** the result is reported, and Can decides. The options are adaptive directions at cuts,
   larger W, or stopping this line.
+
+## Amendment 1: phase 2a, the DEV-wide evaluation (2026-11-18, written before any 2a result)
+
+**Status:** run on Can's go. GPT, Sol and Hydrogen all chose 2a before 2b.
+
+**Rows:** every row of the DEV evaluation set, `results/v3/dev-45cff1d/rows.jsonl`: seeds 430000–430029, both arms,
+1320 runs. Freeze 1's DEV reference (cyl16p D_paired 0.386) was computed on these same rows.
+
+**Variants:**
+- **S128 and S256,** exactly as in phase 1 (B = 16, pad 1e-6), online from k = 0, until detection or N.
+- **cyl16p,** recomputed on the same runs as a check.
+
+**Scoring:** Freeze 1's functions in `score_validation.py`:
+- `paired_delta`, over the runs v2 detects; a miss counts as N − t*;
+- `_soundness`: alarms on admissible runs, and detections before t*;
+- `describe`, `by_cell` and the seed-cluster `bootstrap`, the last descriptive only.
+
+**Also reported:**
+- misses against v2;
+- detections later than v2;
+- the margin at detection;
+- everything both with and without the 10 rows of the five diagnosis runs, which were used to design the window.
+
+**Reading rule (fixed now):**
+- If S256 reaches D_paired ≥ 0.80 with no soundness finding, an 80 % gain is reachable at the architecture level, on
+  DEV.
+- This is not a freeze. Seeds 440200+ stay untouched, and any candidate still needs its own freeze and validation.
