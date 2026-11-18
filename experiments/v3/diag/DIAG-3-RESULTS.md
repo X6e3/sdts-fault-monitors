@@ -410,3 +410,41 @@ its 6,104 samples.
 - The float evaluation of the certificate is conservative, with a narrow but positive margin.
 - Enclosing the coefficient rounding costs nothing measurable, so the bounds now cover the LP with exact
   coefficients.
+
+## Amendment 5, part 2: the window length, E with W = 64, 128 and 192 on all DEV rows (OBSERVED; 2026-11-18/19, Arch)
+
+**Run:**
+- `diag3_cw_dev.py --variants E --W ...` at `3c0917c` on Arch, 14 workers, 23:10–01:04.
+- Outputs are in `results/v3/diag3/cwdev-W{64,128,192}-3c0917c/`. All of them are scored in
+  `results/v3/diag3/score-W-curve-3c0917c.json`, together with W = 256 (amendment 4) and 2a.
+- Other processes were running on Arch at the same time (load 15–19 on 16 threads). The times below are therefore
+  not comparable with the Mac's. Rows and kept measurements are the size measures.
+
+**The criteria:**
+- **W1 passes.** E at W = 128 detects as 2a's S128 on all 1320 rows.
+- **W2 passes.** There is no soundness finding and no uncertified alarm, for any W.
+
+**The size–loss curve** (1081 detection events; 1071 without the ten diagnosis rows):
+
+| window | D_paired | without the diagnosis runs | bootstrap 95 % | misses | detections equal to t* | kept measurements (median / max) | LP rows, max |
+|---|---|---|---|---|---|---|---|
+| none (cyl16p template only) | 0.386 | 0.512 | [0.20, 0.60] | 4 | 897 | – | – |
+| W = 64 | 0.643 | 0.904 | [0.40, 0.92] | 0 | 1037 | 14 / 18 | 159 |
+| W = 128 | 0.815 | 0.980 | [0.54, 0.995] | 0 | 1063 | 21 / 28 | 245 |
+| W = 192 | 0.824 | 0.986 | [0.56, 0.999] | 0 | 1073 | 29 / 35 | 325 |
+| W = 256 | 0.9992 | 0.9987 | [0.997, 1.0] | 0 | 1079 | 36 / 45 | 409 |
+
+**Row by row:**
+- W = 64 is later than W = 128 on 26 rows, and W = 128 later than W = 192 on 12.
+- W = 192 is later than W = 256 on 6 rows: 430010 drift_0.0005 ramp (3449 against 695), 430009 drift_0.001 ramp
+  (1481 against 1452) and 430023 drift_0.001 ramp (681 against 580), each in both arms.
+
+### What it shows (INFERRED)
+
+- **Even W = 64 detects every event,** which neither v2 nor cyl16p does, and keeps 90 % of the gain outside the
+  diagnosis runs.
+- **Outside the diagnosis runs the curve is smooth:** 0.904, 0.980, 0.986 and 0.9987.
+- **The jump between 192 and 256 on all of DEV is 430010.** Its deciding +e3 cut comes 227 samples before t*
+  (DIAG-2), so only a window longer than that holds it.
+- **For a candidate, W sets the size:** the kept measurements and the rows grow roughly linearly with W, from 18 and
+  159 to 45 and 409.
