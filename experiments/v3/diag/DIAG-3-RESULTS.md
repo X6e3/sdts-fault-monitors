@@ -453,8 +453,8 @@ its 6,104 samples.
 
 **Runs:**
 - `diag3_cw_dev.py --variants F --K ...` at `66429e2`.
-  - K = 64 on Arch (14 workers, 01:04–02:1x), from the clean checkout `~/Research/sdts-v3-f-66429e2`.
-  - K = 40 on the Mac (8 workers, 00:12–02:1x).
+  - K = 64 on Arch (14 workers, 01:03–02:02), from the clean checkout `~/Research/sdts-v3-f-66429e2`.
+  - K = 40 on the Mac (8 workers, 00:12–02:08).
 - Outputs are in `results/v3/diag3/cwdev-F-K64-66429e2/` and `cwdev-F-K40-66429e2/`; the score is in
   `score-K64-K40-66429e2.json`.
 
