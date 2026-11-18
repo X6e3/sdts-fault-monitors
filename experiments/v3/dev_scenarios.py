@@ -10,6 +10,10 @@ Same plant, assumptions, faults and arms as v2. Two ambient laws and two noise l
                   learned how quiet the v2 ambient is
   noise "uniform" uniform in [-DELTA, DELTA] (v2)
   noise "edge"    +-DELTA exactly, random sign: on the boundary of (a), to stress soundness
+
+VALIDATION seeds use the same laws with their own seed strings ("v3val:" instead of "v3dev:"). They can only
+be generated after unlock_validation(), which only run_validation.py calls, and only once the freeze record
+is approved and its manifest matches (FREEZE-V1.md). Nothing else in the repository unlocks them.
 """
 import os
 import random
@@ -22,14 +26,27 @@ DEV = range(430000, 430100)
 VALIDATION = range(440000, 441000)
 
 
-def _check_dev(seed):
-    if seed not in DEV:
-        raise ValueError(f"v3 development uses DEV seeds 430000-430099 only, got {seed}")
+_VALIDATION_UNLOCKED = False
+
+
+def unlock_validation(approved_manifest_sha256):
+    """Called by run_validation.py after it has checked the approved freeze record. Not for anything else."""
+    global _VALIDATION_UNLOCKED
+    if not isinstance(approved_manifest_sha256, str) or len(approved_manifest_sha256) != 64:
+        raise ValueError("unlock needs the approved manifest sha256")
+    _VALIDATION_UNLOCKED = True
+
+
+def _prefix(seed):
+    if seed in DEV:
+        return "v3dev"
+    if seed in VALIDATION and _VALIDATION_UNLOCKED:
+        return "v3val"
+    raise ValueError(f"v3 development uses DEV seeds 430000-430099 only, got {seed}")
 
 
 def ambient(seed, law, n=T.N):
-    _check_dev(seed)
-    rng = random.Random(f"v3dev:{seed}:ambient:{law}")
+    rng = random.Random(f"{_prefix(seed)}:{seed}:ambient:{law}")
     ta = [rng.uniform(T.TA_LO, T.TA_HI)]
     if law == "rw":
         for _ in range(n - 1):
@@ -51,8 +68,7 @@ def ambient(seed, law, n=T.N):
 
 
 def noise(seed, law, n=T.N):
-    _check_dev(seed)
-    rng = random.Random(f"v3dev:{seed}:noise:{law}")
+    rng = random.Random(f"{_prefix(seed)}:{seed}:noise:{law}")
     if law == "uniform":
         return [rng.uniform(-T.DELTA, T.DELTA) for _ in range(n)]
     if law == "edge":
@@ -61,10 +77,9 @@ def noise(seed, law, n=T.N):
 
 
 def command(seed, arm, n=T.N):
-    _check_dev(seed)
     if arm == "E0":
         return [T.P0] * n
-    rng = random.Random(f"v3dev:{seed}:command")
+    rng = random.Random(f"{_prefix(seed)}:{seed}:command")
     P, p = [], T.P0
     for k in range(n):
         if k % T.E1_PERIOD == 0:
@@ -74,8 +89,7 @@ def command(seed, arm, n=T.N):
 
 
 def onset(seed):
-    _check_dev(seed)
-    return random.Random(f"v3dev:{seed}:onset").randint(300, 600)
+    return random.Random(f"{_prefix(seed)}:{seed}:onset").randint(300, 600)
 
 
 def run(seed, cell, arm, ambient_law="rw", noise_law="uniform", n=T.N):

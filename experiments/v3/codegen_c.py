@@ -7,6 +7,7 @@ with PAD_i a per-direction constant that bounds, for the chosen arithmetic (floa
 CAP = 2.2 bounds |s_c| (the clamps keep every coordinate in the shifted box [-2, 2]) and HMAX = sqrt(3) CAP
 bounds |h_i| for unit directions while the set is nonempty. The rounded lam add |lam - fl(lam)| ||d||_1 CAP.
 usage: python codegen_c.py KIND [--N n] [--L l] --out FILE [--real float|double]
+       python codegen_c.py --frozen FROZEN.json --out FILE [--real float|double]   (the frozen candidate's tables)
 """
 import argparse
 import math
@@ -37,8 +38,8 @@ def make_template(kind, N, L, prune):
     return tp
 
 
-def build(kind, N, L, real, prune=False):
-    tp = make_template(kind, N, L, prune)
+def build(kind, N, L, real, prune=False, template=None):
+    tp = template if template is not None else make_template(kind, N, L, prune)
     eps = np.finfo(np.float32 if real == "float" else np.float64).eps
     gamma = 6 * eps / (1 - 6 * eps)
     caps = tp.cap_inv.copy()
@@ -103,17 +104,27 @@ def _caps(tp):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("kind")
+    ap.add_argument("kind", nargs="?")
+    ap.add_argument("--frozen", type=Path, help="emit the tables of a frozen candidate file (no rebuild)")
     ap.add_argument("--N", type=int, default=4)
     ap.add_argument("--L", type=int, default=0)
     ap.add_argument("--real", choices=("float", "double"), default="float")
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--prune", action="store_true", help="keep only bases used on the DEV selection set")
     a = ap.parse_args()
-    tp, hmax, idx, lam, starts, pads = build(a.kind, a.N, a.L, a.real, a.prune)
+    if a.frozen:
+        import hashlib
+        tp0 = V.load_frozen(a.frozen)
+        label = f"frozen {a.frozen.name} sha256 {hashlib.sha256(a.frozen.read_bytes()).hexdigest()} {a.real}"
+        tp, hmax, idx, lam, starts, pads = build(None, 0, 0, a.real, template=tp0)
+    else:
+        if not a.kind:
+            raise SystemExit("KIND or --frozen is required")
+        label = f"{a.kind} N={a.N} L={a.L} {a.real}{' pruned' if a.prune else ''}"
+        tp, hmax, idx, lam, starts, pads = build(a.kind, a.N, a.L, a.real, a.prune)
     if max(max(r) for r in idx) > 255 or starts[-1] > 65535:
         raise SystemExit("table too large for uint8/uint16 indices")
-    a.out.write_text(emit(tp, hmax, idx, lam, starts, pads, a.real, f"{a.kind} N={a.N} L={a.L} {a.real}{' pruned' if a.prune else ''}"))
+    a.out.write_text(emit(tp, hmax, idx, lam, starts, pads, a.real, label))
     flash = len(idx) * (3 + 3 * (4 if a.real == "float" else 8)) + (len(starts) * 2) + (len(pads) + 3 * tp.n) * (4 if a.real == "float" else 8)
     print(f"n={tp.n} entries={len(idx)} flash~{flash} B  state RAM={tp.n * (4 if a.real == 'float' else 8)} B + S (2 doubles)")
 

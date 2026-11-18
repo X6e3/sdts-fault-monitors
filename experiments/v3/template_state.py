@@ -283,6 +283,87 @@ def usage(template, runs):
     return counts
 
 
+def _is_unit_basis(tri, lam, i):
+    """The basis is d_i alone: weight 1 on direction i, 0 on the other two."""
+    tri = list(tri)
+    return i in tri and abs(lam[tri.index(i)] - 1.0) < 1e-12 and abs(sum(lam) - 1.0) < 1e-12
+
+
+def dominance_bases_present(template):
+    """Theorem 3's conditions on the tables: +-v in D, the +-e2 predictions keep a basis {+-e2, +-v, x},
+    and the as-range supports keep the basis that returns h(+-e2) itself. Returns a list of what is missing."""
+    v = _unit(M.T @ E[1] - E[1])
+    missing = []
+    v_dirs = [i for i, d in enumerate(template.D) if abs(abs(np.dot(d, v)) - 1) < 1e-12]
+    if len(v_dirs) < 2:
+        missing.append("+-v not in D")
+    for s, e2 in ((1, template.ip[1]), (-1, template.im[1])):
+        g = template.pred[e2]
+        if not any(e2 in tri and any(j in tri for j in v_dirs) for tri in g[0]):
+            missing.append(f"prediction of {'+' if s > 0 else '-'}e2 has no basis with e2 and v")
+        g = template.supp_as[0 if s > 0 else 1]
+        if not any(_is_unit_basis(tri, lam, e2) for tri, lam in zip(g[0], g[1])):
+            missing.append(f"as-range {'+' if s > 0 else '-'}e2 has no unit basis")
+    return missing
+
+
+# ---- frozen tables: the exact candidate, as data -------------------------------------------------------
+# A frozen template is a JSON file holding every float the run-time update reads, as float.hex() strings,
+# so it loads bit-for-bit on any platform. The file is the candidate; regenerating it on another platform may
+# differ in the last bits of lam (LAPACK), which is why validation uses the file, never a rebuild.
+
+FROZEN_FORMAT = "sdts-v3-frozen-template/1"
+
+
+def _hx(a):
+    return [float(x).hex() for x in np.asarray(a, dtype=float).ravel()]
+
+
+def frozen_dict(template, meta):
+    groups = template.pred + template.supp_as
+    return {"format": FROZEN_FORMAT, "meta": meta, "n": template.n, "invariant": bool(template.invariant),
+            "D": [_hx(d) for d in template.D], "cap_inv": _hx(template.cap_inv), "rho_pad": _hx(template.rho_pad),
+            "h0": _hx(template.h0), "ip": list(map(int, template.ip)), "im": list(map(int, template.im)),
+            "groups": [{"idx": g[0].astype(int).tolist(), "lam": [_hx(r) for r in g[1]], "lsum": _hx(g[2]),
+                        "res": _hx(g[3])} for g in groups],
+            "table_entries": int(template.table_entries)}
+
+
+def write_frozen(template, meta, path):
+    import json
+    text = json.dumps(frozen_dict(template, meta), sort_keys=True, separators=(",", ":")) + "\n"
+    with open(path, "w") as f:
+        f.write(text)
+
+
+def load_frozen(path, sha256=None):
+    """A Template whose tables are exactly the frozen file's (checked against sha256 when given)."""
+    import hashlib
+    import json
+    from pathlib import Path as _P
+    raw = _P(path).read_bytes()
+    if sha256 is not None and hashlib.sha256(raw).hexdigest() != sha256:
+        raise ValueError(f"{path}: sha256 does not match the frozen manifest")
+    d = json.loads(raw)
+    if d.get("format") != FROZEN_FORMAT:
+        raise ValueError(f"{path}: not a frozen template")
+    fh = lambda xs: np.array([float.fromhex(x) for x in xs])
+    t = Template.__new__(Template)
+    t.name, t.n, t.invariant = d["meta"].get("name", ""), d["n"], d["invariant"]
+    t.D = np.array([fh(r) for r in d["D"]])
+    t.cap_inv, t.rho_pad, t.h0 = fh(d["cap_inv"]), fh(d["rho_pad"]), fh(d["h0"])
+    t.ip, t.im = list(d["ip"]), list(d["im"])
+    groups = [(np.array(g["idx"], dtype=int).reshape(-1, 3), np.array([fh(r) for r in g["lam"]]).reshape(-1, 3),
+               fh(g["lsum"]), fh(g["res"])) for g in d["groups"]]
+    t.pred, t.supp_as = groups[: t.n], groups[t.n:]
+    t._flat = t._flatten(t.pred)
+    t.table_entries = int(sum(len(b[0]) for b in groups))
+    if t.table_entries != d["table_entries"] or len(t.supp_as) != 2:
+        raise ValueError(f"{path}: inconsistent table")
+    t.meta = d["meta"]
+    return t
+
+
 def pruned(template, counts, keep_top=None):
     """A copy that keeps, per group, the entries ever used (or the keep_top most used) plus the v2 bases."""
     import copy
@@ -296,6 +377,11 @@ def pruned(template, counts, keep_top=None):
         if gi in (template.ip[1], template.im[1]):   # prediction of +-e2: keep every basis using e2 and v
             e2 = template.ip[1] if gi == template.ip[1] else template.im[1]
             keep |= {j for j, tri in enumerate(g[0]) if e2 in tri and any(v in tri for v in v_dirs)}
+        if gi >= template.n:                          # as-range +-e2: keep one basis that returns h(+-e2) itself
+            e2 = template.ip[1] if gi == template.n else template.im[1]
+            trivial = [j for j in range(len(g[0])) if _is_unit_basis(g[0][j], g[1][j], e2)]
+            if trivial and not keep & set(trivial):
+                keep.add(trivial[0])
         if not keep:
             keep = {int(order[0])}
         k = np.array(sorted(keep))
