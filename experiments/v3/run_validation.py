@@ -160,7 +160,7 @@ def main():
     a.out.mkdir(parents=True, exist_ok=False)
     bins, c_info = build_c(m, a.out)
     meta = {"mode": "rehearsal" if a.rehearsal else "validation", "git_head": head, "git_dirty_tracked": bool(dirty),
-            "env": env, "manifest_sha256": manifest_sha, "freeze_doc_sha256": sha256(FREEZE_DOC),
+            "env": env, "manifest_sha256": manifest_sha, "freeze_doc_sha256": sha256(FREEZE_DOC) if FREEZE_DOC.exists() else None,
             "approval": approval, "seeds": [lo, hi], "c_build": c_info, "host": platform.node(),
             "started": time.strftime("%Y-%m-%dT%H:%M:%S%z")}
     (a.out / "meta.json").write_text(json.dumps(meta, indent=1) + "\n")
