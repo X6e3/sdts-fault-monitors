@@ -30,16 +30,10 @@ DELTA, W, B = C.DELTA, C.W, C.B
 VARIANTS = ("E", "N")
 
 
-def job(args):
-    r, var, out, horizon, W, *rest = args
-    K = rest[0] if rest else None                     # the cap on kept measurements (None: no cap)
-    path = Path(out) / f"cwdev-{D.key(r)}-{var}.json"
-    if path.exists():
-        return D.key(r), var, "done before"
-    run = S.run(r["seed"], next(c for c in T.CELLS if c.name == r["cell"]), r["arm"], r["ambient"], r["noise"])
-    zs = G.zs_of(run)
-    w = C.make(var, V.load_frozen(G.V3 / "frozen" / "cyl16p.json"))
-    ts = r["oracle"].get("t_star")
+def online(var, zs, W=W, K=None, t_star=None, horizon=None, tp=None):
+    """one run of a compressed window, online from k = 0: the alarm at t uses the measurements up to t - 1; z_t is
+    kept only if it is not redundant at arrival, then evicted down to K, then the fold. Returns the record."""
+    w = C.make(var, tp if tp is not None else V.load_frozen(G.V3 / "frozen" / "cyl16p.json"))
     last = len(zs) - 1 if horizon is None else min(len(zs) - 1, horizon)
     det, cert, m_det, m_ts, steps, folds, t00 = None, None, None, None, [], [], time.monotonic()
     w.zs[0] = zs[0]
@@ -47,10 +41,11 @@ def job(args):
         t0 = time.monotonic()
         w.now = t
         lower, upper = w.as_range(t)                  # measurements up to t - 1 only
-        if lower is None:
-            raise RuntimeError(f"{D.key(r)} {var}: window LP infeasible before measurement {t}")
+        if lower is None:                             # cannot happen with sound folds; recorded, never hidden
+            det, cert = t, {"certified": False, "reason": "window LP infeasible before the measurement"}
+            break
         m = G.margin(lower, upper, zs[t])
-        if t == ts:
+        if t == t_star:
             m_ts = 1e3 * m
         if upper < zs[t] - DELTA or lower > zs[t] + DELTA:
             det, m_det, cert = t, 1e3 * m, w.certify_alarm(t, zs[t])
@@ -69,17 +64,29 @@ def job(args):
         (folds if folded else steps).append(time.monotonic() - t0)
     ms = 1e3 * np.array(steps) if steps else np.zeros(1)
     fs = 1e3 * np.array(folds) if folds else np.zeros(1)
-    res = {"key": D.key(r), "variant": var, "W": W, "K": K, "evictions": getattr(w, "n_evict", 0), "detect": det, "margin_at_detect_mC": m_det, "margin_at_t_star_mC": m_ts,
-           "alarm_certificate": cert, "folds_raised_to_dual_bound": w.n_short, "largest_raise_C": w.max_short,
-           "max_kept": w.max_kept, "max_nodes": w.max_nodes, "max_vars": w.max_vars, "max_rows": w.max_rows,
-           "n_lp": w.n_lp, "n_retry": w.n_retry, "n_resolve": w.n_resolve, "max_ta_rows": w.max_ta_rows,
-           "steps": len(steps) + len(folds),
-           "step_ms": {"median": float(np.median(ms)), "p95": float(np.percentile(ms, 95)), "max": float(ms.max())},
-           "fold_step_ms": {"median": float(np.median(fs)), "max": float(fs.max())},
-           "seconds": round(time.monotonic() - t00, 1)}
+    return {"variant": var, "W": W, "K": K, "evictions": getattr(w, "n_evict", 0), "detect": det,
+            "margin_at_detect_mC": m_det, "margin_at_t_star_mC": m_ts,
+            "alarm_certificate": cert, "folds_raised_to_dual_bound": w.n_short, "largest_raise_C": w.max_short,
+            "max_kept": w.max_kept, "max_nodes": w.max_nodes, "max_vars": w.max_vars, "max_rows": w.max_rows,
+            "n_lp": w.n_lp, "n_retry": w.n_retry, "n_resolve": w.n_resolve, "max_ta_rows": w.max_ta_rows,
+            "steps": len(steps) + len(folds),
+            "step_ms": {"median": float(np.median(ms)), "p95": float(np.percentile(ms, 95)), "max": float(ms.max())},
+            "fold_step_ms": {"median": float(np.median(fs)), "max": float(fs.max())},
+            "seconds": round(time.monotonic() - t00, 1)}
+
+
+def job(args):
+    r, var, out, horizon, W, *rest = args
+    K = rest[0] if rest else None                     # the cap on kept measurements (None: no cap)
+    path = Path(out) / f"cwdev-{D.key(r)}-{var}.json"
+    if path.exists():
+        return D.key(r), var, "done before"
+    run = S.run(r["seed"], next(c for c in T.CELLS if c.name == r["cell"]), r["arm"], r["ambient"], r["noise"])
+    ts = r["oracle"].get("t_star")
+    res = {"key": D.key(r), **online(var, G.zs_of(run), W, K, ts, horizon)}
     if horizon is None:
         path.write_text(json.dumps(res) + "\n")
-    return D.key(r), var, det, ts, res["seconds"]
+    return D.key(r), var, res["detect"], ts, res["seconds"]
 
 
 def _score(rows, getters):
