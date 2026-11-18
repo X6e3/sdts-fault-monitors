@@ -12,9 +12,12 @@ to generate validation data until then (section 6).
 - The rehearsal is to be rerun at the new freeze commit, after amendment 8 (section 8).
 - K = 32 is informational; it does not change the candidate.
 
-**Proposed after the team's review and Can's preference (2026-11-19), to be confirmed at approval:**
+**Decided by Can Koç on 2026-11-19, after the team's review:**
 - 200 seeds (section 3);
 - "later than v2" is reported in full and does not decide (section 4).
+
+This is not the approval of the freeze. That comes after the manifest is regenerated and the rehearsal rerun, as a
+separate status-line commit (section 6).
 
 ## 0. What is tested, and what a failure means
 
