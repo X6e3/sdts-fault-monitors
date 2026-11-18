@@ -1,0 +1,1 @@
+{"key": "430018-noise_x2-E1-ramp-uniform", "cyl16p": 342, "S128": {"detect": 342, "margin_at_detect_mC": -115.31244585146754, "margin_at_t_star_mC": -115.31244585146754, "n_lp": 1230, "n_retry": 0, "seconds": 14.5}, "S256": {"detect": 342, "margin_at_detect_mC": -115.58178416295235, "margin_at_t_star_mC": -115.58178416295235, "n_lp": 894, "n_retry": 0, "seconds": 20.2}}

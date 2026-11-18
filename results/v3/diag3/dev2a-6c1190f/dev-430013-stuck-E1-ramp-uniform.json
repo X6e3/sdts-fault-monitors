@@ -1,0 +1,1 @@
+{"key": "430013-stuck-E1-ramp-uniform", "cyl16p": 461, "S128": {"detect": 461, "margin_at_detect_mC": -94.16411425679195, "margin_at_t_star_mC": -94.16411425679195, "n_lp": 1762, "n_retry": 0, "seconds": 22.8}, "S256": {"detect": 461, "margin_at_detect_mC": -94.16464229057043, "margin_at_t_star_mC": -94.16464229057043, "n_lp": 1426, "n_retry": 0, "seconds": 39.6}}

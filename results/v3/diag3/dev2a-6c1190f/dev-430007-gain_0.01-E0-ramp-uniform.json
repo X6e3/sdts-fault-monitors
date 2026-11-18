@@ -1,0 +1,1 @@
+{"key": "430007-gain_0.01-E0-ramp-uniform", "cyl16p": 593, "S128": {"detect": 593, "margin_at_detect_mC": -424.1295552217359, "margin_at_t_star_mC": -424.1295552217359, "n_lp": 2362, "n_retry": 0, "seconds": 30.6}, "S256": {"detect": 593, "margin_at_detect_mC": -424.1295552976362, "margin_at_t_star_mC": -424.1295552976362, "n_lp": 2026, "n_retry": 1, "seconds": 61.9}}

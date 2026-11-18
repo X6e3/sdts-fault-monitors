@@ -1,0 +1,1 @@
+{"key": "430007-drift_0.001-E0-rw-uniform", "cyl16p": 3095, "S128": {"detect": 3095, "margin_at_detect_mC": -4.793346645492358, "margin_at_t_star_mC": -4.793346645492358, "n_lp": 13960, "n_retry": 0, "seconds": 139.5}, "S256": {"detect": 3095, "margin_at_detect_mC": -4.793352519700145, "margin_at_t_star_mC": -4.793352519700145, "n_lp": 13624, "n_retry": 1, "seconds": 365.7}}

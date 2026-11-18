@@ -247,3 +247,43 @@ shows that the error is the dense LP's:
 - **The reading rule needs a decision.** It asks for C0–C3 to pass, and C0 fails as fixed. The probe places the
   failure in the reference, not in E. Whether to go on to the DEV comparison (E and N against 2a's S256) on that basis
   is Can's call.
+
+## Phase 2a: S128 and S256 on all DEV rows (OBSERVED; 2026-11-18)
+
+**Run:**
+- `diag3_dev.py` at `6c1190f` on Arch, clean tree, 14 workers, 12:12–17:33.
+- 13.0 million LPs; 1,367 of them needed a fallback method. 74.7 CPU-hours.
+- Outputs are in `results/v3/diag3/dev2a-6c1190f/`: one JSON per row, plus `summary.json`.
+
+**Check:** cyl16p, recomputed online, gives D_paired 0.3858. That is Freeze 1's DEV reference, 0.386.
+
+**Scores** (1320 runs; 1081 with a certified t*; 238 admissible; 1 undetermined):
+
+| | D_paired | bootstrap 95 % | misses | detections equal to t* | largest lag | soundness findings | later than v2 |
+|---|---|---|---|---|---|---|---|
+| v2 | 0 | – | 8 | 805 | 2880 | 0 | – |
+| cyl16p | 0.386 | [0.20, 0.60] | 4 | 897 | 2880 | 0 | 0 |
+| S128 | 0.815 | [0.54, 0.99] | 0 | 1063 | 2844 | 0 | 0 |
+| **S256** | **0.9992** | **[0.997, 1.0]** | **0** | **1079** | **13** | **0** | **0** |
+
+**Without the ten rows of the five diagnosis runs:** cyl16p 0.512, S128 0.980, S256 0.9987.
+
+**S256 differs from the oracle on two rows only.**
+- They are 430027, drift_0.0005, ramp, in both arms: t* = 512, S256 detects at 525. Its margin at t* is +0.232 mC.
+- v2, cyl16p and S128 also detect at 525 there.
+- The total S256 lag is 26 samples, against v2's 32,925.
+
+**S128's lag** comes almost entirely from 430010 (drift_0.0005, ramp), which S128 detects at 3539. That is 5,688 of
+its 6,104 samples.
+
+**The reading rule (amendment 1):**
+- S256 reaches D_paired ≥ 0.80 with no soundness finding, so an 80 % gain is reachable at the architecture level, on
+  DEV. S256 reaches 0.999.
+- This is not a freeze. The window (W = 256, B = 16) was chosen on five of these DEV runs; without them, S256 gives
+  0.9987.
+- Seeds 440200+ are untouched. A candidate still needs its own freeze and its own validation.
+
+**What this does not show:**
+- **S256 folds with the 1e-6 pad, uncertified.** The pilot of amendment 3 found that the dense LP is solved loosely.
+  E and N, with certified folds, are running on the same rows (amendment 4).
+- **The cost is a desktop cost:** an 822 × 1134 LP and about 4.6 LPs per sample. It says nothing yet about an MCU.

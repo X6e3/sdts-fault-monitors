@@ -1,0 +1,1 @@
+{"key": "430016-gain_0.01-E0-rw-uniform", "cyl16p": 345, "S128": {"detect": 345, "margin_at_detect_mC": -111.01455769378366, "margin_at_t_star_mC": -111.01455769378366, "n_lp": 1236, "n_retry": 0, "seconds": 12.0}, "S256": {"detect": 345, "margin_at_detect_mC": -111.01465950390977, "margin_at_t_star_mC": -111.01465950390977, "n_lp": 900, "n_retry": 0, "seconds": 15.2}}

@@ -1,0 +1,1 @@
+{"key": "430026-noise_x2-E1-rw-uniform", "cyl16p": 599, "S128": {"detect": 599, "margin_at_detect_mC": -7.295839525576664, "margin_at_t_star_mC": -7.295839525576664, "n_lp": 2416, "n_retry": 0, "seconds": 29.8}, "S256": {"detect": 599, "margin_at_detect_mC": -7.2960641964630035, "margin_at_t_star_mC": -7.2960641964630035, "n_lp": 2080, "n_retry": 1, "seconds": 58.9}}

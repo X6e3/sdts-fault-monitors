@@ -1,0 +1,1 @@
+{"key": "430017-drift_0.005-E0-ramp-uniform", "cyl16p": 591, "S128": {"detect": 591, "margin_at_detect_mC": -55.181088432768256, "margin_at_t_star_mC": -55.181088432768256, "n_lp": 2358, "n_retry": 0, "seconds": 30.4}, "S256": {"detect": 591, "margin_at_detect_mC": -55.21002215255777, "margin_at_t_star_mC": -55.21002215255777, "n_lp": 2022, "n_retry": 3, "seconds": 60.2}}

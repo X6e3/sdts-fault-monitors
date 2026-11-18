@@ -1,0 +1,1 @@
+{"key": "430013-stuck-E1-rw-uniform", "cyl16p": 461, "S128": {"detect": 461, "margin_at_detect_mC": -93.47808189743456, "margin_at_t_star_mC": -93.47808189743456, "n_lp": 1762, "n_retry": 0, "seconds": 22.2}, "S256": {"detect": 461, "margin_at_detect_mC": -93.47809713910648, "margin_at_t_star_mC": -93.47809713910648, "n_lp": 1426, "n_retry": 0, "seconds": 38.3}}

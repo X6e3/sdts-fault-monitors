@@ -1,0 +1,1 @@
+{"key": "430026-jump_0.5-E0-rw-uniform", "cyl16p": 591, "S128": {"detect": 591, "margin_at_detect_mC": -315.97583102871795, "margin_at_t_star_mC": -315.97583102871795, "n_lp": 2358, "n_retry": 0, "seconds": 30.9}, "S256": {"detect": 591, "margin_at_detect_mC": -315.9758311387757, "margin_at_t_star_mC": -315.9758311387757, "n_lp": 2022, "n_retry": 1, "seconds": 58.9}}

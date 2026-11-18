@@ -1,0 +1,1 @@
+{"key": "430021-jump_0.2-E1-ramp-uniform", "cyl16p": 554, "S128": {"detect": 552, "margin_at_detect_mC": -7.6704044752744505, "margin_at_t_star_mC": -7.6704044752744505, "n_lp": 2196, "n_retry": 0, "seconds": 30.4}, "S256": {"detect": 552, "margin_at_detect_mC": -7.72566353278159, "margin_at_t_star_mC": -7.72566353278159, "n_lp": 1860, "n_retry": 0, "seconds": 57.6}}
