@@ -142,3 +142,84 @@ that computes is the same as at `6c1190f`. The outputs stay on the Mac, apart fr
 - **Otherwise:** each difference is recorded and looked at before 2b (is it a near tie? a fallback?). Determinism
   across platforms is then an open requirement for any candidate.
 - The 2a score is the reference run alone. This check does not change it, and the second machine's rows never enter it.
+
+**Amendment 2 is withdrawn** (2026-11-18, about 15:40). It was stopped before any row finished, so no result of it was
+seen. Two machines agreeing in float64 says little about the MCU, which will use float32 and another solver, and
+soundness rests on certified bounds, not on bit equality. `diag3_platform.py` is kept for the record only.
+
+## Amendment 3: the compressed window, a pilot on the five diagnosis runs (2026-11-18, written before any result)
+
+**Question:** can S256 be written with far fewer variables, with nothing lost?
+- Today S256 carries 3 states per sample: 822 variables × 1134 rows.
+- The independent check (T3c) found that about 88 % of the measurements are redundant when they arrive.
+
+**The exact step.** The window LP's model is x_{j+1} = M x_j + e3 w_j with |w_j| ≤ ρ, since M's third row is e3ᵀ. For
+two nodes a < b with L = b − a:
+
+  x_b = M^L x_a + Σ_{k<L} M^k e3 w_{b−1−k}.
+
+- M^L is computed from exact rational powers of the float64 M.
+- The ambient increments w_j stay explicit, as variables bounded by ±ρ. So the segment's zonotope Z_L is represented
+  exactly with 3 equality rows.
+- Its facets are not enumerated: that takes L(L−1) rows, and the zonotope is degenerate for L ≤ 2.
+- No template of it is used either, since a template is an outer approximation.
+
+**Nodes:** τ, the kept measurements, τ + B (the fold), the objective state and t_end.
+
+**The box between nodes:**
+- **ac and as stay in it automatically.** Rows 1–2 of M are convex combinations, so if the nodes and the TA path are
+  in the box, every state between them is too.
+- **Only the TA box is at stake.** Between nodes, TA can leave the box by at most ⌊L/2⌋ρ.
+
+**Variants** (W = 256, B = 16, smoothing fold, all in `diag3_cw.py`):
+- **A:** the dense S256 of `diag3.Window`.
+- **E:** (ac, as) at the nodes only, TA at every sample. Measurements redundant at arrival are dropped. Apart from the
+  dropped measurements, E has A's feasible set.
+- **N:** as E, but with TA at the nodes only. This drops the TA box between nodes, which is sound and only looser.
+
+**Redundant measurements:**
+- **The rule:** a measurement is redundant at arrival if its slab contains the as-range computed from the measurements
+  before it. In E and N such a measurement is dropped.
+- **Dropping is always sound.** It is not lossless in general. After a fold, the template base is looser than the
+  constraints it replaced, so a dropped measurement could become active again.
+- **What it costs is measured,** as E against A.
+- **K:** no limit and no eviction in this pilot. The largest number kept is reported.
+
+**Certified folds, in every variant:**
+- Each support written is max(LP value + pad, dual bound), then clamped as before.
+- The dual bound comes from weak duality with the solver's multipliers, over the boxed variables, with the
+  floating-point rounding bounded explicitly.
+- The alarm at detection is certified the same way.
+
+**Order (as in phase 1):** the alarm at t uses the measurements up to t − 1. z_t is added, and the fold applied, after
+the alarm check.
+
+**Runs:**
+- **Rows:** the five diagnosis runs, with phase 1's horizon (stop at detection, else at t_cyl16p + 300).
+- **Machine:** the MacBook (Apple M4). All variants are timed on that same machine.
+
+**Check, before the criteria (C0):** E with every measurement kept, run in lockstep with `diag3.Window` up to t*. The
+as-range and the fold supports must agree within 1e-6 °C.
+
+**Criteria (fixed now):**
+- **C1:** A detects at t* in all five runs. In 430010, its margin at detection is within 0.01 mC of the independent
+  certified replay (695, −0.2855 mC). The tolerance allows for two certification procedures that raise supports by
+  different amounts, up to the size of the shortfalls seen (7.3e-6 °C).
+- **C2:** E detects at the same time as A in all five runs, with the margin at t* within 1e-3 mC (1e-6 °C).
+- **C3:** no variant alarms before t*, and every alarm of A and E is certified.
+
+**Reported without a criterion:**
+- N's detections and margins, which give the cost of dropping the TA box between nodes;
+- the folds raised to their dual bound;
+- the largest number of kept measurements and nodes;
+- variables and rows;
+- LP counts;
+- the median, p95 and maximum step time, and the largest fold-step time.
+
+**Reading rule:**
+- **If C0–C3 pass:** E is an exact compressed form of S256 on these runs. The next amendment runs E and N on DEV, on
+  the Mac, and compares them row by row with 2a's S256. The ramp cells are reported apart, because TA there runs close
+  to the box walls.
+- **If C2 fails:** find out why (re-activated measurements, or the implementation) before anything else.
+- **The cost figures** are Python and HiGHS on the Mac, not MCU figures. Variants are compared only on the same
+  machine.

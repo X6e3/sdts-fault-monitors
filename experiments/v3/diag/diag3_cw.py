@@ -1,0 +1,397 @@
+"""DIAG-3 amendment 2 (DIAG-3-PLAN.md): the compressed window, a pilot on the five diagnosis runs. W = 256, B = 16.
+
+variants (all fold with the smoothing rule; every fold support is certified by a dual bound):
+  A  the dense S256 window LP of diag3.Window (3 states per sample)
+  E  (ac, as) only at nodes, the TA path kept at every sample; only measurements redundant at arrival are dropped.
+     Between nodes ac and as stay in the box by convexity, so E is A without the dropped measurements.
+  N  as E, but TA only at nodes, with the ambient increments w_j (|w_j| <= rho) explicit: the TA box between nodes
+     is dropped (sound, looser).
+nodes: tau, the kept measurements, tau + B (the fold), the objective state and t_end.
+segment a -> b (L = b - a):  x_b = M^L x_a + sum_{k<L} M^k e3 w_{b-1-k}, exactly (M^L from exact rational powers).
+
+usage:
+  python -B diag3_cw.py check OUT [--workers 5]       # E with every measurement against diag3.Window, lockstep
+  python -B diag3_cw.py run OUT [--workers 8] [--variants A E N]
+  python -B diag3_cw.py summary OUT
+"""
+import argparse
+import json
+import math
+import os
+import platform
+import subprocess
+import sys
+import time
+from concurrent.futures import ProcessPoolExecutor
+from fractions import Fraction
+from pathlib import Path
+
+import numpy as np
+import scipy.sparse as sp
+from scipy.optimize import linprog
+
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+import diag1 as G  # noqa: E402
+import diag3 as W3  # noqa: E402
+
+V, S, T, M = G.V, G.S, G.T, G.M
+DELTA, RHO, LO, HI, NREC = G.DELTA, G.RHO, G.LO, G.HI, G.NREC
+B, PAD, AFTER, W = W3.B, W3.PAD, W3.AFTER, 256
+U = 2.0 ** -53
+T3A_430010 = (695, -0.2855352673387656)        # the certified replay of the independent check, mC
+CHECK_TOL = 1e-6                                # degC
+MARGIN_TOL_E = 1e-3                             # mC
+MARGIN_TOL_A = 1e-2                             # mC
+
+
+def _powers(n):
+    Mq = [[Fraction(float(M[i, j])) for j in range(3)] for i in range(3)]
+    P = [[[Fraction(int(i == j)) for j in range(3)] for i in range(3)]]
+    for _ in range(n):
+        Q = P[-1]
+        P.append([[sum(Q[i][k] * Mq[k][j] for k in range(3)) for j in range(3)] for i in range(3)])
+    return np.array([[[float(x) for x in row] for row in p] for p in P])
+
+
+POW = _powers(W + 2 * B + 4)
+GEN = POW[:, :, 2]                              # GEN[k] = M^k e3
+assert np.array_equal(M[2], [0.0, 0.0, 1.0]) and np.all(POW[:, 2] == [0.0, 0.0, 1.0])
+
+
+class Rec:
+    last = None
+
+
+def rec_linprog(c, **kw):
+    res = linprog(c, **kw)
+    Rec.last = (c, kw, res)
+    return res
+
+
+W3.linprog = rec_linprog                        # diag3.Window.lp now leaves its LP data in Rec.last
+
+
+def _gam(n):
+    return n * U / (1 - n * U)
+
+
+def _colnnz(A):
+    return int(np.diff(A.tocsc().indptr).max()) if A.nnz else 0
+
+
+def certified_max():
+    """a rigorous upper bound on max (-c) x of the last LP: weak duality with the solver's multipliers, every
+    variable boxed, float rounding bounded explicitly"""
+    c, kw, res = Rec.last
+    bnd = kw["bounds"]
+    lb, ub = bnd[:, 0], bnd[:, 1]
+    s, sa, k, parts = c.astype(float).copy(), np.abs(c).astype(float), 1, []
+    if kw.get("A_ub") is not None:
+        A, y = kw["A_ub"], np.maximum(0.0, -np.asarray(res.ineqlin.marginals))
+        s += A.T @ y
+        sa += abs(A).T @ y
+        k += _colnnz(A)
+        parts.append(y * kw["b_ub"])
+    if kw.get("A_eq") is not None:
+        A, nu = kw["A_eq"], -np.asarray(res.eqlin.marginals)
+        s += A.T @ nu
+        sa += abs(A).T @ np.abs(nu)
+        k += _colnnz(A)
+        parts.append(nu * kw["b_eq"])
+    parts.append(-np.minimum(s * lb, s * ub))
+    parts.append(2 * _gam(k + 1) * sa * np.maximum(np.abs(lb), np.abs(ub)))
+    p = np.concatenate(parts)
+    tot = math.fsum(p)
+    return tot + 4 * (_gam(4) * math.fsum(np.abs(p)) + U * abs(tot))
+
+
+def solve(win, cvec, **kw):
+    t0 = time.monotonic()
+    res = None
+    for method, opts in (("highs-ds", {"presolve": False}), ("highs-ipm", {"presolve": False}), ("highs-ds", {})):
+        res = rec_linprog(cvec, method=method, options=opts, **kw)
+        if res.status in (0, 2):
+            break
+        win.n_retry += 1
+    win.lp_seconds += time.monotonic() - t0
+    win.n_lp += 1
+    if res.status == 2:
+        return None
+    if res.status != 0:
+        raise RuntimeError(f"LP status {res.status}: {res.message}")
+    return -res.fun
+
+
+class Stats:
+    def _init_stats(self):
+        self.n_short, self.max_short, self.max_nodes, self.max_kept = 0, 0.0, 0, 0
+
+    def lp_cert(self, *a):
+        v = self.lp(*a)
+        return (None, None) if v is None else (v, certified_max())
+
+    def fold(self, t):
+        tau2 = self.tau + B
+        t_end, upto = (t, t) if self.smooth else (tau2, tau2)
+        vals = []
+        for d in self.D:
+            v, cub = self.lp_cert(t_end, upto, tau2, d) if self.cert else (self.lp(t_end, upto, tau2, d), None)
+            if v is None:
+                raise RuntimeError("window LP infeasible during a fold")
+            if self.cert:
+                if cub > v + PAD:
+                    self.n_short += 1
+                    self.max_short = max(self.max_short, cub - v - PAD)
+                vals.append(max(v + PAD, cub))
+            else:
+                vals.append(v + PAD)
+        self.tau, self.base = tau2, self.tp.clamp(np.array(vals, dtype=float))
+        self.zs = {j: z for j, z in self.zs.items() if j >= tau2}
+
+    def certify_alarm(self, t, z):
+        up, cup = self.lp_cert(t, t - 1, t, (0, 1.0, 0))
+        dn, cdn = self.lp_cert(t, t - 1, t, (0, -1.0, 0))
+        m = 1e3 * min(z + DELTA + cdn, cup - (z - DELTA))       # G.margin with certified bounds; < 0: certified
+        return {"certified": bool(m < 0), "certified_margin_mC": m}
+
+
+class Dense(Stats, W3.Window):
+    def __init__(self, tp, cert=True):
+        W3.Window.__init__(self, tp, W, smooth=True)
+        self.cert = cert
+        self._init_stats()
+
+
+class Compressed(Stats):
+    def __init__(self, tp, ta_path, cert=True):
+        self.tp, self.D, self.ta_path, self.cert, self.smooth = tp, tp.D, ta_path, cert, True
+        self.tau, self.base, self.zs = 0, None, {}
+        self.n_lp, self.max_vars, self.max_rows, self.lp_seconds, self.n_retry = 0, 0, 0, 0.0, 0
+        self._init_stats()
+
+    def lp(self, t_end, meas_upto, obj_state, obj_vec):
+        tau = self.tau
+        meas = sorted(j for j in self.zs if tau <= j <= meas_upto and not (j == tau and self.base is not None))
+        nodes = sorted({tau, obj_state, t_end, *meas})
+        nv, idx = 0, {}
+        if self.ta_path:
+            nv = t_end - tau + 1                                   # TA_j at every sample: index j - tau
+            for nd in nodes:
+                idx[nd] = (nv, nv + 1, nd - tau)
+                nv += 2
+        else:
+            for nd in nodes:
+                idx[nd] = (nv, nv + 1, nv + 2)
+                nv += 3
+        w0 = nv                                                    # w_j, j = tau .. t_end - 1
+        nv += t_end - tau
+        lb, ub = np.full(nv, LO), np.full(nv, HI)
+        lb[w0:], ub[w0:] = -RHO, RHO
+        for j in meas:
+            i = idx[j][1]
+            lb[i], ub[i] = max(lb[i], self.zs[j] - DELTA), min(ub[i], self.zs[j] + DELTA)
+        if np.any(lb > ub):
+            return None
+        er, ec, ev, r = [], [], [], 0
+        for a, b in zip(nodes, nodes[1:]):
+            L, xa, xb = b - a, idx[a], idx[b]
+            for c in (0, 1) if self.ta_path else (0, 1, 2):
+                er.append(r), ec.append(xb[c]), ev.append(1.0)
+                for q in range(3):
+                    if POW[L][c, q] != 0.0:
+                        er.append(r), ec.append(xa[q]), ev.append(-POW[L][c, q])
+                for k in range(L):
+                    if GEN[k][c] != 0.0:
+                        er.append(r), ec.append(w0 + (b - 1 - k - tau)), ev.append(-GEN[k][c])
+                r += 1
+        if self.ta_path:                                           # TA_{j+1} - TA_j - w_j = 0
+            for j in range(t_end - tau):
+                er += [r, r, r]
+                ec += [j + 1, j, w0 + j]
+                ev += [1.0, -1.0, -1.0]
+                r += 1
+        if self.base is None:                                      # the initial segment: ac = as = TA
+            x0 = idx[tau]
+            er += [r, r, r + 1, r + 1]
+            ec += [x0[0], x0[2], x0[1], x0[2]]
+            ev += [1.0, -1.0, 1.0, -1.0]
+            r += 2
+        A_eq = sp.csr_matrix((ev, (er, ec)), shape=(r, nv)) if r else None
+        b_eq = np.zeros(r) if r else None
+        A_ub = b_ub = None
+        q = 0
+        if self.base is not None:                                  # D0 x_tau <= b
+            x0 = idx[tau]
+            ir, ic, iv = [], [], []
+            for i, d in enumerate(self.D):
+                for c in range(3):
+                    if d[c] != 0.0:
+                        ir.append(i), ic.append(x0[c]), iv.append(d[c])
+            q = len(self.D)
+            A_ub, b_ub = sp.csr_matrix((iv, (ir, ic)), shape=(q, nv)), np.asarray(self.base, dtype=float)
+        cvec = np.zeros(nv)
+        cvec[list(idx[obj_state])] = -np.asarray(obj_vec, dtype=float)
+        self.max_vars, self.max_rows = max(self.max_vars, nv), max(self.max_rows, r + q)
+        self.max_nodes = max(self.max_nodes, len(nodes))
+        return solve(self, cvec, A_ub=A_ub, b_ub=b_ub, A_eq=A_eq, b_eq=b_eq, bounds=np.c_[lb, ub])
+
+    def as_range(self, t):
+        up = self.lp(t, t - 1, t, (0, 1.0, 0))
+        dn = self.lp(t, t - 1, t, (0, -1.0, 0))
+        return (None, None) if up is None or dn is None else (-dn, up)
+
+
+def make(var, cy):
+    return {"A": lambda: Dense(cy), "E": lambda: Compressed(cy, True), "N": lambda: Compressed(cy, False)}[var]()
+
+
+def _run_info(seed, cell, amb):
+    j1 = json.load(open(W3.D1RUN / f"arms-{seed}-{cell}-{amb}-L256.json"))
+    run = S.run(seed, next(c for c in T.CELLS if c.name == cell), "E0", amb, "uniform")
+    return j1["t_star"], j1["t_cyl16p"], G.zs_of(run), V.load_frozen(G.V3 / "frozen" / "cyl16p.json")
+
+
+def job(args):
+    seed, cell, amb, var, out = args
+    t_star, t_cyl, zs, cy = _run_info(seed, cell, amb)
+    w = make(var, cy)
+    last = min(NREC - 1, t_cyl + AFTER)
+    det, cert, margins, steps, fold_steps, n_dropped, t00 = None, None, {}, [], [], 0, time.monotonic()
+    w.zs[0] = zs[0]
+    for t in range(1, last + 1):
+        t0 = time.monotonic()
+        lower, upper = w.as_range(t)                  # measurements up to t - 1 only
+        if lower is None:
+            raise RuntimeError(f"window LP infeasible before measurement {t}")
+        margins[t] = G.margin(lower, upper, zs[t])
+        if upper < zs[t] - DELTA or lower > zs[t] + DELTA:
+            det, cert = t, w.certify_alarm(t, zs[t])
+            break
+        if var == "A" or not (lower >= zs[t] - DELTA and upper <= zs[t] + DELTA):
+            w.zs[t] = zs[t]
+        else:
+            n_dropped += 1
+        w.max_kept = max(w.max_kept, len(w.zs))
+        folded = t - w.tau > W + B
+        if folded:
+            w.fold(t)                                 # after the alarm check, with z_t
+        (fold_steps if folded else steps).append(time.monotonic() - t0)
+    ms = 1e3 * np.array(steps) if steps else np.zeros(1)
+    fs = 1e3 * np.array(fold_steps) if fold_steps else np.zeros(1)
+    res = {"seed": seed, "cell": cell, "ambient": amb, "variant": var, "W": W, "B": B, "t_star": t_star,
+           "t_cyl16p": t_cyl, "detect": det, "censored_at": None if det is not None else last,
+           "margin_at_t_star_mC": 1e3 * margins[t_star] if t_star in margins else None,
+           "margin_at_detect_mC": 1e3 * margins[det] if det is not None else None, "alarm_certificate": cert,
+           "folds_raised_to_dual_bound": w.n_short, "largest_raise_C": w.max_short,
+           "measurements_dropped": n_dropped, "max_kept": w.max_kept,
+           "max_nodes": getattr(w, "max_nodes", 0) or None, "max_vars": w.max_vars, "max_rows": w.max_rows,
+           "n_lp": w.n_lp, "n_retry": w.n_retry, "lp_seconds": round(w.lp_seconds, 2),
+           "step_ms": {"median": float(np.median(ms)), "p95": float(np.percentile(ms, 95)), "max": float(ms.max())},
+           "fold_step_ms": {"median": float(np.median(fs)), "max": float(fs.max())},
+           "seconds": round(time.monotonic() - t00, 1)}
+    (Path(out) / f"cw-{seed}-{cell}-{amb}-{var}.json").write_text(json.dumps(res, indent=1) + "\n")
+    np.save(Path(out) / f"cw-{seed}-{cell}-{amb}-{var}-margins.npy", np.array(sorted(margins.items())))
+    return seed, var, det, t_star, res["seconds"]
+
+
+def check_job(args):
+    """lockstep up to t*: diag3.Window (phase 1, pad fold) against E with every measurement and the same fold rule"""
+    seed, cell, amb, out = args
+    t_star, _, zs, cy = _run_info(seed, cell, amb)
+    a, e = W3.Window(cy, W, smooth=True), Compressed(cy, True, cert=False)
+    a.zs[0] = e.zs[0] = zs[0]
+    d_range, d_fold, n_fold = 0.0, 0.0, 0
+    for t in range(1, t_star + 1):
+        ra, re = a.as_range(t), e.as_range(t)
+        d_range = max(d_range, abs(ra[0] - re[0]), abs(ra[1] - re[1]))
+        a.zs[t] = e.zs[t] = zs[t]
+        if t - a.tau > W + B:
+            a.fold(t)
+            e.fold(t)
+            d_fold, n_fold = max(d_fold, float(np.max(np.abs(a.base - e.base)))), n_fold + 1
+    res = {"seed": seed, "cell": cell, "ambient": amb, "steps": t_star, "folds": n_fold,
+           "max_abs_diff_as_range_C": d_range, "max_abs_diff_fold_C": d_fold,
+           "dense_max_vars_rows": [a.max_vars, a.max_rows], "E_max_vars_rows": [e.max_vars, e.max_rows]}
+    (Path(out) / f"check-{seed}.json").write_text(json.dumps(res, indent=1) + "\n")
+    return res
+
+
+def summary(out):
+    rows = {}
+    for f in sorted(out.glob("cw-*.json")):
+        r = json.loads(f.read_text())
+        rows.setdefault(r["seed"], {})[r["variant"]] = r
+    checks = [json.loads(f.read_text()) for f in sorted(out.glob("check-*.json"))]
+    rep = {"criteria": {}, "runs": {}}
+    if checks:
+        mx = max(max(c["max_abs_diff_as_range_C"], c["max_abs_diff_fold_C"]) for c in checks)
+        rep["criteria"]["C0_E_all_equals_dense"] = {"max_abs_diff_C": mx, "runs": len(checks),
+                                                     "passes": bool(len(checks) == 5 and mx <= CHECK_TOL)}
+    A = {s: v["A"] for s, v in rows.items() if "A" in v}
+    if len(A) == 5:
+        ok = all(r["detect"] == r["t_star"] for r in A.values())
+        r10 = A[430010]
+        ok10 = r10["detect"] == T3A_430010[0] and abs(r10["margin_at_detect_mC"] - T3A_430010[1]) <= MARGIN_TOL_A
+        rep["criteria"]["C1_A_certified"] = {"all_at_t_star": bool(ok), "430010_matches_independent": bool(ok10),
+                                             "passes": bool(ok and ok10)}
+    E = {s: v["E"] for s, v in rows.items() if "E" in v}
+    if len(E) == 5 and len(A) == 5:
+        same = all(E[s]["detect"] == A[s]["detect"] for s in E)
+        dm = max(abs(E[s]["margin_at_t_star_mC"] - A[s]["margin_at_t_star_mC"]) for s in E)
+        rep["criteria"]["C2_E_equals_A"] = {"same_detections": bool(same), "max_abs_margin_diff_mC": dm,
+                                            "passes": bool(same and dm <= MARGIN_TOL_E)}
+    early = [(s, v) for s, vs in rows.items() for v, r in vs.items() if r["detect"] is not None and
+             r["detect"] < r["t_star"]]
+    uncert = [(s, v) for s, vs in rows.items() for v, r in vs.items() if v in ("A", "E") and r["detect"] is not None
+              and not r["alarm_certificate"]["certified"]]
+    rep["criteria"]["C3_no_early_alarm_and_certified"] = {"early": early, "uncertified": uncert,
+                                                          "passes": bool(not early and not uncert)}
+    for s, vs in rows.items():
+        rep["runs"][s] = {v: {k: r[k] for k in ("detect", "t_star", "margin_at_t_star_mC", "margin_at_detect_mC",
+                                                "alarm_certificate", "folds_raised_to_dual_bound", "largest_raise_C",
+                                                "measurements_dropped", "max_kept", "max_nodes", "max_vars",
+                                                "max_rows", "n_lp", "n_retry", "step_ms", "fold_step_ms", "seconds")}
+                          for v, r in sorted(vs.items())}
+    return rep
+
+
+def _meta(out, cmd):
+    import scipy
+    head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=G.ROOT, text=True).strip()
+    dirty = subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=no"], cwd=G.ROOT, text=True)
+    meta = {"cmd": cmd, "git_head": head, "git_dirty_tracked": bool(dirty), "W": W, "B": B, "pad": PAD,
+            "machine": platform.machine(), "platform": platform.platform(), "python": platform.python_version(),
+            "numpy": np.__version__, "scipy": scipy.__version__, "started": time.strftime("%Y-%m-%dT%H:%M:%S%z")}
+    (out / f"meta-{cmd}.json").write_text(json.dumps(meta, indent=1) + "\n")
+    return meta
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("cmd", choices=("check", "run", "summary"))
+    ap.add_argument("out", type=Path)
+    ap.add_argument("--workers", type=int, default=8)
+    ap.add_argument("--variants", nargs="+", default=["A", "E", "N"])
+    a = ap.parse_args()
+    a.out.mkdir(parents=True, exist_ok=True)
+    if a.cmd == "summary":
+        rep = summary(a.out)
+        (a.out / "summary.json").write_text(json.dumps(rep, indent=1, default=str) + "\n")
+        print(json.dumps(rep["criteria"], indent=1, default=str))
+        return
+    meta = _meta(a.out, a.cmd)
+    if a.cmd == "check":
+        jobs, fn = [(s, c, amb, str(a.out)) for s, c, amb in W3.RUNS], check_job
+    else:
+        jobs, fn = [(s, c, amb, v, str(a.out)) for s, c, amb in W3.RUNS for v in a.variants], job
+    with ProcessPoolExecutor(a.workers) as pool:
+        for x in pool.map(fn, jobs):
+            print(x, flush=True)
+    meta["finished"] = time.strftime("%Y-%m-%dT%H:%M:%S%z")
+    (a.out / f"meta-{a.cmd}.json").write_text(json.dumps(meta, indent=1) + "\n")
+
+
+if __name__ == "__main__":
+    os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
+    main()
