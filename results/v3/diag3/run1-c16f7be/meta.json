@@ -1,0 +1,17 @@
+{
+ "git_head": "c16f7be9848641c4b6cdaf7e5dd0862303526b69",
+ "git_dirty_tracked": false,
+ "B": 16,
+ "pad": 1e-06,
+ "variants": [
+  "inf",
+  "S64",
+  "F64",
+  "S128",
+  "F128",
+  "S256",
+  "F256"
+ ],
+ "started": "2026-11-18T11:58:29+0300",
+ "finished": "2026-11-18T12:02:03+0300"
+}

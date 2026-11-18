@@ -1,0 +1,19 @@
+{
+ "seed": 430007,
+ "cell": "drift_0.002",
+ "ambient": "rw",
+ "variant": "inf",
+ "W": null,
+ "B": 16,
+ "t_star": 673,
+ "t_cyl16p": 792,
+ "detect": 673,
+ "censored_at": null,
+ "margin_at_t_star_mC": -4.18608713022145,
+ "n_lp": 1346,
+ "n_retry": 0,
+ "lp_seconds": 56.1,
+ "seconds": 58.4,
+ "max_vars": 2022,
+ "max_rows": 2694
+}

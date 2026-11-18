@@ -1,0 +1,19 @@
+{
+ "seed": 430000,
+ "cell": "drift_0.001",
+ "ambient": "ramp",
+ "variant": "S256",
+ "W": 256,
+ "B": 16,
+ "t_star": 849,
+ "t_cyl16p": 2048,
+ "detect": 849,
+ "censored_at": null,
+ "margin_at_t_star_mC": -4.62492446257734,
+ "n_lp": 3210,
+ "n_retry": 1,
+ "lp_seconds": 75.6,
+ "seconds": 80.0,
+ "max_vars": 822,
+ "max_rows": 1134
+}
