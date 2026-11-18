@@ -223,3 +223,47 @@ as-range and the fold supports must agree within 1e-6 °C.
 - **If C2 fails:** find out why (re-activated measurements, or the implementation) before anything else.
 - **The cost figures** are Python and HiGHS on the Mac, not MCU figures. Variants are compared only on the same
   machine.
+
+## Amendment 4: E and N on DEV (2026-11-18, written before any result of it)
+
+**Status:**
+- Run on Can's go, after the pilot.
+- The pilot's C0 failed as fixed. The post-hoc probe placed that failure in the dense reference (DIAG-3-RESULTS.md).
+- Going on to DEV on that basis was Can's decision.
+
+**Rows:** every row of the 2a set: `results/v3/dev-45cff1d/rows.jsonl`, seeds 430000–430029, both arms, 1320 runs.
+
+**Variants:**
+- E and N exactly as in amendment 3: W = 256, B = 16, certified folds, measurements redundant at arrival dropped, no
+  K limit.
+- Both run online from k = 0, until detection or N.
+
+**Run:** `diag3_cw_dev.py run`, on the Mac, 8 workers, from a clean checkout. The rows that stop early run first.
+
+**Scoring:**
+- as in amendment 1, with Freeze 1's functions: `paired_delta`, `_soundness`, `describe`, `by_cell`, `bootstrap`;
+- with and without the ten rows of the five diagnosis runs.
+
+**Comparisons:**
+- E against 2a's S256 (the Arch run), row by row, once 2a has finished;
+- N against E, row by row, by cell and ambient.
+
+**Criteria (fixed now):**
+- **D1:** E's detection equals 2a's S256 on every row. Every row that differs is listed, with both margins.
+- **D2:** no soundness finding for E or N, and every alarm certified.
+
+**Reported:**
+- D_paired, misses, detections later than v2, by cell, bootstrap, for E, N and (once available) S256 and cyl16p;
+- the kept measurements (median, p95, max);
+- the largest number of nodes, variables and rows;
+- the largest p95 step time and fold-step time;
+- the folds raised to their dual bound, and the fallback LPs.
+
+**Reading rule:**
+- **The 80 % question.** Amendment 1's rule applies to E and to N: D_paired ≥ 0.80 with no soundness finding means
+  an 80 % gain is reachable at the architecture level, on DEV.
+- **If D1 fails,** each differing row is examined (is it a near tie? the dense LP's error?) before E stands in for
+  S256.
+- **N as the MCU form.** N is taken as the MCU form only if it detects no later than E on every row. Otherwise the TA
+  box between nodes stays, as in E or with its rows added only where TA can reach the wall.
+- **Not a freeze.** Seeds 440200+ stay untouched.
