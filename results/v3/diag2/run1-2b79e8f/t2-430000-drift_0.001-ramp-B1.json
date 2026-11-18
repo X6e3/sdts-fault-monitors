@@ -1,0 +1,20 @@
+{
+ "seed": 430000,
+ "cell": "drift_0.001",
+ "ambient": "ramp",
+ "family": "B1",
+ "n_directions": 72,
+ "table_entries": 559660,
+ "t_star": 849,
+ "k0": 593,
+ "t_cyl16p": 2048,
+ "detect": {
+  "B": 849,
+  "C": 2048,
+  "D": 2048
+ },
+ "margin_at_t_star_mC": {
+  "B": -4.624924428815791,
+  "C": 4.378434669562559
+ }
+}

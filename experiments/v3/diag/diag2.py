@@ -272,14 +272,14 @@ def summary(out, d1):
     rep = {"families": check_families(), "t1": {}, "t2": {}, "checks": {}, "criteria": {}}
     # T1
     tot = {"accumulated": 0.0, "geometry_D0": 0.0, "geometry_B1": 0.0, "geometry_B2": 0.0, "rise_cut": 0.0,
-           "rise_skip": 0.0, "n": 0}
+           "rise_skip": 0.0, "rise_at_cut": 0.0, "rise_beyond_geometry": 0.0, "n": 0}
     for seed, cell, amb in RUNS:
         t = json.load(open(out / f"t1-{seed}-{cell}-{amb}.json"))
         rep["checks"][f"t1 {seed} A reproduces t*"] = t["A_reproduces_t_star"]
         rep["checks"][f"t1 {seed} C matches DIAG-1 (max mC)"] = max((r["check_C_vs_diag1_mC"] for r in t["rows"]),
                                                                      default=0.0)
         per = {"events": len(t["rows"]), "accumulated_mC": 0.0, "geometry_mC": {"D0": 0.0, "B1": 0.0, "B2": 0.0},
-               "rise_with_cut_mC": 0.0, "rise_skip_mC": 0.0}
+               "rise_with_cut_mC": 0.0, "rise_skip_mC": 0.0, "rise_at_cut_mC": 0.0, "rise_beyond_geometry_mC": 0.0}
         for r in t["rows"]:
             for u in ("+e3", "-e3"):
                 x = r[u]
@@ -288,6 +288,9 @@ def summary(out, d1):
                     per["geometry_mC"][f] += x["geometry_mC"][f]
                 per["rise_with_cut_mC"] += x["next_gap_with_cut_mC"] - x["gap_pre_mC"]
                 per["rise_skip_mC"] += x["next_gap_skip_mC"] - x["gap_pre_mC"]
+                # at k itself: rise = gap_cut - gap_pre = geometry(D0) + (accumulated - gap_pre), exactly
+                per["rise_at_cut_mC"] += x["gap_cut_mC"] - x["gap_pre_mC"]
+                per["rise_beyond_geometry_mC"] += x["accumulated_mC"] - x["gap_pre_mC"]
         rep["t1"][seed] = per
         tot["n"] += per["events"]
         tot["accumulated"] += per["accumulated_mC"]
@@ -295,6 +298,8 @@ def summary(out, d1):
             tot[f"geometry_{f}"] += per["geometry_mC"][f]
         tot["rise_cut"] += per["rise_with_cut_mC"]
         tot["rise_skip"] += per["rise_skip_mC"]
+        tot["rise_at_cut"] += per["rise_at_cut_mC"]
+        tot["rise_beyond_geometry"] += per["rise_beyond_geometry_mC"]
     rep["t1"]["total"] = tot
     # T2
     rises = {f: 0.0 for f in ("ref", "D0", "B1", "B2")}
@@ -320,7 +325,7 @@ def summary(out, d1):
                 1e3 * max(np.max(sup1["A"][k] - supB[k]) for k in ks))
             rep["checks"][f"t2 {seed} {f}: C_F <= C_full(D0) (worst excess mC)"] = float(
                 1e3 * max(np.max(sups[f][k] - sup1["C_full"][k]) for k in ks))
-        rep["checks"][f"t2 {seed} D_D0 reproduces cyl16p"] = row["D0"]["detect"]["D"] == j1["t_cyl16p"]
+        rep["checks"][f"t2 {seed} D_D0 reproduces cyl16p"] = bool(row["D0"]["detect"]["D"] == j1["t_cyl16p"])
         for f in rises:
             s = sups[f]
             rises[f] += sum(1e3 * ((s[k + 1][i] - sup1["A"][k + 1][i]) - (s[k][i] - sup1["A"][k][i]))
@@ -330,14 +335,14 @@ def summary(out, d1):
             for f in ("B1", "B2"):
                 loss = row[f]["margin_mC"]["C"] - 1e3 * mar1["A"][ts]
                 row[f]["margin_loss_vs_A_mC"] = loss
-                loss_ok[f] += loss <= 0.5 * ref_loss
-                recov[f] += row[f]["detect"]["C"] == ts
+                loss_ok[f] += int(loss <= 0.5 * ref_loss)
+                recov[f] += int(row[f]["detect"]["C"] == ts)
             row["ref_margin_loss_vs_A_mC"] = ref_loss
         rep["t2"][seed] = row
     rep["t2"]["event_rises_mC"] = rises
     for f in ("B1", "B2"):
-        a = rises[f] <= 0.5 * rises["ref"]
-        b = loss_ok[f] >= 3
+        a = bool(rises[f] <= 0.5 * rises["ref"])
+        b = bool(loss_ok[f] >= 3)
         rep["criteria"][f] = {"a_closes_cut_steps": a, "a_ratio": rises[f] / rises["ref"],
                               "b_closes_decision_loss": b, "b_runs": loss_ok[f], "c_recovers_decision_runs": recov[f],
                               "passes": a and b}

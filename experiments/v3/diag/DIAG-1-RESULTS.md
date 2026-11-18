@@ -253,3 +253,8 @@ already is.
 | dropping the oldest cut | open question | sound by projection and outward wrapping; its tightness is to be measured | GPT R2, Sol |
 
 The next step is `DIAG-2-PLAN.md`.
+
+**Refined by DIAG-2 (T1, `DIAG-2-RESULTS.md`):**
+- 95 % of the TA rise at a cut is lost even by the tightest D-hull of the exact pre-cut set.
+- It is the exact set's shape that the directions cannot express, exposed by the cut.
+- Slack piled up by the recursion beyond that hull accounts for 5 %.

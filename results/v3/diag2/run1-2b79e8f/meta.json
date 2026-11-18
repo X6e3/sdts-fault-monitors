@@ -1,0 +1,19 @@
+{
+ "git_head": "2b79e8f887d1854bd8788c21950287dfde10233f",
+ "git_dirty_tracked": false,
+ "diag1": "/home/x6e3/Research/sdts-runs/v3-diag1/run1-6fe3b54",
+ "L": 256,
+ "cap": 300,
+ "families": {
+  "n": {
+   "D0": 42,
+   "B1": 72,
+   "B2": 94
+  },
+  "added_pairs": 26,
+  "max_abs_diff_to_hydrogen_list": 4.844625702549177e-07,
+  "matches_hydrogen_list": true
+ },
+ "started": "2026-11-18T11:34:19+0300",
+ "finished": "2026-11-18T11:38:33+0300"
+}
