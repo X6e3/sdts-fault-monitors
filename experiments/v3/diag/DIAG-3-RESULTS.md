@@ -448,3 +448,30 @@ its 6,104 samples.
   (DIAG-2), so only a window longer than that holds it.
 - **For a candidate, W sets the size:** the kept measurements and the rows grow roughly linearly with W, from 18 and
   159 to 45 and 409.
+
+## Amendment 6, part 2: F with a cap on kept measurements, K = 64 and K = 40, on all DEV rows (OBSERVED; 2026-11-19)
+
+**Runs:**
+- `diag3_cw_dev.py --variants F --K ...` at `66429e2`.
+  - K = 64 on Arch (14 workers, 01:04–02:1x), from the clean checkout `~/Research/sdts-v3-f-66429e2`.
+  - K = 40 on the Mac (8 workers, 00:12–02:1x).
+- Outputs are in `results/v3/diag3/cwdev-F-K64-66429e2/` and `cwdev-F-K40-66429e2/`; the score is in
+  `score-K64-K40-66429e2.json`.
+
+**The criteria:**
+- **K1 passes.** F with K = 64 detects as amendment 4's E on all 1320 rows, with no eviction: DEV never keeps more
+  than 45.
+- **K2 passes so far** (K = 64 and 40). There is no soundness finding and no uncertified alarm, and no fold needed
+  raising. K = 32 is still running.
+
+| | D_paired | without the diagnosis runs | misses | detections equal to t* | later than v2 | evictions (rows) | kept, max | LP rows, max |
+|---|---|---|---|---|---|---|---|---|
+| E (no cap, amendment 4) | 0.99921 | 0.99875 | 0 | 1079 | 0 | – | 45 | 409 |
+| F, K = 64 | 0.99921 | 0.99875 | 0 | 1079 | 0 | 0 (0) | 45 | 409 |
+| F, K = 40 | 0.99921 | 0.99875 | 0 | 1079 | 0 | 420 (161) | 41 | 399 |
+
+**What it shows (INFERRED):**
+- **The hardened certificate and the outward slabs change nothing on DEV.**
+- **The eviction rule costs nothing at K = 40.** F evicted 420 measurements on 161 rows and still detects as E on
+  every row. The measurements that have been inactive longest are the ones the window can do without.
+- **K = 64 leaves a margin of 19 over the DEV maximum,** and K = 40 shows that the rule works below it.
