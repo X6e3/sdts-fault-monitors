@@ -48,6 +48,17 @@ def main():
     vrows = [{k: r[k] for k in ("seed", "cell", "arm", "ambient", "noise", "t_f", "oracle", "v2")} | {"candidates": f}
              for r, f in zip(rows, firsts)]
     s = SV.score(vrows, manifest)
+    # the RESULTS.md bookkeeping (fault rows with any oracle t*, certified or not), to tie the frozen files to the
+    # DEV numbers reported there; the frozen rules above exclude the uncertified row instead
+    old = {}
+    for name in ["v2"] + list(manifest["candidates"]):
+        get = (lambda r: r["v2"]) if name == "v2" else (lambda nm: (lambda r: r["candidates"][nm]))(name)
+        inc = [r for r in vrows if r["cell"] != "healthy" and r["oracle"]["t_star"] is not None]
+        lags = [get(r) - r["oracle"]["t_star"] for r in inc if get(r) is not None]
+        old[name] = {"oracle_inconsistent_runs": len(inc), "missed": sum(get(r) is None for r in inc),
+                     "equal_to_oracle": sum(x == 0 for x in lags), "lag_sum": sum(lags)}
+    s["results_md_bookkeeping"] = old
+    print("RESULTS.md bookkeeping:", json.dumps(old))
     s["note"] = "DEV reference (430000-430029, run_dev rows); not validation"
     s["source_rows"] = str(a.run_dev_dir / "rows.jsonl")
     a.out.write_text(json.dumps(s, indent=1) + "\n")

@@ -1,0 +1,91 @@
+{
+ "freeze": "v3-freeze-1",
+ "validation_block": [
+  440000,
+  440099
+ ],
+ "reserved_after_this_block": [
+  440100,
+  440999
+ ],
+ "cells": [
+  "healthy",
+  "jump_0.2",
+  "jump_0.5",
+  "drift_0.0005",
+  "drift_0.001",
+  "drift_0.002",
+  "drift_0.005",
+  "drift_0.02",
+  "noise_x2",
+  "stuck",
+  "gain_0.01"
+ ],
+ "arms": [
+  "E0",
+  "E1"
+ ],
+ "laws_all_cells": [
+  [
+   "rw",
+   "uniform"
+  ],
+  [
+   "ramp",
+   "uniform"
+  ]
+ ],
+ "laws_healthy_extra": [
+  [
+   "rw",
+   "edge"
+  ],
+  [
+   "ramp",
+   "edge"
+  ]
+ ],
+ "record_length": 3600,
+ "uncertified_limit_fraction_of_fault_runs": 0.01,
+ "candidates": {
+  "inv4p": {
+   "file": "experiments/v3/frozen/inv4p.json",
+   "sha256": "e509c855aeb8fa478c68417ebf4843b53a2bad679d7a43a95f640e3802539f8b",
+   "target_paired_lag_reduction": 0.1
+  },
+  "cyl16p": {
+   "file": "experiments/v3/frozen/cyl16p.json",
+   "sha256": "7f9cc8700fdd70782ddaf4a7e99a2e2c2f5818ce4aafa970f897b40e90a7747e",
+   "target_paired_lag_reduction": 0.25
+  }
+ },
+ "c_headers": {
+  "inv4p_float": "experiments/v3/frozen/c/tables_inv4p_float.h",
+  "inv4p_double": "experiments/v3/frozen/c/tables_inv4p_double.h",
+  "cyl16p_float": "experiments/v3/frozen/c/tables_cyl16p_float.h",
+  "cyl16p_double": "experiments/v3/frozen/c/tables_cyl16p_double.h"
+ },
+ "files": {
+  "experiments/v3/template_state.py": "6f8409274cdc583f3ed48aca372fc08fccd9970f106ae516291f39a5a6894666",
+  "experiments/v3/dev_scenarios.py": "a1b204efde095c4d36d2aab4ca503970386a2761485b3c84f3ec8da2503c363f",
+  "experiments/v3/run_validation.py": "8b4ea80f5e51bf98ddf74f9e91f3ba3718c03325d70aad155770478408031dc2",
+  "experiments/v3/score_validation.py": "46d3d6e078c6297a3453e840a7fcce315218931e5d6fbe74605e314d1825954e",
+  "experiments/v3/codegen_c.py": "4f99bd4979abf182b66363f140100decb72ed6ce099b2544fd61121fe7eeff07",
+  "experiments/v3/freeze_tables.py": "89a13739cf49f8485bfc2865476067c8c9e71cc7551d446403e3f5fbd6a25e6c",
+  "experiments/v3/c/v3_state.c": "acd3fb60e8fd9c443d7915076416dd9ed6274f56db3b8a8cac8759b09012b961",
+  "experiments/v3/c/v3_state.h": "df7f9369091cff492bf9e6ed9ef5e3ee11714860170e9153d8ee658df4524878",
+  "experiments/v3/c/harness.c": "b3cbdd968cd7f53489c5fd9489460282283d4562e6e321f22429c3fa4ca08915",
+  "experiments/v3/frozen/inv4p.json": "e509c855aeb8fa478c68417ebf4843b53a2bad679d7a43a95f640e3802539f8b",
+  "experiments/v3/frozen/cyl16p.json": "7f9cc8700fdd70782ddaf4a7e99a2e2c2f5818ce4aafa970f897b40e90a7747e",
+  "experiments/v3/frozen/build.json": "5ab2d947e8d8831f2bdb4e60cef97a01ec5cb1dd4446dac6d1027e118850ee15",
+  "experiments/v3/frozen/c/tables_inv4p_float.h": "7fc3c686e2724b18f17e702afa3942ec98acf78a5a58faa98eefbf4c39f46906",
+  "experiments/v3/frozen/c/tables_inv4p_double.h": "2186d789e2799794183c72222257b0f718a250c7bf01f5a289dbf4f7fc9f8add",
+  "experiments/v3/frozen/c/tables_cyl16p_float.h": "bd58d7ef83fed4ddb276117f51d327503377bbf48802118216404d6e941c309e",
+  "experiments/v3/frozen/c/tables_cyl16p_double.h": "00e0a7efd94ef7eebf3be97e9c337bb4b0ff995effed34cd8c50698f21342493",
+  "experiments/generators/thermal.py": "d742012e138402525382eee26e0d6dba87bd224267dc733a75f1e693f98ce481",
+  "experiments/oracle/thermal_oracle.py": "7f4b8da3064675e29f88a7f676e8d0318982fdbde1b5b355e1c83d2238f92e74",
+  "experiments/machine/thermal_machine.py": "0337f7b8520ff581ef8ec7d321de2cd69458396c44c0bbfb43bbdb34a78f2796",
+  "env/thermal_v2_env.py": "40740690aa7a0cea680e7496b391e1632a796075afcb1206b153e61a873644b6",
+  "env/requirements-thermal-v2.txt": "7f25d6435e8b664fe179e4cc57ec7c36b61c9f32ad9c7285a1723e3612b4cd2d"
+ }
+}
