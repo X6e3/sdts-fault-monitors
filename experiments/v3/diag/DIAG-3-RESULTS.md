@@ -381,3 +381,32 @@ its 6,104 samples.
   - For a fixed worst-case time on an MCU, L is not clearly better than E. This is what the review predicted.
 - **The choice between E and L** for an MCU is a question of worst-case time and memory, not of the result. Both give
   the same result on DEV.
+
+## Amendment 6, part 1: the certificate audit (OBSERVED; 2026-11-19, Mac)
+
+**Run:** `diag3_cw.py --variants Fa` at `66429e2`, on the five diagnosis runs, 00:11–00:12. Outputs are in
+`results/v3/diag3/audit-66429e2/`.
+
+**A1 passes.**
+- 5,676 bounds were audited: every fold bound, every alarm bound, and every eighth as-range bound.
+- On every one, the float bound is at least its exact rational evaluation. The smallest slack is 4.4e-15 °C.
+- The coefficient-enclosure term is at most 1.8e-12 °C.
+- Every certified bound lies within 3.2e-7 °C of its LP value.
+
+**A2 passes.**
+- F with no cap detects as the pilot's E in all five runs (673, 579, 849, 695 and 393).
+- The margins at t* agree within 9e-9 mC.
+- Every alarm is certified.
+
+| run | audited bounds | violations | smallest slack (°C) | coefficient term, max (°C) |
+|---|---|---|---|---|
+| 430007 | 1220 | 0 | 1.2e-14 | 5.0e-14 |
+| 430027 | 986 | 0 | 2.1e-14 | 2.0e-13 |
+| 430000 | 1726 | 0 | 4.4e-15 | 1.7e-13 |
+| 430010 | 1308 | 0 | 1.8e-14 | 1.8e-12 |
+| 430019 | 436 | 0 | 1.5e-14 | 4.9e-14 |
+
+**What it shows (INFERRED):**
+- The float evaluation of the certificate is conservative, with a narrow but positive margin.
+- Enclosing the coefficient rounding costs nothing measurable, so the bounds now cover the LP with exact
+  coefficients.
