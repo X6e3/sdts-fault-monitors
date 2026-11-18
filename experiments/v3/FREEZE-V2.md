@@ -2,16 +2,16 @@
 
 Status: DRAFT, not approved
 
-Manifest sha256: TBD (written by `make_manifest_v2.py` at the freeze commit)
+Manifest sha256: ae2e10c90c8b05832c4a64176172714522d0532ae018858070a75efb69aa3f31
 
 Prepared 2026-11-18 on branch `sdts-v3/template-state` for Can Koç's review. The target and the reading of a failure
 are Can's to set. Everything here is a proposal until the status line says APPROVED. `run_validation_v2.py` refuses
 to generate validation data until then (section 6).
 
-**Open items, to be filled from results before review:**
-- the amendment 6 and 7 results (section 5);
+**Open items, to be filled in before review:**
 - the DEV rehearsal (section 8);
-- the manifest sha256.
+- the manifest sha256 and the commit table (section 2);
+- K = 32 (informational).
 
 ## 0. What is tested, and what a failure means
 
@@ -96,16 +96,40 @@ z reached 2.22–2.30 in the 256 samples before t*. The box is part of the model
 
 ## 2. Code, commits and hashes
 
-TBD at the freeze commit: the commit table, and `frozen/MANIFEST-V2.json` with every file the validation depends on,
-by sha256.
+| commit | content |
+|---|---|
+| `66429e2` | F: the hardened certificate, outward slabs, the cap K and the eviction rule; the audit variant (DIAG-3 amendment 6) |
+| `b74de88` | the freeze 2 runner, scorer and manifest writer; `diag3_cw_dev.online()` (same behaviour, checked on DEV rows) |
+| this commit | `frozen/MANIFEST-V2.json` and this file |
 
-The files are listed in `make_manifest_v2.py`:
-- the runner and the scorer, and freeze 1's runner and scorer, which they import unchanged;
-- `template_state.py` and `dev_scenarios.py`;
-- `diag1.py`, `diag3.py`, `diag3_dev.py`, `diag3_cw.py` and `diag3_cw_dev.py`;
-- `frozen/cyl16p.json`;
-- the v2 plant, oracle and machine;
-- the environment lock.
+`frozen/MANIFEST-V2.json` (sha256 above) fixes:
+- the data block, cells and laws;
+- the candidate (variant F, W = 256, B = 16, K = 64, pad 1e-6, the direction file by sha256) and its target;
+- every file the validation depends on, by sha256.
+
+`run_validation_v2.py` refuses to run if any of them differs.
+
+Freeze 1's files below are unchanged: their hashes are those of freeze 1's manifest.
+
+| file | sha256 |
+|---|---|
+| `experiments/v3/run_validation_v2.py` | `8110878f73d7fe3819cac78c4315c15aa486bc427e6fd56b53d76fb4e1ef4aca` |
+| `experiments/v3/score_validation_v2.py` | `496c350fadba5d7631c7c84ab9890989259ca133bf6f0831256d0b9b6f230c22` |
+| `experiments/v3/run_validation.py` | `9cb899ea770dd8b60e37e80c6686a77ef5a662d3b7a5e5f41a294a23111920a3` |
+| `experiments/v3/score_validation.py` | `96c347455888d3f8944788941e6920121ef36f444f0e3bcd4a8f105bbb9104da` |
+| `experiments/v3/template_state.py` | `6f8409274cdc583f3ed48aca372fc08fccd9970f106ae516291f39a5a6894666` |
+| `experiments/v3/dev_scenarios.py` | `a1b204efde095c4d36d2aab4ca503970386a2761485b3c84f3ec8da2503c363f` |
+| `experiments/v3/diag/diag1.py` | `698cb0b0ad81d1501caebf458db4aad924b888cb14b9b81794a31300dfdd382b` |
+| `experiments/v3/diag/diag3.py` | `ce64b0ef2d6d477715252f0a0285b2400f585083f34b1f37a6305c07f54b3ad1` |
+| `experiments/v3/diag/diag3_dev.py` | `0dbba0562ae633807615d043c481db70b71167f4666be6de6ed0fdf309efcfb9` |
+| `experiments/v3/diag/diag3_cw.py` | `688363ce80e7fc0693836846ea3cbf10249b59df29e94078c4c1469f69fd017b` |
+| `experiments/v3/diag/diag3_cw_dev.py` | `0f9e825f40ece832a4a2f9b22d588dc83861ed6b7a91881face5912583757f9e` |
+| `experiments/v3/frozen/cyl16p.json` | `7f9cc8700fdd70782ddaf4a7e99a2e2c2f5818ce4aafa970f897b40e90a7747e` |
+| `experiments/generators/thermal.py` | `d742012e138402525382eee26e0d6dba87bd224267dc733a75f1e693f98ce481` |
+| `experiments/oracle/thermal_oracle.py` | `7f4b8da3064675e29f88a7f676e8d0318982fdbde1b5b355e1c83d2238f92e74` |
+| `experiments/machine/thermal_machine.py` | `0337f7b8520ff581ef8ec7d321de2cd69458396c44c0bbfb43bbdb34a78f2796` |
+| `env/thermal_v2_env.py` | `40740690aa7a0cea680e7496b391e1632a796075afcb1206b153e61a873644b6` |
+| `env/requirements-thermal-v2.txt` | `7f25d6435e8b664fe179e4cc57ec7c36b61c9f32ad9c7285a1723e3612b4cd2d` |
 
 **Environment:** the thermal v2 lock (`env/thermal_v2_env.py`): CPython 3.12.13, numpy 2.5.5, scipy 1.18.1 and
 HiGHS 1.12.0. It is checked at start and recorded.
@@ -161,17 +185,43 @@ F. There is no theorem behind it, and D_paired already counts every late detecti
 
 ## 5. DEV reference (DEV, not validation)
 
-**Amendment 4 (E, no cap, on the Mac), on 1320 DEV rows:**
-- D_paired 0.9992, with bootstrap [0.997, 1.0];
-- 0 misses, 0 soundness findings, every alarm certified;
-- equal to the dense S256 of 2a on every row.
-- An independent scorer agrees to the last digit.
+All of this is in `diag/DIAG-3-RESULTS.md`. The plans and criteria were committed before each run.
 
-**TBD from amendment 6:**
-- the audit (A1) and the pilot equality (A2);
-- F with K = 64 on all 1320 rows (K1, K2), and K = 40 and 32 (the margin of the cap).
+**The candidate itself:** F, K = 64, on the 1320 DEV comparison rows (`results/v3/diag3/cwdev-F-K64-66429e2/`, Arch,
+at `66429e2`).
 
-**TBD from amendment 7:** F on 80 edge-noise healthy runs (E1).
+| | v2 | cyl16p (freeze 1) | **F** |
+|---|---|---|---|
+| detection events R (certified) | 1081 | 1081 | 1081 |
+| misses | 8 | 4 | **0** |
+| exact match with t* | 805 | 897 | **1079** |
+| lag max (s) | 2880 | 2880 | **13** |
+| paired set B, L (s) | 1073, 32925 | 20222 | **26** |
+| **D_paired** | — | 0.386 | **0.99921** |
+| without the 10 diagnosis rows | — | 0.512 | 0.99875 |
+| bootstrap 95 % (descriptive, 30 seeds) | — | [0.20, 0.60] | [0.997, 1.0] |
+| soundness violations / uncertified alarms | 0 | 0 | 0 / 0 |
+| runs later than v2 | — | 0 | 0 |
+| evictions | — | — | 0 (at most 45 kept) |
+
+**The checks behind it:**
+- **Equal to the uncompressed window.** F equals E (amendment 4, the Mac) on every row, and E equals 2a's dense S256
+  (Arch) on every row. An independent scorer, and an independent implementation of E on 42 selected rows, agree.
+- **The certificate audit (A1, A2).** 5,676 bounds were checked in exact rational arithmetic, with no violation (the
+  smallest slack is 4.4e-15 °C). A second, independent exact audit of 84 alarm bounds also found none.
+- **The cap.**
+  - With K = 40, F evicts 420 measurements on 161 rows and still equals E on every row.
+  - K = 32: TBD (informational).
+- **Edge noise (E1).** There is no alarm on 80 healthy edge-noise runs (DEV seeds 430070–430089). Under edge noise
+  no measurement is redundant at arrival, so F runs with the cap full and evicts one measurement per sample. LP rows
+  reach at most 445.
+- **The window length.** For W = 64, 128 and 192, D_paired is 0.643, 0.815 and 0.824 (0.904, 0.980 and 0.986 without
+  the diagnosis runs). W = 256 is the shortest window tried that holds 430010's deciding cut, 227 samples before t*.
+
+**How W = 256 and K = 64 were chosen.**
+- W was chosen on five DEV runs (DIAG-3 phase 1) and confirmed on all of DEV.
+- K = 64 is the DEV maximum (45) plus a margin. Edge noise shows that the cap can be reached.
+- Neither was tuned on any seed outside DEV.
 
 ## 6. Order of operations
 
@@ -203,6 +253,8 @@ F. There is no theorem behind it, and D_paired already counts every late detecti
 - **Model mismatch or a real plant:** same plant, known parameters, simulated laws.
 - **The ambient box:** detection of slow drifts leans on TA ∈ [23, 27] (section 1). A wider true range would make
   those detections later.
+- **Detection under noise at its bound:** with edge noise the cap is full and F evicts at every sample. The
+  validation's edge-noise runs are healthy, so they test soundness only, not detection.
 - **Sensor faults that an admissible ambient path reproduces:** they are invisible to every method (Theorem 4).
 - **Independence beyond the seeds:** F was developed on DEV draws of the same laws.
 
