@@ -1,0 +1,189 @@
+{
+  "schema_version": 1,
+  "task_id": "DIAG1-T2b",
+  "repo_commit": "364666aeaf38c8f7cb443e74c9802f3bb8939b0e",
+  "environment": {
+    "python": "3.12.13",
+    "implementation": "CPython",
+    "numpy": "2.5.5",
+    "scipy": "1.18.1",
+    "highs": "1.12.0",
+    "platform": "Linux-7.3.4-arch1-2-x86_64-with-glibc2.44",
+    "machine": "x86_64",
+    "executable": "/home/x6e3/Research/sdts-v3-45cff1d/.venv/bin/python",
+    "numpy_record_sha256": "ff1cee041784df714b5a5521619920dbfd4ff462e1108a82d45606eca277a524",
+    "scipy_record_sha256": "cda958e21648ffe0b8528473532ef59f89db82bf1fa7d4a9a47161785046e979"
+  },
+  "claim_file": {
+    "path": "/home/x6e3/Research/sdts-runs/v3-diag1/run1-6fe3b54/claims-for-T2b.json",
+    "sha256": "9552927a135d39bf096d0f660faab8a18218580235848b080d17a1a4532d3a2e"
+  },
+  "method": {
+    "formulation": "Independent sparse trajectory LP with x=(ac,as,TA) at each sample, shifted by 25 C. Ambient rate imposed on adjacent TA values. No vertex or hull calculation.",
+    "measurements": "Full-history LP applies z[0..k] before predicting k+1. B/E start is the supplied post-measurement set; supplied caps apply only after the start and the t_star measurement is excluded.",
+    "bounds": "Outward-rounded solver inequality RHS, oracle residual-corrected weak duality with checked axis radii, and feasible path verified by exact rational replay of the stored floats, possibly mixed with an inward solution.",
+    "difference_threshold_c": 1e-06
+  },
+  "task": "B/E finite-window LP",
+  "run": {
+    "seed": 430007,
+    "cell": "drift_0.002",
+    "ambient": "rw",
+    "arm": "E0",
+    "noise": "uniform",
+    "t_star": 673,
+    "z_float64_little_endian_sha256": "b8a8abf1bf83cf231206a30333cac71d429e8c6c3c9f1e2da23c4d803a38dee0"
+  },
+  "L": 64,
+  "k0": 609,
+  "arm": "E",
+  "start_input": {
+    "file": "starts-430007-drift_0.002-rw-k0609.json",
+    "sha256": "6c2a7030b296e3ba7ba24df4cb3d31eb896cf28a8ac9cdf7c152079e341a58a0",
+    "supports_key": "P_k0_arm_E"
+  },
+  "terminal_as": {
+    "min": {
+      "status": 0,
+      "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+      "method": "highs-ds",
+      "estimate_shifted_c": -0.5000308967076178,
+      "estimate_c": 24.499969103292383,
+      "enclosure_shifted_c": [
+        -0.5000308976302901,
+        -0.5000308967076124
+      ],
+      "enclosure_c": [
+        24.499969102369707,
+        24.49996910329239
+      ],
+      "enclosure_width_c": 9.226777120119323e-10,
+      "dual_bound_shifted_c": -0.5000308976302901,
+      "dual_bound_type": "lower",
+      "feasible_path_verified": true,
+      "exact_repair_anchor_fraction": 0.0,
+      "repair_anchor": null,
+      "attempts": [
+        {
+          "method": "highs-ds",
+          "presolve": false,
+          "inward_c": 0.0,
+          "status": 0,
+          "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+          "iterations": 519,
+          "dual_lower_bound_signed_shifted_c": -0.5000308976302901
+        }
+      ]
+    },
+    "max": {
+      "status": 0,
+      "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+      "method": "highs-ds",
+      "estimate_shifted_c": -0.41261419226704954,
+      "estimate_c": 24.58738580773295,
+      "enclosure_shifted_c": [
+        -0.41261419226705354,
+        -0.41261419064901367
+      ],
+      "enclosure_c": [
+        24.587385807732943,
+        24.587385809350987
+      ],
+      "enclosure_width_c": 1.6180398687559716e-09,
+      "dual_bound_shifted_c": -0.41261419064901367,
+      "dual_bound_type": "upper",
+      "feasible_path_verified": true,
+      "exact_repair_anchor_fraction": 0.0,
+      "repair_anchor": null,
+      "attempts": [
+        {
+          "method": "highs-ds",
+          "presolve": false,
+          "inward_c": 0.0,
+          "status": 0,
+          "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+          "iterations": 425,
+          "dual_lower_bound_signed_shifted_c": 0.41261419064901367
+        }
+      ]
+    }
+  },
+  "t_star_margin": {
+    "estimate_c": 0.021605597966338375,
+    "enclosure_c": [
+      0.021605597966334378,
+      0.021605599584374247
+    ],
+    "classification": "overlap"
+  },
+  "observed_through": 672,
+  "feasible_path_through_prediction_at_t_star": true,
+  "empty_before_t_star": false,
+  "claim_comparison": {
+    "claim": {
+      "seed": 430007,
+      "cell": "drift_0.002",
+      "ambient": "rw",
+      "L": 64,
+      "k0": 609,
+      "t_star": 673,
+      "arm": "E",
+      "detect": 792,
+      "margin_at_t_star_c": 0.02160559796638789
+    },
+    "margin": {
+      "reference_c": 0.02160559796638789,
+      "source": "claims-for-T2b.json",
+      "difference_c": -4.951594689828198e-14,
+      "estimate_exceeds_threshold": false,
+      "enclosure_comparison": "within_threshold"
+    },
+    "detection_through_t_star": {
+      "claim": "no_detection_through_t_star",
+      "lp": "no_detection_through_t_star",
+      "matches": true
+    }
+  },
+  "arm_a_lp_file": "/home/x6e3/Research/sdts-runs/v3-diag1-codex/430007-drift_0.002-E0-rw.json",
+  "arm_a_claim_comparison": {
+    "claim": {
+      "seed": 430007,
+      "cell": "drift_0.002",
+      "ambient": "rw",
+      "L": 64,
+      "k0": 609,
+      "t_star": 673,
+      "arm": "A",
+      "detect": 673,
+      "margin_at_t_star_c": -0.004186087096512081
+    },
+    "margin": {
+      "reference_c": -0.004186087096512081,
+      "source": "claims-for-T2b.json",
+      "difference_c": -1.5276668818842154e-12,
+      "estimate_exceeds_threshold": false,
+      "enclosure_comparison": "within_threshold"
+    },
+    "detection_through_t_star": {
+      "claim": "at_t_star",
+      "lp": "at_t_star",
+      "matches": true
+    }
+  },
+  "snapshot_as_comparison": {
+    "min": {
+      "reference_c": -0.5000308967076,
+      "source": "arms-430007-drift_0.002-rw-L64.npz",
+      "difference_c": -1.7763568394002505e-14,
+      "estimate_exceeds_threshold": false,
+      "enclosure_comparison": "within_threshold"
+    },
+    "max": {
+      "reference_c": -0.412614192267,
+      "source": "arms-430007-drift_0.002-rw-L64.npz",
+      "difference_c": -4.951594689828198e-14,
+      "estimate_exceeds_threshold": false,
+      "enclosure_comparison": "within_threshold"
+    }
+  }
+}

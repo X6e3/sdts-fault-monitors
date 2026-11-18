@@ -1,0 +1,1040 @@
+{
+  "schema_version": 1,
+  "task_id": "DIAG1-T2b",
+  "repo_commit": "364666aeaf38c8f7cb443e74c9802f3bb8939b0e",
+  "environment": {
+    "python": "3.12.13",
+    "implementation": "CPython",
+    "numpy": "2.5.5",
+    "scipy": "1.18.1",
+    "highs": "1.12.0",
+    "platform": "Linux-7.3.4-arch1-2-x86_64-with-glibc2.44",
+    "machine": "x86_64",
+    "executable": "/home/x6e3/Research/sdts-v3-45cff1d/.venv/bin/python",
+    "numpy_record_sha256": "ff1cee041784df714b5a5521619920dbfd4ff462e1108a82d45606eca277a524",
+    "scipy_record_sha256": "cda958e21648ffe0b8528473532ef59f89db82bf1fa7d4a9a47161785046e979"
+  },
+  "claim_file": {
+    "path": "/home/x6e3/Research/sdts-runs/v3-diag1/run1-6fe3b54/claims-for-T2b.json",
+    "sha256": "9552927a135d39bf096d0f660faab8a18218580235848b080d17a1a4532d3a2e"
+  },
+  "method": {
+    "formulation": "Independent sparse trajectory LP with x=(ac,as,TA) at each sample, shifted by 25 C. Ambient rate imposed on adjacent TA values. No vertex or hull calculation.",
+    "measurements": "Full-history LP applies z[0..k] before predicting k+1. B/E start is the supplied post-measurement set; supplied caps apply only after the start and the t_star measurement is excluded.",
+    "bounds": "Outward-rounded solver inequality RHS, oracle residual-corrected weak duality with checked axis radii, and feasible path verified by exact rational replay of the stored floats, possibly mixed with an inward solution.",
+    "difference_threshold_c": 1e-06
+  },
+  "run": {
+    "seed": 430000,
+    "cell": "drift_0.001",
+    "ambient": "ramp",
+    "arm": "E0",
+    "noise": "uniform",
+    "t_star": 849,
+    "z_float64_little_endian_sha256": "c24e648526b5f7c04d19bcd99987a2b8c244dd30f6728bcc6aca54d24ec48523"
+  },
+  "task": "full-history support",
+  "checkpoints": [
+    {
+      "label": "k0_L16",
+      "k": 833,
+      "next_sample": 834,
+      "extrema": {
+        "as_next": {
+          "min": {
+            "status": 0,
+            "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+            "method": "highs-ds",
+            "estimate_shifted_c": -0.578887772296523,
+            "estimate_c": 24.42111222770348,
+            "enclosure_shifted_c": [
+              -0.5788877745167947,
+              -0.5788877722953764
+            ],
+            "enclosure_c": [
+              24.421112225483203,
+              24.421112227704626
+            ],
+            "enclosure_width_c": 2.2214183825752798e-09,
+            "dual_bound_shifted_c": -0.5788877745167947,
+            "dual_bound_type": "lower",
+            "feasible_path_verified": true,
+            "exact_repair_anchor_fraction": 0.00016010092546013172,
+            "repair_anchor": {
+              "method": "highs-ds",
+              "inward_c": 2e-09
+            },
+            "attempts": [
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 0.0,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 4166,
+                "dual_lower_bound_signed_shifted_c": -0.5788877745167947
+              },
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 2e-09,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 4154,
+                "strict_original_constraints_verified": true
+              }
+            ]
+          },
+          "max": {
+            "status": 0,
+            "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+            "method": "highs-ds",
+            "estimate_shifted_c": -0.5490494558885854,
+            "estimate_c": 24.450950544111414,
+            "enclosure_shifted_c": [
+              -0.5490498941904418,
+              -0.5490494415117906
+            ],
+            "enclosure_c": [
+              24.450950105809557,
+              24.450950558488213
+            ],
+            "enclosure_width_c": 4.526786512304426e-07,
+            "dual_bound_shifted_c": -0.5490494415117906,
+            "dual_bound_type": "upper",
+            "feasible_path_verified": true,
+            "exact_repair_anchor_fraction": 0.11237445473944055,
+            "repair_anchor": {
+              "method": "highs-ds",
+              "inward_c": 5e-08
+            },
+            "attempts": [
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 0.0,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 4261,
+                "dual_lower_bound_signed_shifted_c": 0.5490494415117906
+              },
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 2e-09,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 4261,
+                "strict_original_constraints_verified": false
+              },
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 1e-08,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 4261,
+                "strict_original_constraints_verified": false
+              },
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 5e-08,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 4261,
+                "strict_original_constraints_verified": true
+              }
+            ]
+          }
+        },
+        "ta_current": {
+          "min": {
+            "status": 0,
+            "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+            "method": "highs-ds",
+            "estimate_shifted_c": -0.5546682255872334,
+            "estimate_c": 24.445331774412768,
+            "enclosure_shifted_c": [
+              -0.5546682441155462,
+              -0.5546682255844756
+            ],
+            "enclosure_c": [
+              24.445331755884453,
+              24.445331774415525
+            ],
+            "enclosure_width_c": 1.8531070566929486e-08,
+            "dual_bound_shifted_c": -0.5546682441155462,
+            "dual_bound_type": "lower",
+            "feasible_path_verified": true,
+            "exact_repair_anchor_fraction": 1.8486216241936262e-05,
+            "repair_anchor": {
+              "method": "highs-ds",
+              "inward_c": 2e-09
+            },
+            "attempts": [
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 0.0,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 4159,
+                "dual_lower_bound_signed_shifted_c": -0.5546682441155462
+              },
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 2e-09,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 4159,
+                "strict_original_constraints_verified": true
+              }
+            ]
+          },
+          "max": {
+            "status": 0,
+            "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+            "method": "highs-ds",
+            "estimate_shifted_c": -0.45867179535942415,
+            "estimate_c": 24.541328204640575,
+            "enclosure_shifted_c": [
+              -0.4586717953637089,
+              -0.45867178005614656
+            ],
+            "enclosure_c": [
+              24.54132820463629,
+              24.541328219943857
+            ],
+            "enclosure_width_c": 1.5307562328814583e-08,
+            "dual_bound_shifted_c": -0.45867178005614656,
+            "dual_bound_type": "upper",
+            "feasible_path_verified": true,
+            "exact_repair_anchor_fraction": 1.7366558645320083e-05,
+            "repair_anchor": {
+              "method": "highs-ds",
+              "inward_c": 2e-09
+            },
+            "attempts": [
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 0.0,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 4152,
+                "dual_lower_bound_signed_shifted_c": 0.45867178005614656
+              },
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 2e-09,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 4152,
+                "strict_original_constraints_verified": true
+              }
+            ]
+          }
+        }
+      },
+      "next_measurement_margin": {
+        "estimate_c": 0.16558140504896152,
+        "enclosure_c": [
+          0.16558140504781488,
+          0.16558140726923326
+        ],
+        "classification": "overlap"
+      },
+      "arm_a_snapshot_comparison": {
+        "as_next": {
+          "min": {
+            "reference_c": -0.578887772298,
+            "source": "arms-430000-drift_0.001-ramp-L16.npz",
+            "difference_c": 1.4770407119613083e-12,
+            "estimate_exceeds_threshold": false,
+            "enclosure_comparison": "within_threshold"
+          },
+          "max": {
+            "reference_c": -0.5490494558879,
+            "source": "arms-430000-drift_0.001-ramp-L16.npz",
+            "difference_c": -6.854516954035716e-13,
+            "estimate_exceeds_threshold": false,
+            "enclosure_comparison": "within_threshold"
+          }
+        },
+        "next_measurement_margin": {
+          "reference_c": 0.16558140505043856,
+          "source": "arms-430000-drift_0.001-ramp-L16.npz",
+          "difference_c": -1.4770407119613083e-12,
+          "estimate_exceeds_threshold": false,
+          "enclosure_comparison": "within_threshold"
+        },
+        "ta_current": {
+          "min": {
+            "reference_c": -0.5546682255888,
+            "source": "starts-430000-drift_0.001-ramp-k0833.json",
+            "difference_c": 1.5666357100485584e-12,
+            "estimate_exceeds_threshold": false,
+            "enclosure_comparison": "within_threshold"
+          },
+          "max": {
+            "reference_c": -0.4586717953586,
+            "source": "starts-430000-drift_0.001-ramp-k0833.json",
+            "difference_c": -8.24174062330485e-13,
+            "estimate_exceeds_threshold": false,
+            "enclosure_comparison": "within_threshold"
+          }
+        },
+        "ta_current_start_file_sha256": "f6256eb7606b4e39ef8e334943168a5a6379c6f1102ac1e4ed1675dba7516286"
+      }
+    },
+    {
+      "label": "k0_L64",
+      "k": 785,
+      "next_sample": 786,
+      "extrema": {
+        "as_next": {
+          "min": {
+            "status": 0,
+            "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+            "method": "highs-ds",
+            "estimate_shifted_c": -0.7155781391210086,
+            "estimate_c": 24.284421860878993,
+            "enclosure_shifted_c": [
+              -0.7155781442780126,
+              -0.7155781391163303
+            ],
+            "enclosure_c": [
+              24.284421855721984,
+              24.284421860883672
+            ],
+            "enclosure_width_c": 5.161682303800319e-09,
+            "dual_bound_shifted_c": -0.7155781442780126,
+            "dual_bound_type": "lower",
+            "feasible_path_verified": true,
+            "exact_repair_anchor_fraction": 8.31442371730992e-05,
+            "repair_anchor": {
+              "method": "highs-ds",
+              "inward_c": 2e-09
+            },
+            "attempts": [
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 0.0,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 3896,
+                "dual_lower_bound_signed_shifted_c": -0.7155781442780126
+              },
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 2e-09,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 3896,
+                "strict_original_constraints_verified": true
+              }
+            ]
+          },
+          "max": {
+            "status": 0,
+            "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+            "method": "highs-ds",
+            "estimate_shifted_c": -0.6307863189490811,
+            "estimate_c": 24.36921368105092,
+            "enclosure_shifted_c": [
+              -0.6307863189661806,
+              -0.6307863108856188
+            ],
+            "enclosure_c": [
+              24.369213681033816,
+              24.369213689114382
+            ],
+            "enclosure_width_c": 8.080561886281146e-09,
+            "dual_bound_shifted_c": -0.6307863108856188,
+            "dual_bound_type": "upper",
+            "feasible_path_verified": true,
+            "exact_repair_anchor_fraction": 0.00023151300479503552,
+            "repair_anchor": {
+              "method": "highs-ds",
+              "inward_c": 2e-09
+            },
+            "attempts": [
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 0.0,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 4224,
+                "dual_lower_bound_signed_shifted_c": 0.6307863108856188
+              },
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 2e-09,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 4355,
+                "strict_original_constraints_verified": true
+              }
+            ]
+          }
+        },
+        "ta_current": {
+          "min": {
+            "status": 0,
+            "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+            "method": "highs-ds",
+            "estimate_shifted_c": -0.75286996079234,
+            "estimate_c": 24.24713003920766,
+            "enclosure_shifted_c": [
+              -0.752869969605749,
+              -0.7528699607785837
+            ],
+            "enclosure_c": [
+              24.24713003039425,
+              24.247130039221418
+            ],
+            "enclosure_width_c": 8.827165332014886e-09,
+            "dual_bound_shifted_c": -0.752869969605749,
+            "dual_bound_type": "lower",
+            "feasible_path_verified": true,
+            "exact_repair_anchor_fraction": 0.00018710643414698053,
+            "repair_anchor": {
+              "method": "highs-ds",
+              "inward_c": 2e-09
+            },
+            "attempts": [
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 0.0,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 3831,
+                "dual_lower_bound_signed_shifted_c": -0.752869969605749
+              },
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 2e-09,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 3817,
+                "strict_original_constraints_verified": true
+              }
+            ]
+          },
+          "max": {
+            "status": 0,
+            "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+            "method": "highs-ds",
+            "estimate_shifted_c": -0.5546717953589406,
+            "estimate_c": 24.445328204641058,
+            "enclosure_shifted_c": [
+              -0.5546717963513799,
+              -0.5546717850896036
+            ],
+            "enclosure_c": [
+              24.445328203648618,
+              24.445328214910397
+            ],
+            "enclosure_width_c": 1.1261776289295256e-08,
+            "dual_bound_shifted_c": -0.5546717850896036,
+            "dual_bound_type": "upper",
+            "feasible_path_verified": true,
+            "exact_repair_anchor_fraction": 0.006585346093631882,
+            "repair_anchor": {
+              "method": "highs-ds",
+              "inward_c": 2e-09
+            },
+            "attempts": [
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 0.0,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 4024,
+                "dual_lower_bound_signed_shifted_c": 0.5546717850896036
+              },
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 2e-09,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 4024,
+                "strict_original_constraints_verified": true
+              }
+            ]
+          }
+        }
+      },
+      "next_measurement_margin": {
+        "estimate_c": 0.3287820189333362,
+        "enclosure_c": [
+          0.3287820189286578,
+          0.32878202409034013
+        ],
+        "classification": "overlap"
+      },
+      "arm_a_snapshot_comparison": {
+        "as_next": {
+          "min": {
+            "reference_c": -0.7155781391241,
+            "source": "arms-430000-drift_0.001-ramp-L64.npz",
+            "difference_c": 3.091304989766286e-12,
+            "estimate_exceeds_threshold": false,
+            "enclosure_comparison": "within_threshold"
+          },
+          "max": {
+            "reference_c": -0.6307863189485,
+            "source": "arms-430000-drift_0.001-ramp-L64.npz",
+            "difference_c": -5.810907310888069e-13,
+            "estimate_exceeds_threshold": false,
+            "enclosure_comparison": "within_threshold"
+          }
+        },
+        "next_measurement_margin": {
+          "reference_c": 0.3287820189364275,
+          "source": "arms-430000-drift_0.001-ramp-L64.npz",
+          "difference_c": -3.091304989766286e-12,
+          "estimate_exceeds_threshold": false,
+          "enclosure_comparison": "within_threshold"
+        },
+        "ta_current": {
+          "min": {
+            "reference_c": -0.7528699607932,
+            "source": "starts-430000-drift_0.001-ramp-k0785.json",
+            "difference_c": 8.599787548746463e-13,
+            "estimate_exceeds_threshold": false,
+            "enclosure_comparison": "within_threshold"
+          },
+          "max": {
+            "reference_c": -0.5546717953586,
+            "source": "starts-430000-drift_0.001-ramp-k0785.json",
+            "difference_c": -3.4061642395499803e-13,
+            "estimate_exceeds_threshold": false,
+            "enclosure_comparison": "within_threshold"
+          }
+        },
+        "ta_current_start_file_sha256": "4ae795af287e6f02129f89aeeae354637d89e2a545d6fdcf8492bb400832dc92"
+      }
+    },
+    {
+      "label": "k0_L256",
+      "k": 593,
+      "next_sample": 594,
+      "extrema": {
+        "as_next": {
+          "min": {
+            "status": 0,
+            "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+            "method": "highs-ds",
+            "estimate_shifted_c": -0.6493476452585437,
+            "estimate_c": 24.350652354741456,
+            "enclosure_shifted_c": [
+              -0.6493476517743473,
+              -0.6493476452532986
+            ],
+            "enclosure_c": [
+              24.35065234822565,
+              24.350652354746703
+            ],
+            "enclosure_width_c": 6.5210487010247675e-09,
+            "dual_bound_shifted_c": -0.6493476517743473,
+            "dual_bound_type": "lower",
+            "feasible_path_verified": true,
+            "exact_repair_anchor_fraction": 0.0007368629476819215,
+            "repair_anchor": {
+              "method": "highs-ds",
+              "inward_c": 2e-09
+            },
+            "attempts": [
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 0.0,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 2947,
+                "dual_lower_bound_signed_shifted_c": -0.6493476517743473
+              },
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 2e-09,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 2947,
+                "strict_original_constraints_verified": true
+              }
+            ]
+          },
+          "max": {
+            "status": 0,
+            "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+            "method": "highs-ds",
+            "estimate_shifted_c": -0.5925518070471353,
+            "estimate_c": 24.407448192952863,
+            "enclosure_shifted_c": [
+              -0.5925518070471413,
+              -0.5925518035085325
+            ],
+            "enclosure_c": [
+              24.407448192952856,
+              24.40744819649147
+            ],
+            "enclosure_width_c": 3.538608739361848e-09,
+            "dual_bound_shifted_c": -0.5925518035085325,
+            "dual_bound_type": "upper",
+            "feasible_path_verified": true,
+            "exact_repair_anchor_fraction": 2.2938440272628373e-07,
+            "repair_anchor": {
+              "method": "highs-ds",
+              "inward_c": 2e-09
+            },
+            "attempts": [
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 0.0,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 3359,
+                "dual_lower_bound_signed_shifted_c": 0.5925518035085325
+              },
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 2e-09,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 3359,
+                "strict_original_constraints_verified": true
+              }
+            ]
+          }
+        },
+        "ta_current": {
+          "min": {
+            "status": 0,
+            "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+            "method": "highs-ds",
+            "estimate_shifted_c": -0.722586394956276,
+            "estimate_c": 24.277413605043723,
+            "enclosure_shifted_c": [
+              -0.7225864002754805,
+              -0.7225863945640079
+            ],
+            "enclosure_c": [
+              24.277413599724518,
+              24.277413605435992
+            ],
+            "enclosure_width_c": 5.711472628178171e-09,
+            "dual_bound_shifted_c": -0.7225864002754805,
+            "dual_bound_type": "lower",
+            "feasible_path_verified": true,
+            "exact_repair_anchor_fraction": 0.008906260547315543,
+            "repair_anchor": {
+              "method": "highs-ds",
+              "inward_c": 2e-09
+            },
+            "attempts": [
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 0.0,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 3115,
+                "dual_lower_bound_signed_shifted_c": -0.7225864002754805
+              },
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 2e-09,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 3115,
+                "strict_original_constraints_verified": true
+              }
+            ]
+          },
+          "max": {
+            "status": 0,
+            "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+            "method": "highs-ds",
+            "estimate_shifted_c": -0.5636100859194394,
+            "estimate_c": 24.43638991408056,
+            "enclosure_shifted_c": [
+              -0.5636100859413845,
+              -0.5636100769814864
+            ],
+            "enclosure_c": [
+              24.436389914058612,
+              24.436389923018517
+            ],
+            "enclosure_width_c": 8.959898156746249e-09,
+            "dual_bound_shifted_c": -0.5636100769814864,
+            "dual_bound_type": "upper",
+            "feasible_path_verified": true,
+            "exact_repair_anchor_fraction": 0.0002860236629216834,
+            "repair_anchor": {
+              "method": "highs-ds",
+              "inward_c": 2e-09
+            },
+            "attempts": [
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 0.0,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 3213,
+                "dual_lower_bound_signed_shifted_c": 0.5636100769814864
+              },
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 2e-09,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 3213,
+                "strict_original_constraints_verified": true
+              }
+            ]
+          }
+        }
+      },
+      "next_measurement_margin": {
+        "estimate_c": 0.2167758515083545,
+        "enclosure_c": [
+          0.21677585150310935,
+          0.21677585802415805
+        ],
+        "classification": "overlap"
+      },
+      "arm_a_snapshot_comparison": {
+        "as_next": {
+          "min": {
+            "reference_c": -0.6493476452591,
+            "source": "arms-430000-drift_0.001-ramp-L256.npz",
+            "difference_c": 5.563327576396659e-13,
+            "estimate_exceeds_threshold": false,
+            "enclosure_comparison": "within_threshold"
+          },
+          "max": {
+            "reference_c": -0.5925518070461,
+            "source": "arms-430000-drift_0.001-ramp-L256.npz",
+            "difference_c": -1.0352829704629585e-12,
+            "estimate_exceeds_threshold": false,
+            "enclosure_comparison": "within_threshold"
+          }
+        },
+        "next_measurement_margin": {
+          "reference_c": 0.21677585150891082,
+          "source": "arms-430000-drift_0.001-ramp-L256.npz",
+          "difference_c": -5.563327576396659e-13,
+          "estimate_exceeds_threshold": false,
+          "enclosure_comparison": "within_threshold"
+        },
+        "ta_current": {
+          "min": {
+            "reference_c": -0.7225863949567,
+            "source": "starts-430000-drift_0.001-ramp-k0593.json",
+            "difference_c": 4.239941731043473e-13,
+            "estimate_exceeds_threshold": false,
+            "enclosure_comparison": "within_threshold"
+          },
+          "max": {
+            "reference_c": -0.5636100859179,
+            "source": "starts-430000-drift_0.001-ramp-k0593.json",
+            "difference_c": -1.539435245945242e-12,
+            "estimate_exceeds_threshold": false,
+            "enclosure_comparison": "within_threshold"
+          }
+        },
+        "ta_current_start_file_sha256": "5c9513a83a7c860603cd7f4fbff4dd77e0c208df181d524d15350be4cbaf3a67"
+      }
+    },
+    {
+      "label": "t_star_minus_1",
+      "k": 848,
+      "next_sample": 849,
+      "extrema": {
+        "as_next": {
+          "min": {
+            "status": 0,
+            "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+            "method": "highs-ds",
+            "estimate_shifted_c": -0.5689125190473454,
+            "estimate_c": 24.431087480952655,
+            "enclosure_shifted_c": [
+              -0.5689125249867752,
+              -0.5689125190314058
+            ],
+            "enclosure_c": [
+              24.43108747501322,
+              24.431087480968596
+            ],
+            "enclosure_width_c": 5.955369419829992e-09,
+            "dual_bound_shifted_c": -0.5689125249867752,
+            "dual_bound_type": "lower",
+            "feasible_path_verified": true,
+            "exact_repair_anchor_fraction": 0.00036456798415593567,
+            "repair_anchor": {
+              "method": "highs-ds",
+              "inward_c": 2e-09
+            },
+            "attempts": [
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 0.0,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 4354,
+                "dual_lower_bound_signed_shifted_c": -0.5689125249867752
+              },
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 2e-09,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 4354,
+                "strict_original_constraints_verified": true
+              }
+            ]
+          },
+          "max": {
+            "status": 0,
+            "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+            "method": "highs-ds",
+            "estimate_shifted_c": -0.5217057750369125,
+            "estimate_c": 24.478294224963086,
+            "enclosure_shifted_c": [
+              -0.5217057750662768,
+              -0.5217057592087313
+            ],
+            "enclosure_c": [
+              24.478294224933723,
+              24.47829424079127
+            ],
+            "enclosure_width_c": 1.5857545498931813e-08,
+            "dual_bound_shifted_c": -0.5217057592087313,
+            "dual_bound_type": "upper",
+            "feasible_path_verified": true,
+            "exact_repair_anchor_fraction": 0.00016003816537918568,
+            "repair_anchor": {
+              "method": "highs-ds",
+              "inward_c": 2e-09
+            },
+            "attempts": [
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 0.0,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 4462,
+                "dual_lower_bound_signed_shifted_c": 0.5217057592087313
+              },
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 2e-09,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 4379,
+                "strict_original_constraints_verified": true
+              }
+            ]
+          }
+        },
+        "ta_current": {
+          "min": {
+            "status": 0,
+            "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+            "method": "highs-ds",
+            "estimate_shifted_c": -0.5603853393527995,
+            "estimate_c": 24.4396146606472,
+            "enclosure_shifted_c": [
+              -0.5603853619787332,
+              -0.5603853393057211
+            ],
+            "enclosure_c": [
+              24.439614638021265,
+              24.439614660694282
+            ],
+            "enclosure_width_c": 2.267301213443318e-08,
+            "dual_bound_shifted_c": -0.5603853619787332,
+            "dual_bound_type": "lower",
+            "feasible_path_verified": true,
+            "exact_repair_anchor_fraction": 0.00023272416619064397,
+            "repair_anchor": {
+              "method": "highs-ds",
+              "inward_c": 2e-09
+            },
+            "attempts": [
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 0.0,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 4296,
+                "dual_lower_bound_signed_shifted_c": -0.5603853619787332
+              },
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 2e-09,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 4296,
+                "strict_original_constraints_verified": true
+              }
+            ]
+          },
+          "max": {
+            "status": 0,
+            "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+            "method": "highs-ds",
+            "estimate_shifted_c": -0.42867179535913563,
+            "estimate_c": 24.571328204640864,
+            "enclosure_shifted_c": [
+              -0.42867180357756457,
+              -0.42867177875064993
+            ],
+            "enclosure_c": [
+              24.571328196422435,
+              24.571328221249352
+            ],
+            "enclosure_width_c": 2.4826914635234232e-08,
+            "dual_bound_shifted_c": -0.42867177875064993,
+            "dual_bound_type": "upper",
+            "feasible_path_verified": true,
+            "exact_repair_anchor_fraction": 0.02970113244255686,
+            "repair_anchor": {
+              "method": "highs-ds",
+              "inward_c": 2e-09
+            },
+            "attempts": [
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 0.0,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 4359,
+                "dual_lower_bound_signed_shifted_c": 0.42867177875064993
+              },
+              {
+                "method": "highs-ds",
+                "presolve": false,
+                "inward_c": 2e-09,
+                "status": 0,
+                "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+                "iterations": 4359,
+                "strict_original_constraints_verified": true
+              }
+            ]
+          }
+        }
+      },
+      "next_measurement_margin": {
+        "estimate_c": -0.004624924731128355,
+        "enclosure_c": [
+          -0.0046249247604926436,
+          -0.004624908902947145
+        ],
+        "classification": "separated"
+      },
+      "arm_a_snapshot_comparison": {
+        "as_next": {
+          "min": {
+            "reference_c": -0.5689125190478,
+            "source": "arms-430000-drift_0.001-ramp-L256.npz",
+            "difference_c": 4.546363285840016e-13,
+            "estimate_exceeds_threshold": false,
+            "enclosure_comparison": "within_threshold"
+          },
+          "max": {
+            "reference_c": -0.5217057750358,
+            "source": "arms-430000-drift_0.001-ramp-L256.npz",
+            "difference_c": -1.1125544929768694e-12,
+            "estimate_exceeds_threshold": false,
+            "enclosure_comparison": "within_threshold"
+          }
+        },
+        "next_measurement_margin": {
+          "reference_c": -0.004624924730015745,
+          "source": "arms-430000-drift_0.001-ramp-L256.npz",
+          "difference_c": -1.1126100041281006e-12,
+          "estimate_exceeds_threshold": false,
+          "enclosure_comparison": "within_threshold"
+        }
+      }
+    }
+  ],
+  "claim_comparisons": [
+    {
+      "claim": {
+        "seed": 430000,
+        "cell": "drift_0.001",
+        "ambient": "ramp",
+        "L": 64,
+        "k0": 785,
+        "t_star": 849,
+        "arm": "A",
+        "detect": 849,
+        "margin_at_t_star_c": -0.004624924730015745
+      },
+      "margin": {
+        "reference_c": -0.004624924730015745,
+        "source": "claims-for-T2b.json",
+        "difference_c": -1.1126100041281006e-12,
+        "estimate_exceeds_threshold": false,
+        "enclosure_comparison": "within_threshold"
+      },
+      "detection_through_t_star": {
+        "claim": "at_t_star",
+        "lp": "at_t_star",
+        "matches": true
+      }
+    },
+    {
+      "claim": {
+        "seed": 430000,
+        "cell": "drift_0.001",
+        "ambient": "ramp",
+        "L": 256,
+        "k0": 593,
+        "t_star": 849,
+        "arm": "A",
+        "detect": 849,
+        "margin_at_t_star_c": -0.004624924730015745
+      },
+      "margin": {
+        "reference_c": -0.004624924730015745,
+        "source": "claims-for-T2b.json",
+        "difference_c": -1.1126100041281006e-12,
+        "estimate_exceeds_threshold": false,
+        "enclosure_comparison": "within_threshold"
+      },
+      "detection_through_t_star": {
+        "claim": "at_t_star",
+        "lp": "at_t_star",
+        "matches": true
+      }
+    }
+  ]
+}

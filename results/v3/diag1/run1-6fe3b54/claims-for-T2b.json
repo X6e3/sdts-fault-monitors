@@ -1,0 +1,269 @@
+{
+ "by": "Claude DIAG1-T1, run1-6fe3b54 (commit 6fe3b54)",
+ "claims": [
+  {
+   "seed": 430000,
+   "cell": "drift_0.001",
+   "ambient": "ramp",
+   "L": 256,
+   "k0": 593,
+   "t_star": 849,
+   "arm": "A",
+   "detect": 849,
+   "margin_at_t_star_c": -0.004624924730015745
+  },
+  {
+   "seed": 430000,
+   "cell": "drift_0.001",
+   "ambient": "ramp",
+   "L": 256,
+   "k0": 593,
+   "t_star": 849,
+   "arm": "B",
+   "detect": 849,
+   "margin_at_t_star_c": -0.004624924015515841
+  },
+  {
+   "seed": 430000,
+   "cell": "drift_0.001",
+   "ambient": "ramp",
+   "L": 256,
+   "k0": 593,
+   "t_star": 849,
+   "arm": "E",
+   "detect": 849,
+   "margin_at_t_star_c": -0.0046249198086157906
+  },
+  {
+   "seed": 430000,
+   "cell": "drift_0.001",
+   "ambient": "ramp",
+   "L": 64,
+   "k0": 785,
+   "t_star": 849,
+   "arm": "A",
+   "detect": 849,
+   "margin_at_t_star_c": -0.004624924730015745
+  },
+  {
+   "seed": 430000,
+   "cell": "drift_0.001",
+   "ambient": "ramp",
+   "L": 64,
+   "k0": 785,
+   "t_star": 849,
+   "arm": "B",
+   "detect": 849,
+   "margin_at_t_star_c": -0.004624924730015745
+  },
+  {
+   "seed": 430000,
+   "cell": "drift_0.001",
+   "ambient": "ramp",
+   "L": 64,
+   "k0": 785,
+   "t_star": 849,
+   "arm": "E",
+   "detect": null,
+   "margin_at_t_star_c": 0.005674461539784237
+  },
+  {
+   "seed": 430007,
+   "cell": "drift_0.002",
+   "ambient": "rw",
+   "L": 256,
+   "k0": 417,
+   "t_star": 673,
+   "arm": "A",
+   "detect": 673,
+   "margin_at_t_star_c": -0.004186087096512081
+  },
+  {
+   "seed": 430007,
+   "cell": "drift_0.002",
+   "ambient": "rw",
+   "L": 256,
+   "k0": 417,
+   "t_star": 673,
+   "arm": "B",
+   "detect": 673,
+   "margin_at_t_star_c": -0.004186085293712061
+  },
+  {
+   "seed": 430007,
+   "cell": "drift_0.002",
+   "ambient": "rw",
+   "L": 256,
+   "k0": 417,
+   "t_star": 673,
+   "arm": "E",
+   "detect": 673,
+   "margin_at_t_star_c": -0.004186078680312066
+  },
+  {
+   "seed": 430007,
+   "cell": "drift_0.002",
+   "ambient": "rw",
+   "L": 64,
+   "k0": 609,
+   "t_star": 673,
+   "arm": "A",
+   "detect": 673,
+   "margin_at_t_star_c": -0.004186087096512081
+  },
+  {
+   "seed": 430007,
+   "cell": "drift_0.002",
+   "ambient": "rw",
+   "L": 64,
+   "k0": 609,
+   "t_star": 673,
+   "arm": "B",
+   "detect": 673,
+   "margin_at_t_star_c": -0.004186087096512081
+  },
+  {
+   "seed": 430007,
+   "cell": "drift_0.002",
+   "ambient": "rw",
+   "L": 64,
+   "k0": 609,
+   "t_star": 673,
+   "arm": "E",
+   "detect": 792,
+   "margin_at_t_star_c": 0.02160559796638789
+  },
+  {
+   "seed": 430010,
+   "cell": "drift_0.0005",
+   "ambient": "ramp",
+   "L": 256,
+   "k0": 439,
+   "t_star": 695,
+   "arm": "A",
+   "detect": 695,
+   "margin_at_t_star_c": -0.0003892589256537793
+  },
+  {
+   "seed": 430010,
+   "cell": "drift_0.0005",
+   "ambient": "ramp",
+   "L": 256,
+   "k0": 439,
+   "t_star": 695,
+   "arm": "B",
+   "detect": null,
+   "margin_at_t_star_c": 4.516329074633063e-05
+  },
+  {
+   "seed": 430010,
+   "cell": "drift_0.0005",
+   "ambient": "ramp",
+   "L": 256,
+   "k0": 439,
+   "t_star": 695,
+   "arm": "E",
+   "detect": null,
+   "margin_at_t_star_c": 0.004560533723046323
+  },
+  {
+   "seed": 430010,
+   "cell": "drift_0.0005",
+   "ambient": "ramp",
+   "L": 64,
+   "k0": 631,
+   "t_star": 695,
+   "arm": "A",
+   "detect": 695,
+   "margin_at_t_star_c": -0.0003892589256537793
+  },
+  {
+   "seed": 430010,
+   "cell": "drift_0.0005",
+   "ambient": "ramp",
+   "L": 64,
+   "k0": 631,
+   "t_star": 695,
+   "arm": "B",
+   "detect": 695,
+   "margin_at_t_star_c": -0.0003892589256537793
+  },
+  {
+   "seed": 430010,
+   "cell": "drift_0.0005",
+   "ambient": "ramp",
+   "L": 64,
+   "k0": 631,
+   "t_star": 695,
+   "arm": "E",
+   "detect": null,
+   "margin_at_t_star_c": 0.0050274991148462345
+  },
+  {
+   "seed": 430027,
+   "cell": "drift_0.002",
+   "ambient": "rw",
+   "L": 256,
+   "k0": 323,
+   "t_star": 579,
+   "arm": "A",
+   "detect": 579,
+   "margin_at_t_star_c": -0.004101114675481021
+  },
+  {
+   "seed": 430027,
+   "cell": "drift_0.002",
+   "ambient": "rw",
+   "L": 256,
+   "k0": 323,
+   "t_star": 579,
+   "arm": "B",
+   "detect": null,
+   "margin_at_t_star_c": 0.000374616193618893
+  },
+  {
+   "seed": 430027,
+   "cell": "drift_0.002",
+   "ambient": "rw",
+   "L": 256,
+   "k0": 323,
+   "t_star": 579,
+   "arm": "E",
+   "detect": null,
+   "margin_at_t_star_c": 0.0010807388683189423
+  },
+  {
+   "seed": 430027,
+   "cell": "drift_0.002",
+   "ambient": "rw",
+   "L": 64,
+   "k0": 515,
+   "t_star": 579,
+   "arm": "A",
+   "detect": 579,
+   "margin_at_t_star_c": -0.004101114675481021
+  },
+  {
+   "seed": 430027,
+   "cell": "drift_0.002",
+   "ambient": "rw",
+   "L": 64,
+   "k0": 515,
+   "t_star": 579,
+   "arm": "B",
+   "detect": 579,
+   "margin_at_t_star_c": -0.004101114675481021
+  },
+  {
+   "seed": 430027,
+   "cell": "drift_0.002",
+   "ambient": "rw",
+   "L": 64,
+   "k0": 515,
+   "t_star": 579,
+   "arm": "E",
+   "detect": null,
+   "margin_at_t_star_c": 0.0019788671506189015
+  }
+ ]
+}

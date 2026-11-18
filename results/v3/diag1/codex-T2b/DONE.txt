@@ -1,0 +1,24 @@
+# Sol — DIAG1-T2b
+# OBSERVED source commit 364666aeaf38c8f7cb443e74c9802f3bb8939b0e
+# OBSERVED Claude claim file SHA-256 9552927a135d39bf096d0f660faab8a18218580235848b080d17a1a4532d3a2e
+# OBSERVED two full-history checks at eight prefixes, plus sixteen B/E LPs. All 64 extrema have a dual bound and a verified primal path.
+# OBSERVED all 24 claims agree through t*, including all 16 B/E prefixes feasible before t*. No margin or available support comparison exceeds 1e-6 C.
+# OBSERVED SHA-256 calculated with sha256sum on the following eighteen result files.
+8d74f63105cc6994607d59cf3b1c2d9ab31f49a883efb6773ebce12db2b8a9ff  arm-430000-drift_0.001-ramp-L256-B.json
+71136b8e0e2c79038e1c5a34e94c4ba052e5e4a4d06e148fbb780ff61db42dd4  arm-430000-drift_0.001-ramp-L256-E.json
+25165b57f0680d954c8769aa70d09714323aeadb478b5809605771b71ea90a3d  arm-430000-drift_0.001-ramp-L64-B.json
+595d9a3e2e347f973fdf930cd39b868eddf221df1e4f9c226939b0ffceecaf9a  arm-430000-drift_0.001-ramp-L64-E.json
+fdb521bbcdc4696683943329973480d28d8f75e8926891bda59f4e8b2eeae831  arm-430007-drift_0.002-rw-L256-B.json
+352e7aa00235a23343da789673bf1d4bbd022627458fce2149ad506c0d81e731  arm-430007-drift_0.002-rw-L256-E.json
+6ecc6100cdf0aec0314eb901df3503f4527e09d0f5b0f4d36088059f6b485014  arm-430007-drift_0.002-rw-L64-B.json
+fb18b7fa431bff22c1981e76b1959b02445794154b204da992d9bfeb8f676d6a  arm-430007-drift_0.002-rw-L64-E.json
+69424b1d4b15c0b561f5caffc64db1919f50202e28afb190e4e07e04a5f6f19a  arm-430010-drift_0.0005-ramp-L256-B.json
+cb484662af485a00a931442d558a9a6b2c3439429a1332db44b3d5d55d9a4b13  arm-430010-drift_0.0005-ramp-L256-E.json
+650e2ff2924072f668e27835c77d2fa6fe598f67cca0b0b13f3d94b2c36b11db  arm-430010-drift_0.0005-ramp-L64-B.json
+0e25656a35e915df9312fdb2c703acea9e5434f0c1d56c175b05d2754e24d19c  arm-430010-drift_0.0005-ramp-L64-E.json
+2394a842287bf0faeed4e97d496f39e5c3c45a1b0720ea020ef1f78513b4d5a4  arm-430027-drift_0.002-rw-L256-B.json
+beefd4f6ddd06adfbddcbb91897bfbf7a194c469c20655bdc3c2cacc943a282b  arm-430027-drift_0.002-rw-L256-E.json
+8c8022e89f51055caa30d951bc8d0e613ea6bfc1a977b859f6a807f79e9544dc  arm-430027-drift_0.002-rw-L64-B.json
+bfd33790a486a94743d1496769c171577d0b3867eb398f0e56bf9646838c925a  arm-430027-drift_0.002-rw-L64-E.json
+9c3236fddb7d52a5a5dd1a8c182cb82559cfcaa1985268d586f580919c103fa7  prefix-430000-drift_0.001-E0-ramp.json
+5e1c99f51d784538224bf09b807038bf2ed8e8979517c8750a97f49efde4871a  prefix-430027-drift_0.002-E0-rw.json

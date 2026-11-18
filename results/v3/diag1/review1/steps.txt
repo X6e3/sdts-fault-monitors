@@ -1,0 +1,94 @@
+# diag1_review.py steps (sha256 f74c1cfead80fccc81c6070bfc11911d3929aa319e5239744ff315e8d5c2a3f8), run on the Mac, 2026-11-18 11:15 +0300, inputs results/v3/diag1/run1-6fe3b54
+
+=== 430007 drift_0.002 rw L=256 k0=417 t*=673 detect={'B': 673, 'E': 673, 'C': 792, 'C_full': 792, 'D': 792, 'F': 792, 'A': 673}
+  t* arm A: lower side +664.558 mC, upper side -4.186 mC -> active upper
+  t* arm B: lower side +664.558 mC, upper side -4.186 mC -> active upper
+  t* arm C: lower side +672.703 mC, upper side +21.304 mC -> active upper
+  t* arm D: lower side +672.749 mC, upper side +21.606 mC -> active upper
+  t* arm E: lower side +664.558 mC, upper side -4.186 mC -> active upper
+  C-B +e3 (mC) at dk  1:0.0 4:0.0 8:14.4 16:14.4 32:19.5 64:16.6 128:35.9 192:39.4 256:39.4   max 44.4 at dk=176
+  C-B -e3 (mC) at dk  1:0.0 4:0.0 8:0.0 16:0.0 32:20.4 64:20.4 128:38.3 192:36.7 256:33.4   max 48.5 at dk=207
+  C-B +e2 (mC) at dk  1:0.0 4:0.0 8:0.5 16:2.2 32:3.4 64:3.0 128:13.4 192:1.2 256:25.5   max 25.5 at dk=256
+  C-B -e2 (mC) at dk  1:0.0 4:0.0 8:0.0 16:0.0 32:0.5 64:8.6 128:2.0 192:6.0 256:8.1   max 18.6 at dk=123
+  slab cuts the predicted as-range at 28 of 256 steps in C, 25 in B
+  TA-gap rises (C-B, +-e3) over 1 mC: 13 right after a cut step (137.4 mC), 0 after other steps (0.0 mC)
+
+=== 430027 drift_0.002 rw L=256 k0=323 t*=579 detect={'B': None, 'E': None, 'C': 1429, 'C_full': 1429, 'D': 1429, 'F': 1429, 'A': 579}
+  t* arm A: lower side +627.545 mC, upper side -4.101 mC -> active upper
+  t* arm B: lower side +628.089 mC, upper side +0.375 mC -> active upper
+  t* arm C: lower side +630.697 mC, upper side +1.539 mC -> active upper
+  t* arm D: lower side +630.770 mC, upper side +1.979 mC -> active upper
+  t* arm E: lower side +628.154 mC, upper side +1.081 mC -> active upper
+  C-B +e3 (mC) at dk  1:0.0 4:0.0 8:0.0 16:20.0 32:24.3 64:24.3 128:11.2 192:11.2 256:1.7   max 24.3 at dk=92
+  C-B -e3 (mC) at dk  1:0.0 4:0.0 8:0.0 16:5.4 32:5.4 64:44.4 128:50.7 192:41.1 256:22.3   max 50.7 at dk=130
+  C-B +e2 (mC) at dk  1:0.0 4:0.0 8:0.0 16:1.2 32:4.9 64:12.6 128:6.9 192:9.6 256:1.2   max 17.3 at dk=97
+  C-B -e2 (mC) at dk  1:0.0 4:0.0 8:0.0 16:0.2 32:1.4 64:7.1 128:4.9 192:2.9 256:2.6   max 12.7 at dk=171
+  slab cuts the predicted as-range at 27 of 256 steps in C, 21 in B
+  TA-gap rises (C-B, +-e3) over 1 mC: 11 right after a cut step (111.5 mC), 0 after other steps (0.0 mC)
+
+=== 430000 drift_0.001 ramp L=256 k0=593 t*=849 detect={'B': 849, 'E': 849, 'C': 2048, 'C_full': 2048, 'D': 2048, 'F': 2048, 'A': 849}
+  t* arm A: lower side +651.832 mC, upper side -4.625 mC -> active upper
+  t* arm B: lower side +651.832 mC, upper side -4.625 mC -> active upper
+  t* arm C: lower side +660.235 mC, upper side +5.554 mC -> active upper
+  t* arm D: lower side +660.260 mC, upper side +5.674 mC -> active upper
+  t* arm E: lower side +651.832 mC, upper side -4.625 mC -> active upper
+  C-B +e3 (mC) at dk  1:0.0 4:0.0 8:0.0 16:6.6 32:21.6 64:26.4 128:49.7 192:27.7 256:16.5   max 49.7 at dk=121
+  C-B -e3 (mC) at dk  1:0.0 4:0.0 8:0.0 16:4.7 32:7.0 64:22.4 128:15.6 192:46.3 256:37.4   max 49.6 at dk=217
+  C-B +e2 (mC) at dk  1:0.0 4:0.0 8:0.0 16:0.7 32:6.3 64:6.0 128:6.0 192:10.4 256:10.2   max 14.8 at dk=170
+  C-B -e2 (mC) at dk  1:0.0 4:0.0 8:0.0 16:0.2 32:0.1 64:4.2 128:0.2 192:15.8 256:8.4   max 19.4 at dk=200
+  slab cuts the predicted as-range at 33 of 256 steps in C, 25 in B
+  TA-gap rises (C-B, +-e3) over 1 mC: 17 right after a cut step (120.1 mC), 0 after other steps (0.0 mC)
+
+=== 430010 drift_0.0005 ramp L=256 k0=439 t*=695 detect={'B': None, 'E': None, 'C': 3575, 'C_full': 3575, 'D': 3575, 'F': 3575, 'A': 695}
+  t* arm A: lower side +693.857 mC, upper side -0.389 mC -> active upper
+  t* arm B: lower side +694.166 mC, upper side +0.045 mC -> active upper
+  t* arm C: lower side +704.262 mC, upper side +3.928 mC -> active upper
+  t* arm D: lower side +705.196 mC, upper side +5.027 mC -> active upper
+  t* arm E: lower side +697.108 mC, upper side +4.561 mC -> active upper
+  C-B +e3 (mC) at dk  1:0.0 4:0.0 8:0.0 16:0.0 32:7.3 64:7.3 128:4.1 192:4.1 256:4.1   max 7.3 at dk=77
+  C-B -e3 (mC) at dk  1:0.0 4:0.0 8:12.1 16:13.2 32:30.1 64:25.5 128:23.1 192:25.1 256:20.9   max 44.1 at dk=77
+  C-B +e2 (mC) at dk  1:0.0 4:0.0 8:0.0 16:0.0 32:0.3 64:3.1 128:2.3 192:3.4 256:3.9   max 3.9 at dk=78
+  C-B -e2 (mC) at dk  1:0.0 4:0.0 8:0.2 16:1.2 32:2.3 64:7.7 128:1.6 192:4.2 256:10.1   max 13.6 at dk=108
+  slab cuts the predicted as-range at 27 of 256 steps in C, 26 in B
+  TA-gap rises (C-B, +-e3) over 1 mC: 11 right after a cut step (80.5 mC), 0 after other steps (0.0 mC)
+
+=== 430019 drift_0.001 ramp L=256 k0=137 t*=393 detect={'B': 393, 'E': 393, 'C': 393, 'C_full': 393, 'D': 393, 'F': 393, 'A': 393}
+  t* arm A: lower side +645.044 mC, upper side -4.509 mC -> active upper
+  t* arm B: lower side +645.044 mC, upper side -4.509 mC -> active upper
+  t* arm C: lower side +653.884 mC, upper side -0.240 mC -> active upper
+  t* arm D: lower side +653.908 mC, upper side -0.227 mC -> active upper
+  t* arm E: lower side +645.044 mC, upper side -4.509 mC -> active upper
+  C-B +e3 (mC) at dk  1:0.0 4:0.0 8:0.0 16:0.0 32:11.5 64:8.9 128:11.1 192:23.1 256:22.7   max 23.5 at dk=241
+  C-B -e3 (mC) at dk  1:0.0 4:0.0 8:0.0 16:10.8 32:31.1 64:38.7 128:27.5 192:33.6 256:31.8   max 47.6 at dk=226
+  C-B +e2 (mC) at dk  1:0.0 4:0.0 8:0.0 16:0.0 32:2.0 64:3.1 128:3.9 192:5.2 256:4.3   max 9.4 at dk=209
+  C-B -e2 (mC) at dk  1:0.0 4:0.0 8:0.0 16:1.1 32:1.0 64:9.7 128:12.7 192:11.3 256:8.8   max 20.0 at dk=123
+  slab cuts the predicted as-range at 33 of 256 steps in C, 27 in B
+  TA-gap rises (C-B, +-e3) over 1 mC: 11 right after a cut step (115.3 mC), 0 after other steps (0.0 mC)
+
+all 5 runs: 63 rises right after a cut step (564.7 mC), 0 after other steps (0.0 mC)
+
+d[36] = [-0.83147  0.55557  0.     ]; M^T d[36] = [-0.683443  0.370506  0.037038], 5.95 deg from the nearest direction of D
+
+430007: k | A: sup(+e3) sup(-e3) | C-A: +e3 -e3 | B-A: +e3 -e3 | d[36]: C-A B-A (mC) | z+delta, A's as max | z-delta, A's as min
+  418 | -0.48267 +0.68271 |   0.00   0.00 |   0.00   0.00 |  0.610  0.610 | -0.23236 -0.53502 | -0.83236 -0.61584
+  419 | -0.48067 +0.68471 |   0.00   0.00 |   0.00   0.00 |  1.186  1.040 | -0.13553 -0.53385 | -0.73553 -0.61725
+  420 | -0.47867 +0.68671 |   0.00   0.00 |   0.00   0.00 |  1.727  1.335 | -0.21342 -0.53266 | -0.81342 -0.61866
+  421 | -0.47667 +0.68871 |   0.00   0.00 |   0.00   0.00 |  2.232  1.529 | -0.50915 -0.53145 | -1.10915 -0.62008
+  422 | -0.47467 +0.69071 |   0.00   0.00 |   0.00   0.00 |  2.701  1.646 | -0.30438 -0.53024 | -0.90438 -0.62152
+  423 | -0.47267 +0.69271 |   0.00   0.00 |   0.00   0.00 |  3.135  1.704 | -0.55972 -0.52901 | -1.15972 -0.62296
+  424 | -0.52532 +0.69471 |  18.59   0.00 |   4.23   0.00 |  3.533  1.715 | -0.23713 -0.55886 | -0.83713 -0.62440
+  425 | -0.52332 +0.69671 |  18.59   0.00 |   4.23   0.00 |  3.885  1.688 | -0.52090 -0.55798 | -1.12090 -0.62586
+  426 | -0.52132 +0.69871 |  18.59   0.00 |   4.23   0.00 |  4.198  1.629 | -0.03366 -0.55707 | -0.63366 -0.62733
+  427 | -0.51932 +0.70071 |  18.59   0.00 |   4.23   0.00 |  4.478  1.543 | -0.35744 -0.55616 | -0.95744 -0.62880
+
+430010: k | A: sup(+e3) sup(-e3) | C-A: +e3 -e3 | B-A: +e3 -e3 | d[36]: C-A B-A (mC) | z+delta, A's as max | z-delta, A's as min
+  440 | -1.37542 +1.59824 |   0.00   0.00 |   0.00   0.00 |  0.777  0.777 | -1.17544 -1.47611 | -1.77544 -1.56876
+  441 | -1.37342 +1.60024 |   0.00   0.00 |   0.00   0.00 |  1.519  1.355 | -1.25821 -1.47418 | -1.85821 -1.56958
+  442 | -1.37142 +1.60224 |   0.00   0.00 |   0.00   0.00 |  2.220  1.780 | -1.02184 -1.47224 | -1.62184 -1.57042
+  443 | -1.36942 +1.60424 |   0.00   0.00 |   0.00   0.00 |  2.875  2.085 | -1.46225 -1.47031 | -2.06225 -1.57127
+  444 | -1.36742 +1.60624 |   0.00   0.00 |   0.00   0.00 |  3.472  2.285 | -1.22996 -1.46837 | -1.82996 -1.57215
+  445 | -1.36542 +1.60824 |   0.00   0.00 |   0.00   0.00 |  3.938  2.324 | -0.93318 -1.46644 | -1.53318 -1.57304
+  446 | -1.36342 +1.55091 |   0.00  18.06 |   0.00   7.14 |  4.162  2.315 | -0.93007 -1.46450 | -1.53007 -1.53378
+  447 | -1.36142 +1.54693 |   0.00  18.51 |   0.00   6.41 |  4.359  2.289 | -1.05744 -1.46256 | -1.65744 -1.53066
+  448 | -1.35942 +1.54893 |   0.00  18.51 |   0.00   6.41 |  4.497  2.247 | -1.15596 -1.46062 | -1.75596 -1.53128
+  449 | -1.35742 +1.55093 |   0.00  18.51 |   0.00   6.41 |  4.604  2.194 | -0.92979 -1.45868 | -1.52979 -1.53191
