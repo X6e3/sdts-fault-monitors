@@ -1,0 +1,441 @@
+{
+  "task": "T3c",
+  "root_commit": "6c1190f0bc5fc16fa4f1204d3f0e6e14aa2cc785",
+  "runs": [
+    {
+      "task": "T3c",
+      "root_commit": "6c1190f0bc5fc16fa4f1204d3f0e6e14aa2cc785",
+      "frozen_direction_input_sha256": "7f9cc8700fdd70782ddaf4a7e99a2e2c2f5818ce4aafa970f897b40e90a7747e",
+      "run": {
+        "seed": 430007,
+        "cell": "drift_0.002",
+        "ambient": "rw",
+        "arm": "E0",
+        "noise": "uniform",
+        "t_star": 673
+      },
+      "W": 256,
+      "block": 16,
+      "fold_pad_c": 1e-06,
+      "tolerance_c": 1e-06,
+      "bound_scope": "stored plant constants, outward measurement RHS, finite variable caps; existing reachable-set clamps",
+      "dropped_measurements": "redundant by outer predicted range at arrival",
+      "detect": 673,
+      "alarm_certificate": {
+        "sample": 673,
+        "estimated_as_range_shifted_c": [
+          -0.4987776725818699,
+          -0.43840587707630785
+        ],
+        "outer_as_range_shifted_c": [
+          -0.4987776842316238,
+          -0.4384056815987146
+        ],
+        "outward_slab_shifted_c": [
+          -0.43421979023338797,
+          0.1657802097666121
+        ],
+        "margin_upper_c": -0.004185891365326654,
+        "separation_certified": true,
+        "solver": [
+          {
+            "method": "highs-ds",
+            "presolve": false,
+            "status": 0,
+            "fallback_index": 0
+          },
+          {
+            "method": "highs-ds",
+            "presolve": false,
+            "status": 0,
+            "fallback_index": 0
+          }
+        ]
+      },
+      "total_lp_objectives": 2396,
+      "solver_fallback_attempts": 0,
+      "max_variables": 822,
+      "max_matrix_rows": 1134,
+      "fold_count": 25,
+      "fold_support_count": 1050,
+      "missing_dual_bounds": 0,
+      "peak_written_support_shortfall_c": 0.0,
+      "peak_unclamped_padded_support_shortfall_c": 0.0,
+      "peak_nonredundant_measurements": 41,
+      "redundant_at_arrival": 592,
+      "numerical_only_redundant": 0,
+      "timings": {
+        "fold_samples": {
+          "count": 25,
+          "peak_lp_objectives": 44,
+          "peak_seconds": 1.224851334001869,
+          "median_seconds": 1.0297236389887985
+        },
+        "ordinary_samples": {
+          "count": 648,
+          "peak_lp_objectives": 2,
+          "peak_seconds": 0.11248237401014194,
+          "median_seconds": 0.0638060034980299
+        }
+      },
+      "full_window_comparison": {
+        "file": "/home/x6e3/Research/sdts-runs/v3-diag3-codex/T3a/430007-drift_0.002-rw.json",
+        "sha256": "c7db5ca2e7aad3468b4be8af6ae3f1896c1ebd303fd127d868208a5d3b0e4bcb",
+        "full_window_detect": 673,
+        "eviction_detect": 673,
+        "common_samples": 674,
+        "largest_abs_margin_delta_c": 4.122303609577216e-10,
+        "deviation_count_over_1e_6": 0
+      },
+      "first_deviation": null
+    },
+    {
+      "task": "T3c",
+      "root_commit": "6c1190f0bc5fc16fa4f1204d3f0e6e14aa2cc785",
+      "frozen_direction_input_sha256": "7f9cc8700fdd70782ddaf4a7e99a2e2c2f5818ce4aafa970f897b40e90a7747e",
+      "run": {
+        "seed": 430027,
+        "cell": "drift_0.002",
+        "ambient": "rw",
+        "arm": "E0",
+        "noise": "uniform",
+        "t_star": 579
+      },
+      "W": 256,
+      "block": 16,
+      "fold_pad_c": 1e-06,
+      "tolerance_c": 1e-06,
+      "bound_scope": "stored plant constants, outward measurement RHS, finite variable caps; existing reachable-set clamps",
+      "dropped_measurements": "redundant by outer predicted range at arrival",
+      "detect": 579,
+      "alarm_certificate": {
+        "sample": 579,
+        "estimated_as_range_shifted_c": [
+          -1.3949373719582208,
+          -1.3693416025452527
+        ],
+        "outer_as_range_shifted_c": [
+          -1.3949373727961056,
+          -1.3693415972958698
+        ],
+        "outward_slab_shifted_c": [
+          -1.3671513191599192,
+          -0.7671513191599187
+        ],
+        "margin_upper_c": -0.002190278135950629,
+        "separation_certified": true,
+        "solver": [
+          {
+            "method": "highs-ds",
+            "presolve": false,
+            "status": 0,
+            "fallback_index": 0
+          },
+          {
+            "method": "highs-ds",
+            "presolve": false,
+            "status": 0,
+            "fallback_index": 0
+          }
+        ]
+      },
+      "total_lp_objectives": 1998,
+      "solver_fallback_attempts": 1,
+      "max_variables": 822,
+      "max_matrix_rows": 1134,
+      "fold_count": 20,
+      "fold_support_count": 840,
+      "missing_dual_bounds": 0,
+      "peak_written_support_shortfall_c": 0.0,
+      "peak_unclamped_padded_support_shortfall_c": 0.0,
+      "peak_nonredundant_measurements": 34,
+      "redundant_at_arrival": 520,
+      "numerical_only_redundant": 0,
+      "timings": {
+        "fold_samples": {
+          "count": 20,
+          "peak_lp_objectives": 44,
+          "peak_seconds": 1.2717887879989576,
+          "median_seconds": 1.1317314225016162
+        },
+        "ordinary_samples": {
+          "count": 559,
+          "peak_lp_objectives": 2,
+          "peak_seconds": 0.20850576399243437,
+          "median_seconds": 0.0528537159843836
+        }
+      },
+      "full_window_comparison": {
+        "file": "/home/x6e3/Research/sdts-runs/v3-diag3-codex/T3a/430027-drift_0.002-rw.json",
+        "sha256": "2f0fb4d689fd7a948edcf1b9b171d779f94f689b593723b1f7da7d2d024b28d5",
+        "full_window_detect": 579,
+        "eviction_detect": 579,
+        "common_samples": 580,
+        "largest_abs_margin_delta_c": 2.1594702248606268e-08,
+        "deviation_count_over_1e_6": 0
+      },
+      "first_deviation": null
+    },
+    {
+      "task": "T3c",
+      "root_commit": "6c1190f0bc5fc16fa4f1204d3f0e6e14aa2cc785",
+      "frozen_direction_input_sha256": "7f9cc8700fdd70782ddaf4a7e99a2e2c2f5818ce4aafa970f897b40e90a7747e",
+      "run": {
+        "seed": 430000,
+        "cell": "drift_0.001",
+        "ambient": "ramp",
+        "arm": "E0",
+        "noise": "uniform",
+        "t_star": 849
+      },
+      "W": 256,
+      "block": 16,
+      "fold_pad_c": 1e-06,
+      "tolerance_c": 1e-06,
+      "bound_scope": "stored plant constants, outward measurement RHS, finite variable caps; existing reachable-set clamps",
+      "dropped_measurements": "redundant by outer predicted range at arrival",
+      "detect": 849,
+      "alarm_certificate": {
+        "sample": 849,
+        "estimated_as_range_shifted_c": [
+          -0.5689125190857311,
+          -0.521705774768367
+        ],
+        "outer_as_range_shifted_c": [
+          -0.568912539450599,
+          -0.5217056601373949
+        ],
+        "outward_slab_shifted_c": [
+          -0.5170808503057843,
+          0.08291914969421584
+        ],
+        "margin_upper_c": -0.00462480983161062,
+        "separation_certified": true,
+        "solver": [
+          {
+            "method": "highs-ds",
+            "presolve": false,
+            "status": 0,
+            "fallback_index": 0
+          },
+          {
+            "method": "highs-ds",
+            "presolve": false,
+            "status": 0,
+            "fallback_index": 0
+          }
+        ]
+      },
+      "total_lp_objectives": 3210,
+      "solver_fallback_attempts": 1,
+      "max_variables": 822,
+      "max_matrix_rows": 1134,
+      "fold_count": 36,
+      "fold_support_count": 1512,
+      "missing_dual_bounds": 0,
+      "peak_written_support_shortfall_c": 0.0,
+      "peak_unclamped_padded_support_shortfall_c": 0.0,
+      "peak_nonredundant_measurements": 39,
+      "redundant_at_arrival": 753,
+      "numerical_only_redundant": 1,
+      "timings": {
+        "fold_samples": {
+          "count": 36,
+          "peak_lp_objectives": 44,
+          "peak_seconds": 1.336070623015985,
+          "median_seconds": 1.1592032574990299
+        },
+        "ordinary_samples": {
+          "count": 813,
+          "peak_lp_objectives": 2,
+          "peak_seconds": 0.107622535986593,
+          "median_seconds": 0.06399837997741997
+        }
+      },
+      "full_window_comparison": {
+        "file": "/home/x6e3/Research/sdts-runs/v3-diag3-codex/T3a/430000-drift_0.001-ramp.json",
+        "sha256": "c101707458fc03b1522d2e78c6d353ef2c6030b5a940300bb38ab4e9acc7daba",
+        "full_window_detect": 849,
+        "eviction_detect": 849,
+        "common_samples": 850,
+        "largest_abs_margin_delta_c": 3.2288845153161105e-08,
+        "deviation_count_over_1e_6": 0
+      },
+      "first_deviation": null
+    },
+    {
+      "task": "T3c",
+      "root_commit": "6c1190f0bc5fc16fa4f1204d3f0e6e14aa2cc785",
+      "frozen_direction_input_sha256": "7f9cc8700fdd70782ddaf4a7e99a2e2c2f5818ce4aafa970f897b40e90a7747e",
+      "run": {
+        "seed": 430010,
+        "cell": "drift_0.0005",
+        "ambient": "ramp",
+        "arm": "E0",
+        "noise": "uniform",
+        "t_star": 695
+      },
+      "W": 256,
+      "block": 16,
+      "fold_pad_c": 1e-06,
+      "tolerance_c": 1e-06,
+      "bound_scope": "stored plant constants, outward measurement RHS, finite variable caps; existing reachable-set clamps",
+      "dropped_measurements": "redundant by outer predicted range at arrival",
+      "detect": 695,
+      "alarm_certificate": {
+        "sample": 695,
+        "estimated_as_range_shifted_c": [
+          -1.1034972470695528,
+          -1.0098518864419135
+        ],
+        "outer_as_range_shifted_c": [
+          -1.1034972510879588,
+          -1.009851881657669
+        ],
+        "outward_slab_shifted_c": [
+          -1.0095663402953465,
+          -0.4095663402953462
+        ],
+        "margin_upper_c": -0.0002855413623223945,
+        "separation_certified": true,
+        "solver": [
+          {
+            "method": "highs-ds",
+            "presolve": false,
+            "status": 0,
+            "fallback_index": 0
+          },
+          {
+            "method": "highs-ds",
+            "presolve": false,
+            "status": 0,
+            "fallback_index": 0
+          }
+        ]
+      },
+      "total_lp_objectives": 2524,
+      "solver_fallback_attempts": 1,
+      "max_variables": 822,
+      "max_matrix_rows": 1134,
+      "fold_count": 27,
+      "fold_support_count": 1134,
+      "missing_dual_bounds": 0,
+      "peak_written_support_shortfall_c": 0.0,
+      "peak_unclamped_padded_support_shortfall_c": 0.0,
+      "peak_nonredundant_measurements": 33,
+      "redundant_at_arrival": 622,
+      "numerical_only_redundant": 1,
+      "timings": {
+        "fold_samples": {
+          "count": 27,
+          "peak_lp_objectives": 44,
+          "peak_seconds": 1.3502710669999942,
+          "median_seconds": 1.0215039390022866
+        },
+        "ordinary_samples": {
+          "count": 668,
+          "peak_lp_objectives": 2,
+          "peak_seconds": 0.12580323099973612,
+          "median_seconds": 0.04980930501187686
+        }
+      },
+      "full_window_comparison": {
+        "file": "/home/x6e3/Research/sdts-runs/v3-diag3-codex/T3a/430010-drift_0.0005-ramp.json",
+        "sha256": "d08f1b6709be87b6779cb28739ae6375c48712ec1b84bca068bc4532d8152fe5",
+        "full_window_detect": 695,
+        "eviction_detect": 695,
+        "common_samples": 696,
+        "largest_abs_margin_delta_c": 1.6747264464100908e-08,
+        "deviation_count_over_1e_6": 0
+      },
+      "first_deviation": null
+    },
+    {
+      "task": "T3c",
+      "root_commit": "6c1190f0bc5fc16fa4f1204d3f0e6e14aa2cc785",
+      "frozen_direction_input_sha256": "7f9cc8700fdd70782ddaf4a7e99a2e2c2f5818ce4aafa970f897b40e90a7747e",
+      "run": {
+        "seed": 430019,
+        "cell": "drift_0.001",
+        "ambient": "ramp",
+        "arm": "E0",
+        "noise": "uniform",
+        "t_star": 393
+      },
+      "W": 256,
+      "block": 16,
+      "fold_pad_c": 1e-06,
+      "tolerance_c": 1e-06,
+      "bound_scope": "stored plant constants, outward measurement RHS, finite variable caps; existing reachable-set clamps",
+      "dropped_measurements": "redundant by outer predicted range at arrival",
+      "detect": 393,
+      "alarm_certificate": {
+        "sample": 393,
+        "estimated_as_range_shifted_c": [
+          1.3153102595161275,
+          1.355845268373648
+        ],
+        "outer_as_range_shifted_c": [
+          1.315310258677687,
+          1.3558452689586042
+        ],
+        "outward_slab_shifted_c": [
+          1.360354386441696,
+          1.9603543864416966
+        ],
+        "margin_upper_c": -0.004509117483091795,
+        "separation_certified": true,
+        "solver": [
+          {
+            "method": "highs-ds",
+            "presolve": false,
+            "status": 0,
+            "fallback_index": 0
+          },
+          {
+            "method": "highs-ds",
+            "presolve": false,
+            "status": 0,
+            "fallback_index": 0
+          }
+        ]
+      },
+      "total_lp_objectives": 1122,
+      "solver_fallback_attempts": 0,
+      "max_variables": 822,
+      "max_matrix_rows": 1134,
+      "fold_count": 8,
+      "fold_support_count": 336,
+      "missing_dual_bounds": 0,
+      "peak_written_support_shortfall_c": 0.0,
+      "peak_unclamped_padded_support_shortfall_c": 0.0,
+      "peak_nonredundant_measurements": 31,
+      "redundant_at_arrival": 346,
+      "numerical_only_redundant": 1,
+      "timings": {
+        "fold_samples": {
+          "count": 8,
+          "peak_lp_objectives": 44,
+          "peak_seconds": 1.1276072110049427,
+          "median_seconds": 1.032090941516799
+        },
+        "ordinary_samples": {
+          "count": 385,
+          "peak_lp_objectives": 2,
+          "peak_seconds": 0.10050425300141796,
+          "median_seconds": 0.04424679701332934
+        }
+      },
+      "full_window_comparison": {
+        "file": "/home/x6e3/Research/sdts-runs/v3-diag3-codex/T3a/430019-drift_0.001-ramp.json",
+        "sha256": "37b5767c42d640f1f9f3983c50f645977af9c6aa370f17ef170ee1ed37310edb",
+        "full_window_detect": 393,
+        "eviction_detect": 393,
+        "common_samples": 394,
+        "largest_abs_margin_delta_c": 3.1227582741877313e-09,
+        "deviation_count_over_1e_6": 0
+      },
+      "first_deviation": null
+    }
+  ]
+}

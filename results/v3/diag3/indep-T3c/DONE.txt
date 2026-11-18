@@ -1,0 +1,9 @@
+# Sol — DIAG3-T3c
+# OBSERVED checkout commit 6c1190f0bc5fc16fa4f1204d3f0e6e14aa2cc785
+# OBSERVED reference and code in T3a; measurement eviction traces, window counts and timing in this directory.
+e34002b94f605dea282561bc497da063025ff761aad6126b1eea47a47293dfa1  430000-drift_0.001-ramp.json
+03db7c9b4d7e205f08f9d9cb584db47d3b752b1ae8f39ad2e8c46375667338bd  430007-drift_0.002-rw.json
+6d38747321704042730635424b488e886ff92eaaca73d5c87b59bb14c2cefbd7  430010-drift_0.0005-ramp.json
+daf6adfec5d72af793dc1f2e9517d087e9131e2c64aa10ce7332d6ea8c12c013  430019-drift_0.001-ramp.json
+8cd0446aec2830bd9b780f58b315da4f0bc4aea4eefe1d55835e22b7637e440b  430027-drift_0.002-rw.json
+0ddaa47ffa7506d7ea77958941c8ed28f4ce8760461c94a16caa6f3167742121  summary.json

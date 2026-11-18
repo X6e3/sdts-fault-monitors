@@ -1,0 +1,13 @@
+# Sol — DIAG3-T3a
+# OBSERVED checkout commit 6c1190f0bc5fc16fa4f1204d3f0e6e14aa2cc785
+# OBSERVED independent S256, five runs. Three original supports on seed 430010 were below the checked dual upper bounds. The corrected suffix produced a certified alarm at the same sample.
+c101707458fc03b1522d2e78c6d353ef2c6030b5a940300bb38ab4e9acc7daba  430000-drift_0.001-ramp.json
+c7db5ca2e7aad3468b4be8af6ae3f1896c1ebd303fd127d868208a5d3b0e4bcb  430007-drift_0.002-rw.json
+b35a1aa0d7f4131cb0c9a25403cd2681eb7be08c1aeb57394e897e5e2d655b43  430010-certified-suffix.json
+d08f1b6709be87b6779cb28739ae6375c48712ec1b84bca068bc4532d8152fe5  430010-drift_0.0005-ramp.json
+37b5767c42d640f1f9f3983c50f645977af9c6aa370f17ef170ee1ed37310edb  430019-drift_0.001-ramp.json
+2f0fb4d689fd7a948edcf1b9b171d779f94f689b593723b1f7da7d2d024b28d5  430027-drift_0.002-rw.json
+971c706e0ee6509a121120e4634a04f60ac743602e97df89f91fcbfafda89a20  independent_window.py
+ac706f25cbcd283e772f22b938083683cc8922ffc3632395c0a362b4ef2852b4  refine_fold_duals.py
+dd2dbba6f5651f1176f5a21676e1171e2ce48ea6dc16a58e6bad509d8e21b5a8  certified_suffix.py
+f37f0a65e1e06f8634caccc05a1aa677a3a64603bdde0d863b9d976ca7fd0682  summary.json

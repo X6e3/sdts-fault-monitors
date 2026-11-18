@@ -115,3 +115,39 @@ Two different questions remain open.
 - **Fold:** a cheaper fold, e.g. fewer directions or a longer B.
 
 My suggestion is 2a first, because it tells us whether 2b is worth building.
+
+## Independent check of phase 1 (T3a) and what the window really needs (T3c) (OBSERVED; 2026-11-18)
+
+**Where the outputs are:** `results/v3/diag3/indep-T3a/` and `indep-T3c/`. Every hash matches its `DONE.txt`.
+
+**Method:** an independent implementation of S256 written from the plan's text, sharing no code with `diag3.py`. It
+adds dual bounds for every fold support and a certified enclosure of the alarm.
+
+**T3a: S256 reproduced on all five runs.**
+- **Same detection times:** 673, 579, 849, 695 and 393.
+- **Margins at t*:** they agree with `run1-c16f7be` within 5e-14 °C.
+- **The alarm at t*:** its separation is certified in all five runs.
+- **The fold supports.** In four runs every written support lies at or above its certified dual upper bound.
+  - In 430010, three supports at the folds from sample 657 on fell short of it by up to 7.3e-6 °C. That is more than
+    the 1e-6 pad.
+  - A replay from the last certified fold (641) raised them to their dual bounds, or kept a valid clamp. In that
+    replay the alarm is still certified at 695, with a margin of −0.2855 mC.
+  - So the 1e-6 pad is not always enough. A certified candidate needs dual-checked folds, not a fixed pad.
+
+**T3c: most measurements are redundant when they arrive.**
+
+| run | measurements redundant at arrival | largest number non-redundant in the window |
+|---|---|---|
+| 430007 | 592 of 673 | 41 |
+| 430027 | 520 of 579 | 34 |
+| 430000 | 751 of 849 | 39 |
+| 430010 | 623 of 695 | 32 (33 with eviction) |
+| 430019 | 347 of 393 | 31 |
+
+- **About 88 % are redundant.** Dropping the redundant ones changes no detection, and no margin by more than 3.2e-8 °C.
+- **So K ≈ 41 kept measurements loses nothing on these runs.** The number of variables, 3 per sample of the window, is
+  not reduced by this. That still needs the compressed transitions.
+
+**Cost as run** (Python and HiGHS, x86):
+- a fold sample takes 1.2–1.6 s at its peak (44 LPs);
+- an ordinary sample takes 50–70 ms (median, 2 LPs).
