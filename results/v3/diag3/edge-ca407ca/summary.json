@@ -1,0 +1,9 @@
+{
+ "runs": 80,
+ "alarms": [],
+ "E1_passes": true,
+ "max_kept": 65,
+ "evictions": 282800,
+ "max_rows": 445,
+ "n_retry": 78
+}

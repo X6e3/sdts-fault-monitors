@@ -475,3 +475,30 @@ its 6,104 samples.
 - **The eviction rule costs nothing at K = 40.** F evicted 420 measurements on 161 rows and still detects as E on
   every row. The measurements that have been inactive longest are the ones the window can do without.
 - **K = 64 leaves a margin of 19 over the DEV maximum,** and K = 40 shows that the rule works below it.
+
+## Amendment 7: F on edge noise (OBSERVED; 2026-11-19, Arch)
+
+**Run:**
+- `diag3_cw_edge.py` at `ca407ca`, from a clean checkout, 14 workers, 02:02–02:19.
+- 80 healthy runs with edge noise: DEV seeds 430070–430089, both arms, rw and ramp.
+- Outputs are in `results/v3/diag3/edge-ca407ca/`.
+
+**E1 passes.** There is no alarm on any of the 80 runs.
+
+**The cap is binding throughout, and that is new.**
+- Under edge noise no measurement is redundant at arrival: each sits on its slab boundary.
+- F keeps every measurement until the cap is reached (64 in the window, 65 with τ). It then evicts one per sample:
+  3535 evictions in every run, one per sample after the 64th.
+- **This is the opposite of uniform noise,** where 88 % are redundant and DEV never keeps more than 45.
+
+**Size and time under edge noise:**
+- LP rows at most 445, against 409 on the DEV rows. The kept measurements are at the cap.
+- The step p95 is at most 32 ms and the fold step at most 670 ms (Arch, a shared machine).
+- 78 LPs needed a fallback method, and no fold was raised.
+
+**What it shows (INFERRED):**
+- **Soundness holds with the memory full and an eviction at every sample.** This was the case the cap was meant
+  for.
+- **For an MCU, K is the size to plan for, not the DEV median.** Noise at its bound, or a sensor that saturates the
+  slab, fills the window.
+- **This check says nothing about detection under such noise.** Every run here is healthy.
