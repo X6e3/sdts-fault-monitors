@@ -8,11 +8,13 @@ Prepared 2026-11-18 on branch `sdts-v3/template-state` for Can Koç's review. Th
 are Can's to set. Everything here is a proposal until the status line says APPROVED. `run_validation_v2.py` refuses
 to generate validation data until then (section 6).
 
-**Open item:** K = 32 (informational; it does not change the candidate).
+**Open items:**
+- The rehearsal is to be rerun at the new freeze commit, after amendment 8 (section 8).
+- K = 32 is informational; it does not change the candidate.
 
-**For Can to decide at review:**
-- 100 seeds or 200 (section 3);
-- whether "later than v2" is a FAIL or only reported (section 4).
+**Proposed after the team's review and Can's preference (2026-11-19), to be confirmed at approval:**
+- 200 seeds (section 3);
+- "later than v2" is reported in full and does not decide (section 4).
 
 ## 0. What is tested, and what a failure means
 
@@ -44,7 +46,7 @@ The DEV results stay what they are: DEV results.
 It says nothing about an MCU, float32, a real plant or model mismatch (section 7).
 
 After the result, neither the candidate nor any rule changes. A new or modified candidate is a new freeze with the next
-unused seed block (440300 onwards).
+unused seed block (440400 onwards).
 
 ## 1. The candidate
 
@@ -53,22 +55,29 @@ unused seed block (440300 onwards).
 - the measurements kept in the window, at most K = 64;
 - τ itself.
 
-**The window LP** (DIAG-3 amendments 3, 4 and 6):
+**The window LP** (DIAG-3 amendments 3, 4, 6 and 8):
 - It runs over the samples τ … t, with t − τ ≤ W + B = 272.
 - **Exact step between nodes:** x_b = M^L x_a + Σ_{k<L} M^k e3 w_{b−1−k}, with |w_j| ≤ ρ explicit.
+  - M^L is the exact rational power of the float64 matrix M, the same M as the simulator's and the oracle's, rounded
+    once.
   - (ac, as) are kept at the nodes and TA at every sample.
   - The nodes are τ, the kept measurements, τ + 16 and the objective sample.
   - Between nodes ac and as stay in the box by convexity, so the only box rows needed there are TA's.
 - **Measurements:** a measurement redundant at arrival is dropped. Dropping is sound, and lossless on DEV.
 - **The cap:** above K kept measurements, the one inactive longest (its bound with a zero multiplier) is evicted. A
   newly kept measurement counts as active at arrival, and ties go to the oldest. Eviction is sound.
+  - K counts the window after τ.
+  - The reported `max_kept` also counts the measurement at τ, which the base already holds, so it can read K + 1.
 - **The fold, every B = 16 samples:**
   - It uses the smoothing rule, with the measurements up to the fold sample.
   - Each of the 42 supports is max(LP value + 1e-6, certified dual bound), then clamped.
 - **The alarm at t:**
   - It is computed from the measurements up to t − 1.
   - z_t is kept, evicted and folded only after the alarm check.
-  - Each alarm is certified: the certified as-range excludes z_t ± δ.
+  - **F raises an alarm only when it is certified:** the certified as-range excludes z_t ± δ, with the slab rounded
+    outward.
+  - LP values that point to an alarm the bound cannot prove raise no alarm. z_t is then dropped, which is sound, and
+    the case is counted (`unproved_primal_alarms`, reported).
 - **The certificate:**
   - weak duality with the solver's multipliers;
   - every variable is boxed;
@@ -77,8 +86,8 @@ unused seed block (440300 onwards).
   - the measurement slabs are rounded outward.
 
   So the bound holds for the LP with exact coefficients, whatever the solver's tolerance.
-- **An empty window LP** cannot happen with sound folds. If it does, it is recorded as an uncertified alarm, which is
-  a FAIL.
+- **An empty window LP** cannot happen with sound folds. If it does, at an as-range or at a fold, it is recorded as
+  an uncertified alarm, which is a FAIL.
 
 **What is a theorem and what is not:**
 - **Soundness** holds by construction under the model: certified folds, certified alarms, and only sound drops and
@@ -137,19 +146,25 @@ HiGHS 1.12.0. It is checked at start and recorded.
 
 ## 3. Data
 
-**Seeds 440200–440299** (100 seeds), generated only after approval, by `run_validation_v2.py`. They use freeze 1's
-validation namespace (`v3val:`) and laws. 440300–440999 stay reserved.
+**Seeds 440200–440399** (200 seeds), generated only after approval, by `run_validation_v2.py`. They use freeze 1's
+validation namespace (`v3val:`) and laws. 440400–440999 stay reserved.
 
 **Per seed, 48 runs, as in freeze 1:**
 - 11 cells × arms E0, E1 × ambient `rw`, `ramp` with uniform noise;
 - plus healthy × E0, E1 × `rw`, `ramp` with `edge` noise.
 
-That is 4800 runs in total.
+That is 9600 runs in total: about 7400 detection events at the rehearsal's rate, and 1600 healthy runs (800 of them
+with edge noise).
 
-**Why 100 seeds and not 200** (freeze 1 used 200 for inv4p's small margin):
-- On DEV, F's point is 0.999 against a target of 0.80, and the seed-bootstrap lower end is 0.997.
-- The margin is wide, so 100 seeds is ample. The other 100 seeds stay unused for a later freeze.
-- **Cost:** about 6.3 h on Arch with 14 workers, from the rehearsal's rate (section 8).
+**Why 200 seeds:**
+- **The 80 % target alone would not need them.** On DEV, F's point is 0.999 and the bootstrap lower end is 0.997.
+  That bootstrap resamples DEV's 30 seeds, though, and says nothing about behaviour DEV never showed.
+- **The weak spot is the tail.** W = 256 fails only on very slow drifts whose deciding cut comes more than 256 samples
+  before t*; DEV had one such seed in 30. 200 seeds sample that tail about twice as well as 100.
+- **The healthy runs.** If none of the 1600 healthy runs alarms, the per-run false-alarm rate is below about 0.19 %
+  at 95 % (rule of three). Soundness itself rests on the certificate, not on this count.
+- **The same block size as freeze 1,** so the two validations have the same design.
+- **Cost:** about 12.6 h on Arch with 14 workers, at the rehearsal's rate (section 8). 600 seeds stay unused.
 
 ## 4. Scoring rules (`score_validation_v2.py`, fixed)
 
@@ -175,14 +190,16 @@ exists. N = 3600.
 - **PASS:** otherwise.
 
 **Reported, not deciding:**
-- runs later than v2;
+- runs later than v2, each with its cell and the delay; the largest positive t_F − t_v2; and the runs where v2 detects
+  and F misses (which also count in the misses rule);
+- the unproved LP alarms (section 1);
 - D_censored, exact matches with t*, lag quantiles, per cell and ambient law;
 - the seed-cluster bootstrap (2000 resamples, rng seed 20261118);
 - evictions, kept measurements, the largest LP size, and folds raised to their dual bound;
 - the subgroups drift_0.0005/ramp and rw (pre-specified).
 
-**For Can to decide:** whether "later than v2 on any run" should be a FAIL rather than reported. On DEV it is 0 for
-F. There is no theorem behind it, and D_paired already counts every late detection.
+**Why "later than v2" does not decide:** there is no theorem behind it, and D_paired already counts every late
+detection. On DEV it is 0 for F. It is reported in full (above).
 
 ## 5. DEV reference (DEV, not validation)
 
@@ -241,7 +258,8 @@ at `66429e2`).
 4. **Score.** `score_validation_v2.py OUT`. Then a dated record with the verdict as it comes out, the per-cell table
    and the run hashes.
 5. **Infrastructure failure** (a crash, a reboot, incomplete rows):
-   - the identical command is rerun on the same block;
+   - the identical command is rerun on the same block, into a new output directory (the runner refuses an existing
+     one);
    - a needed code change outside the candidate and the rules gets a dated addendum here;
    - the candidate, the target and the scoring do not change.
 6. **No reruns for any other reason, and no second look at another block for the same candidate.**
