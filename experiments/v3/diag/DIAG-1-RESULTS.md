@@ -3,7 +3,9 @@
 **Plan:** `DIAG-1-PLAN.md`, with amendment 1 written before any arm result.
 
 **Revised the same day after review round 1** (GPT R1, Hydrogen H1, Sol T2b). What changed, and why, is listed in
-the last section. The main correction: the loss arrives in single steps at measurement cuts, not as a steady drift.
+the last section. The main correction is about how the loss happens. The slack builds up beforehand, in other
+directions. It becomes visible in TA in single steps, at measurement cuts. It is not a steady drift. (Wording
+sharpened in round 2, after GPT and Sol.)
 
 **Run:**
 - `diag1.py` at `6fe3b54` on Arch, clean tree.
@@ -204,7 +206,16 @@ already is.
      measurements. A state that keeps the last few active cuts exactly, beside the template, aims at it directly.
    - **The constraint:** it must keep them as a small LP with one common ambient path. Transported halfspaces each
      pay their own worst-case ambient step, which is why the `window` family failed (`RESULTS.md`).
-   - **Cost:** it is paid per cut, not per step. Cortex-M timing is open.
+   - **Cost (corrected in round 2):** "paid per cut, not per step" was not shown. It is withdrawn.
+     - Keeping K cuts does not bound memory by K. The common ambient path between two cuts has one variable per
+       sample (GPT, Sol).
+     - A prototype needs two budgets: at most K cuts and at most W samples. The transitions between cuts also need a
+       compressed summary that keeps the ambient path common.
+     - Whether a cheap per-sample bound check makes the LP rare is to be measured. Cortex-M timing is open.
+   - **Dropping the oldest cut is sound (GPT, Sol; MATH):**
+     - Project the LP's feasible set onto the state at the time of the oldest cut.
+     - Wrap that projection outward in the template directions, and restart from it.
+     - The true state stays inside at every step. How much detection power this keeps is a separate measurement.
    - This is the bounded online adaptive state (with v2 in parallel), narrowed to cut events.
 4. **An update that re-templates less often** (a block of steps with offline bases): unchanged. The limit to work out
    first is that the measurement slabs inside a block cannot all be applied offline-exactly.
@@ -232,3 +243,13 @@ already is.
 | ages of the separating facets | "age 0" | age 0 or ∞ for the as − ac facet; neither is intermediate | GPT R1 |
 | censored delays, deciding side | not stated | stated (delays of "—" rows cannot be split; +e2 decides throughout) | GPT R1 |
 | forward orbits of e2 as next family | first suggestion | weakened to a control (MATH: the orbit stays in the positive octant) | Hydrogen H1 |
+
+## Changes in review round 2 (2026-11-18)
+
+| what | before | after | from |
+|---|---|---|---|
+| where the loss arises | "arrives in single steps at cuts" | the slack builds up beforehand in other directions; it becomes visible in TA at cuts | GPT R2, Sol |
+| cost of keeping K cuts | "paid per cut, not per step" | withdrawn; it needs K and W budgets and compressed transitions | GPT R2, Sol |
+| dropping the oldest cut | open question | sound by projection and outward wrapping; its tightness is to be measured | GPT R2, Sol |
+
+The next step is `DIAG-2-PLAN.md`.
