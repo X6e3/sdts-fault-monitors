@@ -287,3 +287,49 @@ its 6,104 samples.
 - **S256 folds with the 1e-6 pad, uncertified.** The pilot of amendment 3 found that the dense LP is solved loosely.
   E and N, with certified folds, are running on the same rows (amendment 4).
 - **The cost is a desktop cost:** an 822 × 1134 LP and about 4.6 LPs per sample. It says nothing yet about an MCU.
+
+## Amendment 4: E and N on all DEV rows (OBSERVED; 2026-11-18, MacBook Air, Apple M4)
+
+**Run:**
+- `diag3_cw_dev.py` at `90d3edc`, from a clean checkout, 8 workers, 16:08–18:54.
+- Outputs are in `results/v3/diag3/cwdev-90d3edc/`.
+- Scored with `--ref results/v3/diag3/dev2a-6c1190f`.
+
+**The criteria:**
+- **D1 passes.** E's detection equals 2a's S256 on all 1320 rows; no row differs.
+- **D2 passes.** There is no soundness finding for E or N, and every alarm is certified.
+
+**Scores** (1320 runs; 1081 with a certified t*; 238 admissible):
+
+| | D_paired | bootstrap 95 % | misses | detections equal to t* | largest lag | soundness findings |
+|---|---|---|---|---|---|---|
+| S256 (2a, dense, pad folds) | 0.9992 | [0.997, 1.0] | 0 | 1079 | 13 | 0 |
+| **E** (compressed, exact, certified folds) | **0.9992** | **[0.997, 1.0]** | **0** | **1079** | **13** | **0** |
+| N (TA box dropped between nodes) | 0.982 | [0.96, 0.995] | 2 | 1057 | 91 | 0 |
+
+**Without the ten rows of the diagnosis runs:** E 0.9987, N 0.971.
+
+**N against E:**
+- **N is never earlier than E.** It is later on 22 rows (11 seeds and cells, both arms).
+- **Where:** only drift_0.0005 and drift_0.001. drift_0.0005: 6 rows rw and 2 ramp. drift_0.001: 12 rw and 2 ramp.
+- **Misses:** N misses 430006 drift_0.0005 rw, in both arms. E detects it at 3574.
+- **So the loss is not confined to the ramp cells.** Under the random-walk ambient, TA also reaches the box walls.
+
+**Size and time over all DEV rows** (Python and HiGHS on the Mac; not MCU figures):
+
+| | kept measurements (median / p95 / max) | nodes, max | variables, max | rows, max | step p95, worst row (ms) | fold step, max (ms) |
+|---|---|---|---|---|---|---|
+| E | 36 / 43 / 45 | 48 | 643 | 409 | 24 | 574 |
+| N | 36 / 43 / 45 | 48 | 417 | 183 | 13 | 376 |
+
+- No fold of E or N needed raising to its dual bound.
+- 4 LPs in each needed a fallback method.
+
+### What it shows (INFERRED)
+
+- **E is S256, row for row, on DEV,** with certified folds and at most 409 rows against 1134.
+- **At most 45 measurements are kept.** That is a little above the 41 seen on the diagnosis runs.
+- **N is not the MCU form, by the reading rule.** The TA box between nodes matters on 22 rows.
+- **The next step:** add the TA box rows only when they are needed. An exact way is to solve N, check the TA path
+  that the solution implies between nodes, and add the violated rows. An optimum that satisfies them is the optimum of
+  E. This would keep E's result at a cost close to N's. It is a proposal, not yet tested.
