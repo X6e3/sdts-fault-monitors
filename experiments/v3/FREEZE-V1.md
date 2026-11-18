@@ -1,6 +1,6 @@
 # v3 freeze 1: two candidates and the rules of their independent validation
 
-Status: PROPOSED (not approved; validation data must not be generated)
+Status: APPROVED by Can Koç on 2026-11-18
 
 Manifest sha256: e8dd60f134252c1855aca040a46836281db57c1ee19da9713f4c7a25d6e18a96
 
