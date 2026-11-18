@@ -1,0 +1,10 @@
+# Sol — DIAG1-T2
+
+# OBSERVED: source commit 08d6a50c1a10a55483b1710dbae640038444355e
+# OBSERVED: three DEV JSONs, 12 prefixes, 48 optimal extrema with both bounds. Method and environment are recorded in each JSON.
+# UNKNOWN: Claude Arm A comparison is pending. No Arm A JSONs were available in the shared diagnosis directories at handoff.
+
+# OBSERVED: SHA-256 computed with sha256sum.
+2191200f33e5ecc322cc4ff0b072f7e6a0f146c0bd605a72a29525fab66deb9f  430007-drift_0.002-E0-rw.json
+a18eb66a978038350ccfb68f1b76078eb6f3e1ebb68fd053543255be9e071ac4  430019-drift_0.001-E0-ramp.json
+b10dcafd3ecb874aa921bb3ede19685666ecf55641cf42f4dbaee271bd5b808d  430010-drift_0.0005-E0-ramp.json
