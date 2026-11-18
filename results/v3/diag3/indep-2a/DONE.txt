@@ -1,0 +1,6 @@
+# Sol — DIAG3-2a / DIAG3-T3b
+# OBSERVED checkout commit 6c1190f0bc5fc16fa4f1204d3f0e6e14aa2cc785; input run commit 6c1190f0bc5fc16fa4f1204d3f0e6e14aa2cc785; EXIT=0
+# OBSERVED SHA-256 digests of output files
+a2cbab2aacc6c411c145bb2ac43591e56ee63d00e14a084c9bdcd34b8156a6ee  independent_score.py
+a244d6a9d5bc11523c19c18626cba9126424547ae3494826da298b360466a7ac  s256-close-detections.csv
+17eb3a9416d7180afb4497065559ce54208e49fd431e99316bade7ee8398398d  scores.json

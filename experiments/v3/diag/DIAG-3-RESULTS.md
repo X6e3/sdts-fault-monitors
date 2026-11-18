@@ -333,3 +333,22 @@ its 6,104 samples.
 - **The next step:** add the TA box rows only when they are needed. An exact way is to solve N, check the TA path
   that the solution implies between nodes, and add the violated rows. An optimum that satisfies them is the optimum of
   E. This would keep E's result at a cost close to N's. It is a proposal, not yet tested.
+
+## Independent score of 2a (T3b) (OBSERVED; 2026-11-18)
+
+**Where:** `results/v3/diag3/indep-2a/`. Every hash matches its `DONE.txt`.
+
+**Method:** a scorer written independently of `diag3_dev.py summary`, run on the same 2a outputs.
+
+**It agrees to the last digit:**
+
+| | all DEV | without the diagnosis runs |
+|---|---|---|
+| cyl16p | 0.385816 | 0.511835 |
+| S128 | 0.814609 | 0.979945 |
+| S256 | 0.999210 | 0.998747 |
+
+**Close detections.** `s256-close-detections.csv` lists the 18 S256 detections whose margin is above −0.5 mC.
+- The closest are 430009 drift_0.001 ramp (−0.0235 mC) and 430026 drift_0.0005 ramp (−0.0385 mC), both arms each.
+- E detects all of them at the same samples, and E's alarms are certified (amendment 4). So none of these 18 rests on
+  the dense LP's tolerance.
