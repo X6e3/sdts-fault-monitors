@@ -8,10 +8,11 @@ Prepared 2026-11-18 on branch `sdts-v3/template-state` for Can Koç's review. Th
 are Can's to set. Everything here is a proposal until the status line says APPROVED. `run_validation_v2.py` refuses
 to generate validation data until then (section 6).
 
-**Open items, to be filled in before review:**
-- the DEV rehearsal (section 8);
-- the manifest sha256 and the commit table (section 2);
-- K = 32 (informational).
+**Open item:** K = 32 (informational; it does not change the candidate).
+
+**For Can to decide at review:**
+- 100 seeds or 200 (section 3);
+- whether "later than v2" is a FAIL or only reported (section 4).
 
 ## 0. What is tested, and what a failure means
 
@@ -148,7 +149,7 @@ That is 4800 runs in total.
 **Why 100 seeds and not 200** (freeze 1 used 200 for inv4p's small margin):
 - On DEV, F's point is 0.999 against a target of 0.80, and the seed-bootstrap lower end is 0.997.
 - The margin is wide, so 100 seeds is ample. The other 100 seeds stay unused for a later freeze.
-- **Cost:** about 2 h of oracle and about 5 h of F on Arch with 14 workers (estimate from DEV).
+- **Cost:** about 6.3 h on Arch with 14 workers, from the rehearsal's rate (section 8).
 
 ## 4. Scoring rules (`score_validation_v2.py`, fixed)
 
@@ -260,5 +261,30 @@ at `66429e2`).
 
 ## 8. DEV rehearsal of the full pipeline (DEV seeds, not validation)
 
-TBD at the freeze commit: `run_validation_v2.py --rehearsal --seeds 430096 430097` (96 runs, edge noise included),
-scored by `score_validation_v2.py`. These two DEV seeds have not been used before.
+The identical pipeline was run on DEV seeds 430096–430097 (`--rehearsal`; validation stays locked).
+
+**Run:**
+- `run_validation_v2.py` at `cfb7f18` on Arch, from a clean checkout, 14 workers.
+- The checks passed: the manifest `ae2e10c9…` and the environment lock (CPython 3.12.13, numpy 2.5.5, scipy 1.18.1,
+  HiGHS 1.12.0).
+- 96 runs (2 seeds × 48) in 453 s. Rows sha256 `d5b352faf42ecf0f4e4ea36c66a40f890e7a429f7f8abf85ada36c7071c0e6f5`.
+- Scored with `score_validation_v2.py`. The outputs are in `results/v3/freeze2/rehearsal-dev-430096/`. The solver
+  attempts (4.8 MB) stay on Arch.
+- These two DEV seeds had not been used before.
+
+**Pipeline checks:**
+- complete: 96 of 96 rows;
+- 0 uncertified oracle runs;
+- 74 detection events;
+- 22 admissible runs, the 8 edge-noise healthy runs included.
+
+| | soundness | uncertified alarms | misses | later than v2 | D_paired | detections equal to t* |
+|---|---|---|---|---|---|---|
+| F (W = 256, K = 64) | 0 | 0 | 0 (v2: 0) | 0 | 1.0 (L_v2 = 994 s) | 74 of 74 |
+
+**What the rehearsal shows:**
+- **The pipeline works end to end:** generation, oracle, v2, F and scoring.
+- **On the 8 edge-noise runs F evicts at every sample** (28,280 evictions; up to 65 kept and 445 rows), with no
+  alarm, as in amendment 7.
+- **Two DEV seeds say nothing about the target.** D_paired = 1.0 here is not evidence for H-F.
+- **Expected validation time:** 4800 runs at this rate is about 6.3 h on Arch with 14 workers.
