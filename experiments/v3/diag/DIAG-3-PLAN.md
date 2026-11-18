@@ -374,3 +374,30 @@ affected.
 **Criterion E1 (fixed now):** no F alarm on any of the 80 runs.
 
 **Reading:** E1 is a precondition of the freeze. A failure is a soundness bug, to be found before anything else.
+
+## Amendment 8: F raises certified alarms only (2026-11-19, written before any result of it)
+
+**Why:** a review of the freeze-2 code (`cfb7f18`) found three gaps.
+1. **The alarm comes from the LP values, not the bound.** `online()` stops on the LP values (`upper < z − δ`) and only
+   then asks for the certificate. A solver value slightly off at a boundary would record an uncertified alarm on a
+   healthy run. Such a run counts as a soundness violation and an uncertified alarm, so one such slip would fail the
+   whole validation. The 400 edge-noise runs of a 100-seed block make this more likely.
+2. **The alarm's certificate does not round z_t ± δ outward,** while the LP slabs do. The float 0.3 is 1.1e-17 below
+   3/10.
+3. **An empty fold LP raises an exception** and stops the worker. The freeze document says it is recorded as an
+   uncertified alarm.
+
+**The change, for F only** (E, N and L behave as they ran):
+- **An alarm is raised only if it is certified.** LP values that point to an alarm the bound cannot prove raise no
+  alarm. z_t is then dropped, which is sound, and the case is counted (`unproved_primal_alarms`).
+- **`certify_alarm` rounds the slab of z_t outward.**
+- **An empty fold LP** is recorded as an uncertified alarm.
+- **The freeze-2 scorer also reports** the largest positive t_F − t_v2 and the rows where v2 detects and F misses.
+
+**Runs:** F with K = 64 on all 1320 DEV rows, and on amendment 7's 80 edge-noise runs (Arch, 14 workers, from a
+clean checkout of this commit).
+
+**Criteria (fixed now):**
+- **T1:** F's detection equals amendment 6's F (K = 64) on every DEV row. The number of unproved LP alarms is reported.
+- **T2:** there is no alarm on the 80 edge-noise runs.
+- The freeze-2 rehearsal is rerun at the new freeze commit.

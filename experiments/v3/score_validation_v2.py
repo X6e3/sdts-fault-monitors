@@ -38,6 +38,7 @@ def score(rows, manifest, expected_runs=None, env_ok=True):
               for r in rows if r["F"]["detect"] is not None and not (r["F"]["alarm_certificate"] or {}).get("certified")]
     later = [(r["seed"], r["cell"], r["arm"], r["ambient"], r["noise"], r["v2"], fget(r)) for r in rows
              if r["v2"] is not None and (fget(r) is None or fget(r) > r["v2"])]
+    later_by = [x[6] - x[5] for x in later if x[6] is not None]
     d_p, lc, lv2, nb = SV.paired_delta(R, fget)
     d_c, lcc, lvc = SV.censored_delta(R, fget)
     desc = SV.describe(R, fget)
@@ -62,7 +63,10 @@ def score(rows, manifest, expected_runs=None, env_ok=True):
         "target_paired_lag_reduction": target, "D_paired": d_p, "paired_set": nb, "L_paired": lc, "L_paired_v2": lv2,
         "D_censored": d_c, "L_censored": lcc, "L_censored_v2": lvc,
         "D_paired_bootstrap95_descriptive": SV.bootstrap(R, fget),
-        "soundness_violations": sound, "uncertified_alarms": uncert, "later_than_v2_reported": later, **desc,
+        "soundness_violations": sound, "uncertified_alarms": uncert, "later_than_v2_reported": later,
+        "later_than_v2_largest_s": max(later_by) if later_by else None,
+        "v2_detects_F_misses": sum(1 for x in later if x[6] is None),
+        "unproved_primal_alarms": sum(r["F"].get("unproved_primal_alarms", 0) for r in rows), **desc,
         "evictions": sum(r["F"]["evictions"] for r in rows),
         "runs_with_evictions": sum(1 for r in rows if r["F"]["evictions"]),
         "max_kept": {"median": SV.q(kept, .5), "p95": SV.q(kept, .95), "max": kept[-1] if kept else None},
@@ -90,7 +94,8 @@ def main():
     c = s["F"]
     print(f"F: {c['verdict']}  D_paired={c['D_paired']}  target={c['target_paired_lag_reduction']}  "
           f"misses={c['misses']} (v2 {s['v2']['misses']})  soundness={len(c['soundness_violations'])}  "
-          f"uncertified={len(c['uncertified_alarms'])}  later_than_v2={len(c['later_than_v2_reported'])}  "
+          f"uncertified={len(c['uncertified_alarms'])}  later_than_v2={len(c['later_than_v2_reported'])} "
+          f"(largest {c['later_than_v2_largest_s']} s)  unproved={c['unproved_primal_alarms']}  "
           f"{c['fail_reasons']}")
     print(f"runs {s['runs']}  fault {s['fault_runs']}  uncertified oracle {s['uncertified_oracle']}  "
           f"events {s['detection_events']}")

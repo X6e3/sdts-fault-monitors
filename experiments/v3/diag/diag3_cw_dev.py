@@ -36,6 +36,7 @@ def online(var, zs, W=W, K=None, t_star=None, horizon=None, tp=None):
     w = C.make(var, tp if tp is not None else V.load_frozen(G.V3 / "frozen" / "cyl16p.json"))
     last = len(zs) - 1 if horizon is None else min(len(zs) - 1, horizon)
     det, cert, m_det, m_ts, steps, folds, t00 = None, None, None, None, [], [], time.monotonic()
+    unproved = 0                                      # F: LP values pointing to an alarm that the bound cannot prove
     w.zs[0] = zs[0]
     for t in range(1, last + 1):
         t0 = time.monotonic()
@@ -48,9 +49,12 @@ def online(var, zs, W=W, K=None, t_star=None, horizon=None, tp=None):
         if t == t_star:
             m_ts = 1e3 * m
         if upper < zs[t] - DELTA or lower > zs[t] + DELTA:
-            det, m_det, cert = t, 1e3 * m, w.certify_alarm(t, zs[t])
-            break
-        if not (lower >= zs[t] - DELTA and upper <= zs[t] + DELTA):
+            c = w.certify_alarm(t, zs[t])
+            if c["certified"] or not getattr(w, "harden", False):   # E, N, L (amendments 3-5): as they ran
+                det, m_det, cert = t, 1e3 * m, c
+                break
+            unproved += 1                             # F raises only certified alarms; z_t is dropped (sound)
+        elif not (lower >= zs[t] - DELTA and upper <= zs[t] + DELTA):
             if getattr(w, "track", False):
                 w.keep(t, zs[t])
             else:
@@ -60,11 +64,16 @@ def online(var, zs, W=W, K=None, t_star=None, horizon=None, tp=None):
         w.max_kept = max(w.max_kept, len(w.zs))
         folded = t - w.tau > W + B
         if folded:
-            w.fold(t)                                 # after the alarm check, with z_t
+            try:
+                w.fold(t)                             # after the alarm check, with z_t
+            except RuntimeError as e:                 # cannot happen with sound folds; recorded, never hidden
+                det, cert = t, {"certified": False, "reason": str(e)}
+                break
         (folds if folded else steps).append(time.monotonic() - t0)
     ms = 1e3 * np.array(steps) if steps else np.zeros(1)
     fs = 1e3 * np.array(folds) if folds else np.zeros(1)
-    return {"variant": var, "W": W, "K": K, "evictions": getattr(w, "n_evict", 0), "detect": det,
+    return {"variant": var, "W": W, "K": K, "evictions": getattr(w, "n_evict", 0), "unproved_primal_alarms": unproved,
+            "detect": det,
             "margin_at_detect_mC": m_det, "margin_at_t_star_mC": m_ts,
             "alarm_certificate": cert, "folds_raised_to_dual_bound": w.n_short, "largest_raise_C": w.max_short,
             "max_kept": w.max_kept, "max_nodes": w.max_nodes, "max_vars": w.max_vars, "max_rows": w.max_rows,

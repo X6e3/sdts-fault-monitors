@@ -186,7 +186,10 @@ class Stats:
     def certify_alarm(self, t, z):
         up, cup = self.lp_cert(t, t - 1, t, (0, 1.0, 0))
         dn, cdn = self.lp_cert(t, t - 1, t, (0, -1.0, 0))
-        m = 1e3 * min(z + DELTA + cdn, cup - (z - DELTA))       # G.margin with certified bounds; < 0: certified
+        zl, zu = z - DELTA, z + DELTA
+        if getattr(self, "harden", False):                         # the slab of z_t, rounded outward
+            zl, zu = np.nextafter(zl, -np.inf), np.nextafter(zu, np.inf)
+        m = 1e3 * min(zu + cdn, cup - zl)                          # G.margin with certified bounds; < 0: certified
         return {"certified": bool(m < 0), "certified_margin_mC": m}
 
 

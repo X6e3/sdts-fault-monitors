@@ -43,7 +43,7 @@ MANIFEST = V3 / "frozen" / "MANIFEST-V2.json"
 FREEZE_DOC = V3 / "FREEZE-V2.md"
 APPROVAL = re.compile(r"^Status: APPROVED by Can Koç on (\d{4}-\d{2}-\d{2})$", re.M)
 CAND = None
-F_KEYS = ("detect", "alarm_certificate", "margin_at_detect_mC", "evictions", "max_kept", "max_nodes", "max_vars",
+F_KEYS = ("detect", "alarm_certificate", "margin_at_detect_mC", "evictions", "unproved_primal_alarms", "max_kept", "max_nodes", "max_vars",
           "max_rows", "n_lp", "n_retry", "folds_raised_to_dual_bound", "largest_raise_C", "steps", "step_ms",
           "fold_step_ms", "seconds")
 
