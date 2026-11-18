@@ -1,0 +1,113 @@
+{
+ "mode": "rehearsal",
+ "git_head": "522d85f399ba20a1a31fdb87213e47cc6ff69658",
+ "git_dirty_tracked": false,
+ "env": {
+  "python": "3.12.13",
+  "implementation": "CPython",
+  "numpy": "2.5.5",
+  "scipy": "1.18.1",
+  "highs": "1.12.0",
+  "platform": "Linux-7.3.4-arch1-2-x86_64-with-glibc2.44",
+  "machine": "x86_64",
+  "executable": "/home/x6e3/Research/sdts-v3-45cff1d/.venv/bin/python",
+  "numpy_record_sha256": "ff1cee041784df714b5a5521619920dbfd4ff462e1108a82d45606eca277a524",
+  "scipy_record_sha256": "cda958e21648ffe0b8528473532ef59f89db82bf1fa7d4a9a47161785046e979"
+ },
+ "manifest_sha256": "40544eaebcef1f18cdd1d2eb0b4dd2fccab735f9dcfb8517197d4631f1d26f2c",
+ "freeze_doc_sha256": null,
+ "approval": null,
+ "seeds": [
+  430098,
+  430099
+ ],
+ "c_build": {
+  "cc": "cc (GCC) 16.2.1 20260810",
+  "flags": [
+   "-O2",
+   "-std=c99",
+   "-ffp-contract=off",
+   "-fno-fast-math"
+  ],
+  "inv4p_float": {
+   "header": "experiments/v3/frozen/c/tables_inv4p_float.h",
+   "binary_sha256": "c734e91e74bed6bbc8c90638ee3adc54751b2ecbb6e6e2b78427957d6d0428f0",
+   "cmd": [
+    "cc",
+    "-O2",
+    "-std=c99",
+    "-ffp-contract=off",
+    "-fno-fast-math",
+    "-DV3_FLOAT",
+    "-DV3_TABLES=\"/home/x6e3/Research/sdts-v3-45cff1d/experiments/v3/frozen/c/tables_inv4p_float.h\"",
+    "-I/home/x6e3/Research/sdts-v3-45cff1d/experiments/v3/c",
+    "-o",
+    "/home/x6e3/Research/sdts-runs/v3-freeze1/rehearsal2-430098/c_build/v3_inv4p_float",
+    "/home/x6e3/Research/sdts-v3-45cff1d/experiments/v3/c/harness.c",
+    "/home/x6e3/Research/sdts-v3-45cff1d/experiments/v3/c/v3_state.c",
+    "-lm"
+   ]
+  },
+  "inv4p_double": {
+   "header": "experiments/v3/frozen/c/tables_inv4p_double.h",
+   "binary_sha256": "e3732aef26d328402ad389d0a32cfcbcd80865739573dcb4df2ac0e937e4bbdd",
+   "cmd": [
+    "cc",
+    "-O2",
+    "-std=c99",
+    "-ffp-contract=off",
+    "-fno-fast-math",
+    "-DV3_TABLES=\"/home/x6e3/Research/sdts-v3-45cff1d/experiments/v3/frozen/c/tables_inv4p_double.h\"",
+    "-I/home/x6e3/Research/sdts-v3-45cff1d/experiments/v3/c",
+    "-o",
+    "/home/x6e3/Research/sdts-runs/v3-freeze1/rehearsal2-430098/c_build/v3_inv4p_double",
+    "/home/x6e3/Research/sdts-v3-45cff1d/experiments/v3/c/harness.c",
+    "/home/x6e3/Research/sdts-v3-45cff1d/experiments/v3/c/v3_state.c",
+    "-lm"
+   ]
+  },
+  "cyl16p_float": {
+   "header": "experiments/v3/frozen/c/tables_cyl16p_float.h",
+   "binary_sha256": "6211b34423ac58896a3642e78db499d09e676eb641c09b7ae4d2f6d7ee2c7d58",
+   "cmd": [
+    "cc",
+    "-O2",
+    "-std=c99",
+    "-ffp-contract=off",
+    "-fno-fast-math",
+    "-DV3_FLOAT",
+    "-DV3_TABLES=\"/home/x6e3/Research/sdts-v3-45cff1d/experiments/v3/frozen/c/tables_cyl16p_float.h\"",
+    "-I/home/x6e3/Research/sdts-v3-45cff1d/experiments/v3/c",
+    "-o",
+    "/home/x6e3/Research/sdts-runs/v3-freeze1/rehearsal2-430098/c_build/v3_cyl16p_float",
+    "/home/x6e3/Research/sdts-v3-45cff1d/experiments/v3/c/harness.c",
+    "/home/x6e3/Research/sdts-v3-45cff1d/experiments/v3/c/v3_state.c",
+    "-lm"
+   ]
+  },
+  "cyl16p_double": {
+   "header": "experiments/v3/frozen/c/tables_cyl16p_double.h",
+   "binary_sha256": "e6fc8c48797988150849a55f6e7be7db7df7421cc2863651a1dce1565239329c",
+   "cmd": [
+    "cc",
+    "-O2",
+    "-std=c99",
+    "-ffp-contract=off",
+    "-fno-fast-math",
+    "-DV3_TABLES=\"/home/x6e3/Research/sdts-v3-45cff1d/experiments/v3/frozen/c/tables_cyl16p_double.h\"",
+    "-I/home/x6e3/Research/sdts-v3-45cff1d/experiments/v3/c",
+    "-o",
+    "/home/x6e3/Research/sdts-runs/v3-freeze1/rehearsal2-430098/c_build/v3_cyl16p_double",
+    "/home/x6e3/Research/sdts-v3-45cff1d/experiments/v3/c/harness.c",
+    "/home/x6e3/Research/sdts-v3-45cff1d/experiments/v3/c/v3_state.c",
+    "-lm"
+   ]
+  }
+ },
+ "host": "x6e3-db4",
+ "started": "2026-11-18T05:58:30+0300",
+ "runs": 96,
+ "seconds": 175.7,
+ "finished": "2026-11-18T06:01:26+0300",
+ "rows_sha256": "9aec25b121aa39b3e9b7dfb5d789ee71c565ce7911780db6ff5355c8c997f9a5"
+}

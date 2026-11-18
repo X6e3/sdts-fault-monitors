@@ -20,7 +20,8 @@ Verdict per candidate:
   FAIL          soundness violations > 0, or dominance violations > 0, or misses > v2 misses,
                 or D_paired < the candidate's frozen target
   PASS          otherwise
-The C builds are scored for soundness and agreement with the Python reference; they do not enter the verdict.
+The C builds are scored for soundness, runs later than v2 and agreement with the Python reference; they do not
+enter the verdict (float32 pads are not covered by Theorem 3, see FREEZE-V1.md section 4).
 usage: python -B score_validation.py RUN_DIR [--manifest frozen/MANIFEST.json] [--out scores.json]
 """
 import argparse
@@ -163,8 +164,10 @@ def score(rows, manifest, expected_runs=None, env_ok=True):
             rel["same" if a == b else ("C misses, Python detects" if a is None else
                                        "C detects, Python misses" if b is None else
                                        "C later" if a > b else "C earlier")] += 1
-        c_out[tag] = {"soundness_violations": _soundness(rows, R, A, get), "vs_python": dict(rel),
-                      "D_paired": paired_delta(R, get)[0], **describe(R, get)}
+        dom = [(r["seed"], r["cell"], r["arm"], r["ambient"], r["noise"], r["v2"], get(r)) for r in rows
+               if r["v2"] is not None and (get(r) is None or get(r) > r["v2"])]
+        c_out[tag] = {"soundness_violations": _soundness(rows, R, A, get), "later_than_v2_reported": dom,
+                      "vs_python": dict(rel), "D_paired": paired_delta(R, get)[0], **describe(R, get)}
     out["c_builds"] = c_out
     return out
 

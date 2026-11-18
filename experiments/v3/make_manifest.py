@@ -28,8 +28,8 @@ def sha(rel):
 def main():
     m = {
         "freeze": "v3-freeze-1",
-        "validation_block": [440000, 440099],
-        "reserved_after_this_block": [440100, 440999],
+        "validation_block": [440000, 440199],
+        "reserved_after_this_block": [440200, 440999],
         "cells": ["healthy", "jump_0.2", "jump_0.5", "drift_0.0005", "drift_0.001", "drift_0.002", "drift_0.005",
                   "drift_0.02", "noise_x2", "stuck", "gain_0.01"],
         "arms": ["E0", "E1"],
