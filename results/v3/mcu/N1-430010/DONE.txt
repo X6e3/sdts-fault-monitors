@@ -1,0 +1,6 @@
+# Neon — Task N1 (open MCU numbers verification, 2026-11-19)
+# OBSERVED checkout /home/x6e3/Research/sdts-v3-a8-0e28951 commit 0e28951f7f7a8103387b84b1a5df8e4925238d1c; EXIT=0
+# OBSERVED SHA-256 digests of output files
+488291031502b5160ce851f5a266c272a7f61352f2861d0ebd4cdbd8273c04bf  n1_results.json
+bc31db368e33faa2aaa020b710325d5843b6b6c8cc57fc961292369b62ef1ddc  report.md
+23c0b4dd83794219f654793e631ddacd08e623f1eba54ccbc908719e4e57ec38  run_n1.py
