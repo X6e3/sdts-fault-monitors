@@ -149,3 +149,56 @@ template states:
 - The candidates and rules of freeze 1 do not change.
 - A float32-aware variant, or more TA-orthogonal faces, would be a new freeze with seeds from 440200 onwards (reserved,
   never generated).
+
+## Addendum (2026-11-19): the model gap found by DIAG-3 amendment 9
+
+Nothing here changes a verdict, a rule or a candidate of freeze 1. It records what the gap that DIAG-3 amendment 9
+closes for freeze 2's F (`diag/DIAG-3-PLAN.md`) means for the frozen template states. DEV only: no validation data
+were read or generated.
+
+**The gap (MATH, from amendment 9):**
+- **The model.** The frozen `TemplateMachine` predicts with the float M. The recurrence of `thermal.py`'s `step()`,
+  taken exactly, differs from it by about u per entry. In a predicted support this is at most
+  ‖(M_exact − M)ᵀ d_i‖₁ · max|s_c| over P, with ‖(M_exact − M)ᵀ d_i‖₁ ≤ 7.1e-17 (cyl16p; inv4p 6.9e-17).
+- **The clamps are not affected.** cyl16p's hold under the exact recurrence (`diag/check_model.py`), and inv4p's 16
+  are among them, with the same values.
+- **The data.** The slab of z is widened by one ulp. The float data differ from the exact recurrence's by up to
+  1.2e-13 °C on DEV (measured).
+- So Theorem 2, as implemented, covers the float M and data that are exact to one ulp, not these two terms.
+
+**The check (OBSERVED; `diag/check_freeze1_model.py`, Mac, 2026-11-19):**
+- **Runs:** the frozen files, unchanged, on the 1320 DEV comparison rows and on the 80 healthy edge-noise DEV runs
+  (430070–430089, both arms, rw and ramp). The replay equals `first_inconsistent` on every row.
+- Outputs are in `results/v3/freeze1/model-gap-dev/` (`summary.json`, and `rows.jsonl` per row).
+- **A covered machine** adds the model term to every predicted support and widens the slab to δ + η, with
+  η = 1e-9 °C, amendment 9's allowance.
+- **Detection: no row differs,** for either candidate.
+  - 1076 alarms (inv4p) and 1078 (cyl16p).
+  - The smallest alarm margin is 4.9e-6 °C (inv4p) and 9.1e-5 °C (cyl16p), more than 4,000 times η.
+- **Edge noise: no alarm, but at rounding level.**
+  - On 48 of the 80 edge-noise runs, the frozen machine comes within 1.9e-14 to 3.0e-14 °C of a false alarm. That is
+    less than the measured data error.
+  - On the other 32 its smallest gap is 1.2e-6 °C or more.
+  - With the gap covered, the smallest gap is 2.0e-9 °C.
+- **Uniform noise:** the smallest gap on an admissible run is 2.0e-3 °C.
+
+**Why (MATH; OBSERVED on the 80 runs):**
+- From the steady state, s_0 = (t, t, t). If v_0 = +δ, the measurement gives t ≥ TA_0.
+- The rows of the exact recurrence sum to 1, so as_1 = t. If v_1 = −δ, the slab gives as_1 ≤ TA_0.
+- The exact set at k = 1 is then the single value as_1 = TA_0. The run is consistent with a gap of exactly 0. The same
+  holds with the signs swapped.
+- All 48 near-zero runs have opposite signs at k = 0 and 1, and none of the other 32 has.
+- **HYP, not checked:** the oracle's 373 undetermined edge-noise runs (above) are this case. About half of the runs
+  are expected to have opposite first signs. Checking it would need the validation block's noise, which this note
+  does not regenerate.
+
+**What it means:**
+- **The verdicts stand as recorded.** They count what the frozen machine did: no alarm on any of the 2395 admissible
+  runs, the 800 with edge noise included.
+- **For noise exactly at ±δ, "never on an admissible record" was observed, not proved.** About half of such runs
+  are consistent with a gap of exactly 0, and there the frozen machine's answer depends on rounding below the data
+  error.
+- **Noise inside the bound is far from this.** With uniform noise the smallest DEV gap, 2.0e-3 °C, is ten orders of
+  magnitude above both terms.
+- **Detection on DEV is not affected.**
+- **Freeze 2's F carries the allowance η** (amendment 9), and so does its edge-noise check.

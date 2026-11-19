@@ -1,0 +1,83 @@
+{
+ "rows": 1400,
+ "delta_covered": 0.30000000100000007,
+ "eta_C": 1e-09,
+ "model_pad_max": {
+  "inv4p": 6.93889390390723e-17,
+  "cyl16p": 7.112406173692361e-17
+ },
+ "inv4p_clamps_not_in_cyl16p": [],
+ "candidates": {
+  "inv4p": {
+   "replay_differs_from_reference": 0,
+   "rows_differ": [],
+   "alarms_frozen": 1076,
+   "alarms_covered": 1076,
+   "alarms_on_admissible": 0,
+   "smallest_alarm_margin_C": 4.941679441428093e-06,
+   "smallest_gap_on_admissible_C": {
+    "uniform": 0.0020331936835291664,
+    "edge": 1.8707257964933888e-14
+   },
+   "smallest_gap_on_admissible_covered_C": {
+    "uniform": 0.0020331956963566267,
+    "edge": 2.0000191225388875e-09
+   },
+   "edge_runs_by_first_signs": {
+    "opposite": {
+     "runs": 48,
+     "gap_below_1e-13": 48,
+     "smallest_gap_C": 1.8707257964933888e-14,
+     "largest_gap_C": 2.7977620220553945e-14
+    },
+    "same": {
+     "runs": 32,
+     "gap_below_1e-13": 0,
+     "smallest_gap_C": 1.1522173379852063e-06,
+     "largest_gap_C": 0.00025511671591549323
+    }
+   }
+  },
+  "cyl16p": {
+   "replay_differs_from_reference": 0,
+   "rows_differ": [],
+   "alarms_frozen": 1078,
+   "alarms_covered": 1078,
+   "alarms_on_admissible": 0,
+   "smallest_alarm_margin_C": 9.102037424685294e-05,
+   "smallest_gap_on_admissible_C": {
+    "uniform": 0.0019761654272008045,
+    "edge": 1.9789725413943415e-14
+   },
+   "smallest_gap_on_admissible_covered_C": {
+    "uniform": 0.001976167439422083,
+    "edge": 2.0000202050063365e-09
+   },
+   "edge_runs_by_first_signs": {
+    "opposite": {
+     "runs": 48,
+     "gap_below_1e-13": 48,
+     "smallest_gap_C": 1.9789725413943415e-14,
+     "largest_gap_C": 2.9753977059954195e-14
+    },
+    "same": {
+     "runs": 32,
+     "gap_below_1e-13": 0,
+     "smallest_gap_C": 1.1522173397615632e-06,
+     "largest_gap_C": 0.0002527764566693236
+    }
+   }
+  }
+ },
+ "wall_seconds": 65.5,
+ "meta": {
+  "script_sha256": "9990d4a1a42f11d5499da840b4d8cff68980568ca53692837dc6595dc55a6821",
+  "git_head": "42252a3195d56afa5cd1fa71c17330bb9c58fcac",
+  "platform": "macOS-27.0-arm64-arm-64bit",
+  "machine": "arm64",
+  "python": "3.12.13",
+  "numpy": "2.5.5",
+  "scipy": "1.18.1",
+  "finished": "2026-11-19T06:12:31+0300"
+ }
+}
