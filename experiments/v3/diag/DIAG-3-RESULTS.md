@@ -602,3 +602,22 @@ its 6,104 samples.
   not its margin.
 - F's slab δ + η covers both links of the soundness claim with room: the data's float error (a priori under 5e-11 °C)
   and the oracle's float matrix (under 5.0e-13 °C).
+
+## After the freeze-2 approval: the certificate audit on every DEV row (OBSERVED; 2026-11-19, Mac)
+
+`audit_dev.py` at `0ce1b3f7` (clean checkout; criteria AF1 and AF2 fixed in the script before the run), Fa on all
+1320 DEV comparison rows, 8 workers, 07:11–10:38 (27.5 CPU-hours); `results/v3/diag3/audit-dev-0ce1b3f7/`
+(one file per row, `summary.json`, `meta.json`, `run.log`). DEV only; the validation on Arch was not touched.
+
+- **AF1 holds.** 3,548,402 bounds were audited, from 204 to 9,634 per row, with no violation. The smallest slack
+  is 8.2e-16 °C. The coefficient-enclosure term is at most 1.8e-11 °C. The certified bound lies at most 7.1e-6 °C
+  above the solver's value.
+- **AF2 holds.** Fa detects at the same sample as F (K_cap = 64, `cwdev-F-K64-42252a3`) on all 1320 rows. Its 1,082
+  alarms, all on fault rows, are all certified. The 120 healthy rows raise none.
+
+**What it shows (INFERRED):**
+- The amendment-6 audit covered 5,676 bounds on five runs. This covers 625 times as many, on every DEV row, at the
+  frozen certificate. The float bound never fell below its exact rational value.
+- The smallest slack, 8.2e-16 °C, is smaller than on the five runs (4.4e-15 °C), but it is still positive. The audit
+  is a check, not part of the soundness argument: the argument rests on the certificate's construction (FREEZE-V2
+  §1).

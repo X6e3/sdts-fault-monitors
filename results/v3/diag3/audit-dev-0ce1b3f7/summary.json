@@ -1,0 +1,15 @@
+{
+ "rows": 1320,
+ "done": 1320,
+ "missing": 0,
+ "audited_bounds": 3548402,
+ "violations": 0,
+ "min_slack_C": 8.222589276130066e-16,
+ "max_coefficient_term_C": 1.7966295118299058e-11,
+ "max_gap_to_value_C": 7.055660937338448e-06,
+ "detect_differs_from_F": [],
+ "uncertified_alarms": [],
+ "alarms": 1082,
+ "AF1": true,
+ "AF2": true
+}
