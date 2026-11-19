@@ -401,3 +401,60 @@ clean checkout of this commit).
 - **T1:** F's detection equals amendment 6's F (K = 64) on every DEV row. The number of unproved LP alarms is reported.
 - **T2:** there is no alarm on the 80 edge-noise runs.
 - The freeze-2 rehearsal is rerun at the new freeze commit.
+
+## Amendment 9: F's model is the exact recurrence; the data's float error is enclosed (2026-11-19, written before any result of it)
+
+**Why:** a review of the freeze-2 draft (`0162658`) found a gap between the model and the certificate. Checked before
+writing this:
+- **The float matrix M is not a convex combination.** Read as exact rationals, its first two rows sum to 1 + 2⁻⁵⁶
+  and 1 + 3·2⁻⁵⁶ (each entry is rounded separately). Under that matrix the fixed point with TA = +2 has
+  ac = 2 + 2.7e-15 and as = 2 + 2.3e-15. So the ac and as boxes [−2, 2], which F takes from convexity, do not hold for
+  the matrix whose exact powers F uses.
+- **The recurrence of `thermal.py`, `step()`, in exact arithmetic with its float parameters** (CC, CS, K, H, DT taken
+  exactly) has row sums exactly 1. Under it the boxes hold by convexity. Its powers differ from those of the float M
+  by up to 54 u (relative, L ≤ 292), which is more than the 2u coefficient term of the certificate.
+- **The clamps of cyl16p** (`cap_inv`) hold under the exact recurrence: all 42, with the smallest slack 2.2e-15 °C.
+  This was checked with 60-digit decimals, 6000 exact terms and a tail bound below 1e-41.
+- **The simulated data are not exact either.** The harness computes z from two float64 simulations, `Ts` and the
+  known part `S`. Against the exact recurrence on the same inputs (80-digit decimals, 64 healthy DEV runs, both arms,
+  rw and ramp, uniform and edge noise), |zs_float − zs_exact| reaches 1.2e-13 °C. That is more than the one-ulp
+  outward rounding of the slabs (4.4e-16).
+
+**The change, for F only** (E, N and L behave as they ran):
+1. **The model is the exact recurrence.** F's powers M^L and M^k e3 are the exact powers of the exact-recurrence
+   matrix, each rounded once. The coefficient term of the certificate then covers them, as it is written.
+2. **The data allowance η = 1e-9 °C.** F's measurement slabs, and the slab of z_t in the alarm certificate, use
+   δ + η, rounded outward. The primal alarm and redundancy tests of `online()` use the same δ + η.
+   - **The a priori bound:** each float step of `step()` errs by at most 10·u·250 ≈ 2.8e-13 per state, with every
+     intermediate below 250 in magnitude. The error then propagates through the exact recurrence, whose 2×2 part
+     is nonnegative with (I − M22)⁻¹ row sums 67.5 and 52.5. So each simulation is within 1.9e-11 of exact, and zs
+     within about 4e-11 after the two simulations and three float operations.
+   - η is 25 times that bound. It is also below the smallest certified alarm margin on DEV (2.3e-5 °C) by a factor
+     of 2·10⁴.
+   - **With η the chain closes:** the float data lie within η of data that the exact model explains with
+     |noise| ≤ δ. So F's certified alarm proves that no admissible explanation exists for the run's true data.
+3. **The checks are kept as a script,** `diag/check_model.py`: the row sums, the single rounding of each exact power,
+   the 42 clamps, and the measured data error.
+4. **Scorer** (`score_validation_v2.py`), from the same review:
+   - **Run identity:** in validation mode the seeds are the manifest's block. Every expected key
+     (seed, cell, arm, ambient, noise) occurs exactly once, with no extra keys.
+   - **Integrity:** meta's mode, the manifest sha256, the rows sha256 (recomputed), the finished stamp, a clean
+     tracked tree, the approval (in validation mode), and the environment against `thermal_v2_env.LOCK` field by
+     field. Before, env_ok only checked that meta's env was not empty.
+   - **Precedence:** an integrity failure gives INCONCLUSIVE. Otherwise a soundness violation or an uncertified alarm
+     on a valid row is a FAIL, even if rows are missing. Otherwise missing, duplicate or extra rows, or |U| > 1 % of
+     |F|, give INCONCLUSIVE. Then the misses and D_paired rules apply. If L_v2 = 0, D_paired is undefined, which is a
+     FAIL, as the code already does.
+
+**Runs:** F with K = 64 on all 1320 DEV rows, and on amendment 7's 80 edge-noise runs (Arch, 14 workers, from a clean
+checkout of the code commit).
+
+**Criteria (fixed now):**
+- **T1′:** F's detection equals amendment 8's F on every DEV row, with no uncertified alarm. A difference does not
+  stop the amendment, since the change is a correctness fix, but each one is reported and explained before the
+  freeze.
+- **T2′:** there is no alarm on the 80 edge-noise runs.
+- **S1:** the new scorer reproduces the amendment-8 rehearsal's verdict and numbers. On constructed inputs (a
+  missing row, a duplicate, an extra key, a wrong rows sha, an environment mismatch, a soundness violation with a
+  missing row) it gives the verdicts above.
+- The manifest is regenerated and the freeze-2 rehearsal rerun at the new freeze commit.
