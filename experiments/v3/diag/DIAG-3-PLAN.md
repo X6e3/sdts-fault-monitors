@@ -688,3 +688,9 @@ re-evaluated from its output.
 - The R2 hash is over (row, t, role, direction or side, setting).
 - In F and F3 alike, the eviction record keeps entries of measurements that have left the window. They are never
   read again. For an MCU port they would be pruned with the window; that changes no decision.
+- Two precisions to the above, made while writing the code and before any result was read:
+  - **U3's n_implied > 0** is over R3's settings together. Setting (e) fails every P_J LP by design, so its own
+    n_implied is 0.
+  - **U2 paths leaves out `box_alarms`.** Whether a DEV fault drives a slab outside the box at a step whose LP fails
+    depends on the data, not on the failure path. The box-proved alarm is covered by U0's constructed cases. It is
+    reported for each setting.
