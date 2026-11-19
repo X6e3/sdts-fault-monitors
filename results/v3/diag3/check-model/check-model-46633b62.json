@@ -1,0 +1,67 @@
+{
+ "rows": {
+  "float_M_row_sums_minus_1_in_2^-56": [
+   1.0,
+   3.0
+  ],
+  "exact_row_sums_minus_1": [
+   0.0,
+   0.0
+  ]
+ },
+ "powers": {
+  "POWX_is_the_exact_power_rounded_once": true,
+  "L_max": 292,
+  "float_M_power_gap_max_in_u": 54.43898353227568,
+  "at_L": 292
+ },
+ "clamps": {
+  "directions": 42,
+  "clamps_not_proved": [],
+  "smallest_slack_C": 2.220446049250313e-15,
+  "terms": 6000,
+  "tail_bound_C": 3.9579032894902805e-42
+ },
+ "clamps_exact": {
+  "directions": 42,
+  "clamps_not_proved": [],
+  "smallest_slack_C": 2.220446049250313e-15,
+  "smallest_slack_C_is_exact_rational_rounded_to_float": true,
+  "terms": 6000,
+  "tail_rows_c": 0.38611142299188267
+ },
+ "oracle_gap": {
+  "e_per_step_C": 1.3877787807814457e-16,
+  "Mf22_inf_norm_minus_1": 1.3877787807814457e-17,
+  "steps": 3600,
+  "as_gap_bound_C": 4.99600361081333e-13,
+  "ETA_C": 1e-09,
+  "ETA_over_bound": 2001.5998343868373
+ },
+ "ambient_rounding": {
+  "paths": 16,
+  "rate_excess_max_C": -5.016969282720107e-09,
+  "box_holds": true,
+  "a_priori_excess_C": 1.7763568394002505e-15,
+  "projection_shift_bound_C": 6.3931082650015014e-12
+ },
+ "data": {
+  "healthy_runs": 64,
+  "seeds": [
+   430000,
+   430007
+  ],
+  "max_abs_zs_error_C": 1.2083469879406946e-13,
+  "ETA_C": 1e-09,
+  "ETA_over_max": 8275.768549762626
+ },
+ "pass": true,
+ "meta": {
+  "git_head": "46633b6275163abf1cef2c5f217b0ed28e00254e",
+  "git_dirty_tracked": false,
+  "seeds": [
+   430000,
+   430007
+  ]
+ }
+}

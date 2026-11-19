@@ -577,3 +577,28 @@ its 6,104 samples.
 - **The two missing evictions** mean that one more measurement was redundant at arrival in each of those two runs.
   Under edge noise every measurement sits on its slab boundary, and the slab is now η wider. This was not traced to
   the sample.
+
+## Review of the freeze-2 draft: checks at the frozen code (OBSERVED; 2026-11-19, Mac)
+
+**The certificate audit A1, rerun** (`diag3_cw.py --variants Fa` at `f774155b`, the frozen code; clean checkout
+`~/Downloads/sdts-runs/v3-mac-src-f774155b`, 06:45–06:46; `results/v3/diag3/audit-f774155b/`):
+- the same five diagnosis runs and the same 5,676 bounds as at `66429e2`;
+- no violation; the smallest slack is 4.4e-15 °C, and per run it equals the earlier value to within 2e-17 °C;
+- the coefficient-enclosure term is at most 1.8e-12 °C;
+- the detections are the same (673, 579, 849, 695 and 393), and the margins at t* move by less than 0.003 µC.
+
+**`check_model.py` at `46633b62`** (`results/v3/diag3/check-model/check-model-46633b62.json`, pass):
+- **The clamps in exact rationals.** All 42 hold under the exact recurrence, with no decimal rounding and no
+  allowance. The smallest slack is 2.2e-15 °C, as with 60-digit decimals.
+- **The oracle's model gap.** For any admissible ambient path, the oracle's float matrix and the exact recurrence
+  give as values within 5.0e-13 °C of each other over 3600 steps. η is 2,000 times that.
+- **The ambient rounding.** On the 16 DEV paths used, no increment exceeds ρ (the largest is ρ − 5.0e-9) and the box
+  holds. A priori, an increment can exceed ρ by half an ulp of 27, 1.8e-15 °C; projecting the path then moves it by
+  at most 6.4e-12 °C.
+- The earlier checks are unchanged: exact rows, powers rounded once, a data error of at most 1.2e-13 °C.
+
+**What it shows (INFERRED):**
+- The certificate at the frozen code is as conservative as it was at `66429e2`. Amendment 9 changed its inputs,
+  not its margin.
+- F's slab δ + η covers both links of the soundness claim with room: the data's float error (a priori under 5e-11 °C)
+  and the oracle's float matrix (under 5.0e-13 °C).

@@ -1,0 +1,15 @@
+{
+ "cmd": "run",
+ "git_head": "f774155b2e3f6ac0e3907de33008ee52a69073f6",
+ "git_dirty_tracked": false,
+ "W": 256,
+ "B": 16,
+ "pad": 1e-06,
+ "machine": "arm64",
+ "platform": "macOS-27.0-arm64-arm-64bit",
+ "python": "3.12.13",
+ "numpy": "2.5.5",
+ "scipy": "1.18.1",
+ "started": "2026-11-19T06:45:22+0300",
+ "finished": "2026-11-19T06:45:51+0300"
+}

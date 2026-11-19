@@ -63,8 +63,8 @@ taken exactly (DIAG-3 amendment 9). On the shifted state (ac, as, TA), its matri
 have this property: its rows, read as rationals, sum to 1 + 2⁻⁵⁶ and 1 + 3·2⁻⁵⁶.
 
 **The window LP** (DIAG-3 amendments 3, 4, 6, 8 and 9):
-- It runs over the samples τ … t. At most t − τ = W + B = 272 transitions are solved at the alarm check. On a fold
-  sample the fold LP, which runs after the alarm check, spans 273 (the fold runs when t − τ > 272).
+- It runs over the samples τ … t, at most t − τ = W + B + 1 = 273 transitions. The window reaches 273 on a fold
+  sample: the alarm check there spans 273, and so does the fold LP after it (the fold runs when t − τ > 272).
 - **Exact step between nodes:** x_b = M^L x_a + Σ_{k<L} M^k e3 w_{b−1−k}, with |w_j| ≤ ρ explicit.
   - M^L and M^k e3 are the exact powers of the exact recurrence, each rounded once (`check_model.py` checks this
     for L ≤ 292). The exact powers of the float64 matrix would differ from them by up to 54 u.
@@ -81,14 +81,26 @@ have this property: its rows, read as rationals, sum to 1 + 2⁻⁵⁶ and 1 + 3
   - It uses the smoothing rule, with the measurements up to the fold sample.
   - Each of the 42 supports is max(LP value + 1e-6, certified dual bound), then clamped.
   - **The clamps** are cyl16p's: the TA box, the ac and as boxes it implies, and the reachable-set caps `cap_inv`.
-    All 42 hold under the exact recurrence; the smallest slack is 2.2e-15 °C (`check_model.py`, 60-digit
-    decimals).
+    All 42 hold under the exact recurrence; the smallest slack is 2.2e-15 °C. `check_model.py` shows this in exact
+    rational arithmetic (integer orbits, an exact tail bound, no allowance), and again with 60-digit decimals.
 - **The noise slab is δ + η, with η = 1e-9 °C,** rounded outward. It is used in every measurement row, in the alarm
   certificate and in the online alarm and redundancy tests.
   - η encloses the float error of the data. The harness computes z from two float64 simulations, so z differs from
     the exact recurrence on the same inputs by up to 1.2e-13 °C (measured on 64 healthy DEV runs).
-  - The a priori bound is about 4e-11 °C (DIAG-3 amendment 9). η is 25 times that bound, and 2·10⁴ times smaller
-    than the smallest certified alarm margin on DEV.
+  - **The a priori bound** (DIAG-3 amendment 9; it covers every run, not only the measured ones):
+    - each float step of `step()` errs by at most 10·u·250 ≈ 2.8e-13 °C per state, every intermediate being below
+      250 in magnitude;
+    - the error propagates through the exact recurrence, whose 2×2 part is nonnegative with (I − M22)⁻¹ row sums
+      67.5 and 52.5, so each simulation stays within 1.9e-11 °C of exact over any length. The float start (the
+      steady state, three operations) adds a few ulps, which the recurrence does not amplify (‖M22^k‖∞ ≤ 1);
+    - z_s = (y − S) − 25 adds three float operations; in all, z_s is within about 4e-11 °C of the exact data;
+    - the ambient path: its increments are float sums, so they can exceed ρ by half an ulp of 27 (1.8e-15 °C).
+      Projecting the path onto the admissible set moves TA, and so as, by at most 3599 times that, 6.4e-12 °C. On
+      the DEV paths no increment exceeds ρ (`check_model.py`);
+    - the noise draws satisfy |v| ≤ δ exactly, for both laws.
+
+    So the float data of a healthy run lie within 5e-11 °C of data that an admissible exact-model run explains with
+    |noise| ≤ δ. η is 20 times that, and 2·10⁴ times smaller than the smallest certified alarm margin on DEV.
   - Why it matters at the noise bound: with noise exactly ±δ, a healthy run can be consistent with a gap of exactly
     0. On 48 of the 80 DEV edge-noise runs, freeze 1's template state, which has no such allowance, comes within
     2e-14 °C of a false alarm (`RECORD-2026-11-18-validation.md`, addendum).
@@ -113,26 +125,42 @@ have this property: its rows, read as rationals, sum to 1 + 2⁻⁵⁶ and 1 + 3
 
 **What is a theorem and what is not:**
 - **Soundness** holds by construction under the model. The invariant chain:
-  - **The set.** Let 𝔛(t) be the set of exact-model explanations up to t: a start state at the P0 steady state with
-    TA₀ in the box, increments |w_j| ≤ ρ, TA in its box, and every measurement explained with |noise| ≤ δ + η. The
-    invariant is: the window LP's feasible set, projected on the states, contains 𝔛(t).
+  - **The set.** Let 𝔛(t | t − 1) be the exact-model explanations of the measurements up to t − 1, as states at t: a
+    start at the P0 steady state with TA₀ in the box, increments |w_j| ≤ ρ, TA in its box, and every measurement
+    up to t − 1 explained with |noise| ≤ δ + η. The alarm at t asks whether z_t ± (δ + η) meets its as-range.
+  - **The ideal window.** Take the window LP with exact coefficients, the exact powers of the exact recurrence. Its
+    feasible set, projected on the state at t, contains 𝔛(t | t − 1): its rows are the model's dynamics, the ac and
+    as boxes hold by convexity, the slabs are δ + η rounded outward, the w and TA boxes are the model's, and the
+    base at τ contains the projection of the explanations at τ (by induction). The solver gets the rounded
+    coefficients, so the solver's own feasible set need not contain 𝔛. The proof does not use it.
+  - **The certificate bounds the ideal window.** It is weak duality with every variable boxed, the float rounding
+    bounded, and each coefficient's rounding enclosed (2u per coefficient; each is the exact value rounded once,
+    `check_model.py`). So it is an upper bound on max d·x over the ideal window, whatever the solver returns.
   - **Start.** cyl16p's initial supports h0 contain every start state.
-  - **The window.** Its rows are the exact dynamics, with coefficients rounded once; the certificate encloses
-    that rounding (2u per coefficient). The ac and as boxes hold by convexity, the slabs are δ + η rounded outward,
-    and the w and TA boxes are the model's.
   - **Dropping and evicting.** Dropping a measurement that is redundant at arrival, or evicting one, removes a
     constraint. The set can only grow.
-  - **The fold.** Each new support is at least the certified dual bound of max d·x over the window. The bound is
-    weak duality with every variable boxed, the float rounding bounded, and the coefficient rounding enclosed, so
-    it is at least the maximum over 𝔛. The clamps hold under the exact recurrence (`check_model.py`). So the new
-    base contains the projection of 𝔛.
-  - **The alarm.** A certified alarm proves the window, and so 𝔛, has no explanation of z_t. The run's float data
-    are within η of data that the exact model generates with |noise| ≤ δ. So no explanation of the run's true
-    data exists either: the run is not admissible, and the alarm is not before t*.
-  - **The audit.** `exact_bound()` evaluates the same certificate in rational arithmetic on the float LP data,
-    coefficient term included: 5,676 bounds (amendment 6) and 84 alarm bounds (independently), with no violation.
-  - **Outside the chain:** the solver's own tolerance (the certificate does not rely on it), and the oracle,
-    which is freeze 1's yardstick and is unchanged.
+  - **The fold.** Each new support is at least its certified bound, so at least the maximum over the ideal window,
+    so at least the maximum over the explanations. The clamps hold under the exact recurrence (`check_model.py`). So
+    the new base contains the projection of the explanations at the fold sample.
+  - **The alarm.** A certified alarm at t proves that the ideal window, and so 𝔛(t | t − 1), has no state whose as
+    lies within z_t ± (δ + η): no exact-model run explains z_0 … z_t with |noise| ≤ δ + η.
+- **No alarm on a healthy run.** A healthy run's float data lie within 5e-11 °C of data that an admissible
+  exact-model run explains with |noise| ≤ δ (the a priori bound above). That run explains the float data with
+  |noise| ≤ δ + 5e-11 < δ + η, so a certified alarm cannot occur. A fault run that the oracle certifies consistent
+  is the case below with the whole run as the prefix.
+- **No alarm before the oracle's t\*.** The oracle (`thermal_oracle.py`, unchanged) uses δ, not δ + η, and the
+  float64 matrix built entry by entry, Mf. Its t* is certified: the prefix up to t* − 1 is certified consistent,
+  by a TA path that is exactly admissible and explains z with |noise| ≤ δ under Mf (d_up encloses the oracle's own
+  float rounding). Run the same path through the exact recurrence: for every admissible TA path the two as differ
+  by at most 5.0e-13 °C over 3600 steps (`check_model.py`, `oracle_gap`, exact rationals). So an exact-model run
+  explains that prefix with |noise| ≤ δ + 5.0e-13 < δ + η, and F cannot alarm before t*. An oracle verdict of
+  inconsistent under Mf does not enter this argument: it only defines the events that F must detect.
+- **The audit.** `exact_bound()` evaluates the same certificate in rational arithmetic on the float LP data,
+  coefficient term included, with no violation: 5,676 bounds at `66429e2` (amendment 6), the same 5,676 again at
+  the frozen code (`f774155b`, `results/v3/diag3/audit-f774155b/`; smallest slack 4.4e-15 °C), and 84 alarm bounds
+  at `66429e2`, independently.
+- **Outside the chain:** the solver's own tolerance (the certificate does not rely on it), and the oracle's own
+  certificates, which are freeze 1's yardstick and unchanged.
 - **There is no dominance theorem over v2** (freeze 1's Theorem 3 was about the template state). Runs where F is later
   than v2 are reported, not judged.
 
@@ -160,7 +188,9 @@ z reached 2.22–2.30 in the 256 samples before t*. The box is part of the model
 | `a5c3fa6` | amendment 9's checks T1′ and T2′ (DIAG-3-RESULTS) |
 | `04432f13` | freeze 1's record: an addendum on the model gap at the noise bound (`diag/check_freeze1_model.py`), cited in section 1 |
 | `9dc1af3` | `frozen/MANIFEST-V2.json` regenerated (block 440200–440399, the code of `42252a3`), and this file |
-| this commit | the DEV rehearsal at `9dc1af3` (section 8), and this file |
+| `f774155b` | the DEV rehearsal at `9dc1af3` (section 8), and this file |
+| `46633b62` | `diag/check_model.py`: the clamps in exact rationals, the oracle's model gap, the ambient rounding (not in the manifest) |
+| this commit | the review's corrections to this file; `check_model.py`'s output and the certificate audit at the frozen code (DIAG-3-RESULTS) |
 
 The frozen code is that of `42252a3`. No file in the manifest changed after it, so amendment 9's checks ran the
 frozen code. `diag/check_model.py` and `tests/test_v3_freeze2_scorer.py` check the frozen code; the validation does
@@ -205,8 +235,11 @@ HiGHS 1.12.0. It is checked at start and recorded.
 validation namespace (`v3val:`) and laws. 440400–440999 stay reserved.
 
 **Per seed, 48 runs, as in freeze 1:**
-- 11 cells × arms E0, E1 × ambient `rw`, `ramp` with uniform noise;
-- plus healthy × E0, E1 × `rw`, `ramp` with `edge` noise.
+- 11 cells × arms E0, E1 × ambient `rw`, `ramp` with uniform noise: 44 runs. The healthy cell is one of the 11, so 4
+  of them are healthy;
+- plus healthy × E0, E1 × `rw`, `ramp` with `edge` noise: 4 runs.
+
+So each seed has 40 fault runs and 8 healthy runs, 4 of them with edge noise.
 
 That is 9600 runs in total: about 7400 detection events at the rehearsal's rate, and 1600 healthy runs (800 of them
 with edge noise).
@@ -227,7 +260,8 @@ with edge noise).
 ## 4. Scoring rules (`score_validation_v2.py`, fixed)
 
 **Decision, the same for every method:** the first sample at which no explanation with b = 0 and |noise| ≤ δ
-exists. N = 3600.
+exists. N = 3600. The oracle and v2 use δ. F's slab is δ + η (section 1), which can only make its alarms later;
+η enters no score.
 
 **Sets, as in freeze 1:**
 - F (fault runs), U (uncertified oracle), R (detection events) and A (admissible runs);
@@ -309,6 +343,8 @@ There is no alarm on any of the 238 admissible rows.
 - **The certificate audit (A1, A2).** 5,676 bounds were checked in exact rational arithmetic, with no violation (the
   smallest slack is 4.4e-15 °C). A second, independent exact audit of 84 alarm bounds also found none. Both ran at
   `66429e2`'s code. Amendment 9 changes the coefficients and the slab that the certificate is given, not its method.
+  A1 was rerun at the frozen code (`f774155b`): the same 5,676 bounds, no violation, the same smallest slack and the
+  same detections (`results/v3/diag3/audit-f774155b/`).
 - **The cap.**
   - With K_cap = 40, F evicts 420 measurements on 161 rows and still equals E on every row.
   - With K_cap = 32 (informational), F evicts 21,821 measurements on 960 rows and still equals E on every row.
@@ -349,8 +385,9 @@ There is no alarm on any of the 238 admissible rows.
 
 ## 7. What this validation can not show
 
-- **An MCU:** F solves about 4.6 LPs of up to about 400 rows per sample in Python. Nothing here measures memory or
-  time on a microcontroller.
+- **An MCU:** F solves about 4.6 LPs per sample in Python. The largest LP seen has 445 rows (under edge noise, 409
+  on the DEV rows); that is the observed peak, not a proved bound. Nothing here measures memory or time on a
+  microcontroller.
 - **float32 or fixed point:** the certificate is float64.
 - **Model mismatch or a real plant:** same plant, known parameters, simulated laws.
 - **The ambient box:** detection of slow drifts leans on TA ∈ [23, 27] (section 1). A wider true range would make
@@ -372,6 +409,9 @@ The identical pipeline was run on DEV seeds 430096–430097 (`--rehearsal`; vali
 - Scored with `score_validation_v2.py`: identity complete, no integrity problem. The outputs are in
   `results/v3/freeze2/rehearsal-dev-430096-9dc1af3/`. The solver attempts (4.8 MB) stay on Arch.
 
+This file changed after the rehearsal (the review's corrections, `f774155b` onwards). No file in the manifest did,
+so the rehearsal stands for the frozen code.
+
 **Pipeline checks:**
 - complete: 96 of 96 rows;
 - 0 uncertified oracle runs;
@@ -380,7 +420,7 @@ The identical pipeline was run on DEV seeds 430096–430097 (`--rehearsal`; vali
 
 | | soundness | uncertified alarms | unproved LP alarms | misses | later than v2 | D_paired | detections equal to t* |
 |---|---|---|---|---|---|---|---|
-| F (W = 256, K = 64) | 0 | 0 | 0 | 0 (v2: 0) | 0 | 1.0 (L_v2 = 994 s) | 74 of 74 |
+| F (W = 256, K_cap = 64) | 0 | 0 | 0 | 0 (v2: 0) | 0 | 1.0 (L_v2 = 994 s) | 74 of 74 |
 
 **Against the rehearsal at `bc2a051`** (amendment 8's code; `results/v3/freeze2/rehearsal-dev-430096-bc2a051/`, same
 seeds):
