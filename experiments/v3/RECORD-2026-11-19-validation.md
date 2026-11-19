@@ -242,3 +242,51 @@ the verdict. It is outside section 6 and is labelled as a diagnosis.
   - Informational: how does the LP behave under HiGHS's other settings, and how far is the failing direction's a
     priori support from what the fold needed?
 - No other validation run is replayed.
+
+## Diagnosis of the deciding fold (results; after the verdict)
+
+`diag_fold_440243.py` at `6bff6e9b`, on Arch, 2026-11-19 21:10–21:11 (25.3 s). Clean worktree, environment lock
+held, frozen files matched the manifest. Outputs: `results/v3/freeze2/diag-fold-440243-6bff6e9b/` (`diag.json`,
+`run.log`, and the LPs of the three directions that failed an attempt, `lp-dir1.npz`, `lp-dir6.npz` and
+`lp-dir40.npz`). The verdict stands.
+
+**OBSERVED, the fixed questions:**
+- **Q1, the replay reproduces the row.** All 13 compared fields equal the validation row, including the certificate's
+  reason, the 881 evictions and the 7 retries.
+- **Q2, the fold fails again, at direction 40.**
+  - The fold moves τ from 672 to 688, with 64 kept measurements (samples 744–945).
+  - Directions 0–39 solved. Direction 40, d = (−0.981, 0.195, 0), failed in all three attempts. Each attempt ended
+    with HiGHS status 15 (model status unknown, primal status feasible).
+  - The run's 7 retries are:
+    - at t = 280 and 804, an as-range LP, solved at the second attempt (interior point);
+    - at the t = 945 fold, directions 1 and 6, also solved by interior point;
+    - direction 40, three.
+- **Q3, the other directions.** Rebuilt from the same state, the other 41 directions all solve. Directions 1 and 6
+  again fail the first attempt and solve at the second.
+- **Q4, repeatable.** Direction 40 fails in all 15 attempts of 5 further rounds in the same process, and again in a
+  fresh process from the saved LP. Direction 1's dual simplex fails every time, with and without presolve, and its
+  interior point solves.
+- **Q5, other settings.** HiGHS's default (with presolve) and interior point with presolve also fail on direction 40.
+  The direction's a priori support (the exact clamps with the boxes) is 1.683; its value in the previous base was
+  −0.187.
+
+**OBSERVED, after the run** (exploratory, not among the fixed questions; the scripts and outputs are in
+`posthoc-dual/`):
+- **Nothing to certify.** None of the failed attempts returns multipliers or a primal point. The certificate cannot be
+  computed from them.
+- **The certificate's role.** Direction 6 shows why it is there. The interior point and the dual simplex with presolve
+  both report "optimal", but with values 7.6e-6 °C apart. The certified bound of each lies above both values, and the
+  exact rational evaluation confirms each bound.
+- **The other faces.** The new base's other 41 faces, with the values this fold computed, imply d₄₀·x ≤ −0.209. This
+  is a 3-variable float LP, not certified. It is lower than the previous base's −0.187, and far below the a priori
+  support (1.683) and the box-only bound (2.352).
+
+**INFERRED:**
+- The failure is deterministic in this environment. It is a property of this LP under HiGHS 1.12.0, not a transient.
+- A fallback for a later freeze: a bound on a failed face that is implied by the other faces' certified values. It is
+  sound, because the ideal window set lies inside their polytope. At this fold it is far tighter than the clamps.
+  - HYPOTHESIS, not tested. It would need its own certificate (a 3-variable LP).
+  - Its cost elsewhere is unmeasured, and whether direction 40's exact support is lower than −0.209 is unknown.
+
+**UNKNOWN:** why HiGHS fails on this LP. The LP has 403 equality rows, 42 inequality rows and 679 variables, in the
+range of LPs that solved elsewhere in the run.

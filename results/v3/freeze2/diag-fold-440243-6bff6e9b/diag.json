@@ -1,0 +1,1919 @@
+{
+ "meta": {
+  "git_head": "6bff6e9bdb31b5731c3e6e94447c987ef4a55b5a",
+  "git_dirty_tracked": false,
+  "manifest_sha256": "cc7adffa240b6ab4eab9b45652f4437ce582f784123b1b1cac8341f4db303385",
+  "env_lock_ok": true,
+  "env": {
+   "python": "3.12.13",
+   "implementation": "CPython",
+   "numpy": "2.5.5",
+   "scipy": "1.18.1",
+   "highs": "1.12.0",
+   "platform": "Linux-7.3.4-arch1-2-x86_64-with-glibc2.44",
+   "machine": "x86_64",
+   "executable": "/home/x6e3/Research/sdts-v3-diag-6bff6e9b/.venv/bin/python",
+   "numpy_record_sha256": "ff1cee041784df714b5a5521619920dbfd4ff462e1108a82d45606eca277a524",
+   "scipy_record_sha256": "cda958e21648ffe0b8528473532ef59f89db82bf1fa7d4a9a47161785046e979"
+  },
+  "scipy": "1.18.1",
+  "platform": "Linux-7.3.4-arch1-2-x86_64-with-glibc2.44",
+  "started": "2026-11-19T21:10:34+0300",
+  "finished": "2026-11-19T21:11:00+0300",
+  "seconds": 25.3
+ },
+ "key": [
+  440243,
+  "healthy",
+  "E0",
+  "ramp",
+  "edge"
+ ],
+ "t_f": 386,
+ "q1_reproduces": true,
+ "q1": {
+  "detect": {
+   "replay": 945,
+   "validation": 945,
+   "equal": true
+  },
+  "alarm_certificate": {
+   "replay": {
+    "certified": false,
+    "reason": "LP status 4: The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)"
+   },
+   "validation": {
+    "certified": false,
+    "reason": "LP status 4: The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)"
+   },
+   "equal": true
+  },
+  "evictions": {
+   "replay": 881,
+   "validation": 881,
+   "equal": true
+  },
+  "unproved_primal_alarms": {
+   "replay": 0,
+   "validation": 0,
+   "equal": true
+  },
+  "max_kept": {
+   "replay": 65,
+   "validation": 65,
+   "equal": true
+  },
+  "max_nodes": {
+   "replay": 66,
+   "validation": 66,
+   "equal": true
+  },
+  "max_vars": {
+   "replay": 679,
+   "validation": 679,
+   "equal": true
+  },
+  "max_rows": {
+   "replay": 445,
+   "validation": 445,
+   "equal": true
+  },
+  "n_lp": {
+   "replay": 3695,
+   "validation": 3695,
+   "equal": true
+  },
+  "n_retry": {
+   "replay": 7,
+   "validation": 7,
+   "equal": true
+  },
+  "folds_raised_to_dual_bound": {
+   "replay": 2,
+   "validation": 2,
+   "equal": true
+  },
+  "largest_raise_C": {
+   "replay": 1.7077839295786e-06,
+   "validation": 1.7077839295786e-06,
+   "equal": true
+  },
+  "steps": {
+   "replay": 944,
+   "validation": 944,
+   "equal": true
+  }
+ },
+ "fold_state": {
+  "tau": 672,
+  "kept": [
+   744,
+   762,
+   767,
+   776,
+   777,
+   778,
+   781,
+   783,
+   788,
+   789,
+   792,
+   797,
+   798,
+   800,
+   806,
+   807,
+   808,
+   811,
+   813,
+   815,
+   817,
+   819,
+   821,
+   823,
+   826,
+   829,
+   830,
+   835,
+   837,
+   839,
+   841,
+   843,
+   846,
+   850,
+   853,
+   858,
+   863,
+   868,
+   871,
+   874,
+   878,
+   881,
+   887,
+   893,
+   898,
+   901,
+   905,
+   910,
+   914,
+   917,
+   924,
+   928,
+   929,
+   930,
+   933,
+   934,
+   936,
+   938,
+   939,
+   941,
+   942,
+   943,
+   944,
+   945
+  ],
+  "base": [
+   0.34561205010080087,
+   -0.24464076164633525,
+   0.35797310420106015,
+   -0.27191787799522843,
+   0.4485186724983418,
+   -0.32580597101398673,
+   0.0016062060175356652,
+   0.02121320343561932,
+   0.006917829068947611,
+   0.07424621202466343,
+   0.006793662204876355,
+   0.0017365015754440538,
+   0.007516926341104595,
+   0.09545941546028087,
+   0.008333757867695272,
+   0.09797958971142688,
+   0.4088081190479386,
+   -0.2929929687838787,
+   0.4562939596717394,
+   -0.33006781781503425,
+   0.48624471774739647,
+   -0.3544726320380536,
+   0.4975094024386351,
+   -0.3652552233830233,
+   0.48965511823008573,
+   -0.3620012228783332,
+   0.46298371455501064,
+   -0.3448356799719708,
+   0.41852013724610393,
+   -0.31441825684092356,
+   0.2837610339911533,
+   -0.21896780919078687,
+   0.20022502050964167,
+   -0.15760289181900594,
+   0.11217787908278587,
+   -0.08910680437939475,
+   -0.052045884476600884,
+   0.09357533515108074,
+   -0.12195316332931555,
+   0.18313710986129064,
+   -0.18688710881272286,
+   0.2691409646674598
+  ],
+  "fold": "LP status 4: The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)"
+ },
+ "q2_fold_attempts": [
+  {
+   "t": 945,
+   "purpose": "fold-dir0",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 0
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir1",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 4,
+   "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+   "dir": 1
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir1",
+   "method": "highs-ipm",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 1
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir2",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 2
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir3",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 3
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir4",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 4
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir5",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 5
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir6",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 4,
+   "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Infeasible)",
+   "dir": 6
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir6",
+   "method": "highs-ipm",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 6
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir7",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 7
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir8",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 8
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir9",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 9
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir10",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 10
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir11",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 11
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir12",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 12
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir13",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 13
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir14",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 14
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir15",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 15
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir16",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 16
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir17",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 17
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir18",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 18
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir19",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 19
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir20",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 20
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir21",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 21
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir22",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 22
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir23",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 23
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir24",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 24
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir25",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 25
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir26",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 26
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir27",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 27
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir28",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 28
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir29",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 29
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir30",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 30
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir31",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 31
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir32",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 32
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir33",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 33
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir34",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 34
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir35",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 35
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir36",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 36
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir37",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 37
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir38",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 38
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir39",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 39
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir40",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 4,
+   "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+   "dir": 40
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir40",
+   "method": "highs-ipm",
+   "presolve": false,
+   "status": 4,
+   "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+   "dir": 40
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir40",
+   "method": "highs-ds",
+   "presolve": true,
+   "status": 4,
+   "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+   "dir": 40
+  }
+ ],
+ "q3_rebuild_values": [
+  {
+   "dir": 0,
+   "value": 0.36167047685145925,
+   "certified_bound": 0.36167047699258775
+  },
+  {
+   "dir": 1,
+   "value": -0.27248093566047826,
+   "certified_bound": -0.2724809354607436
+  },
+  {
+   "dir": 2,
+   "value": 0.3741928512215798,
+   "certified_bound": 0.3741928517642809
+  },
+  {
+   "dir": 3,
+   "value": -0.29856898543177923,
+   "certified_bound": -0.298568984995912
+  },
+  {
+   "dir": 4,
+   "value": 0.46562784621327047,
+   "certified_bound": 0.46562784652208133
+  },
+  {
+   "dir": 5,
+   "value": -0.3507129615529816,
+   "certified_bound": -0.3507129614513316
+  },
+  {
+   "dir": 6,
+   "value": -0.0001046745575076502,
+   "certified_bound": -0.0001046745466286077
+  },
+  {
+   "dir": 7,
+   "value": 0.021213203435614142,
+   "certified_bound": 0.021213203435700843
+  },
+  {
+   "dir": 8,
+   "value": 0.0020531543304893596,
+   "certified_bound": 0.0020531543759828904
+  },
+  {
+   "dir": 9,
+   "value": 0.07424621202464562,
+   "certified_bound": 0.07424621202515164
+  },
+  {
+   "dir": 10,
+   "value": 0.006793662210738238,
+   "certified_bound": 0.006793662222461547
+  },
+  {
+   "dir": 11,
+   "value": 0.0013804923621679732,
+   "certified_bound": 0.0013804923658438403
+  },
+  {
+   "dir": 12,
+   "value": 0.0011501819416540326,
+   "certified_bound": 0.0011501820007900235
+  },
+  {
+   "dir": 13,
+   "value": 0.09545941546025985,
+   "certified_bound": 0.09545941546077169
+  },
+  {
+   "dir": 14,
+   "value": 0.001849447059025927,
+   "certified_bound": 0.0018494471193977857
+  },
+  {
+   "dir": 15,
+   "value": 0.0979795897114045,
+   "certified_bound": 0.09797958971199247
+  },
+  {
+   "dir": 16,
+   "value": 0.4277083634164697,
+   "certified_bound": 0.42770836364486486
+  },
+  {
+   "dir": 17,
+   "value": -0.32544712737360904,
+   "certified_bound": -0.32544712708269075
+  },
+  {
+   "dir": 18,
+   "value": 0.4772776188858775,
+   "certified_bound": 0.4772776192352416
+  },
+  {
+   "dir": 19,
+   "value": -0.3659535543393742,
+   "certified_bound": -0.36595355397867857
+  },
+  {
+   "dir": 20,
+   "value": 0.5085294811423346,
+   "certified_bound": 0.5085294815644095
+  },
+  {
+   "dir": 21,
+   "value": -0.39236154477354046,
+   "certified_bound": -0.3923615445597081
+  },
+  {
+   "dir": 22,
+   "value": 0.5202388406254843,
+   "certified_bound": 0.5202388411094092
+  },
+  {
+   "dir": 23,
+   "value": -0.40376004759138084,
+   "certified_bound": -0.40376004713503144
+  },
+  {
+   "dir": 24,
+   "value": 0.5119557132161312,
+   "certified_bound": 0.5119557137359938
+  },
+  {
+   "dir": 25,
+   "value": -0.39956693834017726,
+   "certified_bound": -0.3995669373523101
+  },
+  {
+   "dir": 26,
+   "value": 0.4839984148560238,
+   "certified_bound": 0.48399841539659466
+  },
+  {
+   "dir": 27,
+   "value": -0.3800571036065763,
+   "certified_bound": -0.3800571031297412
+  },
+  {
+   "dir": 28,
+   "value": 0.4374413288671152,
+   "certified_bound": 0.4374413294001533
+  },
+  {
+   "dir": 29,
+   "value": -0.3459418875198539,
+   "certified_bound": -0.34594188707888895
+  },
+  {
+   "dir": 30,
+   "value": 0.29650547735069605,
+   "certified_bound": 0.296505477800143
+  },
+  {
+   "dir": 31,
+   "value": -0.2396503202956522,
+   "certified_bound": -0.23965031985185403
+  },
+  {
+   "dir": 32,
+   "value": 0.2093077630656419,
+   "certified_bound": 0.20930776332063428
+  },
+  {
+   "dir": 33,
+   "value": -0.17155869447760141,
+   "certified_bound": -0.17155869265443277
+  },
+  {
+   "dir": 34,
+   "value": 0.1168666627753294,
+   "certified_bound": 0.11686666288951816
+  },
+  {
+   "dir": 35,
+   "value": -0.09555072562904873,
+   "certified_bound": -0.09555072549386098
+  },
+  {
+   "dir": 36,
+   "value": -0.05999786296536319,
+   "certified_bound": -0.05999786296526512
+  },
+  {
+   "dir": 37,
+   "value": 0.09662140600422348,
+   "certified_bound": 0.09662140600582367
+  },
+  {
+   "dir": 38,
+   "value": -0.13743874605375792,
+   "certified_bound": -0.13743874602664402
+  },
+  {
+   "dir": 39,
+   "value": 0.19111233468166317,
+   "certified_bound": 0.1911123346817515
+  },
+  {
+   "dir": 40,
+   "error": "LP status 4: The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)"
+  },
+  {
+   "dir": 41,
+   "value": 0.2817427827614012,
+   "certified_bound": 0.28174278282860143
+  }
+ ],
+ "q3_rebuild_attempts": [
+  {
+   "t": 945,
+   "purpose": "rebuild-dir0",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 0
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir1",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 4,
+   "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+   "dir": 1
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir1",
+   "method": "highs-ipm",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 1
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir2",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 2
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir3",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 3
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir4",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 4
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir5",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 5
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir6",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 4,
+   "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Infeasible)",
+   "dir": 6
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir6",
+   "method": "highs-ipm",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 6
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir7",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 7
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir8",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 8
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir9",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 9
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir10",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 10
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir11",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 11
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir12",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 12
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir13",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 13
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir14",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 14
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir15",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 15
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir16",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 16
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir17",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 17
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir18",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 18
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir19",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 19
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir20",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 20
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir21",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 21
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir22",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 22
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir23",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 23
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir24",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 24
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir25",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 25
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir26",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 26
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir27",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 27
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir28",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 28
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir29",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 29
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir30",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 30
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir31",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 31
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir32",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 32
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir33",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 33
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir34",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 34
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir35",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 35
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir36",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 36
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir37",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 37
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir38",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 38
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir39",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 39
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir40",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 4,
+   "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+   "dir": 40
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir40",
+   "method": "highs-ipm",
+   "presolve": false,
+   "status": 4,
+   "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+   "dir": 40
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir40",
+   "method": "highs-ds",
+   "presolve": true,
+   "status": 4,
+   "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+   "dir": 40
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir41",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 0,
+   "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+   "dir": 41
+  }
+ ],
+ "failing_directions": [
+  1,
+  6,
+  40
+ ],
+ "q4_q5": {
+  "1": {
+   "direction": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "rows_eq": 403,
+   "rows_ub": 42,
+   "vars": 679,
+   "repeat_in_process": [
+    {
+     "method": "highs-ds",
+     "presolve": false,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+     "value": null
+    },
+    {
+     "method": "highs-ipm",
+     "presolve": false,
+     "status": 0,
+     "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+     "value": -0.27248093566047826
+    },
+    {
+     "method": "highs-ds",
+     "presolve": true,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+     "value": null
+    },
+    {
+     "method": "highs-ds",
+     "presolve": false,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+     "value": null
+    },
+    {
+     "method": "highs-ipm",
+     "presolve": false,
+     "status": 0,
+     "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+     "value": -0.27248093566047826
+    },
+    {
+     "method": "highs-ds",
+     "presolve": true,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+     "value": null
+    },
+    {
+     "method": "highs-ds",
+     "presolve": false,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+     "value": null
+    },
+    {
+     "method": "highs-ipm",
+     "presolve": false,
+     "status": 0,
+     "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+     "value": -0.27248093566047826
+    },
+    {
+     "method": "highs-ds",
+     "presolve": true,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+     "value": null
+    },
+    {
+     "method": "highs-ds",
+     "presolve": false,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+     "value": null
+    },
+    {
+     "method": "highs-ipm",
+     "presolve": false,
+     "status": 0,
+     "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+     "value": -0.27248093566047826
+    },
+    {
+     "method": "highs-ds",
+     "presolve": true,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+     "value": null
+    },
+    {
+     "method": "highs-ds",
+     "presolve": false,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+     "value": null
+    },
+    {
+     "method": "highs-ipm",
+     "presolve": false,
+     "status": 0,
+     "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+     "value": -0.27248093566047826
+    },
+    {
+     "method": "highs-ds",
+     "presolve": true,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+     "value": null
+    }
+   ],
+   "fresh_process": {
+    "frozen_attempts": [
+     {
+      "method": "highs-ds",
+      "presolve": false,
+      "status": 4,
+      "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+      "value": null
+     },
+     {
+      "method": "highs-ipm",
+      "presolve": false,
+      "status": 0,
+      "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+      "value": -0.27248093566047826
+     },
+     {
+      "method": "highs-ds",
+      "presolve": true,
+      "status": 4,
+      "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+      "value": null
+     }
+    ],
+    "other_settings": [
+     {
+      "method": "highs",
+      "presolve": true,
+      "status": 4,
+      "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+      "value": null
+     },
+     {
+      "method": "highs-ipm",
+      "presolve": true,
+      "status": 4,
+      "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Infeasible)",
+      "value": null
+     }
+    ]
+   },
+   "apriori_support": 2.0,
+   "previous_base": -0.24464076164633525
+  },
+  "6": {
+   "direction": [
+    0.7071067811865475,
+    -0.7071067811865475,
+    0.0
+   ],
+   "rows_eq": 403,
+   "rows_ub": 42,
+   "vars": 679,
+   "repeat_in_process": [
+    {
+     "method": "highs-ds",
+     "presolve": false,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Infeasible)",
+     "value": null
+    },
+    {
+     "method": "highs-ipm",
+     "presolve": false,
+     "status": 0,
+     "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+     "value": -0.0001046745575076502
+    },
+    {
+     "method": "highs-ds",
+     "presolve": true,
+     "status": 0,
+     "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+     "value": -0.00011229310384669455
+    },
+    {
+     "method": "highs-ds",
+     "presolve": false,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Infeasible)",
+     "value": null
+    },
+    {
+     "method": "highs-ipm",
+     "presolve": false,
+     "status": 0,
+     "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+     "value": -0.0001046745575076502
+    },
+    {
+     "method": "highs-ds",
+     "presolve": true,
+     "status": 0,
+     "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+     "value": -0.00011229310384669455
+    },
+    {
+     "method": "highs-ds",
+     "presolve": false,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Infeasible)",
+     "value": null
+    },
+    {
+     "method": "highs-ipm",
+     "presolve": false,
+     "status": 0,
+     "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+     "value": -0.0001046745575076502
+    },
+    {
+     "method": "highs-ds",
+     "presolve": true,
+     "status": 0,
+     "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+     "value": -0.00011229310384669455
+    },
+    {
+     "method": "highs-ds",
+     "presolve": false,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Infeasible)",
+     "value": null
+    },
+    {
+     "method": "highs-ipm",
+     "presolve": false,
+     "status": 0,
+     "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+     "value": -0.0001046745575076502
+    },
+    {
+     "method": "highs-ds",
+     "presolve": true,
+     "status": 0,
+     "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+     "value": -0.00011229310384669455
+    },
+    {
+     "method": "highs-ds",
+     "presolve": false,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Infeasible)",
+     "value": null
+    },
+    {
+     "method": "highs-ipm",
+     "presolve": false,
+     "status": 0,
+     "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+     "value": -0.0001046745575076502
+    },
+    {
+     "method": "highs-ds",
+     "presolve": true,
+     "status": 0,
+     "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+     "value": -0.00011229310384669455
+    }
+   ],
+   "fresh_process": {
+    "frozen_attempts": [
+     {
+      "method": "highs-ds",
+      "presolve": false,
+      "status": 4,
+      "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Infeasible)",
+      "value": null
+     },
+     {
+      "method": "highs-ipm",
+      "presolve": false,
+      "status": 0,
+      "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+      "value": -0.0001046745575076502
+     },
+     {
+      "method": "highs-ds",
+      "presolve": true,
+      "status": 0,
+      "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+      "value": -0.00011229310384669455
+     }
+    ],
+    "other_settings": [
+     {
+      "method": "highs",
+      "presolve": true,
+      "status": 0,
+      "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+      "value": -0.00011229310384669455
+     },
+     {
+      "method": "highs-ipm",
+      "presolve": true,
+      "status": 0,
+      "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+      "value": -0.00010248906372326005
+     }
+    ]
+   },
+   "apriori_support": 0.02121320343561932,
+   "previous_base": 0.0016062060175356652
+  },
+  "40": {
+   "direction": [
+    -0.9807852804032304,
+    0.1950903220161286,
+    0.0
+   ],
+   "rows_eq": 403,
+   "rows_ub": 42,
+   "vars": 679,
+   "repeat_in_process": [
+    {
+     "method": "highs-ds",
+     "presolve": false,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+     "value": null
+    },
+    {
+     "method": "highs-ipm",
+     "presolve": false,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+     "value": null
+    },
+    {
+     "method": "highs-ds",
+     "presolve": true,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+     "value": null
+    },
+    {
+     "method": "highs-ds",
+     "presolve": false,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+     "value": null
+    },
+    {
+     "method": "highs-ipm",
+     "presolve": false,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+     "value": null
+    },
+    {
+     "method": "highs-ds",
+     "presolve": true,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+     "value": null
+    },
+    {
+     "method": "highs-ds",
+     "presolve": false,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+     "value": null
+    },
+    {
+     "method": "highs-ipm",
+     "presolve": false,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+     "value": null
+    },
+    {
+     "method": "highs-ds",
+     "presolve": true,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+     "value": null
+    },
+    {
+     "method": "highs-ds",
+     "presolve": false,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+     "value": null
+    },
+    {
+     "method": "highs-ipm",
+     "presolve": false,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+     "value": null
+    },
+    {
+     "method": "highs-ds",
+     "presolve": true,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+     "value": null
+    },
+    {
+     "method": "highs-ds",
+     "presolve": false,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+     "value": null
+    },
+    {
+     "method": "highs-ipm",
+     "presolve": false,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+     "value": null
+    },
+    {
+     "method": "highs-ds",
+     "presolve": true,
+     "status": 4,
+     "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+     "value": null
+    }
+   ],
+   "fresh_process": {
+    "frozen_attempts": [
+     {
+      "method": "highs-ds",
+      "presolve": false,
+      "status": 4,
+      "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+      "value": null
+     },
+     {
+      "method": "highs-ipm",
+      "presolve": false,
+      "status": 4,
+      "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+      "value": null
+     },
+     {
+      "method": "highs-ds",
+      "presolve": true,
+      "status": 4,
+      "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+      "value": null
+     }
+    ],
+    "other_settings": [
+     {
+      "method": "highs",
+      "presolve": true,
+      "status": 4,
+      "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)",
+      "value": null
+     },
+     {
+      "method": "highs-ipm",
+      "presolve": true,
+      "status": 4,
+      "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Infeasible)",
+      "value": null
+     }
+    ]
+   },
+   "apriori_support": 1.68331144581706,
+   "previous_base": -0.18688710881272286
+  }
+ },
+ "apriori_support": [
+  2.0,
+  2.0,
+  2.0,
+  2.0,
+  2.0,
+  2.0,
+  0.02121320343561932,
+  0.02121320343561932,
+  0.07424621202466343,
+  0.07424621202466343,
+  0.006793662204876355,
+  0.006793662204876355,
+  0.09545941546028087,
+  0.09545941546028087,
+  0.09797958971142688,
+  0.09797958971142688,
+  2.504641701505001,
+  2.504641701505001,
+  2.778031427040278,
+  2.778031427040278,
+  2.9446629627723686,
+  2.9446629627723686,
+  2.9981327522311334,
+  2.9981327522311334,
+  2.9363859813938724,
+  2.9363859813938724,
+  2.761795544035876,
+  2.761795544035876,
+  2.4810708527533656,
+  2.4810708527533656,
+  1.6480351777444446,
+  1.6480351777444446,
+  1.1277372878368395,
+  1.1277372878368395,
+  0.5641010864000222,
+  0.5641010864000222,
+  0.6057122817597274,
+  0.6057122817597274,
+  1.1669341767831691,
+  1.1669341767831691,
+  1.68331144581706,
+  1.68331144581706
+ ],
+ "unusual_attempts_in_replay": [
+  {
+   "t": 280,
+   "purpose": "range-down",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 4,
+   "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Infeasible)"
+  },
+  {
+   "t": 804,
+   "purpose": "range-down",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 4,
+   "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Infeasible)"
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir1",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 4,
+   "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)"
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir6",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 4,
+   "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Infeasible)"
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir40",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 4,
+   "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)"
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir40",
+   "method": "highs-ipm",
+   "presolve": false,
+   "status": 4,
+   "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)"
+  },
+  {
+   "t": 945,
+   "purpose": "fold-dir40",
+   "method": "highs-ds",
+   "presolve": true,
+   "status": 4,
+   "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)"
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir1",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 4,
+   "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)"
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir6",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 4,
+   "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Infeasible)"
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir40",
+   "method": "highs-ds",
+   "presolve": false,
+   "status": 4,
+   "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)"
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir40",
+   "method": "highs-ipm",
+   "presolve": false,
+   "status": 4,
+   "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)"
+  },
+  {
+   "t": 945,
+   "purpose": "rebuild-dir40",
+   "method": "highs-ds",
+   "presolve": true,
+   "status": 4,
+   "message": "The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)"
+  }
+ ],
+ "replay_record": {
+  "variant": "F",
+  "W": 256,
+  "K": 64,
+  "evictions": 881,
+  "unproved_primal_alarms": 0,
+  "detect": 945,
+  "margin_at_detect_mC": null,
+  "margin_at_t_star_mC": null,
+  "alarm_certificate": {
+   "certified": false,
+   "reason": "LP status 4: The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)"
+  },
+  "folds_raised_to_dual_bound": 2,
+  "largest_raise_C": 1.7077839295786e-06,
+  "max_kept": 65,
+  "max_nodes": 66,
+  "max_vars": 679,
+  "max_rows": 445,
+  "n_lp": 3695,
+  "n_retry": 7,
+  "n_resolve": 0,
+  "max_ta_rows": 0,
+  "steps": 944,
+  "step_ms": {
+   "median": 14.158184494590387,
+   "p95": 16.601808700943362,
+   "max": 54.17394600226544
+  },
+  "fold_step_ms": {
+   "median": 279.1079680027906,
+   "max": 316.4807010034565
+  },
+  "seconds": 24.0
+ }
+}

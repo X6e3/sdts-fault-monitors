@@ -1,0 +1,32 @@
+[
+ {
+  "method": "highs-ds",
+  "presolve": false,
+  "status": 4,
+  "x": false
+ },
+ {
+  "method": "highs-ipm",
+  "presolve": false,
+  "status": 4,
+  "x": false
+ },
+ {
+  "method": "highs-ds",
+  "presolve": true,
+  "status": 4,
+  "x": false
+ },
+ {
+  "method": "highs",
+  "presolve": true,
+  "status": 4,
+  "x": false
+ },
+ {
+  "method": "highs-ipm",
+  "presolve": true,
+  "status": 4,
+  "x": false
+ }
+]
