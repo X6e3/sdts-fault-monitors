@@ -5,25 +5,13 @@
 - Every claim about a paper must be checked against the paper before it is cited.
 - "Not found" means not found in this pass, not that it does not exist.
 
-## Where each SDTS ingredient already exists
+**Reading order:** what SDTS adds comes first (section 1). The known building blocks follow, with where SDTS stands on
+each (section 2).
 
-| SDTS ingredient | known as | where to start |
-|---|---|---|
-| The information state as a set; detection = no consistent explanation | set-membership (unknown-but-bounded) estimation; consistency-based fault detection | Schweppe 1968 (the origin, ellipsoids); the review of set-membership fault diagnosis in IJAMCS 2010 |
-| No false alarm within the assumed bounds | the guarantee of set-membership fault detection | Puig and co-workers (zonotopes and parallelotopes, consistency tests) |
-| A window of exact constraints plus an outer bound of the initial set | moving-horizon set-membership estimation; "a moving horizon strategy where an outer bound of the initial set is propagated" | Ingimundarson et al. (CDC-ECC 2005, parallelotopes); Segovia, Puig, Duviella (ISA Trans. 2022, set-membership MHE) |
-| Bounded memory, keeping only the last r measurements | bounded-complexity set-membership filters; the observation that the exact consistency set's complexity cannot be bounded a priori | Sznaier, Yilmaz, Blanchini (ACC 2011) |
-| The arrival cost, and filtering against smoothing updates of it | moving horizon estimation (quadratic arrival cost) | Rao, Rawlings and co-workers. Check whether their smoothing update has a set-membership counterpart. |
-| Fixed-direction polytopes (cyl16p) | template polyhedra, support functions | Le Guernic and Girard (support functions, 2010); Sankaranarayanan et al. (template polyhedra) |
-| An exact set representation with complexity reduction | constrained zonotopes | Scott, Raimondo, Marseglia, Braatz (Automatica 2016) |
-| Interval observers as the other main family | interval-observer fault detection, and comparisons with set-membership | Pourasghar, Puig, Ocampo-Martínez (IJRNC 2019) |
-| A certified LP bound from approximate duals over boxed variables | safe bounds in linear programming | Neumaier and Shcherbina (Math. Prog. 2004). A later review reports that one published formula needed a correction. Check ours against the corrected version. |
-| Exact rational LP | exact MIP and LP solving | Cook, Koch, Steffy, Wolter |
-| An LP or QP on an MCU with a guaranteed worst-case time | WCET-certified active-set solvers | DAQP (Arnström, Axehill; exact WCET for active-set MPC; an STM32F405 Cortex-M4 demonstration in a 2026 preprint); EIQP (Wu, Braatz; execution-time certified, LP included) |
+## 1. What SDTS adds (so far, from this pass)
 
-## What looks specific to SDTS so far
-
-These are hedged: they come from this first pass only.
+Each item is backed by a measured, independently checked result in `diag/DIAG-3-RESULTS.md`. Whether it is new
+is hedged: it comes from this first pass only.
 
 1. **The yardstick.** Bounded-memory monitors are measured against the exact full-history information state (the oracle),
    with a size–loss curve (W = 64…256, K = 32…64) and a frozen, pre-registered validation. The literature states the
@@ -47,7 +35,23 @@ These are hedged: they come from this first pass only.
    may be the less common part.
 5. **The finding about the ambient box:** detection of slow drifts leans on the assumed range of TA.
 
-## What a reviewer will ask, and what answers it
+## 2. The known building blocks, and where SDTS stands on them
+
+| SDTS ingredient | known as | where to start |
+|---|---|---|
+| The information state as a set; detection = no consistent explanation | set-membership (unknown-but-bounded) estimation; consistency-based fault detection | Schweppe 1968 (the origin, ellipsoids); the review of set-membership fault diagnosis in IJAMCS 2010 |
+| No false alarm within the assumed bounds | the guarantee of set-membership fault detection | Puig and co-workers (zonotopes and parallelotopes, consistency tests) |
+| A window of exact constraints plus an outer bound of the initial set | moving-horizon set-membership estimation; "a moving horizon strategy where an outer bound of the initial set is propagated" | Ingimundarson et al. (CDC-ECC 2005, parallelotopes); Segovia, Puig, Duviella (ISA Trans. 2022, set-membership MHE) |
+| Bounded memory, keeping only the last r measurements | bounded-complexity set-membership filters; the observation that the exact consistency set's complexity cannot be bounded a priori | Sznaier, Yilmaz, Blanchini (ACC 2011) |
+| The arrival cost, and filtering against smoothing updates of it | moving horizon estimation (quadratic arrival cost) | Rao, Rawlings and co-workers. Check whether their smoothing update has a set-membership counterpart. |
+| Fixed-direction polytopes (cyl16p) | template polyhedra, support functions | Le Guernic and Girard (support functions, 2010); Sankaranarayanan et al. (template polyhedra) |
+| An exact set representation with complexity reduction | constrained zonotopes | Scott, Raimondo, Marseglia, Braatz (Automatica 2016) |
+| Interval observers as the other main family | interval-observer fault detection, and comparisons with set-membership | Pourasghar, Puig, Ocampo-Martínez (IJRNC 2019) |
+| A certified LP bound from approximate duals over boxed variables | safe bounds in linear programming | Neumaier and Shcherbina (Math. Prog. 2004); Jansson (2004, rigorous LP bounds). A later review reports errors in the printed formulas. Ours is derived directly from weak duality with every variable boxed, and audited in exact arithmetic (5,676 + 84 bounds, no violation). Cite the full texts and the review when writing. |
+| Exact rational LP | exact MIP and LP solving | Cook, Koch, Steffy, Wolter |
+| An LP or QP on an MCU with a guaranteed worst-case time | WCET-certified active-set solvers | DAQP (Arnström, Axehill; exact WCET for active-set MPC; an STM32F405 Cortex-M4 demonstration in a 2026 preprint). DAQP is a dual active-set solver for strictly convex QPs, so a pure LP needs a small quadratic regularisation; any dual still gives a valid bound, but how tight it is must be checked. EIQP (Wu, Braatz; execution-time certified, LP included). |
+
+## 3. What a reviewer will ask, and what answers it
 
 - **"How does this compare with zonotopic set-membership fault detection, constrained zonotopes or interval
   observers?"** A baseline comparison on the same scenarios is needed. Proposal: implement one or two baselines and
