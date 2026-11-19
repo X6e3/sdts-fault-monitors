@@ -1,0 +1,42 @@
+{
+ "mode": "rehearsal",
+ "git_head": "9dc1af31757a9cadd3ff6ba34a926ab21939ec87",
+ "git_dirty_tracked": false,
+ "env": {
+  "python": "3.12.13",
+  "implementation": "CPython",
+  "numpy": "2.5.5",
+  "scipy": "1.18.1",
+  "highs": "1.12.0",
+  "platform": "Linux-7.3.4-arch1-2-x86_64-with-glibc2.44",
+  "machine": "x86_64",
+  "executable": "/home/x6e3/Research/sdts-v3-freeze2-9dc1af3/.venv/bin/python",
+  "numpy_record_sha256": "ff1cee041784df714b5a5521619920dbfd4ff462e1108a82d45606eca277a524",
+  "scipy_record_sha256": "cda958e21648ffe0b8528473532ef59f89db82bf1fa7d4a9a47161785046e979"
+ },
+ "manifest_sha256": "cc7adffa240b6ab4eab9b45652f4437ce582f784123b1b1cac8341f4db303385",
+ "freeze_doc_sha256": "8e6d2b3216ab42b2716df76542fc7edbaaba2e3b8ab91dc523397c16d9a578c5",
+ "approval": null,
+ "seeds": [
+  430096,
+  430097
+ ],
+ "candidate": {
+  "name": "F",
+  "variant": "F",
+  "W": 256,
+  "B": 16,
+  "K": 64,
+  "pad_C": 1e-06,
+  "directions_file": "experiments/v3/frozen/cyl16p.json",
+  "directions_sha256": "7f9cc8700fdd70782ddaf4a7e99a2e2c2f5818ce4aafa970f897b40e90a7747e",
+  "target_paired_lag_reduction": 0.8
+ },
+ "host": "x6e3-db4",
+ "machine": "x86_64",
+ "started": "2026-11-19T06:26:51+0300",
+ "runs": 96,
+ "seconds": 468.5,
+ "finished": "2026-11-19T06:34:40+0300",
+ "rows_sha256": "ae7271158a2f7325f4f28a1b3378429e3c9bb63427d41ee25856f690abb58d20"
+}

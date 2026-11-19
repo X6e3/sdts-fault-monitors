@@ -8,7 +8,8 @@ Prepared 2026-11-18 on branch `sdts-v3/template-state` for Can Koç's review. Th
 are Can's to set. Everything here is a proposal until the status line says APPROVED. `run_validation_v2.py` refuses
 to generate validation data until then (section 6).
 
-**Open items:** the DEV rehearsal at this commit (section 8). Then the draft is ready for Can's review.
+**Open items:** none. The manifest is regenerated at the frozen code and the rehearsal rerun at the freeze commit
+(section 8). The draft is ready for Can's review.
 
 **Decided by Can Koç on 2026-11-19, after the team's review:**
 - 200 seeds (section 3);
@@ -158,7 +159,8 @@ z reached 2.22–2.30 in the 256 samples before t*. The box is part of the model
 | `42252a3` | amendment 9's code: F's coefficients from the exact recurrence (`POWX`, `GENX`), the slab δ + η, the scorer's identity and integrity checks and verdict order; `diag/check_model.py` and the scorer's tests |
 | `a5c3fa6` | amendment 9's checks T1′ and T2′ (DIAG-3-RESULTS) |
 | `04432f13` | freeze 1's record: an addendum on the model gap at the noise bound (`diag/check_freeze1_model.py`), cited in section 1 |
-| this commit | `frozen/MANIFEST-V2.json` regenerated (block 440200–440399, the code of `42252a3`), and this file |
+| `9dc1af3` | `frozen/MANIFEST-V2.json` regenerated (block 440200–440399, the code of `42252a3`), and this file |
+| this commit | the DEV rehearsal at `9dc1af3` (section 8), and this file |
 
 The frozen code is that of `42252a3`. No file in the manifest changed after it, so amendment 9's checks ran the
 frozen code. `diag/check_model.py` and `tests/test_v3_freeze2_scorer.py` check the frozen code; the validation does
@@ -220,7 +222,7 @@ with edge noise).
   level: with no alarm on 200 independent seeds, the chance that a seed's healthy runs alarm is below about 1.5 % at
   95 %. Soundness itself rests on the certificate (section 1), not on this count.
 - **The same block size as freeze 1,** so the two validations have the same design.
-- **Cost:** about 12.2 h on Arch with 14 workers, at the rehearsal's rate (section 8). 600 seeds stay unused.
+- **Cost:** about 13 h on Arch with 14 workers, at the rehearsal's rate (section 8). 600 seeds stay unused.
 
 ## 4. Scoring rules (`score_validation_v2.py`, fixed)
 
@@ -362,15 +364,13 @@ There is no alarm on any of the 238 admissible rows.
 
 The identical pipeline was run on DEV seeds 430096–430097 (`--rehearsal`; validation stays locked).
 
-**To be rerun at this commit.** The run below is at `bc2a051`, before amendment 9.
-
 **Run at the freeze commit:**
-- `run_validation_v2.py` at `bc2a051` on Arch, from a clean checkout, 14 workers, 04:10–04:17 on 2026-11-19.
-- The checks passed: the manifest `31d470ae…` and the environment lock (CPython 3.12.13, numpy 2.5.5, scipy 1.18.1,
+- `run_validation_v2.py` at `9dc1af3` on Arch, from a clean checkout, 14 workers, 06:27–06:35 on 2026-11-19.
+- The checks passed: the manifest `cc7adffa…` and the environment lock (CPython 3.12.13, numpy 2.5.5, scipy 1.18.1,
   HiGHS 1.12.0).
-- 96 runs (2 seeds × 48) in 438 s. Rows sha256 `8dbcff37ccbfcd1e76f2d9612bfce25c5bd0a2841114e3d49df3314ea4ad6c91`.
-- Scored with `score_validation_v2.py`. The outputs are in `results/v3/freeze2/rehearsal-dev-430096-bc2a051/`. The
-  solver attempts (4.8 MB) stay on Arch.
+- 96 runs (2 seeds × 48) in 469 s. Rows sha256 `ae7271158a2f7325f4f28a1b3378429e3c9bb63427d41ee25856f690abb58d20`.
+- Scored with `score_validation_v2.py`: identity complete, no integrity problem. The outputs are in
+  `results/v3/freeze2/rehearsal-dev-430096-9dc1af3/`. The solver attempts (4.8 MB) stay on Arch.
 
 **Pipeline checks:**
 - complete: 96 of 96 rows;
@@ -382,15 +382,17 @@ The identical pipeline was run on DEV seeds 430096–430097 (`--rehearsal`; vali
 |---|---|---|---|---|---|---|---|
 | F (W = 256, K = 64) | 0 | 0 | 0 | 0 (v2: 0) | 0 | 1.0 (L_v2 = 994 s) | 74 of 74 |
 
-**Against the first rehearsal** (`cfb7f18`, before amendment 8; `results/v3/freeze2/rehearsal-dev-430096/`, same
+**Against the rehearsal at `bc2a051`** (amendment 8's code; `results/v3/freeze2/rehearsal-dev-430096-bc2a051/`, same
 seeds):
-- Every row is identical, apart from timings and the new `unproved_primal_alarms` field.
-- The only change is in the certified alarm margins: at most 4.5e-13 mC, and always towards zero. That is the slab of
-  z_t rounded outward, the conservative direction.
+- Every row is identical, apart from timings and the certified alarm margins.
+- The 74 margins move by less than 0.2 µC: 67 towards zero, 7 away from it. This is amendment 9's exact recurrence
+  and slab δ + η, as on DEV (DIAG-3-RESULTS, amendment 9).
+- The evictions are the same: 28,280 on the 8 edge-noise runs.
+- The first rehearsal, at `cfb7f18` before amendment 8, is in `results/v3/freeze2/rehearsal-dev-430096/`.
 
 **What the rehearsal shows:**
 - **The pipeline works end to end at the frozen code:** generation, oracle, v2, F and scoring.
 - **On the 8 edge-noise runs F evicts at every sample** (28,280 evictions; up to 65 kept and 445 rows), with no
   alarm, as in amendment 7.
 - **Two DEV seeds say nothing about the target.** D_paired = 1.0 here is not evidence for H-F.
-- **Expected validation time:** 9600 runs at this rate is about 12.2 h on Arch with 14 workers.
+- **Expected validation time:** 9600 runs at this rate is about 13.0 h on Arch with 14 workers.
