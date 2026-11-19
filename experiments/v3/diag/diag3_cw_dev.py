@@ -37,8 +37,12 @@ def online(var, zs, W=W, K=None, t_star=None, horizon=None, tp=None):
     last = len(zs) - 1 if horizon is None else min(len(zs) - 1, horizon)
     det, cert, m_det, m_ts, steps, folds, t00 = None, None, None, None, [], [], time.monotonic()
     unproved = 0                                      # F: LP values pointing to an alarm that the bound cannot prove
-    w.zs[0] = zs[0]
-    for t in range(1, last + 1):
+    c0 = w.box_certificate(zs[0]) if getattr(w, "failsafe", False) else None
+    if c0 is not None and c0["certified"]:            # F3 (N2 addendum): z_0 outside the box is an alarm at 0
+        det, cert = 0, c0
+    else:
+        w.zs[0] = zs[0]
+    for t in range(1, last + 1 if det is None else 1):
         t0 = time.monotonic()
         w.now = t
         lower, upper = w.as_range(t)                  # measurements up to t - 1 only

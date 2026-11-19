@@ -502,7 +502,16 @@ class Failsafe(Compressed):
             self.fs["range_fallbacks"]["both"] += 1
         elif fu or fd:
             self.fs["range_fallbacks"]["one"] += 1
-        return (LO if fd else -dn), (HI if fu else up)
+        # clipped to the a priori box (N2 addendum): a solver value past the box by its tolerance is not used
+        return (LO if fd else max(-dn, LO)), (HI if fu else min(up, HI))
+
+    def box_certificate(self, z):
+        """an alarm proved by the box alone: z's slab (delta + eta, rounded outward) misses [LO, HI]"""
+        zl, zu = np.nextafter(z - self.delta, -np.inf), np.nextafter(z + self.delta, np.inf)
+        m = 1e3 * min(zu - LO, HI - zl)
+        if m < 0:
+            self.fs["box_alarms"] += 1
+        return {"certified": bool(m < 0), "certified_margin_mC": m, "box_sides": ["up", "down"]}
 
     def certify_alarm(self, t, z):
         self.role = ("cert", "up")
@@ -514,8 +523,14 @@ class Failsafe(Compressed):
             self._count("cert_fallbacks", up)
             cup = HI
             box.append("up")
+        elif cup > HI:                                             # the box is the tighter certified bound
+            cup = HI
+            box.append("up")
         if isinstance(dn, Failed):                                 # max (-as) <= -LO, a priori
             self._count("cert_fallbacks", dn)
+            cdn = -LO
+            box.append("down")
+        elif cdn > -LO:
             cdn = -LO
             box.append("down")
         zl, zu = np.nextafter(z - self.delta, -np.inf), np.nextafter(z + self.delta, np.inf)

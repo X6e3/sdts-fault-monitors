@@ -184,11 +184,12 @@ def summary(out):
             for s, a, al in EDGE}
     refM = {k: (json.loads((REF / "cwdev-F-K64-42252a3" / f"cwdev-{k}-F.json").read_text())["alarm_certificate"] or {})
             .get("certified_margin_mC") for k in rows}
-    sound, uncert, early, mism, differs, margin_differs = [], [], [], [], [], []
+    sound, uncert, early, mism, differs, margin_differs, margin_box = [], [], [], [], [], [], []
     tot = {}
     for k, x in xs.items():
         r = rows.get(k)
-        admissible = x["kind"] == "edge" or (r["oracle"]["status"] == "certified" and r["oracle"]["t_star"] is None)
+        admissible = (x["kind"] == "edge" or r["cell"] == "healthy"           # FREEZE-V2 §4: every healthy run
+                      or (r["oracle"]["status"] == "certified" and r["oracle"]["t_star"] is None))
         ts = r["oracle"]["t_star"] if r is not None and r["oracle"]["status"] == "certified" else None
         det = x["detect"]
         if det is not None and admissible:
@@ -205,7 +206,8 @@ def summary(out):
         elif det is not None and x["kind"] == "dev":
             mf = refM[k]
             if mf != (x["alarm_certificate"] or {}).get("certified_margin_mC"):
-                margin_differs.append([k, mf, x["alarm_certificate"]])
+                (margin_box if (x["alarm_certificate"] or {}).get("box_sides") else margin_differs).append(
+                    [k, mf, x["alarm_certificate"]])
         for name, v in x["failsafe"].items():
             if isinstance(v, dict):
                 for kk, n in v.items():
@@ -228,7 +230,7 @@ def summary(out):
            "harness_totals": {k: sum(x["harness"].get(k, 0) for x in xs.values())
                               for k in sorted({k for x in xs.values() for k in x["harness"]})},
            "misses": sum(1 for k in events if k in xs and xs[k]["detect"] is None),
-           "misses_F": sum(1 for k in events if refF[k] is None),
+           "misses_F": sum(1 for k in events if k in xs and refF[k] is None),
            "lag_sum": sum(lag.values()), "lag_sum_F": sum(lagF[k] for k in lag),
            "D_paired_dev": (1 - sum(lag[k] for k in B) / Lv2) if Lv2 else None,
            "D_paired_dev_F": (1 - sum(lagF[k] for k in B) / Lv2) if Lv2 else None,
@@ -241,11 +243,16 @@ def summary(out):
                         "min_slack_C": min(y["min_slack_C"] for y in a),
                         "n_implied": sum(y["n_implied"] for y in a),
                         "min_slack_implied_C": min(y["min_slack_implied_C"] for y in a)}
-    rep["U2_soundness"] = not sound and not early and not uncert
-    rep["U2_memory"] = rep["max_kept"] is not None and rep["max_kept"] <= K + 1
-    rep["U2_injections_match"] = not mism
+    complete = rep["rows"] == rep["expected"]
+    rep["complete"] = complete
+    rep["slab_failures"] = {k: v for k, v in tot.items() if k.endswith("|slab")}
+    rep["U2_soundness"] = complete and not sound and not early and not uncert
+    rep["U2_memory"] = complete and rep["max_kept"] is not None and rep["max_kept"] <= K + 1
+    rep["U2_injections_match"] = complete and not mism
+    rep["U2_no_slab"] = complete and not any(rep["slab_failures"].values())
     if meta["setting"] == "none":
         rep["margin_differs_from_F"] = margin_differs[:20]
+        rep["margin_box_cases"] = margin_box
         rep["U1"] = rep["U2_soundness"] and not differs and not margin_differs and rep["rows"] == rep["expected"]
         rep["U1_no_fallback"] = all(v == 0 for v in tot.values())
     (out / "summary.json").write_text(json.dumps(rep, indent=1, default=str) + "\n")
@@ -319,6 +326,23 @@ def paths(out):
     rec, h = go(zh, None, lambda t, k, w, _: 2 if (t == 289 and k == "fold") else None, 600)
     ok["full_reset_continues"] = (rec["failsafe"]["fold_full_resets"] == 1 and rec["detect"] is None
                                   and sum(rec["failsafe"]["range_failures"].values()) == 0 and len(h.w.zs) > 0)
+
+    z0 = list(zh)
+    z0[0] = 3.0                                                    # z_0 outside the box
+    rec, h = go(z0, None, lambda *a: None, 50)
+    ok["z0_outside_box"] = (rec["detect"] == 0 and rec["alarm_certificate"]["certified"]
+                            and rec["failsafe"]["box_alarms"] == 1 and h.w.zs == {})
+
+    w = C.make("F3", tp)                                           # an as-range value past HI by a solver tolerance
+    w.zs[0] = zh[0]
+    w.lp = lambda t_end, upto, st, vec: (C.HI + 1e-8) if vec[1] > 0 else (-C.LO + 1e-8)
+    w.lp_cert = lambda *a: (w.lp(*a), w.lp(*a) + 1e-9)
+    lo, up = w.as_range(5)
+    zx = C.HI + w.delta + 5e-9                                     # its slab lies just above the box
+    cx = w.certify_alarm(5, zx)
+    ok["range_overshoot"] = (lo == C.LO and up == C.HI and up < zx - w.delta and cx["certified"]
+                             and "up" in cx["box_sides"] and w.fs["box_alarms"] == 1)
+    res["range_overshoot"] = cx
 
     w = C.make("F3", tp)
     w.zs[0], w.zs[5] = zh[0], 10.0                                 # a slab outside the box: empty before any solve
