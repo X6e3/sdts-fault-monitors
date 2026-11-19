@@ -8,6 +8,34 @@
 **Reading order:** what SDTS adds comes first (section 1). The known building blocks follow, with where SDTS stands on
 each (section 2).
 
+## 0. Corrections from the full-text pass (L1, partial, 2026-11-19; to be confirmed in its report)
+
+The full-text pass was cut short; its report is pending. Its interim findings narrow section 1:
+
+- **The window is not ours.** Kesavan and Lee (2001) already reduce the growing full-history LP to a fixed window with
+  an outer-bounded initial set. Brunner, Müller and Allgöwer (CDC 2016, TAC 2018) also use set-valued estimates from a
+  fixed number of recent measurements.
+- **Set-membership smoothing exists:** Morrell and Stirling (1988), Liu, Shen and Deller (2017), Meslem and Ramdani
+  (2018, forward–backward), and Li, Cong and Zhou (2024, optimal set-membership smoothing). What remains to be checked
+  is whether any of them uses later measurements to update the base of a moving window for fault detection, as the
+  smoothing fold does.
+- **Comparing with the exact set is not ours either.** Scott et al. (2016) already compare bounded-complexity
+  estimates with the exact set. The narrower candidate is the loss measured in **detection delay** against the
+  full-history oracle, as a memory–loss curve, on fault-detection runs, with a pre-registered validation.
+- **DAQP:** its current documentation supports pure LPs. The note below that it needs a regularisation is to be
+  corrected once checked.
+- **The safe-bounds review:** its authors and the two sign errors it corrects are confirmed in the pass. The details
+  will be in the report.
+
+**So the contribution, as it stands now:**
+1. The memory–detection-loss curve against the exact oracle.
+2. The diagnosis of where the loss comes from.
+3. The exact compressed window, with every fold and alarm certified and audited.
+4. The ambient-box finding.
+5. The pre-registered validation.
+
+The window, set-membership smoothing and the comparison with the exact set are prior art, to be cited, not claimed.
+
 ## 1. What SDTS adds (so far, from this pass)
 
 Each item is backed by a measured, independently checked result in `diag/DIAG-3-RESULTS.md`. Whether it is new
