@@ -1,0 +1,42 @@
+{
+ "mode": "validation",
+ "git_head": "35b344df61e955eafc18ab722f0ea30c1685fa7d",
+ "git_dirty_tracked": false,
+ "env": {
+  "python": "3.12.13",
+  "implementation": "CPython",
+  "numpy": "2.5.5",
+  "scipy": "1.18.1",
+  "highs": "1.12.0",
+  "platform": "Linux-7.3.4-arch1-2-x86_64-with-glibc2.44",
+  "machine": "x86_64",
+  "executable": "/home/x6e3/Research/sdts-v3-validation-35b344df/.venv/bin/python",
+  "numpy_record_sha256": "ff1cee041784df714b5a5521619920dbfd4ff462e1108a82d45606eca277a524",
+  "scipy_record_sha256": "cda958e21648ffe0b8528473532ef59f89db82bf1fa7d4a9a47161785046e979"
+ },
+ "manifest_sha256": "cc7adffa240b6ab4eab9b45652f4437ce582f784123b1b1cac8341f4db303385",
+ "freeze_doc_sha256": "79389a0e8f49ea4c387a2c22be11a93eb519289638b44a462dc030dbb404e134",
+ "approval": "Status: APPROVED by Can Ko\u00e7 on 2026-11-19",
+ "seeds": [
+  440200,
+  440399
+ ],
+ "candidate": {
+  "name": "F",
+  "variant": "F",
+  "W": 256,
+  "B": 16,
+  "K": 64,
+  "pad_C": 1e-06,
+  "directions_file": "experiments/v3/frozen/cyl16p.json",
+  "directions_sha256": "7f9cc8700fdd70782ddaf4a7e99a2e2c2f5818ce4aafa970f897b40e90a7747e",
+  "target_paired_lag_reduction": 0.8
+ },
+ "host": "x6e3-db4",
+ "machine": "x86_64",
+ "started": "2026-11-19T06:57:26+0300",
+ "runs": 9600,
+ "seconds": 41603.4,
+ "finished": "2026-11-19T18:30:49+0300",
+ "rows_sha256": "4ad0b493c11079c6bfc61714a2da89fde7abfad2409602d0502ad620398738de"
+}

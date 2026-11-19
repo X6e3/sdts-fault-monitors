@@ -1,0 +1,362 @@
+{
+ "runs": 9600,
+ "expected_runs": 9600,
+ "complete": true,
+ "integrity_problems": [],
+ "fault_runs": 8000,
+ "uncertified_oracle": 5,
+ "detection_events": 7265,
+ "admissible_runs": 2330,
+ "v2": {
+  "soundness_violations": [],
+  "detected": 7251,
+  "misses": 14,
+  "equal_to_oracle": 5189,
+  "lag_median": 0,
+  "lag_p90": 61,
+  "lag_max": 2831,
+  "lag_sum_detected": 265602
+ },
+ "F": {
+  "verdict": "FAIL",
+  "fail_reasons": [
+   "1 soundness violations",
+   "1 uncertified alarms"
+  ],
+  "target_paired_lag_reduction": 0.8,
+  "D_paired": 0.994872026566065,
+  "paired_set": 7251,
+  "L_paired": 1362,
+  "L_paired_v2": 265602,
+  "D_censored": 0.9952110041420243,
+  "L_censored": 1362,
+  "L_censored_v2": 284402,
+  "D_paired_bootstrap95_descriptive": [
+   0.9865763357726873,
+   0.9996094336788343
+  ],
+  "soundness_violations": [
+   [
+    "flags an admissible run",
+    440243,
+    "healthy",
+    "E0",
+    "ramp",
+    "edge",
+    945
+   ]
+  ],
+  "uncertified_alarms": [
+   [
+    440243,
+    "healthy",
+    "E0",
+    "ramp",
+    "edge",
+    945,
+    {
+     "certified": false,
+     "reason": "LP status 4: The HiGHS status code was not recognized. (HiGHS Status 15: model_status is Unknown; primal_status is Feasible)"
+    }
+   ]
+  ],
+  "later_than_v2_reported": [],
+  "later_than_v2_largest_s": null,
+  "v2_detects_F_misses": 0,
+  "unproved_primal_alarms": 0,
+  "detected": 7265,
+  "misses": 0,
+  "equal_to_oracle": 7251,
+  "lag_median": 0,
+  "lag_p90": 0,
+  "lag_max": 241,
+  "lag_sum_detected": 1362,
+  "evictions": 2825330,
+  "runs_with_evictions": 800,
+  "max_kept": {
+   "median": 36,
+   "p95": 65,
+   "max": 65
+  },
+  "max_rows": 445,
+  "max_vars": 679,
+  "folds_raised_to_dual_bound": 18,
+  "subgroups": {
+   "drift_0.0005/ramp": {
+    "events": 369,
+    "D_paired": 0.9870665763379934,
+    "detected": 369,
+    "misses": 0,
+    "equal_to_oracle": 361,
+    "lag_median": 0,
+    "lag_p90": 0,
+    "lag_max": 241,
+    "lag_sum_detected": 840
+   },
+   "rw": {
+    "events": 3498,
+    "D_paired": 0.9971859403206966,
+    "detected": 3498,
+    "misses": 0,
+    "equal_to_oracle": 3494,
+    "lag_median": 0,
+    "lag_p90": 0,
+    "lag_max": 209,
+    "lag_sum_detected": 424
+   }
+  }
+ },
+ "by_cell": {
+  "drift_0.0005/ramp": {
+   "v2": {
+    "n": 369,
+    "miss": 10,
+    "lag_sum": 64948
+   },
+   "F": {
+    "n": 369,
+    "miss": 0,
+    "lag_sum": 840
+   }
+  },
+  "drift_0.0005/rw": {
+   "v2": {
+    "n": 158,
+    "miss": 2,
+    "lag_sum": 2618
+   },
+   "F": {
+    "n": 158,
+    "miss": 0,
+    "lag_sum": 0
+   }
+  },
+  "drift_0.001/ramp": {
+   "v2": {
+    "n": 398,
+    "miss": 0,
+    "lag_sum": 36988
+   },
+   "F": {
+    "n": 398,
+    "miss": 0,
+    "lag_sum": 98
+   }
+  },
+  "drift_0.001/rw": {
+   "v2": {
+    "n": 340,
+    "miss": 2,
+    "lag_sum": 7148
+   },
+   "F": {
+    "n": 340,
+    "miss": 0,
+    "lag_sum": 0
+   }
+  },
+  "drift_0.002/ramp": {
+   "v2": {
+    "n": 400,
+    "miss": 0,
+    "lag_sum": 8144
+   },
+   "F": {
+    "n": 400,
+    "miss": 0,
+    "lag_sum": 0
+   }
+  },
+  "drift_0.002/rw": {
+   "v2": {
+    "n": 400,
+    "miss": 0,
+    "lag_sum": 138466
+   },
+   "F": {
+    "n": 400,
+    "miss": 0,
+    "lag_sum": 424
+   }
+  },
+  "drift_0.005/ramp": {
+   "v2": {
+    "n": 400,
+    "miss": 0,
+    "lag_sum": 4242
+   },
+   "F": {
+    "n": 400,
+    "miss": 0,
+    "lag_sum": 0
+   }
+  },
+  "drift_0.005/rw": {
+   "v2": {
+    "n": 400,
+    "miss": 0,
+    "lag_sum": 2056
+   },
+   "F": {
+    "n": 400,
+    "miss": 0,
+    "lag_sum": 0
+   }
+  },
+  "drift_0.02/ramp": {
+   "v2": {
+    "n": 400,
+    "miss": 0,
+    "lag_sum": 378
+   },
+   "F": {
+    "n": 400,
+    "miss": 0,
+    "lag_sum": 0
+   }
+  },
+  "drift_0.02/rw": {
+   "v2": {
+    "n": 400,
+    "miss": 0,
+    "lag_sum": 206
+   },
+   "F": {
+    "n": 400,
+    "miss": 0,
+    "lag_sum": 0
+   }
+  },
+  "gain_0.01/ramp": {
+   "v2": {
+    "n": 400,
+    "miss": 0,
+    "lag_sum": 14
+   },
+   "F": {
+    "n": 400,
+    "miss": 0,
+    "lag_sum": 0
+   }
+  },
+  "gain_0.01/rw": {
+   "v2": {
+    "n": 400,
+    "miss": 0,
+    "lag_sum": 10
+   },
+   "F": {
+    "n": 400,
+    "miss": 0,
+    "lag_sum": 0
+   }
+  },
+  "jump_0.2/ramp": {
+   "v2": {
+    "n": 400,
+    "miss": 0,
+    "lag_sum": 148
+   },
+   "F": {
+    "n": 400,
+    "miss": 0,
+    "lag_sum": 0
+   }
+  },
+  "jump_0.2/rw": {
+   "v2": {
+    "n": 400,
+    "miss": 0,
+    "lag_sum": 114
+   },
+   "F": {
+    "n": 400,
+    "miss": 0,
+    "lag_sum": 0
+   }
+  },
+  "jump_0.5/ramp": {
+   "v2": {
+    "n": 400,
+    "miss": 0,
+    "lag_sum": 14
+   },
+   "F": {
+    "n": 400,
+    "miss": 0,
+    "lag_sum": 0
+   }
+  },
+  "jump_0.5/rw": {
+   "v2": {
+    "n": 400,
+    "miss": 0,
+    "lag_sum": 14
+   },
+   "F": {
+    "n": 400,
+    "miss": 0,
+    "lag_sum": 0
+   }
+  },
+  "noise_x2/ramp": {
+   "v2": {
+    "n": 400,
+    "miss": 0,
+    "lag_sum": 34
+   },
+   "F": {
+    "n": 400,
+    "miss": 0,
+    "lag_sum": 0
+   }
+  },
+  "noise_x2/rw": {
+   "v2": {
+    "n": 400,
+    "miss": 0,
+    "lag_sum": 8
+   },
+   "F": {
+    "n": 400,
+    "miss": 0,
+    "lag_sum": 0
+   }
+  },
+  "stuck/ramp": {
+   "v2": {
+    "n": 200,
+    "miss": 0,
+    "lag_sum": 20
+   },
+   "F": {
+    "n": 200,
+    "miss": 0,
+    "lag_sum": 0
+   }
+  },
+  "stuck/rw": {
+   "v2": {
+    "n": 200,
+    "miss": 0,
+    "lag_sum": 32
+   },
+   "F": {
+    "n": 200,
+    "miss": 0,
+    "lag_sum": 0
+   }
+  }
+ },
+ "mode": "validation",
+ "identity": {
+  "expected": 9600,
+  "missing": 0,
+  "duplicates": 0,
+  "extra": 0,
+  "examples": {
+   "missing": [],
+   "extra": []
+  }
+ }
+}
