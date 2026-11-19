@@ -224,3 +224,21 @@ independence beyond the seeds).
   - HYPOTHESIS, not tested: for a failed fold direction, use a support that is proved at the new base time. The
     exact clamps are one such support. Carrying the old base's numbers forward is not the same thing. The cost in
     lag, misses, memory and time is unmeasured.
+
+## Diagnosis of the deciding fold (plan; after the verdict)
+
+Can Koç decided on 2026-11-19, after the verdict was recorded, to replay the deciding run. The replay cannot change
+the verdict. It is outside section 6 and is labelled as a diagnosis.
+
+- **Script:** `diag/diag_fold_440243.py`. It replays (440243, healthy, E0, ramp, edge) with the frozen F up to the
+  fold at t = 945, after checking the frozen files against `MANIFEST-V2.json`.
+- **Where:** on Arch, in the validation's environment (the lock is checked and recorded), from a clean worktree of
+  this commit. It is not run on the validation's own worktree or output.
+- **Questions, fixed before the run** (Q1–Q5 in the script):
+  - Does the replay reproduce the row?
+  - Does the fold fail again, and at which direction, with which status in each attempt?
+  - Do the fold's other directions solve?
+  - Is the failure repeatable, in this process and in a fresh one?
+  - Informational: how does the LP behave under HiGHS's other settings, and how far is the failing direction's a
+    priori support from what the fold needed?
+- No other validation run is replayed.
