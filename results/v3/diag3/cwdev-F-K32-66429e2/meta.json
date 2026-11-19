@@ -1,0 +1,18 @@
+{
+ "git_head": "66429e2ffc3d15c8ced35f389d520deb3730535e",
+ "git_dirty_tracked": false,
+ "W": 256,
+ "K": 32,
+ "B": 16,
+ "pad": 1e-06,
+ "variants": [
+  "F"
+ ],
+ "machine": "arm64",
+ "platform": "macOS-27.0-arm64-arm-64bit",
+ "python": "3.12.13",
+ "numpy": "2.5.5",
+ "scipy": "1.18.1",
+ "started": "2026-11-19T02:08:25+0300",
+ "finished": "2026-11-19T04:08:37+0300"
+}

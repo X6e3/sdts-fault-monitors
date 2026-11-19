@@ -1,0 +1,865 @@
+{
+ "rows": 1320,
+ "sources": [
+  "F32=results/v3/diag3/cwdev-F-K32-66429e2:F",
+  "E=results/v3/diag3/cwdev-90d3edc:E"
+ ],
+ "score": {
+  "all": {
+   "runs": 1320,
+   "R": 1081,
+   "admissible": 238,
+   "undetermined": 1,
+   "v2": {
+    "D_paired": 0.0,
+    "lag": 32925,
+    "lag_v2": 32925,
+    "n_v2_detects": 1073,
+    "soundness_findings": 0,
+    "detected": 1073,
+    "misses": 8,
+    "equal_to_oracle": 805,
+    "lag_median": 0,
+    "lag_p90": 49,
+    "lag_max": 2880,
+    "lag_sum_detected": 32925,
+    "later_than_v2": 0
+   },
+   "F32": {
+    "D_paired": 0.9992103264996204,
+    "lag": 26,
+    "lag_v2": 32925,
+    "n_v2_detects": 1073,
+    "soundness_findings": 0,
+    "detected": 1081,
+    "misses": 0,
+    "equal_to_oracle": 1079,
+    "lag_median": 0,
+    "lag_p90": 0,
+    "lag_max": 13,
+    "lag_sum_detected": 26,
+    "later_than_v2": 0,
+    "bootstrap95": [
+     0.9972177635098983,
+     1.0
+    ]
+   },
+   "E": {
+    "D_paired": 0.9992103264996204,
+    "lag": 26,
+    "lag_v2": 32925,
+    "n_v2_detects": 1073,
+    "soundness_findings": 0,
+    "detected": 1081,
+    "misses": 0,
+    "equal_to_oracle": 1079,
+    "lag_median": 0,
+    "lag_p90": 0,
+    "lag_max": 13,
+    "lag_sum_detected": 26,
+    "later_than_v2": 0,
+    "bootstrap95": [
+     0.9972177635098983,
+     1.0
+    ]
+   },
+   "by_cell": {
+    "drift_0.0005/ramp": {
+     "v2": {
+      "n": 56,
+      "miss": 4,
+      "lag_sum": 9250
+     },
+     "F32": {
+      "n": 56,
+      "miss": 0,
+      "lag_sum": 26
+     },
+     "E": {
+      "n": 56,
+      "miss": 0,
+      "lag_sum": 26
+     }
+    },
+    "drift_0.0005/rw": {
+     "v2": {
+      "n": 22,
+      "miss": 2,
+      "lag_sum": 186
+     },
+     "F32": {
+      "n": 22,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 22,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "drift_0.001/ramp": {
+     "v2": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 7450
+     },
+     "F32": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "drift_0.001/rw": {
+     "v2": {
+      "n": 43,
+      "miss": 0,
+      "lag_sum": 684
+     },
+     "F32": {
+      "n": 43,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 43,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "drift_0.002/ramp": {
+     "v2": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 970
+     },
+     "F32": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "drift_0.002/rw": {
+     "v2": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 13454
+     },
+     "F32": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "drift_0.005/ramp": {
+     "v2": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 514
+     },
+     "F32": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "drift_0.005/rw": {
+     "v2": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 326
+     },
+     "F32": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "drift_0.02/ramp": {
+     "v2": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 22
+     },
+     "F32": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "drift_0.02/rw": {
+     "v2": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 18
+     },
+     "F32": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "gain_0.01/ramp": {
+     "v2": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "F32": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "gain_0.01/rw": {
+     "v2": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "F32": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "jump_0.2/ramp": {
+     "v2": {
+      "n": 60,
+      "miss": 2,
+      "lag_sum": 18
+     },
+     "F32": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "jump_0.2/rw": {
+     "v2": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 28
+     },
+     "F32": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "jump_0.5/ramp": {
+     "v2": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "F32": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "jump_0.5/rw": {
+     "v2": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "F32": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "noise_x2/ramp": {
+     "v2": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 4
+     },
+     "F32": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "noise_x2/rw": {
+     "v2": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "F32": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "stuck/ramp": {
+     "v2": {
+      "n": 30,
+      "miss": 0,
+      "lag_sum": 1
+     },
+     "F32": {
+      "n": 30,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 30,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "stuck/rw": {
+     "v2": {
+      "n": 30,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "F32": {
+      "n": 30,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 30,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    }
+   }
+  },
+  "without_diag_runs": {
+   "runs": 1310,
+   "R": 1071,
+   "admissible": 238,
+   "undetermined": 1,
+   "v2": {
+    "D_paired": 0.0,
+    "lag": 20743,
+    "lag_v2": 20743,
+    "n_v2_detects": 1063,
+    "soundness_findings": 0,
+    "detected": 1063,
+    "misses": 8,
+    "equal_to_oracle": 805,
+    "lag_median": 0,
+    "lag_p90": 45,
+    "lag_max": 949,
+    "lag_sum_detected": 20743,
+    "later_than_v2": 0
+   },
+   "F32": {
+    "D_paired": 0.9987465651063009,
+    "lag": 26,
+    "lag_v2": 20743,
+    "n_v2_detects": 1063,
+    "soundness_findings": 0,
+    "detected": 1071,
+    "misses": 0,
+    "equal_to_oracle": 1069,
+    "lag_median": 0,
+    "lag_p90": 0,
+    "lag_max": 13,
+    "lag_sum_detected": 26,
+    "later_than_v2": 0,
+    "bootstrap95": [
+     0.9951417004048583,
+     1.0
+    ]
+   },
+   "E": {
+    "D_paired": 0.9987465651063009,
+    "lag": 26,
+    "lag_v2": 20743,
+    "n_v2_detects": 1063,
+    "soundness_findings": 0,
+    "detected": 1071,
+    "misses": 0,
+    "equal_to_oracle": 1069,
+    "lag_median": 0,
+    "lag_p90": 0,
+    "lag_max": 13,
+    "lag_sum_detected": 26,
+    "later_than_v2": 0,
+    "bootstrap95": [
+     0.9951417004048583,
+     1.0
+    ]
+   },
+   "by_cell": {
+    "drift_0.0005/ramp": {
+     "v2": {
+      "n": 54,
+      "miss": 4,
+      "lag_sum": 3490
+     },
+     "F32": {
+      "n": 54,
+      "miss": 0,
+      "lag_sum": 26
+     },
+     "E": {
+      "n": 54,
+      "miss": 0,
+      "lag_sum": 26
+     }
+    },
+    "drift_0.0005/rw": {
+     "v2": {
+      "n": 22,
+      "miss": 2,
+      "lag_sum": 186
+     },
+     "F32": {
+      "n": 22,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 22,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "drift_0.001/ramp": {
+     "v2": {
+      "n": 56,
+      "miss": 0,
+      "lag_sum": 3666
+     },
+     "F32": {
+      "n": 56,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 56,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "drift_0.001/rw": {
+     "v2": {
+      "n": 43,
+      "miss": 0,
+      "lag_sum": 684
+     },
+     "F32": {
+      "n": 43,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 43,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "drift_0.002/ramp": {
+     "v2": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 970
+     },
+     "F32": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "drift_0.002/rw": {
+     "v2": {
+      "n": 56,
+      "miss": 0,
+      "lag_sum": 10816
+     },
+     "F32": {
+      "n": 56,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 56,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "drift_0.005/ramp": {
+     "v2": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 514
+     },
+     "F32": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "drift_0.005/rw": {
+     "v2": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 326
+     },
+     "F32": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "drift_0.02/ramp": {
+     "v2": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 22
+     },
+     "F32": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "drift_0.02/rw": {
+     "v2": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 18
+     },
+     "F32": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "gain_0.01/ramp": {
+     "v2": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "F32": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "gain_0.01/rw": {
+     "v2": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "F32": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "jump_0.2/ramp": {
+     "v2": {
+      "n": 60,
+      "miss": 2,
+      "lag_sum": 18
+     },
+     "F32": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "jump_0.2/rw": {
+     "v2": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 28
+     },
+     "F32": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "jump_0.5/ramp": {
+     "v2": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "F32": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "jump_0.5/rw": {
+     "v2": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "F32": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "noise_x2/ramp": {
+     "v2": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 4
+     },
+     "F32": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "noise_x2/rw": {
+     "v2": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "F32": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 60,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "stuck/ramp": {
+     "v2": {
+      "n": 30,
+      "miss": 0,
+      "lag_sum": 1
+     },
+     "F32": {
+      "n": 30,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 30,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    },
+    "stuck/rw": {
+     "v2": {
+      "n": 30,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "F32": {
+      "n": 30,
+      "miss": 0,
+      "lag_sum": 0
+     },
+     "E": {
+      "n": 30,
+      "miss": 0,
+      "lag_sum": 0
+     }
+    }
+   }
+  }
+ },
+ "pairs": {
+  "F32,E": {
+   "rows_differ": 0,
+   "differ": []
+  }
+ },
+ "cost": {
+  "F32": {
+   "W": 256,
+   "K": 32,
+   "evictions": 21821,
+   "rows_with_evictions": 960,
+   "uncertified_alarms": [],
+   "max_kept": {
+    "median": 33.0,
+    "p95": 33.0,
+    "max": 33
+   },
+   "max_nodes": 35,
+   "max_vars": 617,
+   "max_rows": 383,
+   "max_ta_rows": 0,
+   "resolves_per_lp": 0.0,
+   "step_ms_median_of_medians": 16.33339625004737,
+   "step_ms_p95_max": 29.055624996544793,
+   "fold_step_ms_max": 1420.3471249929862,
+   "cpu_seconds": 57376.5,
+   "folds_raised": 0,
+   "n_retry": 0
+  },
+  "E": {
+   "W": null,
+   "K": null,
+   "evictions": 0,
+   "rows_with_evictions": 0,
+   "uncertified_alarms": [],
+   "max_kept": {
+    "median": 36.0,
+    "p95": 43.0,
+    "max": 45
+   },
+   "max_nodes": 48,
+   "max_vars": 643,
+   "max_rows": 409,
+   "max_ta_rows": 0,
+   "resolves_per_lp": 0.0,
+   "step_ms_median_of_medians": 15.287500248632568,
+   "step_ms_p95_max": 23.82414599924232,
+   "fold_step_ms_max": 574.2965420031396,
+   "cpu_seconds": 52833.1,
+   "folds_raised": 0,
+   "n_retry": 4
+  }
+ }
+}
