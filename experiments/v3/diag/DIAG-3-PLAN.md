@@ -632,3 +632,59 @@ in the code:
   - The runs at `17a1dc69` were stopped before any result was read: R1 partial, R3 setting (a) partial.
   - R0 and R4 at `17a1dc69`/`e52f5192` passed, but they are repeated too.
   - Every run R0–R4 is repeated at the code commit of this addendum.
+
+### Amendment 10, second addendum after the review AG1 (2026-11-19 night, written before any R1–R3 result was read)
+
+A documentation-to-code review of `0ce80072` (AG1) found gaps in how the criteria are computed and stated. None of
+them is in F3's code: they are in `amend10.py`'s summary and path tests, `amend10_r4.py`, and this document.
+`summary()` only reads the per-row records, so the R1–R3 runs going on at `0ce80072` are kept. Their summaries are
+recomputed with the corrected code, and nothing in the old summaries is read first. R0 is repeated. R4 is
+re-evaluated from its output.
+
+**The criteria, made exact:**
+- **What counts as a fallback (U1).** A fallback is a failed LP and what follows from it:
+  - `fold_dir_fallbacks`, `fold_apriori_fallbacks`, `fold_full_resets`, `range_fallbacks`, `range_failures`,
+    `cert_fallbacks`, `measurements_not_kept`, and `fold_implied`, which occurs only after a failed fold direction.
+  - The box clipping of the N2 addendum is part of F3's normal step, not a fallback.
+  - `box_alarms` counts alarms that only a box-clipped or box-fallback side proves. That can happen with no failure.
+  - `U1_no_fallback` uses the fallback counters only.
+- **The margin exception (U1).** For each alarm whose certified margin differs from F's, the side that decides the
+  margin must have been clipped. This is checked by replaying the row with F (DEV, cheap): F's certified bound on
+  that side must lie outside the box, and F3's margin must equal the clipped one. Each such case is listed.
+- **U2 completeness:** the set of row keys equals the expected set (1320 DEV keys and the 80 edge-noise keys), not
+  only their number.
+- **U2 paths:** over settings (a)–(f) together, each fallback counter is greater than 0 for each injected status
+  kind (2 and 4).
+  - `fold_implied` and `fold_full_resets` have no status kind, so they need only be greater than 0.
+  - "other" is never injected, and "slab" must stay 0 (the N2 addendum). Neither belongs in this criterion.
+- **U2 recovery:** in setting (d), the number of event rows that detect after at least one full reset is greater
+  than 0.
+- **U3:** the audit ran (n > 0, n_implied > 0) on a complete run, with no violation.
+- **U4:**
+  - The fallback at the t = 945 fold of 440243 is computed from the fold's other faces, not from `lp-dir40.npz`. That
+    LP is the one that fails.
+  - The criterion is therefore: the P_J bound for direction 40 is not None, is below its a priori support, and is
+    confirmed by R4's exact audit (n_implied > 0, no violation).
+  - The `lp-dir40.npz` clause of the first plan is withdrawn as ill-posed.
+- **U0** adds:
+  - the overshoot case run through `online()`: the z_t is not kept, and the alarm is certified with the box side;
+  - `last_active` is empty after a full reset;
+  - `measurements_not_kept` is 1 when both sides fail;
+  - the unproved alarm is counted when both certificate sides fail.
+
+**Facts the review found undocumented** (code unchanged):
+- The three attempts, in order: `highs-ds` without presolve, `highs-ipm` without presolve, `highs-ds` with presolve.
+  A failed LP adds 3 to `n_retry` and 1 to `n_lp`.
+- A kept measurement is active in an LP when a bound multiplier of its slab exceeds 1e-12 in magnitude.
+- F3 also counts:
+  - `fold_implied`, the P_J bounds used;
+  - `range_failures`, failed as-range LPs by status kind.
+  - The other counters with a kind are also split by kind (2, 4, slab, other).
+- At t ≥ 1, an alarm still runs both certificate LPs; the box bound replaces a side only when that side fails or is
+  looser. Only at t = 0 is z_0 judged by the box alone. Such an alarm has no `margin_at_detect_mC` (there is no
+  as-range at t = 0); its certificate carries the margin.
+- `measurements_not_kept` counts a z_t dropped because a range side failed and no alarm test fired. A z_t whose alarm
+  is unproved counts under `unproved_primal_alarms`, as in F.
+- The R2 hash is over (row, t, role, direction or side, setting).
+- In F and F3 alike, the eviction record keeps entries of measurements that have left the window. They are never
+  read again. For an MCU port they would be pruned with the window; that changes no decision.
