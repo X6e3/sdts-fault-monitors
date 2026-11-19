@@ -2,15 +2,13 @@
 
 Status: DRAFT, not approved
 
-Manifest sha256: ae2e10c90c8b05832c4a64176172714522d0532ae018858070a75efb69aa3f31
+Manifest sha256: 31d470aee8921a90fbaccd17c349ea7bb0e7fe868eaaa7e306458b6d971fa4a8
 
 Prepared 2026-11-18 on branch `sdts-v3/template-state` for Can Koç's review. The target and the reading of a failure
 are Can's to set. Everything here is a proposal until the status line says APPROVED. `run_validation_v2.py` refuses
 to generate validation data until then (section 6).
 
-**Open items:**
-- The rehearsal is to be rerun at the new freeze commit, after amendment 8 (section 8).
-- K = 32 is informational; it does not change the candidate.
+**Open item:** the rehearsal is rerun at this freeze commit (section 8).
 
 **Decided by Can Koç on 2026-11-19, after the team's review:**
 - 200 seeds (section 3);
@@ -113,7 +111,13 @@ z reached 2.22–2.30 in the 256 samples before t*. The box is part of the model
 |---|---|
 | `66429e2` | F: the hardened certificate, outward slabs, the cap K and the eviction rule; the audit variant (DIAG-3 amendment 6) |
 | `b74de88` | the freeze 2 runner, scorer and manifest writer; `diag3_cw_dev.online()` (same behaviour, checked on DEV rows) |
-| this commit | `frozen/MANIFEST-V2.json` and this file |
+| `0e28951` | F raises certified alarms only, the alarm slab rounded outward, an empty fold LP recorded as an uncertified alarm; the scorer's later-than-v2 report (DIAG-3 amendment 8) |
+| `ad8ed35`, `1ab76fd` | this file: 200 seeds, the review fixes, Can's decisions |
+| `1fa5180` | amendment 8's checks T1 and T2 (DIAG-3-RESULTS) |
+| this commit | `frozen/MANIFEST-V2.json` regenerated (block 440200–440399, the code of `0e28951`), and this file |
+
+The frozen code is that of `0e28951`. No file in the manifest changed after it, so amendment 8's checks ran the
+frozen code.
 
 `frozen/MANIFEST-V2.json` (sha256 above) fixes:
 - the data block, cells and laws;
@@ -126,8 +130,8 @@ Freeze 1's files below are unchanged: their hashes are those of freeze 1's manif
 
 | file | sha256 |
 |---|---|
-| `experiments/v3/run_validation_v2.py` | `8110878f73d7fe3819cac78c4315c15aa486bc427e6fd56b53d76fb4e1ef4aca` |
-| `experiments/v3/score_validation_v2.py` | `496c350fadba5d7631c7c84ab9890989259ca133bf6f0831256d0b9b6f230c22` |
+| `experiments/v3/run_validation_v2.py` | `860f2e4ba72ac4627bab7d8f55f343ac461f653f73b8e46152ad40360583a0e1` |
+| `experiments/v3/score_validation_v2.py` | `2db2de5eb37cd094f7116400fdaa7d9593658b2f9bfeaae5bcd768e7247a0da6` |
 | `experiments/v3/run_validation.py` | `9cb899ea770dd8b60e37e80c6686a77ef5a662d3b7a5e5f41a294a23111920a3` |
 | `experiments/v3/score_validation.py` | `96c347455888d3f8944788941e6920121ef36f444f0e3bcd4a8f105bbb9104da` |
 | `experiments/v3/template_state.py` | `6f8409274cdc583f3ed48aca372fc08fccd9970f106ae516291f39a5a6894666` |
@@ -135,8 +139,8 @@ Freeze 1's files below are unchanged: their hashes are those of freeze 1's manif
 | `experiments/v3/diag/diag1.py` | `698cb0b0ad81d1501caebf458db4aad924b888cb14b9b81794a31300dfdd382b` |
 | `experiments/v3/diag/diag3.py` | `ce64b0ef2d6d477715252f0a0285b2400f585083f34b1f37a6305c07f54b3ad1` |
 | `experiments/v3/diag/diag3_dev.py` | `0dbba0562ae633807615d043c481db70b71167f4666be6de6ed0fdf309efcfb9` |
-| `experiments/v3/diag/diag3_cw.py` | `688363ce80e7fc0693836846ea3cbf10249b59df29e94078c4c1469f69fd017b` |
-| `experiments/v3/diag/diag3_cw_dev.py` | `0f9e825f40ece832a4a2f9b22d588dc83861ed6b7a91881face5912583757f9e` |
+| `experiments/v3/diag/diag3_cw.py` | `e88e2b78a127e49e722edfb2f4e1115ad584c5e30541811b2e833215881763d0` |
+| `experiments/v3/diag/diag3_cw_dev.py` | `3af34bcf9cba5f79b2ffb0061e2acce4a9fd2d87d8560f216811ae4cd339c03e` |
 | `experiments/v3/frozen/cyl16p.json` | `7f9cc8700fdd70782ddaf4a7e99a2e2c2f5818ce4aafa970f897b40e90a7747e` |
 | `experiments/generators/thermal.py` | `d742012e138402525382eee26e0d6dba87bd224267dc733a75f1e693f98ce481` |
 | `experiments/oracle/thermal_oracle.py` | `7f4b8da3064675e29f88a7f676e8d0318982fdbde1b5b355e1c83d2238f92e74` |
@@ -209,7 +213,8 @@ detection. On DEV it is 0 for F. It is reported in full (above).
 All of this is in `diag/DIAG-3-RESULTS.md`. The plans and criteria were committed before each run.
 
 **The candidate itself:** F, K = 64, on the 1320 DEV comparison rows (`results/v3/diag3/cwdev-F-K64-66429e2/`, Arch,
-at `66429e2`).
+at `66429e2`). At the frozen code (`0e28951`, amendment 8) it detects identically on every row, with all 1082 alarms
+certified and no unproved LP alarm (`cwdev-F-K64-0e28951/`).
 
 | | v2 | cyl16p (freeze 1) | **F** |
 |---|---|---|---|
@@ -232,8 +237,9 @@ at `66429e2`).
   smallest slack is 4.4e-15 °C). A second, independent exact audit of 84 alarm bounds also found none.
 - **The cap.**
   - With K = 40, F evicts 420 measurements on 161 rows and still equals E on every row.
-  - K = 32: TBD (informational).
-- **Edge noise (E1).** There is no alarm on 80 healthy edge-noise runs (DEV seeds 430070–430089). Under edge noise
+  - With K = 32 (informational), F evicts 21,821 measurements on 960 rows and still equals E on every row.
+- **Edge noise (E1).** There is no alarm on 80 healthy edge-noise runs (DEV seeds 430070–430089), at `ca407ca` and
+  again at the frozen code. Under edge noise
   no measurement is redundant at arrival, so F runs with the cap full and evicts one measurement per sample. LP rows
   reach at most 445.
 - **The window length.** For W = 64, 128 and 192, D_paired is 0.643, 0.815 and 0.824 (0.904, 0.980 and 0.986 without
