@@ -1,105 +1,183 @@
-# SDTS v3: related work, first pass (2026-11-19)
+# SDTS v3: related work (checked against full texts, 2026-11-19)
 
-**Status:** working notes from a web search.
-- Most entries were read from abstracts and indexes, not full texts.
-- Every claim about a paper must be checked against the paper before it is cited.
-- "Not found" means not found in this pass, not that it does not exist.
+**Status:** this replaces the first pass, which was read from abstracts. Each claim about a paper carries a label:
+- **VERIFIED:** the full text was read; the page or section is given.
+- **ABSTRACT:** the official abstract only.
+- **UNVERIFIED:** the metadata only (the DOI resolves to these authors, title and venue), or a summary in another paper.
 
-**Reading order:** what SDTS adds comes first (section 1). The known building blocks follow, with where SDTS stands on
-each (section 2).
+All DOIs were checked against Crossref or OpenAlex on 2026-11-19. "Not found" means not found in the papers read
+and the targeted searches of this pass, not that it does not exist.
 
-## 0. Corrections from the full-text pass (L1, partial, 2026-11-19; to be confirmed in its report)
+**To check before submission:**
+1. Kesavan and Lee (2001), full text: the window LP and the forward-only update of the initial set.
+2. Jansson (2004): the printed Theorem 6.1. Only a PostScript copy of the 2002 report was read.
+3. The IEEE (PSPB Operations Manual 8.2.1.B.10) and IFAC AI-use policy pages. Scripted fetches were refused, so read
+   them in a browser.
 
-The full-text pass was cut short; its report is pending. Its interim findings narrow section 1:
+## 1. What SDTS adds
 
-- **The window is not ours.** Kesavan and Lee (2001) already reduce the growing full-history LP to a fixed window with
-  an outer-bounded initial set. Brunner, Müller and Allgöwer (CDC 2016, TAC 2018) also use set-valued estimates from a
-  fixed number of recent measurements.
-- **Set-membership smoothing exists:** Morrell and Stirling (1988), Liu, Shen and Deller (2017), Meslem and Ramdani
-  (2018, forward–backward), and Li, Cong and Zhou (2024, optimal set-membership smoothing). What remains to be checked
-  is whether any of them uses later measurements to update the base of a moving window for fault detection, as the
-  smoothing fold does.
-- **Comparing with the exact set is not ours either.** Scott et al. (2016) already compare bounded-complexity
-  estimates with the exact set. The narrower candidate is the loss measured in **detection delay** against the
-  full-history oracle, as a memory–loss curve, on fault-detection runs, with a pre-registered validation.
-- **DAQP:** its current documentation supports pure LPs. The note below that it needs a regularisation is to be
-  corrected once checked.
-- **The safe-bounds review:** its authors and the two sign errors it corrects are confirmed in the pass. The details
-  will be in the report.
+1. **The yardstick: detection-delay loss against the exact full-history oracle, as a function of memory**
+   (W = 64…256, K = 32…64), with a pre-registered validation. **Not found.** The closest prior work:
+   - Scott, Raimondo, Marseglia and Braatz (2016) compare bounded-complexity estimators with the exact set, but on
+     state-estimation volume and radius (section 5, pp. 131–132, Figs. 3–5; VERIFIED). Their fault-detection study
+     sweeps the complexity n_c against detection time (section 6, Fig. 7) and leaves the exact observer out: "We did
+     not compare the exact observer Poly because it was found in Section 5 to have much higher complexity" (p. 133).
+   - Casini, Garulli and Vicino (2024) plot the log-volume of bounded-memory estimators against the memory depth
+     (q_p, q_o), relative to the smallest box around the exact feasible set (section 6, Fig. 5, p. 10; VERIFIED). This
+     is state estimation, not detection.
+   - Sznaier, Yilmaz and Blanchini (2011) keep the last r measurements. Their filter is optimal within that r-memory
+     scenario, and they do not compare it with the exact set (sections III–IV; VERIFIED).
+2. **The smoothing fold, and the diagnosis of the loss.** The base of the moving window is updated with the
+   measurements up to the fold time, for fault detection. On DEV, a filtering-only base never recovers 430027.
+   **Not found** for set-membership fault detection. The neighbours:
+   - **Quadratic MHE** has both arrival-cost updates. The filtering form uses the data before the window; the
+     smoothing form also uses the data inside it. Rao, Rawlings and Lee (2001) and Tenny and Rawlings (2002) are
+     recapped in Haseltine and Rawlings (2005): section 5 and appendix 10.1–10.2 (VERIFIED, report version). Haseltine
+     and Rawlings warn that a linearised smoothing prior can bias multimodal nonlinear posteriors (section 6.2). In the
+     linear set-membership case the smoothed set is convex, and an outer template bound of it stays sound.
+   - **Set-membership smoothing exists for state estimation:**
+     - Garulli, Vicino and Zappa (1999): UNVERIFIED, cited by Li et al.;
+     - Liu, Shen and Deller (2017), forward–backward ellipsoids: ABSTRACT;
+     - Meslem and Ramdani (2018), forward–backward intervals: ABSTRACT;
+     - Li, Cong, Zhou and Dong (2026), optimal set-membership smoothing with constrained zonotopes: VERIFIED. It is
+       batch smoothing over [0, T], with no complexity reduction, no moving window and no detection.
+   - Morrell and Stirling (1988, 1991) smooth convex sets of Gaussian distributions, not unknown-but-bounded sets
+     (ABSTRACT).
+   - The other parts of the diagnosis are from our own runs: the template geometry at cut events, and the long-memory
+     TA cuts.
+3. **The exact compressed window.** The ambient increments stay explicit, so each segment is exact with 3 rows.
+   Convexity removes the ac and as boxes between nodes. A measurement is kept only if it is not redundant on arrival.
+   The result is numerically more accurate than the dense LP (the C0 finding). Its parts are standard tools:
+   - condensing, i.e. eliminating the states (for example Jerez, Kerrigan and Constantinides 2011, cited in EIQP);
+   - exact affine maps and intersections of constrained zonotopes (Scott et al. 2016, Proposition 1; VERIFIED).
 
-**So the contribution, as it stands now:**
-1. The memory–detection-loss curve against the exact oracle.
-2. The diagnosis of where the loss comes from.
-3. The exact compressed window, with every fold and alarm certified and audited.
-4. The ambient-box finding.
-5. The pre-registered validation.
+   The combination and the exactness argument are ours.
+4. **Every fold and every alarm certified, with the coefficient rounding enclosed, and audited in exact rational
+   arithmetic.** In the papers read on set-membership estimation and detection, the solvers are all uncertified
+   floating-point ones (linprog, CPLEX, YALMIP, MPT, IPOPT). Certifying every step of an online monitor was
+   **not found**.
+   - The method is that of Neumaier and Shcherbina (2004) and Jansson (2004).
+   - Safe bounds have been applied before in exact rational MIP (Cook, Koch, Steffy and Wolter 2011/2013; VERIFIED)
+     and in static program analysis with template polyhedra (Wang et al. 2021; VERIFIED).
+5. **The ambient-box finding:** detection of slow drifts leans on the assumed range of TA. It is structurally like the
+   parameter box Θ in Ingimundarson et al. (2005), where a fault inside Θ cannot be detected when the rate bound λ is
+   infinite (sections II and V-B; VERIFIED).
 
-The window, set-membership smoothing and the comparison with the exact set are prior art, to be cited, not claimed.
+## 2. Prior art to cite, not to claim
 
-## 1. What SDTS adds (so far, from this pass)
-
-Each item is backed by a measured, independently checked result in `diag/DIAG-3-RESULTS.md`. Whether it is new
-is hedged: it comes from this first pass only.
-
-1. **The yardstick.** Bounded-memory monitors are measured against the exact full-history information state (the oracle),
-   with a size–loss curve (W = 64…256, K = 32…64) and a frozen, pre-registered validation. The literature states the
-   growth problem and proposes bounded-complexity filters. A loss-against-the-exact-set curve on a fault-detection
-   benchmark did not come up in this pass.
-2. **The diagnosis of the loss:**
-   - template geometry at cut events (DIAG-1 and 2);
-   - long-memory TA cuts (430010);
-   - smoothing against filtering for the base (DIAG-3: filtering never recovers 430027).
-
-   The quadratic-MHE literature has filtering and smoothing arrival-cost updates. Whether the set-membership
-   literature compares them like this is to be checked.
-3. **The exact compressed window.**
-   - The ambient increments stay explicit, so each segment zonotope is exact with 3 rows.
-   - Convexity removes the ac and as boxes between nodes.
-   - It is numerically more accurate than the dense LP (the C0 finding).
-   - Individually, these are standard tools (condensing, zonotopes). Their combination and the exactness argument are
-     ours.
-4. **Every fold and every alarm certified, with the coefficient rounding enclosed,** and audited in exact rational
-   arithmetic. The method is Neumaier and Shcherbina's; applying it to every step of an online monitor, with an audit,
-   may be the less common part.
-5. **The finding about the ambient box:** detection of slow drifts leans on the assumed range of TA.
-
-## 2. The known building blocks, and where SDTS stands on them
-
-| SDTS ingredient | known as | where to start |
+| SDTS ingredient | prior work | label, and what it does |
 |---|---|---|
-| The information state as a set; detection = no consistent explanation | set-membership (unknown-but-bounded) estimation; consistency-based fault detection | Schweppe 1968 (the origin, ellipsoids); the review of set-membership fault diagnosis in IJAMCS 2010 |
-| No false alarm within the assumed bounds | the guarantee of set-membership fault detection | Puig and co-workers (zonotopes and parallelotopes, consistency tests) |
-| A window of exact constraints plus an outer bound of the initial set | moving-horizon set-membership estimation; "a moving horizon strategy where an outer bound of the initial set is propagated" | Ingimundarson et al. (CDC-ECC 2005, parallelotopes); Segovia, Puig, Duviella (ISA Trans. 2022, set-membership MHE) |
-| Bounded memory, keeping only the last r measurements | bounded-complexity set-membership filters; the observation that the exact consistency set's complexity cannot be bounded a priori | Sznaier, Yilmaz, Blanchini (ACC 2011) |
-| The arrival cost, and filtering against smoothing updates of it | moving horizon estimation (quadratic arrival cost) | Rao, Rawlings and co-workers. Check whether their smoothing update has a set-membership counterpart. |
-| Fixed-direction polytopes (cyl16p) | template polyhedra, support functions | Le Guernic and Girard (support functions, 2010); Sankaranarayanan et al. (template polyhedra) |
-| An exact set representation with complexity reduction | constrained zonotopes | Scott, Raimondo, Marseglia, Braatz (Automatica 2016) |
-| Interval observers as the other main family | interval-observer fault detection, and comparisons with set-membership | Pourasghar, Puig, Ocampo-Martínez (IJRNC 2019) |
-| A certified LP bound from approximate duals over boxed variables | safe bounds in linear programming | Neumaier and Shcherbina (Math. Prog. 2004); Jansson (2004, rigorous LP bounds). A later review reports errors in the printed formulas. Ours is derived directly from weak duality with every variable boxed, and audited in exact arithmetic (5,676 + 84 bounds, no violation). Cite the full texts and the review when writing. |
-| Exact rational LP | exact MIP and LP solving | Cook, Koch, Steffy, Wolter |
-| An LP or QP on an MCU with a guaranteed worst-case time | WCET-certified active-set solvers | DAQP (Arnström, Axehill; exact WCET for active-set MPC; an STM32F405 Cortex-M4 demonstration in a 2026 preprint). DAQP is a dual active-set solver for strictly convex QPs, so a pure LP needs a small quadratic regularisation; any dual still gives a valid bound, but how tight it is must be checked. EIQP (Wu, Braatz; execution-time certified, LP included). |
+| The information state as a set; detection = no consistent explanation | Witsenhausen 1968; Schweppe 1968; Bertsekas and Rhodes 1971; Puig 2010 (review of set-membership fault diagnosis) | Schweppe and Puig: ABSTRACT. The others: UNVERIFIED. |
+| No false alarm within the assumed bounds | Ingimundarson et al. 2005 (Def. 2, p. 994); Scott et al. 2016 (Eq. (34)); Puig 2010 | VERIFIED. SDTS adds the numerical certificate. |
+| **A moving window with an outer-bounded initial set, for fault detection** | **Kesavan and Lee 2001** | Summarised in Ingimundarson et al. (2005, section I, p. 993; VERIFIED there, UNVERIFIED in the primary text): "a moving horizon strategy where an outer bound of the initial state was propagated" with recursive optimal bounding parallelotopes (ROBP), forward only. The first pass attributed this phrase to Ingimundarson et al.; it describes Kesavan and Lee. |
+| Parallelotope consistency tests | Ingimundarson, Bravo, Puig, Alamo 2005; zonotopes in Ingimundarson et al. 2009 | 2005: VERIFIED. A recursive single-step parallelotope, with no window. They remark that an LP over only the last M points does not use all the data (section IV-A, p. 996). 2009: UNVERIFIED. |
+| Set-valued estimates from a fixed number of recent measurements | Brunner, Müller, Allgöwer (CDC 2016; TAC 2018); Köhler, Müller, Allgöwer (2021) | For output-feedback MPC, not detection. Brunner: ABSTRACT. Köhler: VERIFIED (section III-C), with a forward scalar bound on the initial error. |
+| Set-membership and moving-horizon estimation combined | Segovia, Puig, Duviella (ISA Trans. 2022) | VERIFIED. A two-stage distributed state estimator: forward zonotope filtering tightens the box constraints of a quadratic MHE. It is not moving-horizon set-membership fault detection. |
+| Bounded memory; the exact set's complexity cannot be bounded a priori | Sznaier, Yilmaz, Blanchini 2011; Blanchini and Sznaier 2012; Casini, Garulli, Vicino 2024 | Sznaier et al. and Casini et al.: VERIFIED. Blanchini and Sznaier: UNVERIFIED. |
+| The arrival cost: filtering against smoothing | Rao, Rawlings, Lee 2001; Rao, Rawlings, Mayne 2003; Haseltine and Rawlings 2005 | Haseltine and Rawlings: VERIFIED. Rao, Rawlings, Mayne: ABSTRACT. Rao, Rawlings, Lee: UNVERIFIED. See 1.2. |
+| Fixed-direction polytopes (cyl16p) | Sankaranarayanan, Dang, Ivančić 2008 (template polyhedra); Le Guernic and Girard 2010 (support functions) | UNVERIFIED. |
+| An exact set representation with complexity reduction | Scott et al. 2016; Raghuraman and Koeln 2022 | Scott et al.: VERIFIED. A constrained zonotope is exactly a convex polytope (Theorem 1). Linear maps, Minkowski sums and intersections are exact and grow linearly. Raghuraman and Koeln: UNVERIFIED. |
+| Interval observers as the other main family | Pourasghar, Puig, Ocampo-Martínez 2019; Tang et al. 2019; Althoff and Rath 2021 | Pourasghar: ABSTRACT. Tang et al.: as implemented in CORA (VERIFIED there). |
+| A certified LP bound from approximate duals over boxed variables | Neumaier and Shcherbina 2004; Jansson 2004; Guilbeau, Hossain, Karhbet, Kearfott, Sanusi, Zhao 2017 (the review) | Neumaier and Shcherbina, and the review: VERIFIED. Jansson: partial, see the checks above. The review corrects two printed sign errors in Neumaier and Shcherbina: the multiplier is λ ≈ y − z, not z − y (above Eq. (8), p. 7); and in the rounding scheme (Eq. (11), lines 3 and 5) the residual is Aᵀλ − c, not Aᵀλ + c. Our bound is derived directly from weak duality with every variable boxed, and audited in exact arithmetic (5,676 + 84 bounds, no violation), so it does not depend on the printed formulas. |
+| Exact rational LP | Cook, Koch, Steffy, Wolter (IPCO 2011; MPC 2013) | VERIFIED. QSopt_ex and safe floating-point bounds inside SCIP. |
+| An LP or QP on an MCU with a certified worst-case time | DAQP (Arnström, Bemporad, Axehill); its STM32F405 demonstration (Wikner, Arnström, Axehill 2026); EIQP (Wu, Xiao, Braatz 2025) | **Correction:** DAQP solves LPs directly, with proximal-point iterations (documentation, VERIFIED; Arnström, Bemporad, Axehill 2022, ABSTRACT). The first pass said it needs a quadratic regularisation; that was wrong. DAQP is dense. The STM32F405 demonstration is a strictly convex QP with 60 variables and input boxes only (VERIFIED). EIQP supports LPs with a data-independent iteration count, but it uses a dense LU of size about n + 1 (VERIFIED). Neither fits the 409-row, 643-variable sparse LP of F in about 200 KB as it is. |
+
+**For the MCU (our inference, not from the literature):** the certified bound holds for any multiplier vector,
+because every variable is boxed. A solver stopped at an iteration cap therefore gives a looser fold, or an alarm left
+uncertified and so not raised. Neither is unsound; the cost is detection delay. A custom sparse dual simplex with a
+cap therefore keeps the soundness guarantee. Its worst-case time would still have to be shown.
 
 ## 3. What a reviewer will ask, and what answers it
 
-- **"How does this compare with zonotopic set-membership fault detection, constrained zonotopes or interval
-  observers?"** A baseline comparison on the same scenarios is needed. Proposal: implement one or two baselines and
-  compare them in a separate pre-registered study on a fresh block (440400+), after freeze 2, so that freeze 2 is not
-  delayed or changed.
-- **"One plant, known parameters."** A second plant, and a model-mismatch study.
-- **"Can it run on an MCU?"** The DAQP and EIQP line shows that a certified worst-case time for active-set solvers on a
-  Cortex-M4 is possible. The LP size here (about 400 rows) is the open question.
+**"How does this compare with standard set-membership methods?"** Baselines that run on our plant:
 
-## Sources (as found; to be checked)
+| | baseline | parameters | fault decision | notes |
+|---|---|---|---|---|
+| B1 | Constrained zonotopes CZ(n_c, o) (Scott et al. 2016; CZN-A in CORA) | n_c, the order o | an LP emptiness test (Proposition 2) | **The baseline reviewers will expect first.** The TA box and the measurement strips enter as exact intersections. Sweeping (n_c, o) gives its own memory–loss curve against our oracle. |
+| B2 | Strip-intersection zonotopes (Alamo, Bravo, Camacho 2005; FRad-A in CORA) | the order o; the reduction (Girard, Combastel) | analytic: \|y − C c\| > ‖C G‖₁ + δ | The TA box must be given to it as a virtual strip at every step, so that it has the same prior as SDTS. |
+| B3 | Zonotopic Kalman-gain observer (Combastel 2015; FRad-C in CORA) | the order o | the residual-set test | Report both the plain version and one with the TA box. |
+| B4 | Interval observer (Tang et al. 2019; Hinf-G in CORA) | a gain L with A − LC Schur | the output-interval test | The other main family (Pourasghar et al. 2019). |
+| B5 | ROBP, and a window with a forward-only base (Chisci, Garulli, Zappa 1996; the Kesavan and Lee style) | W | the strip test; LP infeasibility | The forward-only window is our own filtering ablation from DIAG-3. It isolates the gain of the smoothing fold. |
 
-- Schweppe 1968, IEEE TAC 13(1): https://scilit.net/publications/46d584c2a6122e70fda6d4f44324655c
-- Set-membership FD and FTC review (IJAMCS 2010): https://eudml.org/doc/208012
-- Zonotopic sensor FD (HAL): https://hal-centralesupelec.archives-ouvertes.fr/hal-01002477
-- Ingimundarson et al., parallelotopes and consistency (CDC-ECC 2005): https://folk.ntnu.no/skoge/prost/proceedings/cdc-ecc05/pdffiles/papers/2056.pdf
-- Set-membership distributed MHE (TU Delft repository): https://repository.tudelft.nl/record/uuid:8a248228-bacb-439a-9d3a-f7145b47e59b
-- Sznaier, Yilmaz, Blanchini, bounded complexity filters (ACC 2011): https://skoge.folk.ntnu.no/prost/proceedings/acc11/data/papers/0730.pdf
-- Constrained zonotopes (Scott et al.): https://portal.mardi4nfdi.de/wiki/Publication:286264
-- Le Guernic and Girard, support functions: https://hal.archives-ouvertes.fr/hal-00765598
-- Neumaier and Shcherbina, safe bounds: https://optimization-online.org/?p=9243 ; the review: https://www.reliable-computing.org/archive/preprints/safe-bounds-review-revision-2.pdf
-- Exact MIP (Cook et al.): https://math.uwaterloo.ca/~bico/papers/exactmip_bb_short.pdf
-- DAQP on an STM32F405 (2026 preprint): https://arxiv.org/abs/2603.09342 ; exact WCET for implicit MPC: https://deepai.org/publication/exact-worst-case-execution-time-analysis-for-implicit-model-predictive-control
-- Köhler, Müller, Allgöwer, online estimation bounds (arXiv 2105.03427): https://arxiv.org/abs/2105.03427
+Proposal (unchanged): run the baselines in a separate pre-registered study on a fresh block (440400+), after freeze 2.
+
+**"One plant, known parameters."** Candidate second plants:
+- **The DC motor of Scott et al. (2016), section 6 (VERIFIED):** the matrices are printed, so their Fig. 7 can be
+  rerun with the exact oracle added. This is the most direct comparison.
+- **The quadruple tank** (Johansson 2000), as in Ingimundarson et al. (2005) and CORA: linear and small.
+- **The wind-turbine benchmark** (Odgaard, Stoustrup, Kinnaert 2013; ABSTRACT): the wind speed is a bounded unmeasured
+  input, and the benchmark has sensor faults. Set-membership detection has been tried on it before (Tabatabaeipour et
+  al. 2012; UNVERIFIED).
+
+DAMADICS and Tennessee Eastman are strongly nonlinear. They fit only a model-mismatch extension, if anything.
+
+**"Can it run on an MCU?"** See the MCU paragraph above, and `MCU-NOTES.md`.
+
+**Venues:** Automatica, IEEE TCST, IEEE TAC, IJRNC; for conferences, IFAC SAFEPROCESS, CDC and ACC.
+
+**AI-use policies:**
+- **Elsevier** (Automatica, IFAC-PapersOnLine; VERIFIED, 2026-11-19): a declaration at submission. Where AI tools are
+  used in the research process rather than in writing, that use "should be described in detail in the Methods
+  section".
+- **Wiley** (IJRNC; VERIFIED): a disclosure at submission of the tools, their purpose, and how the authors checked the
+  outputs.
+- **IEEE and IFAC:** UNVERIFIED; check in a browser.
+
+## Sources
+
+DOIs checked against Crossref or OpenAlex on 2026-11-19.
+
+**Read in full (VERIFIED):**
+- M. Althoff, "Guaranteed State Estimation in CORA 2021," ARCH21, EPiC Series in Computing 80, pp. 161–175, 2021. doi:10.29007/7m2k
+- M. Casini, A. Garulli, A. Vicino, "Set membership state estimation for discrete-time linear systems with binary sensor measurements," Automatica 159, 111396, 2024. doi:10.1016/j.automatica.2023.111396
+- M. Casini, A. Garulli, A. Vicino, "Adaptive Threshold Selection for Set Membership State Estimation With Quantized Measurements," IEEE TAC 70(9), pp. 5736–5749, 2025. doi:10.1109/TAC.2025.3545704
+- W. Cook, T. Koch, D. E. Steffy, K. Wolter, "A hybrid branch-and-bound approach for exact rational mixed-integer programming," Math. Prog. Comp. 5(3), pp. 305–344, 2013. doi:10.1007/s12532-013-0055-6 (IPCO 2011 version: doi:10.1007/978-3-642-20807-2_9)
+- J. T. Guilbeau, Md. I. Hossain, S. D. Karhbet, R. B. Kearfott, T. S. Sanusi, L. Zhao, "A review of computation of mathematically rigorous bounds on optima of linear programs," J. Global Optim. 68(3), pp. 677–683, 2017. doi:10.1007/s10898-016-0489-2
+- E. L. Haseltine, J. B. Rawlings, "Critical evaluation of extended Kalman filtering and moving-horizon estimation," Ind. Eng. Chem. Res. 44(8), pp. 2451–2460, 2005. doi:10.1021/ie034308l (TWMCC report 2002-03 read)
+- A. Ingimundarson, J. M. Bravo, V. Puig, T. Alamo, "Robust Fault Diagnosis using Parallelotope-based Set-membership Consistency Tests," CDC-ECC 2005, pp. 993–998. doi:10.1109/CDC.2005.1582287
+- C. Jansson, "Rigorous Lower and Upper Bounds in Linear Programming," SIAM J. Optim. 14(3), pp. 914–935, 2004. doi:10.1137/S1052623402416839 (2002 report, partly read)
+- J. Köhler, M. A. Müller, F. Allgöwer, "Robust output feedback model predictive control using online estimation bounds," arXiv:2105.03427, 2021
+- Y. Li, Y. Cong, X. Zhou, J. Dong, "Optimal Set-Membership Smoothing," IEEE TAC 71(5), pp. 3327–3334, 2026. doi:10.1109/TAC.2025.3632158
+- A. Neumaier, O. Shcherbina, "Safe bounds in linear and mixed-integer linear programming," Math. Prog. 99(2), pp. 283–296, 2004. doi:10.1007/s10107-003-0433-3
+- J. K. Scott, D. M. Raimondo, G. R. Marseglia, R. D. Braatz, "Constrained zonotopes: A new tool for set-based estimation and fault detection," Automatica 69, pp. 126–136, 2016. doi:10.1016/j.automatica.2016.02.036
+- P. Segovia, V. Puig, E. Duviella, "Set-membership-based distributed moving horizon estimation of large-scale systems," ISA Trans. 128B, pp. 402–413, 2022. doi:10.1016/j.isatra.2021.10.036
+- M. Sznaier, B. Yilmaz, F. Blanchini, "Bounded Complexity ℓ∞ Filters for Switched Systems," ACC 2011, pp. 2006–2011. doi:10.1109/ACC.2011.5991274
+- T. Wang, L. Chen, T. Chen, G. Fan, J. Wang, "Making Rigorous Linear Programming Practical for Program Analysis," CP 2021, LIPIcs 210, 57. doi:10.4230/LIPIcs.CP.2021.57
+- J. Wikner, D. Arnström, D. Axehill, "On Real-Time Feasibility of High-Rate MPC using an Active-Set Method on Nano-Quadcopters," arXiv:2603.09342, 2026
+- L. Wu, W. Xiao, R. D. Braatz, "EIQP: Execution-time-certified and Infeasibility-detecting QP Solver," arXiv:2502.07738, 2025
+- DAQP documentation: https://darnstrom.github.io/daqp/ (accessed 2026-11-19)
+- Elsevier, "Generative AI policies for journals": https://www.elsevier.com/about/policies-and-standards/generative-ai-policies-for-journals (accessed 2026-11-19)
+- Wiley Author Services, ethics guidelines, "Artificial Intelligence": https://authorservices.wiley.com/ethics-guidelines/index.html (accessed 2026-11-19)
+
+**Abstract only (ABSTRACT):**
+- D. Arnström, A. Bemporad, D. Axehill, "A Linear Programming Method Based on Proximal-Point Iterations With Applications to Multi-Parametric Programming," IEEE L-CSS 6, pp. 2066–2071, 2022. doi:10.1109/LCSYS.2021.3138218
+- D. Arnström, A. Bemporad, D. Axehill, "A Dual Active-Set Solver for Embedded Quadratic Programming Using Recursive LDLᵀ Updates," IEEE TAC 67(8), pp. 4362–4369, 2022. doi:10.1109/TAC.2022.3176430
+- D. Arnström, D. Broman, D. Axehill, "Exact Worst-Case Execution-Time Analysis for Implicit Model Predictive Control," IEEE TAC 69(10), pp. 7190–7196, 2024. doi:10.1109/TAC.2024.3395521
+- F. D. Brunner, M. A. Müller, F. Allgöwer, "Enhancing output feedback MPC for linear discrete-time systems with set-valued moving horizon estimation," CDC 2016, pp. 2733–2738. doi:10.1109/CDC.2016.7798675
+- F. D. Brunner, M. A. Müller, F. Allgöwer, "Enhancing Output-Feedback MPC With Set-Valued Moving Horizon Estimation," IEEE TAC 63(9), pp. 2976–2986, 2018. doi:10.1109/TAC.2018.2791899
+- J. Liu, Q. Shen, J. R. Deller, "A set-membership smoother for state estimation in disturbances of unknown distribution," CCC 2017, pp. 5038–5042. doi:10.23919/CHICC.2017.8028152
+- N. Meslem, N. Ramdani, "Forward-Backward Set-Membership State Estimator Based on Interval Analysis," ACC 2018, pp. 5161–5166. doi:10.23919/ACC.2018.8431250
+- D. R. Morrell, W. C. Stirling, "Set-valued filtering and smoothing," Asilomar 1988, pp. 236–240, doi:10.1109/ACSSC.1988.753990; IEEE Trans. SMC 21(1), pp. 184–193, 1991, doi:10.1109/21.101148
+- P. F. Odgaard, J. Stoustrup, M. Kinnaert, "Fault-Tolerant Control of Wind Turbines: A Benchmark Model," IEEE TCST 21(4), pp. 1168–1182, 2013. doi:10.1109/TCST.2013.2259235
+- M. Pourasghar, V. Puig, C. Ocampo-Martínez, "Interval observer versus set-membership approaches for fault detection in uncertain systems using zonotopes," IJRNC 29(10), pp. 2819–2843, 2019. doi:10.1002/rnc.4523
+- V. Puig, "Fault diagnosis and fault tolerant control using set-membership approaches: Application to real case studies," IJAMCS 20(4), pp. 619–635, 2010. doi:10.2478/v10006-010-0046-y
+- C. V. Rao, J. B. Rawlings, D. Q. Mayne, "Constrained state estimation for nonlinear discrete-time systems: stability and moving horizon approximations," IEEE TAC 48(2), pp. 246–258, 2003. doi:10.1109/TAC.2002.808470
+- F. C. Schweppe, "Recursive state estimation: Unknown but bounded errors and system inputs," IEEE TAC 13(1), pp. 22–28, 1968. doi:10.1109/TAC.1968.1098790
+
+**Metadata only (UNVERIFIED content):**
+- T. Alamo, J. M. Bravo, E. F. Camacho, "Guaranteed state estimation by zonotopes," Automatica 41(6), pp. 1035–1043, 2005. doi:10.1016/j.automatica.2004.12.008
+- M. Althoff, J. J. Rath, "Comparison of guaranteed state estimators for linear time-invariant systems," Automatica 130, 109662, 2021. doi:10.1016/j.automatica.2021.109662
+- D. P. Bertsekas, I. B. Rhodes, "Recursive state estimation for a set-membership description of uncertainty," IEEE TAC 16(2), pp. 117–128, 1971. doi:10.1109/TAC.1971.1099674
+- F. Blanchini, M. Sznaier, "A Convex Optimization Approach to Synthesizing Bounded Complexity ℓ∞ Filters," IEEE TAC 57(1), pp. 216–221, 2012. doi:10.1109/TAC.2011.2162893
+- L. Chisci, A. Garulli, G. Zappa, "Recursive state bounding by parallelotopes," Automatica 32(7), pp. 1049–1055, 1996. doi:10.1016/0005-1098(96)00048-9
+- C. Combastel, "Zonotopes and Kalman observers: Gain optimality under distinct uncertainty paradigms and robust convergence," Automatica 55, pp. 265–273, 2015. doi:10.1016/j.automatica.2015.03.008
+- A. Garulli, A. Vicino, G. Zappa, "Optimal induced-norm and set membership state smoothing and filtering for linear systems with bounded disturbances," Automatica 35(5), pp. 767–776, 1999. doi:10.1016/S0005-1098(98)00212-X
+- A. Ingimundarson, J. M. Bravo, V. Puig, T. Alamo, P. Guerra, "Robust fault detection using zonotope-based set-membership consistency test," IJACSP 23(4), pp. 311–330, 2009. doi:10.1002/acs.1038
+- P. Kesavan, J. H. Lee, "A set based approach to detection and isolation of faults in multivariable systems," Comput. Chem. Eng. 25(7–8), pp. 925–940, 2001. doi:10.1016/S0098-1354(00)00315-X
+- C. Le Guernic, A. Girard, "Reachability analysis of linear systems using support functions," Nonlinear Anal. Hybrid Syst. 4(2), pp. 250–262, 2010. doi:10.1016/j.nahs.2009.03.002
+- V. Raghuraman, J. P. Koeln, "Set operations and order reductions for constrained zonotopes," Automatica 139, 110204, 2022. doi:10.1016/j.automatica.2022.110204
+- C. V. Rao, J. B. Rawlings, J. H. Lee, "Constrained linear state estimation—a moving horizon approach," Automatica 37(10), pp. 1619–1628, 2001. doi:10.1016/S0005-1098(01)00115-7
+- S. Sankaranarayanan, T. Dang, F. Ivančić, "Symbolic Model Checking of Hybrid Systems Using Template Polyhedra," TACAS 2008, LNCS 4963, pp. 188–202. doi:10.1007/978-3-540-78800-3_14
+- S. M. Tabatabaeipour, P. F. Odgaard, T. Bak, J. Stoustrup, "Fault Detection of Wind Turbines with Uncertain Parameters: A Set-Membership Approach," Energies 5(7), pp. 2424–2448, 2012. doi:10.3390/en5072424
+- W. Tang, Z. Wang, Y. Wang, T. Raïssi, Y. Shen, "Interval Estimation Methods for Discrete-Time Linear Time-Invariant Systems," IEEE TAC 64(11), pp. 4717–4724, 2019. doi:10.1109/TAC.2019.2902673
+- H. S. Witsenhausen, "Sets of possible states of linear systems given perturbed observations," IEEE TAC 13(5), pp. 556–558, 1968. doi:10.1109/TAC.1968.1098995
