@@ -62,11 +62,14 @@ def online(var, zs, W=W, K=None, t_star=None, horizon=None, tp=None):
         elif getattr(w, "range_failed", False):       # F3: only a z_t checked against a solved range is kept
             w.fs["measurements_not_kept"] += 1
         elif not (lower >= zs[t] - d and upper <= zs[t] + d):
+            first = getattr(w, "failsafe", False)     # F3 (third addendum): evict first, so |zs| <= K + 1 always
+            if first and K is not None and sum(1 for j in w.zs if j > w.tau) >= K:
+                w.evict()
             if getattr(w, "track", False):
                 w.keep(t, zs[t])
             else:
                 w.zs[t] = zs[t]
-            if K is not None and sum(1 for j in w.zs if j > w.tau) > K:
+            if not first and K is not None and sum(1 for j in w.zs if j > w.tau) > K:
                 w.evict()
         w.max_kept = max(w.max_kept, len(w.zs))
         folded = t - w.tau > W + B

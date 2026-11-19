@@ -584,6 +584,7 @@ class Failsafe(Compressed):
                     h[i] = min(h[i], b)
             self.tau, self.base = tau2, self.tp.clamp(h)
         self.zs = {j: z for j, z in self.zs.items() if j >= tau2}
+        self.last_active = {j: a for j, a in self.last_active.items() if j in self.zs}   # third addendum
 
 
 class AuditedF3(Failsafe):

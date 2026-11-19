@@ -694,3 +694,39 @@ re-evaluated from its output.
   - **U2 paths leaves out `box_alarms`.** Whether a DEV fault drives a slab outside the box at a step whose LP fails
     depends on the data, not on the failure path. The box-proved alarm is covered by U0's constructed cases. It is
     reported for each setting.
+
+### Amendment 10, third addendum: memory accounting (2026-11-20, written before the identity check was run)
+
+**What K7 found** (two findings, neither a false alarm):
+- Inside a step, `zs` reaches K_cap + 2 = 66 entries, because `online()` inserts z_t before it evicts. Between steps
+  the count is at most 65, as reported.
+- `last_active` keeps the entries of measurements that the fold has dropped. The second addendum listed this as
+  undocumented. On 430000 E0 ramp uniform, 180 entries at t = 1600, 149 of them stale. The auxiliary state is
+  therefore not bounded by K or W.
+
+**The change (F3 only; F, E, N and L are untouched):**
+- `Failsafe.fold`, after it prunes `zs`, prunes `last_active` to the keys that remain in `zs`.
+- `online()`, for a failsafe variant: when z_t is to be kept and the kept count above τ already equals K, the evict
+  comes first, and the keep second.
+
+**Why no decision changes (MATH):**
+- `last_active` is read only by `evict`, and only for keys in `zs`. A key that the fold drops never returns, because
+  new keys are samples t > τ. `lp()` marks activity only for keys of `zs` (`meas ⊆ zs`).
+- In the old order, the new measurement's eviction key is (last_active = t, j = t). Every other candidate has
+  last_active ≤ t and j < t, so it wins the tie. The new measurement is therefore never evicted while another
+  candidate exists, and one always exists (count ≥ K ≥ 1). Both orders evict the same measurement. The activity
+  updates of step t come from the as-range, which runs before either order.
+- After the change, at every point of a step: |zs| ≤ K + 1 = 65 (K above τ, plus z_τ), and the keys of
+  `last_active` are a subset of the keys of `zs`.
+
+**Identity criterion I1** (written before it ran):
+- **I1a, Mac, now:** 4 healthy edge rows and 4 DEV fault rows, under settings none and d, run with the old code
+  (0ce80072) and the new code on the Mac. Every field of every record is equal, except the wall-clock fields
+  `seconds`, `step_ms` and `fold_step_ms`. An instrumented run of the new code also shows |zs| ≤ 65 at every point
+  and keys(last_active) ⊆ keys(zs) after every step.
+- **I1b, Arch, after all.done:** the new code on all 1400 rows of R-none, against R-none at 0ce80072 on Arch, by the
+  same rule. Mac and Arch outputs are not mixed.
+- **If any field differs:** the change is withdrawn. F3 stays at 0ce80072, and FREEZE-V3 says: at most 65 between
+  steps, 66 inside a step, and an eviction record that grows.
+- **If I1 holds:** freeze 3's candidate is the new commit, and R1–R3 at 0ce80072 stand for it, because no record can
+  differ.
