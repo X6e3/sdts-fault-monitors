@@ -458,3 +458,135 @@ checkout of the code commit).
   missing row, a duplicate, an extra key, a wrong rows sha, an environment mismatch, a soundness violation with a
   missing row) it gives the verdicts above.
 - The manifest is regenerated and the freeze-2 rehearsal rerun at the new freeze commit.
+
+## Amendment 10: F3, F with a sound path for solver failures (2026-11-19 night, written before any result of it)
+
+**Why:** freeze 2's validation failed (`RECORD-2026-11-19-validation.md`).
+- On one healthy edge-noise run, one fold LP (direction 40) ended in all three attempts with HiGHS status 15
+  (unknown). It does so every time.
+- The frozen code records a failed fold as an uncertified alarm. A failed as-range or alarm LP is not caught at
+  all, and would stop the run.
+- The diagnosis (`6bff6e9b`, `66fcfcc5`) showed three things about that fold:
+  - the other 41 directions solve;
+  - the failed attempts return neither multipliers nor a point;
+  - the other faces imply d₄₀·x ≤ −0.209, against an a priori 1.683.
+
+**The candidate F3:** F as frozen in freeze 2, with W = 256, B = 16, K_cap = 64, cyl16p, the exact recurrence and
+δ + η unchanged. One principle is added: **F3 uses no solver result it cannot certify.**
+
+**Two outcomes per LP:**
+- **Solved:** status 0, then used with its certificate, as in F. Only status 0 ends the frozen three attempts.
+- **Failed:** every other ending after the three attempts. That includes status 2 (infeasible), which comes with no
+  infeasibility certificate.
+- Failures are counted by the status of the last attempt: 2, 4, or other. A slab that is empty before any solve
+  counts as its own kind.
+
+**The invariant.** At every step, the window's set contains every exact-model explanation of the data it holds:
+the ideal set 𝔛 of FREEZE-V2 §1. Each fallback below keeps that inclusion, and no fallback is built from another
+fallback.
+
+**The a priori box.** ac, as and TA lie in [LO, HI] = [−2, 2] under the exact recurrence (convexity; amendment 9).
+So max as ≤ HI and max(−as) ≤ −LO hold without any LP.
+
+**What F3 does with a failure:**
+- **An as-range side fails at t.** That side becomes its box bound: upper = HI, or lower = LO.
+  - The alarm test and the alarm certificate then run as in F.
+  - So if z_t ± (δ + η), rounded outward, lies outside [LO, HI], the alarm is certified by the box alone. No LP is
+    needed.
+  - **z_t is not kept,** because only a measurement checked against a solved range enters the window. Dropping a
+    measurement is sound.
+  - This is a change from the draft. Keeping an unchecked z_t could make the window empty: lb > ub, or an
+    infeasible window on a fault run.
+  - The cost of a failed as-range is a later alarm or a miss. It is counted, and it shows in the lag.
+- **An alarm-certificate LP fails.** That side's certified bound becomes the box bound (HI, or −LO for the lower
+  side). The alarm is certified if either side proves it, as in F. Otherwise it is unproved: no alarm, z_t is
+  dropped, as in F.
+- **A fold direction d_i fails.** Its new base value is a certified upper bound of max d_i·x over P_J ∩ box.
+  - J is the set of directions of the same fold that solved. P_J = {x : d_j·x ≤ h_j, j ∈ J}, where h_j is the
+    value the fold stores for j.
+  - The bound is a 3-variable LP, solved with the same three attempts and certified by `certified_max(harden=True)`.
+    That is weak duality, d_i = D_Jᵀλ + μ with λ ≥ 0, where μ is the box residual, rounded outward.
+  - This is sound: 𝔛(τ + B) ⊆ P_J ∩ box, because each h_j is at least its certified support.
+  - The stored value is max(v + PAD, bound), as for a solved direction. It is then clamped.
+  - If that LP fails too, the value is the a priori support: `cap_inv` with the boxes, checked exactly in
+    `check_model.py`.
+- **Every direction of a fold fails (a full reset).** The fold is atomic:
+  - τ ← τ + B;
+  - base ← the a priori support in every direction, `tp.clamp(+∞)`;
+  - every kept measurement is dropped;
+  - the activity record is cleared.
+  - This is not the start of the run. The base stays defined (not `None`), so the equalities ac = as = TA of the
+    first segment are not used again, and the steady state is not assumed. The new set contains 𝔛(τ + B) because
+    the a priori support holds at every time.
+  - After a reset the window is the box set plus new measurements, so its LPs are not empty.
+- **Counted and reported** (not in the verdict):
+  - `fold_dir_fallbacks`, split by status 2, 4 and other;
+  - `fold_apriori_fallbacks`;
+  - `fold_full_resets`;
+  - `range_fallbacks`, one side and both sides;
+  - `cert_fallbacks`;
+  - `box_alarms`;
+  - `measurements_not_kept`.
+- **Unchanged:**
+  - the alarm rule: F3 raises only certified alarms;
+  - F itself, whose code paths stay as frozen;
+  - the scoring rules, the verdict order and the D_paired target of 0.80;
+  - the scenario laws.
+
+**Runs** (Arch, 14 workers, from a clean checkout of the code commit; R3 on the Mac):
+- **R0, path tests.** Constructed cases, one per branch:
+  - an as-range failing on one side, and on both;
+  - a box-certified alarm;
+  - a certificate LP failing on one side, and on both;
+  - a fold direction falling back to P_J, and to the a priori support;
+  - a full reset;
+  - a pre-solve empty slab.
+- **R1.** F3 on all 1320 DEV rows and on amendment 7's 80 edge-noise runs (DEV seeds 430070–430089).
+- **R2, failure injection.** A harness outside the candidate's code makes chosen LPs fail in all three attempts.
+  - The choice is a deterministic hash of (row, t, LP role, direction). It is fixed here, before any result.
+  - Half of the injected failures return status 2 and half status 4.
+  - The harness logs every injection.
+  - Settings, each on all 1320 DEV rows and the 80 edge-noise runs:
+    - (a) 1 % of fold-direction LPs;
+    - (b) 10 % of fold-direction LPs;
+    - (c) 1 % of as-range LPs and 1 % of certificate LPs;
+    - (d) every direction of every fourth fold, which forces full resets;
+    - (e) 10 % of fold-direction LPs, together with every P_J fallback LP, which forces the a priori path;
+    - (f) every certificate LP on the upper side, which forces box-sided certificates.
+- **R3, the audit.** A1's exact rational audit, extended to every P_J fallback bound, on settings (a), (b) and (e).
+- **R4, regressions** on freeze 2's block. It is no longer a holdout, so these test the code and are not evidence.
+  - The saved `lp-dir40.npz` through the fallback.
+  - F3 on (440243, healthy, E0, ramp, edge) over the whole run.
+
+**Criteria (fixed now):**
+- **U0:** every R0 case behaves as specified above.
+- **U1:** on R1:
+  - F3 detects at the same sample as freeze 2's F on every DEV row, with every alarm certified;
+  - there is no alarm on the 80 edge-noise runs;
+  - no fallback occurs (DEV had no LP that failed all three attempts). If one occurs, it is reported and explained.
+- **U2:** on every R2 setting:
+  - **soundness:** no alarm on an admissible row (the 120 healthy, the 118 certified-consistent and the 80
+    edge-noise rows), no alarm before t*, and every alarm certified;
+  - **memory:** at most K_cap + 1 = 65 kept measurements, as in F;
+  - **the injections:** the window's failure counters equal the harness's log, role by role;
+  - **the paths:** across the settings, every counter above is greater than 0, each status kind included;
+  - **recovery:** in setting (d), at least one fault row detects after a full reset. The number is reported.
+- **U3:** R3 finds no violation: every audited bound is at least its exact rational evaluation.
+- **U4:**
+  - the fallback on `lp-dir40.npz` gives a certified bound that R3's exact evaluation confirms;
+  - on 440243 (healthy, so admissible) F3 runs all 3600 samples with no alarm;
+  - its t = 945 fold takes the P_J bound for direction 40.
+  - Matching −0.209 is not a criterion.
+- **Reported, not deciding:**
+  - per setting against R1: D_paired on DEV, misses, lag, resets, measurements not kept;
+  - the per-run LP counts and time.
+
+**Scope of H-F3, to be stated in FREEZE-V3.md:**
+- The validation block tests F3 in normal operation on fresh seeds, including whatever solver failures occur
+  there.
+- Robustness to injected failures is DEV evidence only, unless an injection setting is frozen with it and run on the
+  block too. That is decided in FREEZE-V3.md, before approval.
+
+If U0–U4 hold, FREEZE-V3.md is written:
+- it covers F3, a manifest, a DEV rehearsal and the block 440400–440599 (reserved, never generated);
+- Can approves it before any validation data exist.
