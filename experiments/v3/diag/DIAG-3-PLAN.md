@@ -590,3 +590,45 @@ So max as ≤ HI and max(−as) ≤ −LO hold without any LP.
 If U0–U4 hold, FREEZE-V3.md is written:
 - it covers F3, a manifest, a DEV rehearsal and the block 440400–440599 (reserved, never generated);
 - Can approves it before any validation data exist.
+
+### Amendment 10, addendum after the code review N2 (2026-11-19 night, written before any R1–R3 result)
+
+A referee review of `17a1dc69` (N2) checked 13 items against the code. It found two defects, both confirmed here
+in the code:
+- **The summary's admissible set (`amend10.py`)** left out healthy rows whose oracle is undetermined. FREEZE-V2 §4
+  counts every healthy run as admissible. On DEV every healthy row is certified, so no DEV result depends on it,
+  but the rule is the frozen one.
+  - The U2 flags did not require a complete run.
+  - The misses were counted over different sets for F3 and F.
+- **The window could take a measurement that its box excludes.** Each later LP then ends "slab", before any solve.
+  1. z_0 is kept without a check.
+  2. An as-range value can exceed the box by the solver's tolerance. A z_t whose slab lies just outside [LO, HI],
+     and inside that overshoot, then passes the alarm test and is kept.
+  - Neither path can occur on an admissible run: there, as lies in the box, so every slab meets it. Both can occur
+    on a fault run, or with a fault present at t = 0.
+  - The "slab" failures were left out of the counter match and of U2, so they would not have shown.
+
+**The changes** (F3 only; F, E, N and L unchanged):
+- **The as-range is clipped to the box:** lower ← max(lower, LO), upper ← min(upper, HI). The certificate's bounds
+  are clipped the same way: cup ← min(cup, HI), cdn ← min(cdn, −LO). Both are a priori bounds, so this is sound.
+  - A slab outside the box then fails the alarm test against the clipped range.
+  - The certificate proves the alarm by the box alone.
+  - Such a z_t is never kept.
+- **z_0:** if its slab (δ + η, rounded outward) misses [LO, HI], F3 raises an alarm at t = 0, certified by the box.
+  Otherwise z_0 is kept, as before.
+- **The summary:**
+  - every healthy row counts as admissible;
+  - the U2 flags require a complete run;
+  - the misses of F3 and F are counted over the same events;
+  - "slab" failures are reported.
+
+**Criteria, amended:**
+- **U0** adds two cases:
+  - z_0 outside the box: a certified box alarm at t = 0;
+  - an as-range value above HI: clipped, and a z_t above the box gives a box-certified alarm and is not kept.
+- **U1:** the margins equal F's, except where F's certified bound lies outside the box. Each such case is listed.
+- **U2** adds: no "slab" failure in any setting. With these changes it cannot occur after t = 0.
+- **The runs:**
+  - The runs at `17a1dc69` were stopped before any result was read: R1 partial, R3 setting (a) partial.
+  - R0 and R4 at `17a1dc69`/`e52f5192` passed, but they are repeated too.
+  - Every run R0–R4 is repeated at the code commit of this addendum.
