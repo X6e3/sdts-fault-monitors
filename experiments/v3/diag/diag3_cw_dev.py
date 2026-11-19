@@ -55,6 +55,8 @@ def online(var, zs, W=W, K=None, t_star=None, horizon=None, tp=None):
                 det, m_det, cert = t, 1e3 * m, c
                 break
             unproved += 1                             # F raises only certified alarms; z_t is dropped (sound)
+        elif getattr(w, "range_failed", False):       # F3: only a z_t checked against a solved range is kept
+            w.fs["measurements_not_kept"] += 1
         elif not (lower >= zs[t] - d and upper <= zs[t] + d):
             if getattr(w, "track", False):
                 w.keep(t, zs[t])
@@ -82,6 +84,7 @@ def online(var, zs, W=W, K=None, t_star=None, horizon=None, tp=None):
             "steps": len(steps) + len(folds),
             "step_ms": {"median": float(np.median(ms)), "p95": float(np.percentile(ms, 95)), "max": float(ms.max())},
             "fold_step_ms": {"median": float(np.median(fs)), "max": float(fs.max())},
+            **({"failsafe": w.fs} if hasattr(w, "fs") else {}),
             "seconds": round(time.monotonic() - t00, 1)}
 
 

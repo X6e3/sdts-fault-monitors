@@ -157,10 +157,27 @@ def exact_bound():
     return tot
 
 
+ATTEMPTS = (("highs-ds", {"presolve": False}), ("highs-ipm", {"presolve": False}), ("highs-ds", {}))
+
+
+class Failed:
+    """F3 (amendment 10): an LP with no usable answer after the three attempts. status: the last attempt's scipy
+    status (2: infeasible, 4: numerical trouble, ...) or "slab" (a measurement slab empty before any solve)"""
+
+    def __init__(self, status, message=""):
+        self.status, self.message = status, message
+
+    def kind(self):
+        return str(self.status) if self.status in (2, 4, "slab") else "other"
+
+    def __repr__(self):
+        return f"Failed({self.status!r})"
+
+
 def solve(win, cvec, **kw):
     t0 = time.monotonic()
     res = None
-    for method, opts in (("highs-ds", {"presolve": False}), ("highs-ipm", {"presolve": False}), ("highs-ds", {})):
+    for method, opts in ATTEMPTS:
         res = rec_linprog(cvec, method=method, options=opts, **kw)
         if res.status in (0, 2):
             break
@@ -171,6 +188,23 @@ def solve(win, cvec, **kw):
         return None
     if res.status != 0:
         raise RuntimeError(f"LP status {res.status}: {res.message}")
+    return -res.fun
+
+
+def solve_f3(win, cvec, **kw):
+    """F3 (amendment 10): the same three attempts; only status 0 ends them. Any other ending, status 2 included, is a
+    failure, returned (not raised): F3 uses no solver claim it cannot certify."""
+    t0 = time.monotonic()
+    res = None
+    for method, opts in ATTEMPTS:
+        res = rec_linprog(cvec, method=method, options=opts, **kw)
+        if res.status == 0:
+            break
+        win.n_retry += 1
+    win.lp_seconds += time.monotonic() - t0
+    win.n_lp += 1
+    if res.status != 0:
+        return Failed(int(res.status), str(res.message))
     return -res.fun
 
 
@@ -230,6 +264,12 @@ class Compressed(Stats):
         self.ta_rows, self.n_resolve, self.max_ta_rows = set(), 0, 0
         self._init_stats()
 
+    def _solve(self, cvec, **kw):                                  # F3 overrides these two (amendment 10)
+        return solve(self, cvec, **kw)
+
+    def _empty(self):
+        return None
+
     def lp(self, t_end, meas_upto, obj_state, obj_vec):
         tau = self.tau
         meas = sorted(j for j in self.zs if tau <= j <= meas_upto and not (j == tau and self.base is not None))
@@ -255,7 +295,7 @@ class Compressed(Stats):
                 zl, zu = np.nextafter(zl, -np.inf), np.nextafter(zu, np.inf)
             lb[i], ub[i] = max(lb[i], zl), min(ub[i], zu)
         if np.any(lb > ub):
-            return None
+            return self._empty()                                   # F: None; F3: Failed("slab")
         er, ec, ev, r = [], [], [], 0
         for a, b in zip(nodes, nodes[1:]):
             L, xa, xb = b - a, idx[a], idx[b]
@@ -301,8 +341,8 @@ class Compressed(Stats):
         else:
             self.max_vars, self.max_rows = max(self.max_vars, nv), max(self.max_rows, r + q)
             self.max_nodes = max(self.max_nodes, len(nodes))
-            v = solve(self, cvec, A_ub=A_ub, b_ub=b_ub, A_eq=A_eq, b_eq=b_eq, bounds=np.c_[lb, ub])
-        if self.track and v is not None:                           # a measurement is active if its bound binds
+            v = self._solve(cvec, A_ub=A_ub, b_ub=b_ub, A_eq=A_eq, b_eq=b_eq, bounds=np.c_[lb, ub])
+        if self.track and v is not None and not isinstance(v, Failed):   # a measurement is active if its bound binds
             res = Rec.last[2]
             for j in meas:
                 i = idx[j][1]
@@ -408,10 +448,160 @@ class Audited(Compressed):
         return -out[1], out[0]
 
 
+class Failsafe(Compressed):
+    """F3 (DIAG-3 amendment 10): F, using no solver result it cannot certify. An LP is solved (status 0, used with its
+    certificate) or failed (anything else after the three attempts, status 2 included). Each failure keeps the window
+    set a superset of the exact-model explanations of the data it holds:
+      - an as-range side, or a side of the alarm certificate, falls back to the a priori box (as in [LO, HI]); a z_t
+        whose as-range had a failed side is not kept;
+      - a fold direction falls back to a certified bound of max d_i x over the box and the faces of the same fold that
+        solved, else to its a priori support (cap_inv with the boxes);
+      - a fold in which every direction fails resets atomically to the a priori support (the base stays defined: the
+        initial segment's equalities are not used again) and drops every kept measurement."""
+
+    def __init__(self, tp):
+        super().__init__(tp, True, harden=True, track=True)
+        self.failsafe, self.role, self.range_failed = True, None, False
+        self.fs = {"fold_dir_fallbacks": {}, "fold_implied": 0, "fold_apriori_fallbacks": {}, "fold_full_resets": 0,
+                   "range_fallbacks": {"one": 0, "both": 0}, "range_failures": {}, "cert_fallbacks": {},
+                   "box_alarms": 0, "measurements_not_kept": 0}
+
+    def _solve(self, cvec, **kw):
+        return solve_f3(self, cvec, **kw)
+
+    def _empty(self):
+        return Failed("slab")
+
+    def _count(self, name, f):
+        d = self.fs[name]
+        d[f.kind()] = d.get(f.kind(), 0) + 1
+
+    def _cub(self, v):                                             # the certified bound of the last LP
+        return certified_max(True)
+
+    def lp_cert(self, *a):
+        v = self.lp(*a)
+        return (v, None) if isinstance(v, Failed) else (v, self._cub(v))
+
+    def _range_hook(self, t, v):
+        pass
+
+    def as_range(self, t):
+        got = []
+        for side, vec in (("up", (0, 1.0, 0)), ("down", (0, -1.0, 0))):
+            self.role = ("range", side)
+            v = self.lp(t, t - 1, t, vec)
+            self._range_hook(t, v)
+            if isinstance(v, Failed):
+                self._count("range_failures", v)
+            got.append(v)
+        up, dn = got
+        fu, fd = isinstance(up, Failed), isinstance(dn, Failed)
+        self.range_failed = fu or fd
+        if fu and fd:
+            self.fs["range_fallbacks"]["both"] += 1
+        elif fu or fd:
+            self.fs["range_fallbacks"]["one"] += 1
+        return (LO if fd else -dn), (HI if fu else up)
+
+    def certify_alarm(self, t, z):
+        self.role = ("cert", "up")
+        up, cup = self.lp_cert(t, t - 1, t, (0, 1.0, 0))
+        self.role = ("cert", "down")
+        dn, cdn = self.lp_cert(t, t - 1, t, (0, -1.0, 0))
+        box = []
+        if isinstance(up, Failed):                                 # max as <= HI, a priori
+            self._count("cert_fallbacks", up)
+            cup = HI
+            box.append("up")
+        if isinstance(dn, Failed):                                 # max (-as) <= -LO, a priori
+            self._count("cert_fallbacks", dn)
+            cdn = -LO
+            box.append("down")
+        zl, zu = np.nextafter(z - self.delta, -np.inf), np.nextafter(z + self.delta, np.inf)
+        m_dn, m_up = zu + cdn, cup - zl                            # < 0: the slab is below / above the bound
+        m = 1e3 * min(m_dn, m_up)
+        proved = [s for s, x in (("down", m_dn), ("up", m_up)) if x < 0]
+        if proved and all(s in box for s in proved):
+            self.fs["box_alarms"] += 1
+        return {"certified": bool(m < 0), "certified_margin_mC": m, "box_sides": box}
+
+    def implied(self, i, J, h):
+        """a certified upper bound of max d_i x over {x in the box : d_j x <= h_j, j in J}, or None"""
+        self.role = ("implied", i)
+        A = sp.csr_matrix(self.D[J])
+        v = self._solve(-np.asarray(self.D[i], dtype=float), A_ub=A, b_ub=np.asarray(h[J], dtype=float),
+                        bounds=np.array([[LO, HI]] * 3, dtype=float))
+        if isinstance(v, Failed):
+            self._count("fold_apriori_fallbacks", v)
+            return None
+        return max(v + PAD, self._cub(v))
+
+    def fold(self, t):
+        tau2 = self.tau + B
+        n = len(self.D)
+        vals, failed = np.full(n, np.inf), []
+        for i, d in enumerate(self.D):
+            self.role = ("fold", i)
+            v, cub = self.lp_cert(t, t, tau2, d)
+            if isinstance(v, Failed):
+                self._count("fold_dir_fallbacks", v)
+                failed.append(i)
+                continue
+            if cub > v + PAD:
+                self.n_short += 1
+                self.max_short = max(self.max_short, cub - v - PAD)
+            vals[i] = max(v + PAD, cub)
+        if len(failed) == n:                                       # the atomic reset
+            self.fs["fold_full_resets"] += 1
+            self.tau, self.base = tau2, self.tp.clamp(np.full(n, np.inf))
+            self.zs, self.last_active = {}, {}
+            return
+        if not failed:                                             # as F
+            self.tau, self.base = tau2, self.tp.clamp(vals)
+        else:
+            h = self.tp.clamp(vals)                                # failed entries: their a priori support
+            J = [j for j in range(n) if j not in failed]
+            for i in failed:
+                b = self.implied(i, J, h)
+                if b is not None:
+                    self.fs["fold_implied"] += 1
+                    h[i] = min(h[i], b)
+            self.tau, self.base = tau2, self.tp.clamp(h)
+        self.zs = {j: z for j, z in self.zs.items() if j >= tau2}
+
+
+class AuditedF3(Failsafe):
+    """F3 with Audited's exact rational audit: every fold bound (P_J fallbacks included), every alarm bound and
+    every 8th as-range bound"""
+
+    def __init__(self, tp):
+        super().__init__(tp)
+        self.audit = {"n": 0, "min_slack_C": math.inf, "violations": 0, "max_gap_to_value_C": 0.0,
+                      "max_coefficient_term_C": 0.0, "n_implied": 0, "min_slack_implied_C": math.inf}
+
+    def _check(self, v, cub):
+        Audited._check(self, v, cub)
+
+    def _cub(self, v):
+        cub = certified_max(True)
+        self._check(v, cub)
+        if self.role and self.role[0] == "implied":
+            a = self.audit
+            a["n_implied"] += 1
+            a["min_slack_implied_C"] = min(a["min_slack_implied_C"], float(Fraction(cub) - exact_bound()))
+        return cub
+
+    def _range_hook(self, t, v):
+        if t % 8 == 0 and not isinstance(v, Failed):
+            self._check(v, certified_max(True))
+
+
 def make(var, cy):
     return {"A": lambda: Dense(cy), "E": lambda: Compressed(cy, True), "N": lambda: Compressed(cy, False),
             "L": lambda: Compressed(cy, False, lazy=True),
-            "F": lambda: Compressed(cy, True, harden=True, track=True), "Fa": lambda: Audited(cy)}[var]()
+            "F": lambda: Compressed(cy, True, harden=True, track=True), "Fa": lambda: Audited(cy),
+            "F3": lambda: Failsafe(cy), "F3a": lambda: AuditedF3(cy)}[var]()
 
 
 def _run_info(seed, cell, amb):
