@@ -35,7 +35,7 @@ a01d880d39711e3906348f7bdfe7c8c0479a0540ade643dc00cf2fe591fa01a4  meta.json
 | | target | D_paired | seed bootstrap 95 % (descriptive) | misses (v2: 24) | soundness | dominance | verdict |
 |---|---|---|---|---|---|---|---|
 | inv4p | 0.10 | **0.152** | [0.107, 0.205] | 20 | 0 | 0 | **PASS** |
-| cyl16p | 0.25 | **0.387** | [0.323, 0.453] | 16 | 0 | 0 | **PASS** |
+| cyl16p | 0.25 | **0.387** | [0.323, 0.452] | 16 | 0 | 0 | **PASS** |
 
 **Data:**
 - 9600 of 9600 runs.
@@ -100,8 +100,9 @@ The rest are near zero for every method. The full table is `by_cell` in `scores.
   - it misses 28 events, more than v2's 24;
   - it is later than v2 on 130 runs.
 - **cyl16p loses part of its gain the same way:** D_paired 0.212, below the 0.25 that its float64 form passed.
-- Neither float32 build was the object of a hypothesis (FREEZE-V1.md section 4). Had they been, inv4p float32 would
-  fail on misses and on its target, and cyl16p float32 on its target.
+- Neither float32 build was the object of a hypothesis (FREEZE-V1.md section 4). Had they been, both would fail on
+  dominance (130 and 52 runs later than v2 above), inv4p float32 also on misses and on its target, and cyl16p
+  float32 also on its target.
 - **Precision is a budget axis of its own.** This is the effect the DEV rehearsal showed on one run, now on many.
   HYP, not checked: the static float32 pads accumulate in the directions that only the clamps bound.
 
@@ -159,7 +160,7 @@ were read or generated.
 **The gap (MATH, from amendment 9):**
 - **The model.** The frozen `TemplateMachine` predicts with the float M. The recurrence of `thermal.py`'s `step()`,
   taken exactly, differs from it by about u per entry. In a predicted support this is at most
-  ‖(M_exact − M)ᵀ d_i‖₁ · max|s_c| over P, with ‖(M_exact − M)ᵀ d_i‖₁ ≤ 7.1e-17 (cyl16p; inv4p 6.9e-17).
+  ‖(M_exact − M)ᵀ d_i‖₁ · max|s_c| over P, with ‖(M_exact − M)ᵀ d_i‖₁ ≤ 7.12e-17 (cyl16p; inv4p 6.94e-17).
 - **The clamps are not affected.** cyl16p's hold under the exact recurrence (`diag/check_model.py`), and inv4p's 16
   are among them, with the same values.
 - **The data.** The slab of z is widened by one ulp. The float data differ from the exact recurrence's by up to
@@ -178,7 +179,7 @@ were read or generated.
 - **Edge noise: no alarm, but at rounding level.**
   - On 48 of the 80 edge-noise runs, the frozen machine comes within 1.9e-14 to 3.0e-14 °C of a false alarm. That is
     less than the measured data error.
-  - On the other 32 its smallest gap is 1.2e-6 °C or more.
+  - On the other 32 its smallest gap is 1.15e-6 °C or more.
   - With the gap covered, the smallest gap is 2.0e-9 °C.
 - **Uniform noise:** the smallest gap on an admissible run is 2.0e-3 °C.
 
