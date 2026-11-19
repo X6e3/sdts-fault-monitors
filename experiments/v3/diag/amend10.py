@@ -175,6 +175,46 @@ def run(out, setting, var, workers, limit):
     (out / "meta.json").write_text(json.dumps(meta, indent=1) + "\n")
 
 
+FALLBACK = ("fold_dir_fallbacks", "fold_apriori_fallbacks", "fold_full_resets", "range_fallbacks", "range_failures",
+            "cert_fallbacks", "measurements_not_kept", "fold_implied")     # box_alarms is not a fallback (addendum 2)
+
+
+def _margin_box_check(k, r, m_ref, cert3):
+    """replay row k with F, record F's certified bounds at its alarm, and check that F3's margin is F's with the
+    deciding side clipped to the box (DIAG-3 amendment 10, second addendum)"""
+    calls, orig_ca, orig_lc = [], C.Stats.certify_alarm, C.Stats.lp_cert
+    flag = {"on": False}
+
+    def lc(self, *a):
+        res = orig_lc(self, *a)
+        if flag["on"]:
+            calls.append(res)
+        return res
+
+    def ca(self, t, z):
+        calls.clear()
+        flag["on"] = True
+        try:
+            out = orig_ca(self, t, z)
+        finally:
+            flag["on"] = False
+        calls.append(("z", z, out))
+        return out
+
+    run = S.run(r["seed"], next(c for c in T.CELLS if c.name == r["cell"]), r["arm"], r["ambient"], r["noise"])
+    C.Stats.certify_alarm, C.Stats.lp_cert = ca, lc
+    try:
+        recF = CD.online("F", G.zs_of(run), W, K, r["oracle"].get("t_star"), tp=V.load_frozen(G.V3 / "frozen" / "cyl16p.json"))
+    finally:
+        C.Stats.certify_alarm, C.Stats.lp_cert = orig_ca, orig_lc
+    (_, cup), (_, cdn), (_, z, _) = calls[-3], calls[-2], calls[-1]
+    zl, zu = np.nextafter(z - C.DELTA_F, -np.inf), np.nextafter(z + C.DELTA_F, np.inf)
+    mF = 1e3 * min(zu + cdn, cup - zl)
+    m3 = 1e3 * min(zu + min(cdn, -C.LO), min(cup, C.HI) - zl)
+    ok = (mF == m_ref and m3 == cert3.get("certified_margin_mC") and (cup > C.HI or cdn > -C.LO) and m3 != mF)
+    return {"ok": bool(ok), "F_detect": recF["detect"], "cup": cup, "cdn": cdn, "mF": mF, "m3": m3}
+
+
 def summary(out):
     meta = json.loads((out / "meta.json").read_text())
     rows = {D.key(r): r for r in map(json.loads, D.ROWS.read_text().splitlines()) if r}
@@ -243,21 +283,57 @@ def summary(out):
                         "min_slack_C": min(y["min_slack_C"] for y in a),
                         "n_implied": sum(y["n_implied"] for y in a),
                         "min_slack_implied_C": min(y["min_slack_implied_C"] for y in a)}
-    complete = rep["rows"] == rep["expected"]
+    expected = set(rows) | {f"edge-{s}-{a}-{al}" for s, a, al in EDGE}
+    complete = set(xs) == expected                                   # the key set, not only the count
     rep["complete"] = complete
+    rep["missing_keys"], rep["extra_keys"] = sorted(expected - set(xs))[:20], sorted(set(xs) - expected)[:20]
     rep["slab_failures"] = {k: v for k, v in tot.items() if k.endswith("|slab")}
     rep["U2_soundness"] = complete and not sound and not early and not uncert
     rep["U2_memory"] = complete and rep["max_kept"] is not None and rep["max_kept"] <= K + 1
     rep["U2_injections_match"] = complete and not mism
     rep["U2_no_slab"] = complete and not any(rep["slab_failures"].values())
+    rep["fallback_totals"] = {k: v for k, v in tot.items() if k.split("|")[0] in FALLBACK}
     if meta["setting"] == "none":
-        rep["margin_differs_from_F"] = margin_differs[:20]
-        rep["margin_box_cases"] = margin_box
-        rep["U1"] = rep["U2_soundness"] and not differs and not margin_differs and rep["rows"] == rep["expected"]
-        rep["U1_no_fallback"] = all(v == 0 for v in tot.values())
+        verified, unexplained = [], list(margin_differs)
+        for case in margin_box:                                       # the clipped side must decide the margin
+            chk = _margin_box_check(case[0], rows[case[0]], case[1], case[2])
+            (verified if chk["ok"] else unexplained).append([*case, chk])
+        rep["margin_box_verified"] = verified
+        rep["margin_differs_from_F"] = unexplained[:20]
+        rep["n_margin_differs_from_F"] = len(unexplained)
+        rep["U1"] = rep["U2_soundness"] and not differs and not unexplained and complete
+        rep["U1_no_fallback"] = not any(rep["fallback_totals"].values())
+    if meta["setting"] == "d":
+        rep["U2_recovery"] = complete and rep["after_reset_detections"] > 0
+    if "audit" in rep:
+        rep["U3"] = complete and rep["audit"]["n"] > 0 and rep["audit"]["violations"] == 0
     (out / "summary.json").write_text(json.dumps(rep, indent=1, default=str) + "\n")
     print(json.dumps({k: v for k, v in rep.items() if k not in ("detect_differs_from_F", "counter_mismatches")},
                      indent=1, default=str))
+
+
+def criteria(r2_dirs, r3_dirs):
+    """U2 paths over settings (a)-(f) together, and U3's n_implied over the R3 settings together"""
+    tot, rep = {}, {}
+    for d in r2_dirs:
+        sm = json.loads((d / "summary.json").read_text())
+        for k, v in sm["totals"].items():
+            tot[k] = tot.get(k, 0) + v
+        rep[str(d)] = {k: sm.get(k) for k in ("complete", "U2_soundness", "U2_memory", "U2_injections_match", "U2_no_slab",
+                                             "U2_recovery") if k in sm}
+    need = [f"{n}|{kind}" for n in ("fold_dir_fallbacks", "fold_apriori_fallbacks", "range_failures", "cert_fallbacks")
+            for kind in ("2", "4")] + ["range_fallbacks|one", "range_fallbacks|both", "fold_full_resets", "fold_implied",
+                                       "measurements_not_kept"]
+    rep["paths_totals"] = {k: tot.get(k, 0) for k in need}
+    rep["box_alarms_total"] = tot.get("box_alarms", 0)
+    rep["U2_paths"] = all(tot.get(k, 0) > 0 for k in need)
+    if r3_dirs:
+        a = [json.loads((d / "summary.json").read_text()) for d in r3_dirs]
+        rep["U3_settings"] = {str(d): x.get("U3") for d, x in zip(r3_dirs, a)}
+        rep["U3_n_implied_total"] = sum((x.get("audit") or {}).get("n_implied", 0) for x in a)
+        rep["U3"] = all(x.get("U3") for x in a) and rep["U3_n_implied_total"] > 0
+    print(json.dumps(rep, indent=1))
+    return rep
 
 
 # ---- R0: the paths -----------------------------------------------------------------------------------------------
@@ -293,7 +369,8 @@ def paths(out):
     ok["range_one_side"] = (rec["failsafe"]["range_fallbacks"]["one"] == 1 and tk not in h.w.zs
                             and rec["failsafe"]["measurements_not_kept"] == 1 and rec["detect"] is None)
     rec, h = go(zh, None, lambda t, k, w, _: 2 if (t == tk and k == "range") else None, tk)
-    ok["range_both_sides"] = rec["failsafe"]["range_fallbacks"]["both"] == 1 and tk not in h.w.zs and rec["detect"] is None
+    ok["range_both_sides"] = (rec["failsafe"]["range_fallbacks"]["both"] == 1 and tk not in h.w.zs and rec["detect"] is None
+                              and rec["failsafe"]["measurements_not_kept"] == 1)
 
     zb = list(zh)
     zb[100] = 3.0                                                  # outside the as box [-2, 2]
@@ -308,7 +385,8 @@ def paths(out):
     rec2, _ = go(zf, tsf, lambda t, k, w, _: 2 if (t == ta and k == "cert") else None, None)
     ok["cert_one_side"] = (rec1["failsafe"]["cert_fallbacks"].get("4") == 1 and rec1["detect"] is not None
                            and rec1["alarm_certificate"]["certified"] and rec1["detect"] >= ta)
-    ok["cert_both_sides"] = (rec2["failsafe"]["cert_fallbacks"].get("2") == 2
+    ok["cert_both_sides"] = ((rec2["detect"] is None or rec2["detect"] == ta or rec2["unproved_primal_alarms"] >= 1)
+                             and rec2["failsafe"]["cert_fallbacks"].get("2") == 2
                              and (rec2["detect"] is None or (rec2["alarm_certificate"]["certified"] and rec2["detect"] >= ta)))
     res["cert"] = {"base_detect": ta, "one_side": [rec1["detect"], rec1["alarm_certificate"]],
                    "both_sides": [rec2["detect"], rec2["alarm_certificate"], rec2["unproved_primal_alarms"]]}
@@ -321,7 +399,7 @@ def paths(out):
     ok["fold_apriori"] = (rec["failsafe"]["fold_apriori_fallbacks"].get("4") == 1 and rec["failsafe"]["fold_implied"] == 0
                           and h.w.base[40] == apriori[40])
     rec, h = go(zh, None, lambda t, k, w, _: 2 if (t == 289 and k == "fold") else None, 289)
-    ok["full_reset"] = (rec["failsafe"]["fold_full_resets"] == 1 and h.w.tau == 32 and h.w.zs == {}
+    ok["full_reset"] = (rec["failsafe"]["fold_full_resets"] == 1 and h.w.tau == 32 and h.w.zs == {} and h.w.last_active == {}
                         and h.w.base is not None and np.array_equal(h.w.base, apriori))
     rec, h = go(zh, None, lambda t, k, w, _: 2 if (t == 289 and k == "fold") else None, 600)
     ok["full_reset_continues"] = (rec["failsafe"]["fold_full_resets"] == 1 and rec["detect"] is None
@@ -344,6 +422,30 @@ def paths(out):
                              and "up" in cx["box_sides"] and w.fs["box_alarms"] == 1)
     res["range_overshoot"] = cx
 
+    zo = list(zh)                                                  # the overshoot through online(): a z_t just above
+    zo[tk] = C.HI + C.DELTA_F + 5e-9                               # the box, range and certificate LPs past HI by 1e-8
+    o_lp, o_lc = C.Failsafe.lp, C.Failsafe.lp_cert
+
+    def lp_o(self, t_end, upto, st, vec):
+        if self.now == tk and vec[1] > 0 and st == t_end:
+            return C.HI + 1e-8
+        return o_lp(self, t_end, upto, st, vec)
+
+    def lc_o(self, *a):
+        if self.now == tk and self.role == ("cert", "up"):
+            return C.HI + 1e-8, C.HI + 2e-8
+        return o_lc(self, *a)
+
+    C.Failsafe.lp, C.Failsafe.lp_cert = lp_o, lc_o
+    try:
+        rec, h = go(zo, None, lambda *a: None, tk + 5)
+    finally:
+        C.Failsafe.lp, C.Failsafe.lp_cert = o_lp, o_lc
+    ok["overshoot_online"] = (rec["detect"] == tk and rec["alarm_certificate"]["certified"]
+                              and "up" in rec["alarm_certificate"]["box_sides"] and rec["failsafe"]["box_alarms"] == 1
+                              and tk not in h.w.zs)
+    res["overshoot_online"] = rec["alarm_certificate"]
+
     w = C.make("F3", tp)
     w.zs[0], w.zs[5] = zh[0], 10.0                                 # a slab outside the box: empty before any solve
     v = w.lp(6, 5, 6, (0, 1.0, 0))
@@ -358,17 +460,20 @@ def paths(out):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("cmd", choices=("paths", "run", "summary"))
+    ap.add_argument("cmd", choices=("paths", "run", "summary", "criteria"))
     ap.add_argument("out", type=Path)
     ap.add_argument("--setting", choices=SETTINGS, default="none")
     ap.add_argument("--variant", choices=("F3", "F3a"), default="F3")
     ap.add_argument("--workers", type=int, default=14)
     ap.add_argument("--limit", type=int)
+    ap.add_argument("--r3", type=Path, nargs="*", default=[])
     a = ap.parse_args()
     if a.cmd == "paths":
         return paths(a.out)
     if a.cmd == "summary":
         return summary(a.out)
+    if a.cmd == "criteria":                                        # OUT: a run base with R-a..R-f; --r3: R3 dirs
+        return criteria([a.out / f"R-{s}" for s in "abcdef"], a.r3)
     run(a.out, a.setting, a.variant, a.workers, a.limit)
 
 

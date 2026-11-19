@@ -9,6 +9,7 @@ support. Criterion U4:
 The validation seeds are unlocked with freeze 2's manifest sha256, as in the diagnosis of 2026-11-19 (Can's decision);
 nothing else of that block is generated.
 usage: python -B amend10_r4.py OUT
+       python -B amend10_r4.py check OUT/r4.json
 """
 import json
 import platform
@@ -30,6 +31,22 @@ import run_validation as RV1  # noqa: E402
 
 G, S, T, V = C.G, C.S, C.T, C.V
 SEED, CELL, ARM, AMB, NOISE = 440243, "healthy", "E0", "ramp", "edge"
+
+
+def u4_of(rec, log, audit):
+    """U4 as made exact by amendment 10's second addendum: the P_J bound for direction 40 at t = 945 exists, is below
+    its a priori support and is confirmed by the exact audit"""
+    return {"all_samples": rec["steps"] == T.N - 1, "no_alarm": rec["detect"] is None,
+            "dir40_at_945_implied": any(x["t"] == 945 and x["dir"] == 40 and x["bound"] is not None
+                                        and x["bound"] < x["apriori"] for x in log),
+            "audit_no_violation": audit["violations"] == 0 and audit["n_implied"] > 0}
+
+
+def check(path):
+    """re-evaluate U4 from an existing r4.json"""
+    rep = json.loads(Path(path).read_text())
+    u4 = u4_of(rep["record"], rep["implied_log"], rep["audit"])
+    print(json.dumps({"U4": all(u4.values()), "u4": u4, "git_head_of_run": rep["meta"]["git_head"]}, indent=1))
 
 
 def main(out):
@@ -58,9 +75,7 @@ def main(out):
     finally:
         C.Failsafe.implied, C.make = orig_implied, orig_make
     audit = box["w"].audit
-    u4 = {"all_samples": rec["steps"] == T.N - 1, "no_alarm": rec["detect"] is None,
-          "dir40_at_945_implied": any(x["t"] == 945 and x["dir"] == 40 and x["bound"] is not None for x in log),
-          "audit_no_violation": audit["violations"] == 0 and audit["n_implied"] > 0}
+    u4 = u4_of(rec, log, audit)
     rep = {"key": [SEED, CELL, ARM, AMB, NOISE], "U4": all(u4.values()), "u4": u4, "implied_log": log, "audit": audit,
            "record": rec, "meta": {
                "git_head": subprocess.run(["git", "rev-parse", "HEAD"], cwd=HERE, capture_output=True, text=True).stdout.strip(),
@@ -71,4 +86,7 @@ def main(out):
 
 
 if __name__ == "__main__":
-    main(Path(sys.argv[1]))
+    if sys.argv[1] == "check":
+        check(sys.argv[2])
+    else:
+        main(Path(sys.argv[1]))
