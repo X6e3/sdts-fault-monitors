@@ -621,3 +621,48 @@ its 6,104 samples.
 - The smallest slack, 8.2e-16 °C, is smaller than on the five runs (4.4e-15 °C), but it is still positive. The audit
   is a check, not part of the soundness argument: the argument rests on the certificate's construction (FREEZE-V2
   §1).
+
+## Amendment 10: F3, F with a sound path for solver failures (OBSERVED; in progress, 2026-11-20)
+
+Code `0ce80072` (F3), criteria and summary `6c3af845`. Plan: `DIAG-3-PLAN.md`, amendment 10 and its three addenda.
+DEV only, except R4, which replays freeze 2's deciding row with the validation seeds unlocked by freeze 2's manifest
+(the diagnosis of 2026-11-19; that block is no longer a holdout).
+
+**R0, the path tests (U0): 13 of 13 pass.** Mac, at `6c3af845`, on 430000 healthy E0 rw and 430000 jump_0.2 E0 rw.
+The cases are:
+- range_one_side, range_both_sides, range_overshoot, overshoot_online;
+- box_alarm, cert_one_side, cert_both_sides;
+- fold_implied, fold_apriori, full_reset, full_reset_continues;
+- z0_outside_box, slab_empty.
+
+The box-proved alarm has a certified margin of −700.0 mC on both sides.
+
+**R4, 440243 with F3a (U4): passes.** Arch, at `0ce80072`, clean tree, 191 s.
+- All 3599 steps run, with no alarm.
+- At t = 945, direction 40 fails, as in freeze 2. The fallback takes the P_J bound −0.20897 °C from the 41 solved
+  faces, against an a priori support of 1.683 °C.
+- This is the run's only fallback (`fold_dir_fallbacks` {4: 1}, `fold_implied` 1). No other failure, reset or box
+  alarm occurred.
+- The exact audit checked 9,634 bounds, one of them the P_J bound, with no violation. The smallest slack is 1.1e-14 °C
+  overall and 3.9e-14 °C on the P_J bound.
+- Re-evaluated at `6c3af845` under the strict U4 of the second addendum: passes.
+
+**R1–R3:** running (R1, R2 on Arch; R3 on the Mac). Not read yet.
+
+**Third addendum, I1a: passes.** Mac, 2026-11-20 02:10–02:50. The old code (`0ce80072`) and the new (`000cd215`) ran
+side by side, two processes at nice 19, while R3 ran. Inputs: 4 healthy edge rows (430070 E0/E1 × rw/ramp) and 4
+DEV fault rows (indices 0, 100, 200 and 300 of the fault rows sorted by key), under settings none and d.
+Outputs are in `results/v3/diag3/amend10-i1a-000cd215/`; scripts `diag/amend10_i1a.py` and
+`diag/amend10_i1_compare.py`.
+- **Records:** all 16 pairs are equal in every field except `seconds`, `step_ms` and `fold_step_ms`.
+- **Memory, new code:**
+  - |zs| is at most 65 at every check (after each keep, evict and fold);
+  - |last_active| is at most |zs|;
+  - keys(last_active) ⊆ keys(zs) at all 48,460 checks.
+- **Memory, old code, same rows:**
+  - |zs| reaches 66 on every edge row;
+  - |last_active| reaches 317 on 430000 drift_0.0005 E0 ramp;
+  - the subset fails at 6,860 of 7,342 checks on an edge row under setting none.
+- On edge noise every z_t cuts the range, so each edge row keeps a measurement at every step. That gives 3,535
+  evictions and 15,934 LPs on all four rows. The data differ between the rows: `n_retry` is 0 on rw and 1 on ramp.
+- **I1b** (all of R-none on Arch with the new code) follows after all.done.
