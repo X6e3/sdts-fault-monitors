@@ -35,6 +35,15 @@ d35e2b09a852254f52e67b294b70772157a697876e7f1e5d1819ca05b28be6f1  scores.json
   `~/Downloads/sdts-runs/` on the Mac and `~/Research/sdts-runs/v3-freeze2/` on Arch.
 - The rows were scored again on the Mac with the frozen `score_validation_v2.py`, from a clean copy of `35b344df`.
   The resulting `scores.json` is byte-identical.
+- **An independent scorer** scored the same files again. It was written from section 4 alone and imports only the
+  Python standard library. It reproduces every number in this record, the cell table, the bootstrap, the deciding
+  row and the verdict.
+  - It also checks the manifest's 17 files at the commit and in the run's worktree, and that the approval commit
+    changes only the status line.
+  - It finds a finite, negative certified margin on each of the 7,270 certified alarms. This checks the recorded
+    margins; it does not recompute the certificates.
+  - Its output is on Arch, not in the repository (`independent-score.json`, sha256
+    `2811e6326c2746b40a7ff4127fd618b670b4deae3f1c17af13df6eb053acd631`).
 
 ## Verdict
 
@@ -84,16 +93,25 @@ below. They do not decide.
   - 22 on uniform-noise runs, each solved at the second attempt.
 - On DEV there were 4 retries on the 1320 comparison rows, and 49 on 26 of the 80 edge-noise runs. No LP failed all
   three attempts on DEV.
+- These are counts, not a failure rate. The runs are not independent trials, and the retries concentrate on edge
+  noise.
 
 **INFERRED:**
-- One LP of the fold at t = 945 ended without a usable answer in all three attempts. HiGHS reported its model status
-  as unknown and its primal status as feasible.
-- The window was not shown to be empty, and the run is healthy. So this is not evidence against the model. It is the
-  float64 reference implementation stopping on a solver failure.
+- One LP of the fold at t = 945 did not end optimal or infeasible in any of its three attempts. This follows from the
+  code.
+- Only the last attempt's message is recorded: HiGHS reported the model status as unknown and the primal status as
+  feasible. scipy maps that to its generic status 4.
+- The window was not shown to be empty, and the run is healthy. So the recorded cause is the implementation's
+  solver-failure path, not a counterexample to the certificate. It is not, on its own, evidence that the
+  certificates are correct either; that rests on section 1 and the DEV audits.
+- This is the float64 reference implementation stopping on a solver failure.
 - H-F is a hypothesis about exactly that implementation: Python, with HiGHS through scipy (section 0). So the FAIL is
   a FAIL of H-F as written.
 - Section 1 foresaw an empty window LP at a fold, recorded as an uncertified alarm, which is a FAIL. It did not name a
   solver that returns no answer. The code treats both the same way, and the rules count the row the same way.
+
+**UNKNOWN:** which of the fold's 42 directions failed, why, and whether it fails again. The F record does not keep
+the LP, and nothing was replayed.
 
 ## Secondary, reported (not deciding)
 
@@ -187,9 +205,10 @@ frozen float64 reference implementation raised one uncertified alarm, on a healt
 - other window lengths, caps or formulations;
 - the SDTS question itself.
 
-**Reported, and not a claim:** the accuracy numbers above (D_paired 0.995, no misses, never later than v2). They come
-from a run whose verdict is FAIL. They are not evidence for H-F, and no later text may cite them as a validated
-result.
+**Measured, and reported with the verdict:** the frozen candidate measured D_paired 0.995, no misses and never later
+than v2 on this fresh block. They may be reported, always together with the FAIL and its cause. H-F is a joint
+hypothesis, so these numbers do not validate it, and freeze 2 is not a PASS. The block is no longer a holdout for any
+later candidate.
 
 **Not tested:** everything in section 7 (an MCU, float32, model mismatch, the ambient box, detection under edge noise,
 independence beyond the seeds).
@@ -199,5 +218,9 @@ independence beyond the seeds).
   LPs, to see which direction fails and whether it fails every time. It generates validation-seed data again, so it
   is outside section 6 and needs an explicit decision. It cannot change the verdict.
 - **What F should do when an LP returns no usable answer.** The frozen code records the case at a fold as an alarm,
-  and at an as-range it would stop the run. Neither is a sound way to go on. Any change is a new freeze, with seeds
-  from 440400 onwards (reserved, never generated). The candidate and the rules of freeze 2 do not change.
+  and at an as-range it would stop the run. Neither is a sound way to go on. A solver failure, a certified alarm and
+  a normal step have to be separate outcomes. Any change is a new freeze, with seeds from 440400 onwards (reserved,
+  never generated). The candidate and the rules of freeze 2 do not change.
+  - HYPOTHESIS, not tested: for a failed fold direction, use a support that is proved at the new base time. The
+    exact clamps are one such support. Carrying the old base's numbers forward is not the same thing. The cost in
+    lag, misses, memory and time is unmeasured.
