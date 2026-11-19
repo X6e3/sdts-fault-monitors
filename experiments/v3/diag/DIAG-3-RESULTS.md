@@ -502,3 +502,25 @@ its 6,104 samples.
 - **For an MCU, K is the size to plan for, not the DEV median.** Noise at its bound, or a sensor that saturates the
   slab, fills the window.
 - **This check says nothing about detection under such noise.** Every run here is healthy.
+
+## Amendment 8: F raises certified alarms only (OBSERVED; 2026-11-19, Arch)
+
+**Runs:**
+- At `0e28951`, from the clean checkout `~/Research/sdts-v3-a8-0e28951`, with 14 workers.
+- F with K = 64 on all 1320 DEV rows (02:48–03:51), then amendment 7's 80 edge-noise runs (03:51–04:07).
+- Outputs are in `results/v3/diag3/cwdev-F-K64-0e28951/` and `edge-0e28951/`. The pairing with amendment 6's F is in
+  `score-K64-a8-vs-a6-0e28951.json`.
+
+**T1 passes.** F's detection equals amendment 6's F (K = 64) on every DEV row: 0 rows differ.
+- 1082 alarms, all certified. The certified margin closest to zero is −0.023 mC.
+- **Unproved LP alarms: 0.** The LP never pointed to an alarm that the bound could not prove.
+- No eviction; at most 45 measurements kept.
+
+**T2 passes.** There is no alarm on the 80 edge-noise runs, and no unproved LP alarm.
+- As in amendment 7, the cap binds: 3535 evictions per run, at most 65 kept (with τ), and at most 445 LP rows.
+- The step p95 is at most 33 ms and the fold step at most 749 ms (Arch, a shared machine).
+
+**What it shows (INFERRED):**
+- **The three changes are safeguards that DEV never triggers.** The outcome is the same as before on every row. On
+  validation, an LP value that the bound cannot prove would now drop z_t and be counted, instead of failing the
+  whole run.
