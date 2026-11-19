@@ -48,13 +48,14 @@ def online(var, zs, W=W, K=None, t_star=None, horizon=None, tp=None):
         m = G.margin(lower, upper, zs[t])
         if t == t_star:
             m_ts = 1e3 * m
-        if upper < zs[t] - DELTA or lower > zs[t] + DELTA:
+        d = getattr(w, "delta", DELTA)                # F: delta + eta (amendment 9); E, N, L: delta
+        if upper < zs[t] - d or lower > zs[t] + d:
             c = w.certify_alarm(t, zs[t])
             if c["certified"] or not getattr(w, "harden", False):   # E, N, L (amendments 3-5): as they ran
                 det, m_det, cert = t, 1e3 * m, c
                 break
             unproved += 1                             # F raises only certified alarms; z_t is dropped (sound)
-        elif not (lower >= zs[t] - DELTA and upper <= zs[t] + DELTA):
+        elif not (lower >= zs[t] - d and upper <= zs[t] + d):
             if getattr(w, "track", False):
                 w.keep(t, zs[t])
             else:

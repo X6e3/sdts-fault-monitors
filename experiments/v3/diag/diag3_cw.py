@@ -46,8 +46,18 @@ MARGIN_TOL_A = 1e-2                             # mC
 LAZY_TOL, LAZY_MAX = 1e-9, 100                  # degC; re-solves per LP
 
 
-def _powers(n):
-    Mq = [[Fraction(float(M[i, j])) for j in range(3)] for i in range(3)]
+def exact_matrix():
+    """thermal.py's step() on the shifted state (ac, as, TA), in exact arithmetic with its float parameters taken
+    exactly. Rows 1 and 2 sum to exactly 1, so ac and as are convex combinations of TA (DIAG-3 amendment 9). The float
+    M does not have this property: its rows, read as rationals, sum to 1 + 2^-56 and 1 + 3 * 2^-56."""
+    CC, CS, K, H, DT = (Fraction(x) for x in (T.CC, T.CS, T.K, T.H, T.DT))
+    z, one = Fraction(0), Fraction(1)
+    return [[1 - DT * K / CC, DT * K / CC, z], [DT * K / CS, 1 - DT * (K + H) / CS, DT * H / CS], [z, z, one]]
+
+
+def _powers(n, Mq=None):
+    if Mq is None:                                 # E, N, L (amendments 3-5): the float M read as rationals
+        Mq = [[Fraction(float(M[i, j])) for j in range(3)] for i in range(3)]
     P = [[[Fraction(int(i == j)) for j in range(3)] for i in range(3)]]
     for _ in range(n):
         Q = P[-1]
@@ -58,6 +68,13 @@ def _powers(n):
 POW = _powers(W + 2 * B + 4)
 GEN = POW[:, :, 2]                              # GEN[k] = M^k e3
 assert np.array_equal(M[2], [0.0, 0.0, 1.0]) and np.all(POW[:, 2] == [0.0, 0.0, 1.0])
+MX = exact_matrix()
+assert all(sum(MX[i]) == 1 for i in range(3)) and all(x >= 0 for row in MX for x in row)
+POWX = _powers(W + 2 * B + 4, MX)               # F: exact powers of the exact recurrence, each rounded once
+GENX = POWX[:, :, 2]
+assert np.all(POWX[:, 2] == [0.0, 0.0, 1.0])
+ETA = 1e-9                                      # degC; F: allowance for the float error of the data (amendment 9)
+DELTA_F = DELTA + ETA
 
 
 class Rec:
@@ -186,7 +203,8 @@ class Stats:
     def certify_alarm(self, t, z):
         up, cup = self.lp_cert(t, t - 1, t, (0, 1.0, 0))
         dn, cdn = self.lp_cert(t, t - 1, t, (0, -1.0, 0))
-        zl, zu = z - DELTA, z + DELTA
+        d = getattr(self, "delta", DELTA)                          # F: delta + eta (amendment 9)
+        zl, zu = z - d, z + d
         if getattr(self, "harden", False):                         # the slab of z_t, rounded outward
             zl, zu = np.nextafter(zl, -np.inf), np.nextafter(zu, np.inf)
         m = 1e3 * min(zu + cdn, cup - zl)                          # G.margin with certified bounds; < 0: certified
@@ -205,6 +223,8 @@ class Compressed(Stats):
         assert not (lazy and ta_path)
         self.tp, self.D, self.ta_path, self.cert, self.smooth, self.lazy = tp, tp.D, ta_path, cert, True, lazy
         self.harden, self.track, self.now, self.last_active, self.n_evict = harden, track, 0, {}, 0
+        # F (harden): the exact recurrence's powers and the slab delta + eta (amendment 9); E, N, L as they ran
+        self.delta, self.pw, self.gen = (DELTA_F, POWX, GENX) if harden else (DELTA, POW, GEN)
         self.tau, self.base, self.zs = 0, None, {}
         self.n_lp, self.max_vars, self.max_rows, self.lp_seconds, self.n_retry = 0, 0, 0, 0.0, 0
         self.ta_rows, self.n_resolve, self.max_ta_rows = set(), 0, 0
@@ -230,7 +250,7 @@ class Compressed(Stats):
         lb[w0:], ub[w0:] = -RHO, RHO
         for j in meas:
             i = idx[j][1]
-            zl, zu = self.zs[j] - DELTA, self.zs[j] + DELTA
+            zl, zu = self.zs[j] - self.delta, self.zs[j] + self.delta
             if self.harden:                                        # round the slab outward
                 zl, zu = np.nextafter(zl, -np.inf), np.nextafter(zu, np.inf)
             lb[i], ub[i] = max(lb[i], zl), min(ub[i], zu)
@@ -242,11 +262,11 @@ class Compressed(Stats):
             for c in (0, 1) if self.ta_path else (0, 1, 2):
                 er.append(r), ec.append(xb[c]), ev.append(1.0)
                 for q in range(3):
-                    if POW[L][c, q] != 0.0:
-                        er.append(r), ec.append(xa[q]), ev.append(-POW[L][c, q])
+                    if self.pw[L][c, q] != 0.0:
+                        er.append(r), ec.append(xa[q]), ev.append(-self.pw[L][c, q])
                 for k in range(L):
-                    if GEN[k][c] != 0.0:
-                        er.append(r), ec.append(w0 + (b - 1 - k - tau)), ev.append(-GEN[k][c])
+                    if self.gen[k][c] != 0.0:
+                        er.append(r), ec.append(w0 + (b - 1 - k - tau)), ev.append(-self.gen[k][c])
                 r += 1
         if self.ta_path:                                           # TA_{j+1} - TA_j - w_j = 0
             for j in range(t_end - tau):

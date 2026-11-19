@@ -1,0 +1,36 @@
+{
+ "rows": {
+  "float_M_row_sums_minus_1_in_2^-56": [
+   1.0,
+   3.0
+  ],
+  "exact_row_sums_minus_1": [
+   0.0,
+   0.0
+  ]
+ },
+ "powers": {
+  "POWX_is_the_exact_power_rounded_once": true,
+  "L_max": 292,
+  "float_M_power_gap_max_in_u": 54.43898353227568,
+  "at_L": 292
+ },
+ "clamps": {
+  "directions": 42,
+  "clamps_not_proved": [],
+  "smallest_slack_C": 2.220446049250313e-15,
+  "terms": 6000,
+  "tail_bound_C": 3.9579032894902805e-42
+ },
+ "data": {
+  "healthy_runs": 64,
+  "seeds": [
+   430000,
+   430007
+  ],
+  "max_abs_zs_error_C": 1.2083469879406946e-13,
+  "ETA_C": 1e-09,
+  "ETA_over_max": 8275.768549762626
+ },
+ "pass": true
+}
