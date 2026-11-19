@@ -8,7 +8,8 @@ Prepared 2026-11-18 on branch `sdts-v3/template-state` for Can Koç's review. Th
 are Can's to set. Everything here is a proposal until the status line says APPROVED. `run_validation_v2.py` refuses
 to generate validation data until then (section 6).
 
-**Open item:** the rehearsal is rerun at this freeze commit (section 8).
+**Open items:** none. The manifest is regenerated at the frozen code and the rehearsal rerun at the freeze commit
+(section 8). The draft is ready for Can's review.
 
 **Decided by Can Koç on 2026-11-19, after the team's review:**
 - 200 seeds (section 3);
@@ -171,7 +172,7 @@ with edge noise).
 - **The healthy runs.** If none of the 1600 healthy runs alarms, the per-run false-alarm rate is below about 0.19 %
   at 95 % (rule of three). Soundness itself rests on the certificate, not on this count.
 - **The same block size as freeze 1,** so the two validations have the same design.
-- **Cost:** about 12.6 h on Arch with 14 workers, at the rehearsal's rate (section 8). 600 seeds stay unused.
+- **Cost:** about 12.2 h on Arch with 14 workers, at the rehearsal's rate (section 8). 600 seeds stay unused.
 
 ## 4. Scoring rules (`score_validation_v2.py`, fixed)
 
@@ -290,14 +291,13 @@ certified and no unproved LP alarm (`cwdev-F-K64-0e28951/`).
 
 The identical pipeline was run on DEV seeds 430096–430097 (`--rehearsal`; validation stays locked).
 
-**Run:**
-- `run_validation_v2.py` at `cfb7f18` on Arch, from a clean checkout, 14 workers.
-- The checks passed: the manifest `ae2e10c9…` and the environment lock (CPython 3.12.13, numpy 2.5.5, scipy 1.18.1,
+**Run at the freeze commit:**
+- `run_validation_v2.py` at `bc2a051` on Arch, from a clean checkout, 14 workers, 04:10–04:17 on 2026-11-19.
+- The checks passed: the manifest `31d470ae…` and the environment lock (CPython 3.12.13, numpy 2.5.5, scipy 1.18.1,
   HiGHS 1.12.0).
-- 96 runs (2 seeds × 48) in 453 s. Rows sha256 `d5b352faf42ecf0f4e4ea36c66a40f890e7a429f7f8abf85ada36c7071c0e6f5`.
-- Scored with `score_validation_v2.py`. The outputs are in `results/v3/freeze2/rehearsal-dev-430096/`. The solver
-  attempts (4.8 MB) stay on Arch.
-- These two DEV seeds had not been used before.
+- 96 runs (2 seeds × 48) in 438 s. Rows sha256 `8dbcff37ccbfcd1e76f2d9612bfce25c5bd0a2841114e3d49df3314ea4ad6c91`.
+- Scored with `score_validation_v2.py`. The outputs are in `results/v3/freeze2/rehearsal-dev-430096-bc2a051/`. The
+  solver attempts (4.8 MB) stay on Arch.
 
 **Pipeline checks:**
 - complete: 96 of 96 rows;
@@ -305,13 +305,19 @@ The identical pipeline was run on DEV seeds 430096–430097 (`--rehearsal`; vali
 - 74 detection events;
 - 22 admissible runs, the 8 edge-noise healthy runs included.
 
-| | soundness | uncertified alarms | misses | later than v2 | D_paired | detections equal to t* |
-|---|---|---|---|---|---|---|
-| F (W = 256, K = 64) | 0 | 0 | 0 (v2: 0) | 0 | 1.0 (L_v2 = 994 s) | 74 of 74 |
+| | soundness | uncertified alarms | unproved LP alarms | misses | later than v2 | D_paired | detections equal to t* |
+|---|---|---|---|---|---|---|---|
+| F (W = 256, K = 64) | 0 | 0 | 0 | 0 (v2: 0) | 0 | 1.0 (L_v2 = 994 s) | 74 of 74 |
+
+**Against the first rehearsal** (`cfb7f18`, before amendment 8; `results/v3/freeze2/rehearsal-dev-430096/`, same
+seeds):
+- Every row is identical, apart from timings and the new `unproved_primal_alarms` field.
+- The only change is in the certified alarm margins: at most 4.5e-13 mC, and always towards zero. That is the slab of
+  z_t rounded outward, the conservative direction.
 
 **What the rehearsal shows:**
-- **The pipeline works end to end:** generation, oracle, v2, F and scoring.
+- **The pipeline works end to end at the frozen code:** generation, oracle, v2, F and scoring.
 - **On the 8 edge-noise runs F evicts at every sample** (28,280 evictions; up to 65 kept and 445 rows), with no
   alarm, as in amendment 7.
 - **Two DEV seeds say nothing about the target.** D_paired = 1.0 here is not evidence for H-F.
-- **Expected validation time:** 4800 runs at this rate is about 6.3 h on Arch with 14 workers.
+- **Expected validation time:** 9600 runs at this rate is about 12.2 h on Arch with 14 workers.
