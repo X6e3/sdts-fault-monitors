@@ -1,6 +1,6 @@
 # v3 freeze 2: the compressed window F, and the rules of its independent validation
 
-Status: DRAFT, not approved
+Status: APPROVED by Can Koç on 2026-11-19
 
 Manifest sha256: cc7adffa240b6ab4eab9b45652f4437ce582f784123b1b1cac8341f4db303385
 
