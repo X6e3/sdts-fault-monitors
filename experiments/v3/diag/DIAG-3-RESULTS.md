@@ -530,3 +530,50 @@ its 6,104 samples.
 - **The three changes are safeguards that DEV never triggers.** The outcome is the same as before on every row. On
   validation, an LP value that the bound cannot prove would now drop z_t and be counted, instead of failing the
   whole run.
+
+## Amendment 9: the exact recurrence as F's model, and the data allowance (OBSERVED; 2026-11-19, Arch)
+
+**Runs:**
+- At `42252a3`, from the clean checkout `~/Research/sdts-v3-a9-42252a3`, with 14 workers.
+- F with K = 64 on all 1320 DEV rows (05:05–06:07), then amendment 7's 80 edge-noise runs (06:07–06:24).
+- Outputs are in `results/v3/diag3/cwdev-F-K64-42252a3/` and `edge-42252a3/`. The pairing with amendment 8's F is in
+  `score-K64-a9-vs-a8-42252a3.json`.
+
+**The model checks pass** (`check_model.py`, `results/v3/diag3/check-model/`):
+- the exact rows sum to 1;
+- each of F's powers is the exact power rounded once;
+- all 42 clamps hold under the exact recurrence, with the smallest slack 2.2e-15 °C;
+- the data error is at most 1.2e-13 °C on 64 healthy DEV runs, 8,000 times below η.
+
+**T1′ passes.** F's detection equals amendment 8's F on every DEV row: 0 rows differ.
+- 1082 alarms, all certified. No unproved LP alarm.
+- No eviction; at most 45 measurements kept and 409 LP rows.
+- D_paired 0.99921, 0 misses, 1079 detections at t*, lag at most 13 s, as before.
+- **The certified margins move by less than 1 µC.**
+  - 1073 of the 1082 move towards zero, by at most 0.20 µC.
+  - 9 move away from it, by at most 0.08 µC.
+  - The margin closest to zero is still −0.023 mC.
+  - The U row (430003, drift_0.001, E1, rw) still alarms at 1956, with −10.93 mC.
+- The step p95 is at most 28 ms and the fold step at most 762 ms (Arch, a shared machine).
+
+**T2′ passes.** There is no alarm on the 80 edge-noise runs, and no unproved LP alarm.
+- As in amendments 7 and 8, the cap binds: at most 65 kept (with τ) and at most 445 LP rows.
+- 3535 evictions per run, except 430074 ramp, both arms, with 3534: 282,798 in all, against 282,800 at `0e28951`.
+- The step p95 is at most 33 ms and the fold step at most 805 ms (Arch, a shared machine).
+
+**S1 passes.** The 10 scorer tests (`tests/test_v3_freeze2_scorer.py`) pass:
+- the scorer reproduces the `bc2a051` rehearsal: PASS, with the same numbers;
+- a missing row, a duplicate, an extra key, a wrong rows sha, an environment mismatch or a wrong manifest give
+  INCONCLUSIVE;
+- validation mode without the seed block and the approval gives INCONCLUSIVE;
+- a soundness violation with a missing row gives FAIL, and so does an uncertified alarm.
+
+**What it shows (INFERRED):**
+- **The correction costs nothing on DEV.** No detection, alarm or eviction changes, and the margins move by less than
+  1 µC, against a smallest margin of 23 µC.
+- **The certified margin is the dual bound of the solver's solution.** When the LP changes, that bound can move a
+  little either way. That is why 9 margins move away from zero, although the slabs widen and the coefficients
+  change only at the level of u.
+- **The two missing evictions** mean that one more measurement was redundant at arrival in each of those two runs.
+  Under edge noise every measurement sits on its slab boundary, and the slab is now η wider. This was not traced to
+  the sample.

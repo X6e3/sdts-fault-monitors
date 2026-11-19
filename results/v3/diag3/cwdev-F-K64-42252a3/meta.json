@@ -1,0 +1,18 @@
+{
+ "git_head": "42252a3195d56afa5cd1fa71c17330bb9c58fcac",
+ "git_dirty_tracked": false,
+ "W": 256,
+ "K": 64,
+ "B": 16,
+ "pad": 1e-06,
+ "variants": [
+  "F"
+ ],
+ "machine": "x86_64",
+ "platform": "Linux-7.3.4-arch1-2-x86_64-with-glibc2.44",
+ "python": "3.12.13",
+ "numpy": "2.5.5",
+ "scipy": "1.18.1",
+ "started": "2026-11-19T05:05:33+0300",
+ "finished": "2026-11-19T06:07:20+0300"
+}
