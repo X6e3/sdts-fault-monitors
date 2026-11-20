@@ -1,6 +1,6 @@
 # v3 freeze 3: F3, the compressed window with a sound path for solver failures, and the rules of its validation
 
-Status: DRAFT, not approved
+Status: APPROVED by Can Koç on 2026-11-20
 
 Manifest sha256: 0a40cbdf863da6eb046a1c76726d53bf2e967bfa3e0056b1ac15b87cbc7b85c7
 
