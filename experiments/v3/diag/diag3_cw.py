@@ -98,11 +98,13 @@ def _colnnz(A):
     return int(np.diff(A.tocsc().indptr).max()) if A.nnz else 0
 
 
-def certified_max(harden=False):
+def certified_max(harden=False, strict=False):
     """a rigorous upper bound on max (-c) x of the last LP: weak duality with the solver's multipliers, every
     variable boxed, float rounding bounded explicitly. harden: also enclose the rounding of the LP coefficients
     themselves (each one correctly rounded from its exact value, so off by less than 2u |a|), so that the bound holds
-    for the LP with the exact coefficients (exact powers of M), not only for its float64 copy."""
+    for the LP with the exact coefficients (exact powers of M), not only for its float64 copy. strict (F3, fourth
+    addendum): NaN instead of a bound when a term is not finite or the sum overflows; finite terms give the same
+    value as without it."""
     c, kw, res = Rec.last
     bnd = kw["bounds"]
     lb, ub = bnd[:, 0], bnd[:, 1]
@@ -125,8 +127,17 @@ def certified_max(harden=False):
     if harden:
         parts.append(2 * U * (sa - np.abs(c)) * xm)
     p = np.concatenate(parts)
-    tot = math.fsum(p)
-    return tot + 4 * (_gam(4) * math.fsum(np.abs(p)) + U * abs(tot))
+    if not strict:
+        tot = math.fsum(p)
+        return tot + 4 * (_gam(4) * math.fsum(np.abs(p)) + U * abs(tot))
+    if not np.all(np.isfinite(p)):
+        return math.nan
+    try:
+        tot = math.fsum(p)
+        b = tot + 4 * (_gam(4) * math.fsum(np.abs(p)) + U * abs(tot))
+    except OverflowError:
+        return math.nan
+    return b if math.isfinite(b) else math.nan
 
 
 def exact_bound():
@@ -162,13 +173,15 @@ ATTEMPTS = (("highs-ds", {"presolve": False}), ("highs-ipm", {"presolve": False}
 
 class Failed:
     """F3 (amendment 10): an LP with no usable answer after the three attempts. status: the last attempt's scipy
-    status (2: infeasible, 4: numerical trouble, ...) or "slab" (a measurement slab empty before any solve)"""
+    status (2: infeasible or a model error, 4: numerical trouble, ...), "slab" (a measurement slab empty before any
+    solve), "exception" (the solver call raised) or "nonfinite" (status 0 with a non-finite value or multiplier, or a
+    non-finite certified bound); the last two since the fourth addendum"""
 
     def __init__(self, status, message=""):
         self.status, self.message = status, message
 
     def kind(self):
-        return str(self.status) if self.status in (2, 4, "slab") else "other"
+        return str(self.status) if self.status in (2, 4, "slab", "exception", "nonfinite") else "other"
 
     def __repr__(self):
         return f"Failed({self.status!r})"
@@ -191,21 +204,63 @@ def solve(win, cvec, **kw):
     return -res.fun
 
 
+SOLVER_ERRORS = (RuntimeError, ValueError, IndexError, OverflowError, ZeroDivisionError, FloatingPointError)
+
+
+def _check_inputs(cvec, kw):
+    """F3 (fourth addendum): the LP we built must be finite and of consistent shape before the solver sees it.
+    If it is not, that is our error: it is raised here, and never counted as a solver failure."""
+    n = len(cvec)
+    arrays = [np.asarray(cvec, dtype=float), np.asarray(kw["bounds"], dtype=float)]
+    if arrays[1].shape != (n, 2):
+        raise ValueError(f"F3: bounds of shape {arrays[1].shape} for {n} variables")
+    for a_name, b_name in (("A_ub", "b_ub"), ("A_eq", "b_eq")):
+        A = kw.get(a_name)
+        if A is None:
+            continue
+        b = np.asarray(kw[b_name], dtype=float)
+        if A.shape != (len(b), n):
+            raise ValueError(f"F3: {a_name} of shape {A.shape} for {len(b)} rows and {n} variables")
+        arrays += [b, np.asarray(A.data if sp.issparse(A) else A, dtype=float)]
+    if not all(np.all(np.isfinite(a)) for a in arrays):
+        raise ValueError("F3: a non-finite LP input")
+
+
+def _usable(res, kw):
+    """F3 (fourth addendum): status 0 with a finite value and finite multipliers for every part the LP has"""
+    if res.status != 0 or res.fun is None or not math.isfinite(res.fun):
+        return False
+    parts = [res.lower.marginals, res.upper.marginals]
+    if kw.get("A_ub") is not None:
+        parts.append(res.ineqlin.marginals)
+    if kw.get("A_eq") is not None:
+        parts.append(res.eqlin.marginals)
+    return all(m is not None and np.all(np.isfinite(m)) for m in parts)
+
+
 def solve_f3(win, cvec, **kw):
     """F3 (amendment 10): the same three attempts; only status 0 ends them. Any other ending, status 2 included, is a
-    failure, returned (not raised): F3 uses no solver claim it cannot certify."""
+    failure, returned (not raised): F3 uses no solver claim it cannot certify. Fourth addendum: the inputs are checked
+    first, and a failed check raises (our error); an attempt whose solver call raises one of SOLVER_ERRORS, or whose
+    status 0 comes with a non-finite value or multiplier, has failed like any other."""
+    _check_inputs(cvec, kw)
     t0 = time.monotonic()
-    res = None
+    res, fail = None, None
     for method, opts in ATTEMPTS:
-        res = rec_linprog(cvec, method=method, options=opts, **kw)
-        if res.status == 0:
-            break
+        try:
+            res = rec_linprog(cvec, method=method, options=opts, **kw)
+        except SOLVER_ERRORS as e:
+            fail = Failed("exception", f"{type(e).__name__}: {e}")
+        else:
+            if _usable(res, kw):
+                fail = None
+                break
+            fail = (Failed(int(res.status), str(res.message)) if res.status != 0
+                    else Failed("nonfinite", "status 0 with a non-finite value or multiplier"))
         win.n_retry += 1
     win.lp_seconds += time.monotonic() - t0
     win.n_lp += 1
-    if res.status != 0:
-        return Failed(int(res.status), str(res.message))
-    return -res.fun
+    return fail if fail is not None else -res.fun
 
 
 class Stats:
@@ -477,11 +532,16 @@ class Failsafe(Compressed):
         d[f.kind()] = d.get(f.kind(), 0) + 1
 
     def _cub(self, v):                                             # the certified bound of the last LP
-        return certified_max(True)
+        return certified_max(True, strict=True)
 
     def lp_cert(self, *a):
         v = self.lp(*a)
-        return (v, None) if isinstance(v, Failed) else (v, self._cub(v))
+        if isinstance(v, Failed):
+            return v, None
+        cub = self._cub(v)
+        if not math.isfinite(cub):                                 # fourth addendum: no bound, so a failed LP
+            return Failed("nonfinite", "the certified bound is not finite"), None
+        return v, cub
 
     def _range_hook(self, t, v):
         pass
@@ -550,7 +610,11 @@ class Failsafe(Compressed):
         if isinstance(v, Failed):
             self._count("fold_apriori_fallbacks", v)
             return None
-        return max(v + PAD, self._cub(v))
+        cub = self._cub(v)
+        if not math.isfinite(cub):                                 # fourth addendum
+            self._count("fold_apriori_fallbacks", Failed("nonfinite", "the certified bound is not finite"))
+            return None
+        return max(v + PAD, cub)
 
     def fold(self, t):
         tau2 = self.tau + B
@@ -600,7 +664,9 @@ class AuditedF3(Failsafe):
         Audited._check(self, v, cub)
 
     def _cub(self, v):
-        cub = certified_max(True)
+        cub = certified_max(True, strict=True)
+        if not math.isfinite(cub):                                 # not used: the LP takes its fallback
+            return cub
         self._check(v, cub)
         if self.role and self.role[0] == "implied":
             a = self.audit
@@ -610,7 +676,9 @@ class AuditedF3(Failsafe):
 
     def _range_hook(self, t, v):
         if t % 8 == 0 and not isinstance(v, Failed):
-            self._check(v, certified_max(True))
+            cub = certified_max(True, strict=True)
+            if math.isfinite(cub):                                 # fourth addendum: only finite bounds are audited
+                self._check(v, cub)
 
 
 def make(var, cy):

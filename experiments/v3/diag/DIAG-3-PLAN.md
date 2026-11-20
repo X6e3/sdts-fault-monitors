@@ -730,3 +730,97 @@ re-evaluated from its output.
   steps, 66 inside a step, and an eviction record that grows.
 - **If I1 holds:** freeze 3's candidate is the new commit, and R1–R3 at 0ce80072 stand for it, because no record can
   differ.
+
+### Amendment 10, fourth addendum: the solver boundary, and U5 (2026-11-20, written before any of its tests ran)
+
+**What review M1 found** (`~/Research/sdts-runs/v3-proof/M1/GAPS.md` on Arch, checked against the code at 000cd215):
+- **G1.** `solve_f3` turns every status into `Failed`, but an exception raised inside `linprog` is not caught. In a
+  fold it reaches `online()`'s `except RuntimeError` and becomes an uncertified alarm, which freeze 2's rules score
+  as FAIL. In an as-range or a certificate LP it stops the run. F3's own code raises nothing on these paths. M1 showed
+  the branch with an injected exception on DEV 430000; no natural case is known. scipy 1.18.1 returns HiGHS errors as
+  statuses (`_linprog_highs.py`), but its compiled HiGHS module translates C++ exceptions into Python ones
+  (`RuntimeError`, `ValueError`, `IndexError`, `OverflowError`, `MemoryError`).
+- **G2.** After status 0, nothing checks that the value and the multipliers are finite. In a fold,
+  `max(v + PAD, nan)` returns v + PAD: a primal value with no certificate, which could tighten the base below the
+  true support. In an alarm certificate a NaN only removes the alarm.
+- **Also seen while checking G1:** scipy maps HiGHS `kModelError` to status 2. Status 2 is not always "infeasible".
+  F3 already reads status 2 as a failure, never as a proof, so nothing changes.
+
+**The change (F3 and F3a only; F, Fa, E, N and L are untouched):**
+- `solve_f3`, before the attempts: every input array (objective, both right-hand sides, bounds, matrix entries) is
+  checked for finite values and consistent shapes. A failed check raises `ValueError`. It is our own error, not a
+  solver failure, and it stops the run.
+- `solve_f3`, each attempt: an exception of type `RuntimeError`, `ValueError`, `IndexError`, `OverflowError`,
+  `ZeroDivisionError` or `FloatingPointError` raised inside the `linprog` call ends that attempt as failed. With the
+  inputs checked, these can only come from the solver. `MemoryError`, `TypeError` and everything raised outside the
+  call are not caught.
+- `solve_f3`, each attempt: status 0 counts as solved only if the value and every multiplier the LP has (inequality,
+  equality, lower and upper bound) are finite. Otherwise the attempt has failed.
+- The attempts, `n_retry` and `n_lp` are counted as before. After three failed attempts the LP returns
+  `Failed(status)` for the last attempt, with status `"exception"` or `"nonfinite"` where that is how it failed.
+  `Failed.kind()` reports both under their own names: 2, 4, slab, exception, nonfinite, other.
+- `certified_max(harden, strict=False)`: with `strict=True` (F3 and F3a only) it returns NaN when any term is not
+  finite or the final sum overflows. `Failsafe.lp_cert` and `Failsafe.implied` treat a non-finite certified bound as
+  `Failed("nonfinite")`, so that LP takes its fallback. `AuditedF3` audits only finite bounds.
+- `online()` is unchanged. Any other error in a fold is still recorded as an uncertified alarm and scored FAIL, and
+  any other error elsewhere still stops the run. Neither is hidden.
+
+**Why no decision changes when no such event occurs (MATH):** on an LP whose inputs are finite, whose attempts raise
+nothing and whose status-0 answer and certificate are finite, every line of the new path computes what the old one
+did, in the same order: the same attempts, counters, return value and `Failed` status. The records can differ only
+where an exception or a non-finite value occurred. Each such event now takes a fallback that section "Amendment 10"
+already proves sound.
+
+**U0b, the solver-boundary path tests** (R0's harness style, DEV 430000, constructed by patching `rec_linprog` or
+`certified_max` for one chosen LP; expected outcomes written here before the run):
+1. exception on the first attempt of one fold direction, none after: solved by the second attempt; `n_retry` one
+   higher than without the exception; no failsafe counter changes;
+2. exception on all three attempts of one fold direction: `fold_dir_fallbacks["exception"] == 1`, the P_J bound is
+   taken for it (`fold_implied == 1`), no alarm;
+3. status 0 with a NaN inequality multiplier on all three attempts of one fold direction:
+   `fold_dir_fallbacks["nonfinite"] == 1`, no alarm;
+4. finite multipliers that make the certified bound overflow, on one fold direction:
+   `fold_dir_fallbacks["nonfinite"] == 1`, no alarm;
+5. a non-finite certificate on the "up" side of an alarm certificate on the fault row: `cert_fallbacks["nonfinite"]
+   == 1` and `"up"` in `box_sides`; any alarm raised is certified;
+6. exception on all attempts of one as-range side: `range_failures["exception"] == 1`, that z_t is not kept;
+7. a NaN in an LP's input: `solve_f3` raises `ValueError`; it does not return `Failed`;
+8. a `TypeError` raised by our own code in a fold (a patched `Failsafe._cub`): it propagates out of `online()`;
+9. a `MemoryError` raised inside `linprog`: it propagates;
+10. `Failed("exception").kind() == "exception"` and `Failed("nonfinite").kind() == "nonfinite"`.
+U0b passes if all ten hold. R0's 13 path tests are run again at the new commit and must still pass.
+
+**Identity criterion I2** (as I1, written before it ran; the comparison is every field except `seconds`, `step_ms`
+and `fold_step_ms`):
+- **I2a, Mac, now:** the 16 records of I1a (4 edge and 4 fault rows, settings none and d), new code against the
+  0ce80072 records already on the Mac.
+- **I2b, Arch, after all.done:** the new code on all rows of R-none, R-d and R-e, against the same settings at
+  0ce80072 on Arch. This replaces I1b, which would have compared an intermediate commit.
+- **I2c, F3a:** R4 (440243, unlocked with freeze 2's manifest as before) with the new code: the record and the audit
+  equal d207c9d1's R4 except wall-clock time.
+- **If every record is equal:** R1–R3 at 0ce80072 stand for the new commit, and the new commit is freeze 3's
+  candidate.
+- **If any record differs:** the change is not withdrawn (it closes G1 and G2). The difference is written down, and
+  every R setting that differs is run again in full at the new commit; U1–U3 are judged on those runs.
+
+**U5, the forced-fallback coverage test** (FREEZE-V3.md section 4, the condition of the slab rule; at the new commit):
+- **Rows:** DEV seeds 430000 and 430001: their 16 healthy rows (E0 and E1, rw and ramp, uniform and edge noise) and
+  4 fault rows (430000 and 430001 × cells drift_0.002 and stuck, E0, rw, uniform), all with F3a, W = 256, K = 64.
+- **Forcing:** on healthy rows at t = 300, 1000 and 2000, on fault rows at t = 250 (onsets are 300–600), a
+  measurement 10 °C above the box is written into the window at key t, just before step t + 1, past the keep gate,
+  as R0's `slab_empty` does. It replaces z_t if z_t was kept. Every LP that holds it fails with kind `slab`, so no
+  z is kept and nothing is evicted until the next fold, where every direction fails and the full reset removes it.
+- **Truth:** the generator's states in the model's coordinates: x_t = (Tc_t − Sc_t, Ts_t − Ss_t, TA_t) − 25, with
+  (Sc, Ss) the known response to the same command at zero ambient from the P0 = 20 steady state.
+- **Pass if all hold:**
+  - no alarm on a healthy row; every alarm on a fault row certified;
+  - at every fold, the true state at the new τ satisfies d_i · x ≤ base_i + 1e-9 °C for all 42 directions;
+  - at every alarm certificate computed, the true a_s at t lies inside its two certified bounds (+1e-9 °C);
+  - on fault rows these two checks apply only while every measurement used precedes the onset (fold at t < t_f,
+    certificate at t ≤ t_f): after the onset the data has no admissible explanation, so the plant state need not
+    lie in the window;
+  - each forcing is followed by slab failures and exactly one full reset, and the counters say so;
+  - every fault row detects after its last forced reset (the lag is reported);
+  - the exact audit finds no violation.
+- **Reported, not deciding:** the measurements dropped, the samples from forcing to reset, and each fault row's lag
+  against the same row without forcing.

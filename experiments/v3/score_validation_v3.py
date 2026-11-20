@@ -20,9 +20,14 @@ FALLBACKS = ("fold_dir_fallbacks", "fold_implied", "fold_apriori_fallbacks", "fo
 
 
 def failsafe_report(rows):
-    """sums of F3's failsafe counters over rows; dict counters are summed key by key"""
-    tot, rows_with_fallback = {}, 0
+    """sums of F3's failsafe counters over rows; dict counters are summed key by key. slab_rows: every row with an
+    empty-slab failure and its count by counter (the slab rule, FREEZE-V3.md section 4: each one is an invariant
+    violation to be explained; the sample is found by replaying the row, which is deterministic)"""
+    tot, rows_with_fallback, slab_rows = {}, 0, []
     for r in rows:
+        per = {k: v["slab"] for k, v in r["F3"]["failsafe"].items() if isinstance(v, dict) and v.get("slab", 0)}
+        if per:
+            slab_rows.append({"key": [r["seed"], r["cell"], r["arm"], r["ambient"], r["noise"]], "by_counter": per})
         any_fb = False
         for k, v in r["F3"]["failsafe"].items():
             if isinstance(v, dict):
@@ -35,7 +40,7 @@ def failsafe_report(rows):
                 any_fb |= k in FALLBACKS and v > 0
         rows_with_fallback += any_fb
     slab = sum(v.get("slab", 0) for v in tot.values() if isinstance(v, dict))
-    return {"totals": tot, "rows_with_fallback": rows_with_fallback, "slab_failures": slab}
+    return {"totals": tot, "rows_with_fallback": rows_with_fallback, "slab_failures": slab, "slab_rows": slab_rows}
 
 
 def as_f3(s):
@@ -70,6 +75,8 @@ def main():
           f"(largest {c['later_than_v2_largest_s']} s)  unproved={c['unproved_primal_alarms']}  "
           f"fallback rows={c['failsafe']['rows_with_fallback']}  slab={c['failsafe']['slab_failures']}  "
           f"{c['fail_reasons']}")
+    for x in c["failsafe"]["slab_rows"]:
+        print(f"INVARIANT VIOLATION (empty slab; reported, not deciding): {x['key']} {x['by_counter']}")
     print(f"identity {ident}  integrity problems {problems}")
     print(f"runs {s['runs']}  fault {s['fault_runs']}  uncertified oracle {s['uncertified_oracle']}  "
           f"events {s['detection_events']}")
