@@ -1,0 +1,81 @@
+{
+ "freeze": "v3-freeze-3",
+ "validation_block": [
+  440400,
+  440599
+ ],
+ "reserved_after_this_block": [
+  440600,
+  440999
+ ],
+ "cells": [
+  "healthy",
+  "jump_0.2",
+  "jump_0.5",
+  "drift_0.0005",
+  "drift_0.001",
+  "drift_0.002",
+  "drift_0.005",
+  "drift_0.02",
+  "noise_x2",
+  "stuck",
+  "gain_0.01"
+ ],
+ "arms": [
+  "E0",
+  "E1"
+ ],
+ "laws_all_cells": [
+  [
+   "rw",
+   "uniform"
+  ],
+  [
+   "ramp",
+   "uniform"
+  ]
+ ],
+ "laws_healthy_extra": [
+  [
+   "rw",
+   "edge"
+  ],
+  [
+   "ramp",
+   "edge"
+  ]
+ ],
+ "record_length": 3600,
+ "uncertified_limit_fraction_of_fault_runs": 0.01,
+ "candidate": {
+  "name": "F3",
+  "variant": "F3",
+  "W": 256,
+  "B": 16,
+  "K": 64,
+  "pad_C": 1e-06,
+  "directions_file": "experiments/v3/frozen/cyl16p.json",
+  "directions_sha256": "7f9cc8700fdd70782ddaf4a7e99a2e2c2f5818ce4aafa970f897b40e90a7747e",
+  "target_paired_lag_reduction": 0.8
+ },
+ "files": {
+  "experiments/v3/run_validation_v3.py": "b834073700ef7784fdcd14df09acb95f821e610362b1b1e63f886ba598c7f3f9",
+  "experiments/v3/score_validation_v3.py": "f32d74931b7b714aa3cf1b65d25d7c8908c26838c7619195793f07e52bc70696",
+  "experiments/v3/score_validation_v2.py": "c46c092b8c2574cc62daf25d7f12e9967f27bf1475cec710d08ce68d6d1e2ba5",
+  "experiments/v3/run_validation.py": "9cb899ea770dd8b60e37e80c6686a77ef5a662d3b7a5e5f41a294a23111920a3",
+  "experiments/v3/score_validation.py": "96c347455888d3f8944788941e6920121ef36f444f0e3bcd4a8f105bbb9104da",
+  "experiments/v3/template_state.py": "6f8409274cdc583f3ed48aca372fc08fccd9970f106ae516291f39a5a6894666",
+  "experiments/v3/dev_scenarios.py": "a1b204efde095c4d36d2aab4ca503970386a2761485b3c84f3ec8da2503c363f",
+  "experiments/v3/diag/diag1.py": "698cb0b0ad81d1501caebf458db4aad924b888cb14b9b81794a31300dfdd382b",
+  "experiments/v3/diag/diag3.py": "ce64b0ef2d6d477715252f0a0285b2400f585083f34b1f37a6305c07f54b3ad1",
+  "experiments/v3/diag/diag3_dev.py": "0dbba0562ae633807615d043c481db70b71167f4666be6de6ed0fdf309efcfb9",
+  "experiments/v3/diag/diag3_cw.py": "1d68dc6b586c4928bdde098019a60eb57e3d84072643cd89b6ed92909be51fb3",
+  "experiments/v3/diag/diag3_cw_dev.py": "a911bf9969fc156f3191d2b946ad5654d79615532b699d3622c41879e894dce4",
+  "experiments/v3/frozen/cyl16p.json": "7f9cc8700fdd70782ddaf4a7e99a2e2c2f5818ce4aafa970f897b40e90a7747e",
+  "experiments/generators/thermal.py": "d742012e138402525382eee26e0d6dba87bd224267dc733a75f1e693f98ce481",
+  "experiments/oracle/thermal_oracle.py": "7f4b8da3064675e29f88a7f676e8d0318982fdbde1b5b355e1c83d2238f92e74",
+  "experiments/machine/thermal_machine.py": "0337f7b8520ff581ef8ec7d321de2cd69458396c44c0bbfb43bbdb34a78f2796",
+  "env/thermal_v2_env.py": "40740690aa7a0cea680e7496b391e1632a796075afcb1206b153e61a873644b6",
+  "env/requirements-thermal-v2.txt": "7f25d6435e8b664fe179e4cc57ec7c36b61c9f32ad9c7285a1723e3612b4cd2d"
+ }
+}

@@ -2,7 +2,7 @@
 
 Status: DRAFT, not approved
 
-Manifest sha256: [written when the manifest is generated at the frozen code]
+Manifest sha256: 0a40cbdf863da6eb046a1c76726d53bf2e967bfa3e0056b1ac15b87cbc7b85c7
 
 Prepared 2026-11-20 on branch `sdts-v3/template-state` for Can Koç's review. The target and the reading of a failure
 are Can's to set. Everything here is a proposal until the status line says APPROVED. `run_validation_v3.py` refuses
@@ -157,7 +157,10 @@ freeze 2.
 - `score_validation_v3.py` calls `score_validation_v2.score()` unchanged, with F3's record in F's place. Scored on
   freeze 2's own rows, it gives freeze 2's scores, field for field (checked when it was written).
 
-`frozen/MANIFEST-V3.json` [sha256 above, once generated] fixes:
+`frozen/MANIFEST-V3.json` fixes the following. Its sha256 is above. It was generated on 2026-11-20 at the frozen
+code, with `diag3_cw.py` as at `b57b5a39`.
+
+It fixes:
 - the data block, cells and laws;
 - the candidate (variant F3, W = 256, B = 16, K_cap = 64, pad 1e-6, cyl16p's directions by sha256) and its target;
 - every file the validation depends on, by sha256: freeze 2's list, with the V3 runner and scorer, and the V2 scorer
@@ -165,7 +168,28 @@ freeze 2.
 
 `run_validation_v3.py` refuses to run if any of them differs.
 
-[The file table goes here, from the manifest.]
+| file | sha256 |
+|---|---|
+| `experiments/v3/run_validation_v3.py` | `b834073700ef7784fdcd14df09acb95f821e610362b1b1e63f886ba598c7f3f9` |
+| `experiments/v3/score_validation_v3.py` | `f32d74931b7b714aa3cf1b65d25d7c8908c26838c7619195793f07e52bc70696` |
+| `experiments/v3/score_validation_v2.py` | `c46c092b8c2574cc62daf25d7f12e9967f27bf1475cec710d08ce68d6d1e2ba5` |
+| `experiments/v3/run_validation.py` | `9cb899ea770dd8b60e37e80c6686a77ef5a662d3b7a5e5f41a294a23111920a3` |
+| `experiments/v3/score_validation.py` | `96c347455888d3f8944788941e6920121ef36f444f0e3bcd4a8f105bbb9104da` |
+| `experiments/v3/template_state.py` | `6f8409274cdc583f3ed48aca372fc08fccd9970f106ae516291f39a5a6894666` |
+| `experiments/v3/dev_scenarios.py` | `a1b204efde095c4d36d2aab4ca503970386a2761485b3c84f3ec8da2503c363f` |
+| `experiments/v3/diag/diag1.py` | `698cb0b0ad81d1501caebf458db4aad924b888cb14b9b81794a31300dfdd382b` |
+| `experiments/v3/diag/diag3.py` | `ce64b0ef2d6d477715252f0a0285b2400f585083f34b1f37a6305c07f54b3ad1` |
+| `experiments/v3/diag/diag3_dev.py` | `0dbba0562ae633807615d043c481db70b71167f4666be6de6ed0fdf309efcfb9` |
+| `experiments/v3/diag/diag3_cw.py` | `1d68dc6b586c4928bdde098019a60eb57e3d84072643cd89b6ed92909be51fb3` |
+| `experiments/v3/diag/diag3_cw_dev.py` | `a911bf9969fc156f3191d2b946ad5654d79615532b699d3622c41879e894dce4` |
+| `experiments/v3/frozen/cyl16p.json` | `7f9cc8700fdd70782ddaf4a7e99a2e2c2f5818ce4aafa970f897b40e90a7747e` |
+| `experiments/generators/thermal.py` | `d742012e138402525382eee26e0d6dba87bd224267dc733a75f1e693f98ce481` |
+| `experiments/oracle/thermal_oracle.py` | `7f4b8da3064675e29f88a7f676e8d0318982fdbde1b5b355e1c83d2238f92e74` |
+| `experiments/machine/thermal_machine.py` | `0337f7b8520ff581ef8ec7d321de2cd69458396c44c0bbfb43bbdb34a78f2796` |
+| `env/thermal_v2_env.py` | `40740690aa7a0cea680e7496b391e1632a796075afcb1206b153e61a873644b6` |
+| `env/requirements-thermal-v2.txt` | `7f25d6435e8b664fe179e4cc57ec7c36b61c9f32ad9c7285a1723e3612b4cd2d` |
+
+Validation block: seeds 440400–440599; 440600–440999 stay reserved. Record length 3600 samples.
 
 **Environment:** the thermal v2 lock: CPython 3.12.13, numpy 2.5.5, scipy 1.18.1 and HiGHS 1.12.0. It is checked at
 start and recorded.
