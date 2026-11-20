@@ -941,3 +941,17 @@ with the underflow term. Two sentences above are wrong as written. They stay as 
 - **Docstrings.** Two docstrings in `diag3_cw.py` state the same claims: a strict bound "equals the non-strict one",
   and the term "is exact". The file stays byte for byte as at `b57b5a39`, so that the frozen file is the one every
   test ran on. The docstrings are corrected after the freeze, with the general fixes.
+
+**U5b: run on Can's OK (2026-11-20, about 12:30; written before it ran).** The script is `diag/amend10_u5b.py`,
+committed with this paragraph. It runs on the Mac, at the commit that adds both, with 4 workers. The code is the
+frozen candidate's: `diag3_cw.py` as at `b57b5a39`. U5 ran at `1c0439cd`, with the fourth addendum's code.
+- **Rows and forcing:** as proposed above. Each row also runs unforced, to report its lag.
+- **Two preconditions** are checked and fail U5b if they do not hold: every row has an oracle t*, and every onset
+  comes after the forcing at 250.
+- **Pass if, on every forced row:**
+  - the row raises an alarm, and it is certified;
+  - every fold before the onset holds the true state (at least one fold is checked);
+  - every alarm certificate up to the onset holds the true a_s;
+  - the forcing gives exactly one full reset, 42 slab fold failures and some slab range failures;
+  - the detection comes after that reset;
+  - the exact audit finds no violation.
