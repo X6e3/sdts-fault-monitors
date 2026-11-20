@@ -1,0 +1,88 @@
+{
+ "key": [
+  440243,
+  "healthy",
+  "E0",
+  "ramp",
+  "edge"
+ ],
+ "U4": true,
+ "u4": {
+  "all_samples": true,
+  "no_alarm": true,
+  "dir40_at_945_implied": true,
+  "audit_no_violation": true
+ },
+ "implied_log": [
+  {
+   "t": 945,
+   "dir": 40,
+   "bound": -0.20897322193454337,
+   "apriori": 1.68331144581706,
+   "n_solved": 41
+  }
+ ],
+ "audit": {
+  "n": 9634,
+  "min_slack_C": 1.1440772059889826e-14,
+  "violations": 0,
+  "max_gap_to_value_C": 5.270099415627394e-05,
+  "max_coefficient_term_C": 2.8847001176668385e-11,
+  "n_implied": 1,
+  "min_slack_implied_C": 3.895647225313821e-14
+ },
+ "record": {
+  "variant": "F3a",
+  "W": 256,
+  "K": 64,
+  "evictions": 3534,
+  "unproved_primal_alarms": 0,
+  "detect": null,
+  "margin_at_detect_mC": null,
+  "margin_at_t_star_mC": null,
+  "alarm_certificate": null,
+  "folds_raised_to_dual_bound": 6,
+  "largest_raise_C": 5.170099415627394e-05,
+  "max_kept": 65,
+  "max_nodes": 66,
+  "max_vars": 679,
+  "max_rows": 445,
+  "n_lp": 15935,
+  "n_retry": 11,
+  "n_resolve": 0,
+  "max_ta_rows": 0,
+  "steps": 3599,
+  "step_ms": {
+   "median": 14.261383039411157,
+   "p95": 35.227148997364566,
+   "max": 53.513524995651096
+  },
+  "fold_step_ms": {
+   "median": 622.7260540181305,
+   "max": 741.2319050054066
+  },
+  "failsafe": {
+   "fold_dir_fallbacks": {
+    "4": 1
+   },
+   "fold_implied": 1,
+   "fold_apriori_fallbacks": {},
+   "fold_full_resets": 0,
+   "range_fallbacks": {
+    "one": 0,
+    "both": 0
+   },
+   "range_failures": {},
+   "cert_fallbacks": {},
+   "box_alarms": 0,
+   "measurements_not_kept": 0
+  },
+  "seconds": 185.9
+ },
+ "meta": {
+  "git_head": "b57b5a397cb33700041405979b36d6b695855fa2",
+  "git_dirty_tracked": false,
+  "platform": "Linux-7.3.4-arch1-2-x86_64-with-glibc2.44",
+  "seconds": 185.9
+ }
+}

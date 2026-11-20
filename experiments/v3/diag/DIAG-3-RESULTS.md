@@ -709,9 +709,23 @@ No setting made a detection earlier than F's.
 - In every setting a failure made a detection later or missed it, never wrong. These rates were chosen to reach every
   path; they are not a model of real failure rates (FREEZE-V3 section 7).
 
-**R3, the exact audit (U3):** on the Mac, at `0ce80072`, settings a, b and e with F3a.
-- Settings a and b are done.
-- Setting e is running. Not read yet.
+**R3, the exact audit (U3): passes.** Mac, at `0ce80072`, clean tree, F3a, 8 workers, settings a, b and e one after
+another, 2026-11-19 23:10 to 2026-11-20 12:26. Summaries and the criteria (`amend10.py criteria` with `--r3`) at
+`6c3af845`. The summaries `0ce80072`'s own code wrote are kept as `R3-*.summary-0ce80072.json`; their 18 shared
+scalar flags agree. Everything is in `results/v3/diag3/amend10-r3-0ce80072-mac/`.
+
+| setting | bounds audited | of them P_J bounds | violations | smallest slack | smallest P_J slack | CPU-h |
+|---|---|---|---|---|---|---|
+| a | 4,319,122 | 39,033 | 0 | 8.2e-16 °C | 2.0e-14 °C | 38.0 |
+| b | 4,319,122 | 386,724 | 0 | 8.2e-16 °C | 1.7e-14 °C | 34.3 |
+| e | 3,933,928 | 0 | 0 | 8.2e-16 °C | — | 33.6 |
+
+- **U3 passes:** no violation in any setting, and 425,757 P_J bounds audited in all.
+- In e every P_J LP is injected to fail, so no P_J bound exists to audit. Its 385,194 fewer audited bounds are
+  exactly those.
+- Each setting's U2 flags pass here too.
+- [OBSERVED] F3a on the Mac detects at the same sample as F3 on Arch on all 4,200 rows. It is the same code at
+  `0ce80072`, on another platform and with the audit added. This is not a criterion.
 
 **Third addendum, I1a: passes.** Mac, 2026-11-20 02:10–02:50. The old code (`0ce80072`) and the new (`000cd215`) ran
 side by side, two processes at nice 19, while R3 ran. Inputs: 4 healthy edge rows (430070 E0/E1 × rw/ramp) and 4
@@ -762,4 +776,36 @@ script). Mac, 2026-11-20 04:10–05:30, nice 19, while R3 ran. Outputs in `resul
     unforced run.
   - The certificate-coverage check was never exercised: no alarm certificate was computed before an onset.
 - **U5b** (DIAG-3-PLAN, proposed after U5's result, not run): the fault part again with rows the oracle detects.
-- **I2b and I2c:** not run. Can, 2026-11-20 04:40: no big runs on Arch without his go; I2b's size is his to set.
+- **I2b and I2c:** not run at `8c55e19e`. Can, 2026-11-20 04:40: no big runs on Arch without his go; I2b's size is
+  his to set. Both run at the fifth addendum's commit (below).
+
+**Fifth addendum (review M2's findings), at `b57b5a39`.** Its scripts were committed with the code, before they ran.
+- **Where and when:** Mac, 2026-11-20 11:08–11:44, nice 19, while R3-e ran; I2c on Arch.
+- **Outputs:** `results/v3/diag3/amend10-fifth-b57b5a39-mac/` and `-arch/`.
+- **U0c: passes, 4 of 4** (`diag/amend10_u0c.py`):
+  - **inputs:** five malformed inputs raise `ValueError` with no solver call and nothing counted. They are a (2, 2)
+    objective, `b_ub` without `A_ub`, `A_ub` without `b_ub`, a rank-2 `b_ub`, and lb > ub.
+  - **wrong-length multipliers:** an empty `lower`, a short `upper` and an empty `ineqlin` each fail as `nonfinite`
+    after three attempts. In a fold (t = 289, direction 40, empty `lower`): `fold_dir_fallbacks` {nonfinite: 1}, the
+    P_J bound, no alarm.
+  - **M2's underflow LP:** the strict bound is 15 · 2^−1074, against the exact maximum 2^−1076. The fourth
+    addendum's bound was 0.
+  - **error state:** under `np.errstate(all="raise")` the overflow case returns NaN, and the caller's state is
+    restored. The fourth addendum's function raises `FloatingPointError` there.
+- **U0b 10 of 10 and R0 13 of 13**, again at this commit.
+- **I2a: passes again.** The 16 records equal `0ce80072`'s in every field but wall-clock time. |zs| ≤ 65 and the
+  record ⊆ zs hold at all 48,460 checks.
+- **I3: passes** (`diag/amend10_i3.py`). On R0's and I2a's rows, 90,153 strict bounds were evaluated by both
+  functions: this one, and the fourth addendum's, verbatim from `1c0439cd` and checked against git. They are equal
+  bit for bit on all of them. This is a measurement on those rows, not a property (review M3).
+- **I2c: passes.** Arch, 185.9 s, 440243 with F3a. Compared with R4 of the R1–R2 drive (`0ce80072`) by
+  `diag/amend10_i2c_compare.py`, the following are equal:
+  - the record, in every field but wall-clock time;
+  - the audit of 9,634 bounds;
+  - the implied-bound log.
+
+  U4 passes again.
+- **I2b:** running on Arch at `1ca4df40`, which holds `b57b5a39`'s code. Its selection was fixed before the run
+  (DIAG-3-PLAN).
+- **Review M3** checked this commit (FREEZE-V3 section 5). There is no sixth addendum, and `diag3_cw.py` stays byte for
+  byte as at `b57b5a39`.

@@ -1,0 +1,114 @@
+{
+ "none/edge-430070-E0-rw": {
+  "max_zs": 65,
+  "max_last_active": 65,
+  "subset_violations": 0,
+  "checks": 7342,
+  "seconds": 222.8
+ },
+ "none/edge-430070-E0-ramp": {
+  "max_zs": 65,
+  "max_last_active": 65,
+  "subset_violations": 0,
+  "checks": 7342,
+  "seconds": 217.8
+ },
+ "none/edge-430070-E1-rw": {
+  "max_zs": 65,
+  "max_last_active": 65,
+  "subset_violations": 0,
+  "checks": 7342,
+  "seconds": 211.7
+ },
+ "none/edge-430070-E1-ramp": {
+  "max_zs": 65,
+  "max_last_active": 65,
+  "subset_violations": 0,
+  "checks": 7342,
+  "seconds": 222.9
+ },
+ "none/430000-drift_0.0005-E0-ramp-uniform": {
+  "max_zs": 44,
+  "max_last_active": 44,
+  "subset_violations": 0,
+  "checks": 475,
+  "seconds": 131.1
+ },
+ "none/430002-jump_0.2-E0-ramp-uniform": {
+  "max_zs": 26,
+  "max_last_active": 26,
+  "subset_violations": 0,
+  "checks": 53,
+  "seconds": 11.7
+ },
+ "none/430005-drift_0.005-E0-ramp-uniform": {
+  "max_zs": 34,
+  "max_last_active": 34,
+  "subset_violations": 0,
+  "checks": 84,
+  "seconds": 19.0
+ },
+ "none/430008-drift_0.0005-E0-ramp-uniform": {
+  "max_zs": 33,
+  "max_last_active": 33,
+  "subset_violations": 0,
+  "checks": 308,
+  "seconds": 87.0
+ },
+ "d/edge-430070-E0-rw": {
+  "max_zs": 65,
+  "max_last_active": 65,
+  "subset_violations": 0,
+  "checks": 4064,
+  "seconds": 157.5
+ },
+ "d/edge-430070-E0-ramp": {
+  "max_zs": 65,
+  "max_last_active": 65,
+  "subset_violations": 0,
+  "checks": 4064,
+  "seconds": 163.8
+ },
+ "d/edge-430070-E1-rw": {
+  "max_zs": 65,
+  "max_last_active": 65,
+  "subset_violations": 0,
+  "checks": 4064,
+  "seconds": 158.3
+ },
+ "d/edge-430070-E1-ramp": {
+  "max_zs": 65,
+  "max_last_active": 65,
+  "subset_violations": 0,
+  "checks": 4064,
+  "seconds": 163.2
+ },
+ "d/430000-drift_0.0005-E0-ramp-uniform": {
+  "max_zs": 38,
+  "max_last_active": 38,
+  "subset_violations": 0,
+  "checks": 843,
+  "seconds": 127.0
+ },
+ "d/430002-jump_0.2-E0-ramp-uniform": {
+  "max_zs": 24,
+  "max_last_active": 24,
+  "subset_violations": 0,
+  "checks": 71,
+  "seconds": 11.5
+ },
+ "d/430005-drift_0.005-E0-ramp-uniform": {
+  "max_zs": 25,
+  "max_last_active": 25,
+  "subset_violations": 0,
+  "checks": 119,
+  "seconds": 18.9
+ },
+ "d/430008-drift_0.0005-E0-ramp-uniform": {
+  "max_zs": 27,
+  "max_last_active": 27,
+  "subset_violations": 0,
+  "checks": 883,
+  "seconds": 123.7
+ }
+}

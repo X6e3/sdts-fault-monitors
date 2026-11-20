@@ -1,0 +1,81 @@
+{
+ "ok": {
+  "1_exception_first_attempt": true,
+  "2_exception_all_attempts": true,
+  "3_nonfinite_multiplier": true,
+  "4_certificate_overflow": true,
+  "5_certificate_side_nonfinite": true,
+  "6_range_exception": true,
+  "7_nonfinite_input_raises": true,
+  "8_own_error_propagates": true,
+  "9_memory_error_propagates": true,
+  "10_kinds": true
+ },
+ "U0b": true,
+ "details": {
+  "1": {
+   "n_retry": [
+    0,
+    1
+   ],
+   "failsafe": {}
+  },
+  "2": {
+   "fold_dir_fallbacks": {
+    "exception": 1
+   },
+   "fold_implied": 1
+  },
+  "3": {
+   "fold_dir_fallbacks": {
+    "nonfinite": 1
+   },
+   "fold_implied": 1
+  },
+  "4": {
+   "hits": 1,
+   "failsafe": {
+    "fold_dir_fallbacks": {
+     "nonfinite": 1
+    },
+    "fold_implied": 1
+   }
+  },
+  "5": {
+   "base_detect": 420,
+   "detect": 425,
+   "cert_at_ta": {
+    "certified": false,
+    "certified_margin_mC": 743.9266692080358,
+    "box_sides": [
+     "up"
+    ]
+   },
+   "failsafe": {
+    "cert_fallbacks": {
+     "nonfinite": 1
+    }
+   }
+  },
+  "6": {
+   "t": 57,
+   "failsafe": {
+    "range_fallbacks": {
+     "one": 1,
+     "both": 0
+    },
+    "range_failures": {
+     "exception": 1
+    },
+    "measurements_not_kept": 1
+   }
+  },
+  "7": "F3: a non-finite LP input",
+  "8": "simulated error in our own code",
+  "9": "simulated"
+ },
+ "healthy_row": "430000-healthy-E0-rw-uniform",
+ "fault_row": "430000-jump_0.2-E0-rw-uniform",
+ "git_head": "b57b5a397cb33700041405979b36d6b695855fa2",
+ "git_dirty_tracked": false
+}

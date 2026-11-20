@@ -1,0 +1,13 @@
+{
+ "setting": "b",
+ "variant": "F3a",
+ "W": 256,
+ "K": 64,
+ "workers": 8,
+ "git_head": "0ce80072f6eead16b12c5d7d4cb6170004efbc38",
+ "git_dirty_tracked": false,
+ "machine": "arm64",
+ "platform": "macOS-27.0-arm64-arm-64bit",
+ "started": "2026-11-20T03:56:20+0300",
+ "finished": "2026-11-20T08:13:41+0300"
+}

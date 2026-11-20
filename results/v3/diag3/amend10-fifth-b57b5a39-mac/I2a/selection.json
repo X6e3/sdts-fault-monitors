@@ -1,0 +1,1 @@
+{"edge": [[430070, "E0", "rw"], [430070, "E0", "ramp"], [430070, "E1", "rw"], [430070, "E1", "ramp"]], "dev": ["430000-drift_0.0005-E0-ramp-uniform", "430002-jump_0.2-E0-ramp-uniform", "430005-drift_0.005-E0-ramp-uniform", "430008-drift_0.0005-E0-ramp-uniform"]}

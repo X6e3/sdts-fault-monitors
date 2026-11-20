@@ -9,9 +9,8 @@ are Can's to set. Everything here is a proposal until the status line says APPRO
 to generate validation data until then (section 6).
 
 **Open items before review** (each is filled in from its own record, as it comes out):
-- I2b: the frozen code against 0ce80072 on Arch; its size is Can's to set (no big runs on Arch without his go);
-  I2c: R4 with the exact audit (section 5);
-- R3 and U3 (R1–R2 are in: U1 and U2 pass, section 5);
+- I2b: the frozen code against 0ce80072 on Arch, set by Can (all of setting none, a sample of b, d and e), running
+  (section 5). R1–R3 are in: U1, U2 and U3 pass, and so do I2a, I2c and I3 (section 5);
 - U5: the forced-fallback coverage test (section 4, the slab rule's condition): failed as written on its fault-row
   criteria (two rows had no detectable event); U5b proposed, needs Can's OK (section 5);
 - tests of the scorer on small constructed row sets, one per verdict branch and per counter (section 4);
@@ -258,11 +257,12 @@ edge-noise rows.
 - Each failure made a detection later or missed it, never wrong. Setting f fails every upper certificate. An alarm
   that only the upper side can prove then waits until z leaves the box.
 
-R1 and R2 ran at `0ce80072`. They stand for the frozen code only if every I2 record is equal (below). I2a passes; I2b
-and I2c are open.
+R1 and R2 ran at `0ce80072`. They stand for the frozen code only if every I2 record is equal (below). I2a and I2c
+pass; I2b is running.
 
-**The exact audit** [U3, R3 on the Mac: settings a, b and e with F3a, no violation]. Settings a and b are done; e is
-running.
+**The exact audit (U3, R3 on the Mac): passes.** F3a on settings a, b and e: 12,572,172 bounds audited in exact
+rational arithmetic, 425,757 of them P_J bounds, with no violation. The smallest slack is 8.2e-16 °C, and 1.7e-14 °C
+for a P_J bound. On all 4,200 rows F3a on the Mac detects at the same sample as F3 on Arch.
 
 **The path tests (U0, R0): 13 of 13 pass.**
 
@@ -278,10 +278,22 @@ and the fallback takes the P_J bound −0.20897 °C from the 41 solved faces (a 
 - I1b is replaced by I2 (fourth addendum), which compares the frozen code with 0ce80072 directly:
   - **I2a (Mac): passes.** The 16 records of I1a, new code against 0ce80072: equal in every field but wall-clock
     time; |zs| ≤ 65 and the record ⊆ zs at all 48,460 checks.
-  - [I2b, Arch: size to be set by Can.] [I2c: R4 with the exact audit.]
-- **U0b: passes, 10 of 10**, and R0 13 of 13 at `8c55e19e`: solver exceptions and non-finite answers take their
-  fallbacks under their own reason codes; our own errors (a NaN input, a `TypeError` in a fold, a `MemoryError`)
-  propagate.
+  - **I2a again at `b57b5a39`** (the fifth addendum): passes.
+  - **I2c (Arch, `b57b5a39`): passes.** For 440243 with F3a, these equal R4 of the R1–R2 drive:
+    - the record, but for wall-clock time;
+    - the audit of 9,634 bounds;
+    - the implied-bound log.
+  - **I3 (`b57b5a39`): passes.** 90,153 strict bounds are equal bit for bit to the fourth addendum's, on R0's and
+    I2a's rows.
+  - [I2b, Arch, at `1ca4df40` (`b57b5a39`'s code): all 1,400 rows of setting none and 460 of b, d and e. Running.]
+- **U0b: passes, 10 of 10**, and R0 13 of 13 at `8c55e19e`, and both again at `b57b5a39`. Solver exceptions and
+  non-finite answers take their fallbacks under their own reason codes. Our own errors (a NaN input, a `TypeError`
+  in a fold, a `MemoryError`) propagate.
+- **U0c: passes, 4 of 4** at `b57b5a39`. These are M2's witnesses:
+  - malformed inputs raise before any solver call;
+  - multiplier arrays of the wrong length fail as `nonfinite`;
+  - the underflow LP's strict bound is 15 · 2^−1074 ≥ 2^−1076;
+  - the overflow case returns NaN under `np.errstate(all="raise")`.
 - **U5: fails as written, on 2 of 7 criteria, both about fault rows.** Two of its four fault rows (stuck, E0) have no
   oracle detection, so no sound method can detect them, and F3 does not, forced or not. Everything about the
   fallback passes: no alarm on 16 healthy rows; the true state inside the new base at all 3,388 checked folds

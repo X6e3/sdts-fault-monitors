@@ -1,0 +1,101 @@
+{
+ "ok": {
+  "1_shape_errors_raise": true,
+  "2_malformed_multipliers_fail_as_nonfinite": true,
+  "3_underflow_bound_sound": true,
+  "4_overflow_nan_under_errstate_raise": true
+ },
+ "U0c": true,
+ "details": {
+  "1": {
+   "objective_2x2": {
+    "raised": "ValueError: F3: an objective of shape (2, 2)",
+    "solver_calls": 0,
+    "n_lp": 0
+   },
+   "b_ub_without_A_ub": {
+    "raised": "ValueError: F3: A_ub and b_ub must be given together",
+    "solver_calls": 0,
+    "n_lp": 0
+   },
+   "A_ub_without_b_ub": {
+    "raised": "ValueError: F3: A_ub and b_ub must be given together",
+    "solver_calls": 0,
+    "n_lp": 0
+   },
+   "b_ub_rank_2": {
+    "raised": "ValueError: F3: b_ub of shape (1, 1)",
+    "solver_calls": 0,
+    "n_lp": 0
+   },
+   "lb_above_ub": {
+    "raised": "ValueError: F3: a lower bound above its upper bound",
+    "solver_calls": 0,
+    "n_lp": 0
+   }
+  },
+  "2": {
+   "control": {
+    "value": 4.0,
+    "n_retry": 0
+   },
+   "lower": {
+    "returned": "Failed('nonfinite')",
+    "kind": "nonfinite",
+    "n_retry": 3,
+    "n_lp": 1
+   },
+   "upper": {
+    "returned": "Failed('nonfinite')",
+    "kind": "nonfinite",
+    "n_retry": 3,
+    "n_lp": 1
+   },
+   "ineqlin": {
+    "returned": "Failed('nonfinite')",
+    "kind": "nonfinite",
+    "n_retry": 3,
+    "n_lp": 1
+   },
+   "fold_289_dir40_lower_empty": {
+    "hits": 3,
+    "fold_dir_fallbacks": {
+     "nonfinite": 1
+    },
+    "fold_implied": 1,
+    "detect": null
+   }
+  },
+  "3": {
+   "solve": "-0.0",
+   "status": 0,
+   "exact_max": "2^-1076",
+   "new_strict": {
+    "False": "0x0.000000000000fp-1022",
+    "True": "0x0.000000000000fp-1022"
+   },
+   "old_strict": {
+    "False": "0x0.0p+0",
+    "True": "0x0.0p+0"
+   },
+   "new_minus_exact_units_2^-1076": {
+    "False": "59",
+    "True": "59"
+   }
+  },
+  "4": {
+   "solve": "4.0",
+   "new": "nan",
+   "errstate_after_call": {
+    "divide": "raise",
+    "over": "raise",
+    "under": "raise",
+    "invalid": "raise"
+   },
+   "old": "raised FloatingPointError: overflow encountered in multiply"
+  }
+ },
+ "healthy_row": "430000-healthy-E0-rw-uniform",
+ "git_head": "b57b5a397cb33700041405979b36d6b695855fa2",
+ "git_dirty_tracked": false
+}

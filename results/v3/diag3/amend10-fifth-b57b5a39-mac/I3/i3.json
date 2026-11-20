@@ -1,0 +1,169 @@
+{
+ "old_source_matches_1c0439cd": true,
+ "R0": {
+  "n_strict": 2233,
+  "n_old_finite": 2233,
+  "n_equal": 2233,
+  "n_differ": 0,
+  "n_old_nonfinite": 0,
+  "n_new_nan_where_old_nonfinite": 0,
+  "diffs_first_50": []
+ },
+ "I2a_rows": {
+  "none/edge-430070-E0-rw": {
+   "n_strict": 8736,
+   "n_old_finite": 8736,
+   "n_equal": 8736,
+   "n_differ": 0,
+   "n_old_nonfinite": 0,
+   "n_new_nan_where_old_nonfinite": 0,
+   "diffs_first_50": []
+  },
+  "none/edge-430070-E0-ramp": {
+   "n_strict": 8736,
+   "n_old_finite": 8736,
+   "n_equal": 8736,
+   "n_differ": 0,
+   "n_old_nonfinite": 0,
+   "n_new_nan_where_old_nonfinite": 0,
+   "diffs_first_50": []
+  },
+  "none/edge-430070-E1-rw": {
+   "n_strict": 8736,
+   "n_old_finite": 8736,
+   "n_equal": 8736,
+   "n_differ": 0,
+   "n_old_nonfinite": 0,
+   "n_new_nan_where_old_nonfinite": 0,
+   "diffs_first_50": []
+  },
+  "none/edge-430070-E1-ramp": {
+   "n_strict": 8736,
+   "n_old_finite": 8736,
+   "n_equal": 8736,
+   "n_differ": 0,
+   "n_old_nonfinite": 0,
+   "n_new_nan_where_old_nonfinite": 0,
+   "diffs_first_50": []
+  },
+  "none/430000-drift_0.0005-E0-ramp-uniform": {
+   "n_strict": 6680,
+   "n_old_finite": 6680,
+   "n_equal": 6680,
+   "n_differ": 0,
+   "n_old_nonfinite": 0,
+   "n_new_nan_where_old_nonfinite": 0,
+   "diffs_first_50": []
+  },
+  "none/430002-jump_0.2-E0-ramp-uniform": {
+   "n_strict": 548,
+   "n_old_finite": 548,
+   "n_equal": 548,
+   "n_differ": 0,
+   "n_old_nonfinite": 0,
+   "n_new_nan_where_old_nonfinite": 0,
+   "diffs_first_50": []
+  },
+  "none/430005-drift_0.005-E0-ramp-uniform": {
+   "n_strict": 926,
+   "n_old_finite": 926,
+   "n_equal": 926,
+   "n_differ": 0,
+   "n_old_nonfinite": 0,
+   "n_new_nan_where_old_nonfinite": 0,
+   "diffs_first_50": []
+  },
+  "none/430008-drift_0.0005-E0-ramp-uniform": {
+   "n_strict": 4622,
+   "n_old_finite": 4622,
+   "n_equal": 4622,
+   "n_differ": 0,
+   "n_old_nonfinite": 0,
+   "n_new_nan_where_old_nonfinite": 0,
+   "diffs_first_50": []
+  },
+  "d/edge-430070-E0-rw": {
+   "n_strict": 6552,
+   "n_old_finite": 6552,
+   "n_equal": 6552,
+   "n_differ": 0,
+   "n_old_nonfinite": 0,
+   "n_new_nan_where_old_nonfinite": 0,
+   "diffs_first_50": []
+  },
+  "d/edge-430070-E0-ramp": {
+   "n_strict": 6552,
+   "n_old_finite": 6552,
+   "n_equal": 6552,
+   "n_differ": 0,
+   "n_old_nonfinite": 0,
+   "n_new_nan_where_old_nonfinite": 0,
+   "diffs_first_50": []
+  },
+  "d/edge-430070-E1-rw": {
+   "n_strict": 6552,
+   "n_old_finite": 6552,
+   "n_equal": 6552,
+   "n_differ": 0,
+   "n_old_nonfinite": 0,
+   "n_new_nan_where_old_nonfinite": 0,
+   "diffs_first_50": []
+  },
+  "d/edge-430070-E1-ramp": {
+   "n_strict": 6552,
+   "n_old_finite": 6552,
+   "n_equal": 6552,
+   "n_differ": 0,
+   "n_old_nonfinite": 0,
+   "n_new_nan_where_old_nonfinite": 0,
+   "diffs_first_50": []
+  },
+  "d/430000-drift_0.0005-E0-ramp-uniform": {
+   "n_strict": 6176,
+   "n_old_finite": 6176,
+   "n_equal": 6176,
+   "n_differ": 0,
+   "n_old_nonfinite": 0,
+   "n_new_nan_where_old_nonfinite": 0,
+   "diffs_first_50": []
+  },
+  "d/430002-jump_0.2-E0-ramp-uniform": {
+   "n_strict": 422,
+   "n_old_finite": 422,
+   "n_equal": 422,
+   "n_differ": 0,
+   "n_old_nonfinite": 0,
+   "n_new_nan_where_old_nonfinite": 0,
+   "diffs_first_50": []
+  },
+  "d/430005-drift_0.005-E0-ramp-uniform": {
+   "n_strict": 842,
+   "n_old_finite": 842,
+   "n_equal": 842,
+   "n_differ": 0,
+   "n_old_nonfinite": 0,
+   "n_new_nan_where_old_nonfinite": 0,
+   "diffs_first_50": []
+  },
+  "d/430008-drift_0.0005-E0-ramp-uniform": {
+   "n_strict": 6552,
+   "n_old_finite": 6552,
+   "n_equal": 6552,
+   "n_differ": 0,
+   "n_old_nonfinite": 0,
+   "n_new_nan_where_old_nonfinite": 0,
+   "diffs_first_50": []
+  }
+ },
+ "total": {
+  "n_strict": 90153,
+  "n_old_finite": 90153,
+  "n_equal": 90153,
+  "n_differ": 0,
+  "n_old_nonfinite": 0,
+  "n_new_nan_where_old_nonfinite": 0
+ },
+ "I3": true,
+ "git_head": "b57b5a397cb33700041405979b36d6b695855fa2",
+ "git_dirty_tracked": false
+}
