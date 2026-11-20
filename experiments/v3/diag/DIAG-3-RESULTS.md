@@ -830,6 +830,7 @@ Outputs are in `results/v3/diag3/amend10-u5b-44ddd682-mac/`.
 - **The exact audit:** no violation. The smallest slack is 1.5e-14 °C.
 - **Not exercised:** the certificate check, as in U5. No alarm certificate was computed at or before an onset, so
   that criterion holds without a case. The certificates themselves are covered by the exact audit (U3) and by L1.
-- **U5 stays recorded as failed as written.** Its healthy part passed, and U5b passes its fault part. Whether the two
-  together meet the slab rule's condition ("U5 passes before approval", FREEZE-V3 section 4) is Can's decision.
+- **U5 stays recorded as failed as written.** Its healthy part passed, and U5b passes its fault part.
+- **Can's decision (2026-11-20, about 12:50):** the two together meet the slab rule's condition, "U5 passes before
+  approval" (FREEZE-V3 section 4).
 

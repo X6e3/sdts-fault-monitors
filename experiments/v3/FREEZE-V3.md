@@ -11,9 +11,6 @@ to generate validation data until then (section 6).
 **Open items before review** (each is filled in from its own record, as it comes out):
 - I2b: the frozen code against 0ce80072 on Arch, set by Can (all of setting none, a sample of b, d and e), running
   (section 5). R1–R3 are in: U1, U2 and U3 pass, and so do I2a, I2c and I3 (section 5);
-- U5: the forced-fallback coverage test (section 4, the slab rule's condition). It failed as written on its fault-row
-  criteria, because two rows had no detectable event. Its healthy part passed, and U5b, its fault part on rows the
-  oracle detects, passes (section 5). Whether the two together meet the condition is Can's decision;
 - tests of the scorer on small constructed row sets, one per verdict branch and per counter (section 4);
 - the independent summary of the R runs (review K7d) (section 5);
 - the fourth and fifth addenda (reviews M1 and M2, Can's decisions 2026-11-20): U0b, U0c, I3 and the identity
@@ -210,7 +207,9 @@ come with it:
   deterministic. The cause is found and written down before any claim is made from the result. The verdict does not
   change.
 - **U5 passes before approval.** U5 forces the empty-slab path on DEV rows and checks that the fallback keeps the true
-  state (below).
+  state (below). **Met** (Can, 2026-11-20). U5 failed as written, but only on two fault rows the oracle itself does not
+  detect. Its healthy part passed, and U5b passed the fault part on rows the oracle detects, with nothing else
+  changed.
 
 **U5, the forced-fallback coverage test** (DEV seeds 430000 and 430001, F3a, its plan committed before it runs):
 - **Rows:** the 16 healthy rows of the two seeds (8 uniform noise, 8 edge noise) and 4 fault rows.
@@ -307,6 +306,8 @@ and the fallback takes the P_J bound −0.20897 °C from the 41 solved faces (a 
   - Every row detects at the oracle's t*, certified, after the reset, forced or not.
   - The exact audit finds no violation.
   - The certificate check again had no case. No certificate was computed up to an onset.
+  - Can, 2026-11-20: U5's healthy part and U5b together meet the slab rule's condition (section 4). U5 stays
+    recorded as failed as written.
 
 **Independent reviews:**
 - **N2 (code) and AG1 (documents against code):** their findings were closed by the addenda before any R1–R3 result
