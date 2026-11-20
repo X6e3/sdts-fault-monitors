@@ -900,3 +900,23 @@ run when the commit was made.
   - I2c runs at this commit on Arch. It is compared with R4 of the R1–R2 drive (Arch, `0ce80072`), which is the
     record d207c9d1 reported.
   - I2b's size is still open.
+
+**I2b, as Can set it (2026-11-20, about 11:30; written before it ran).** It runs on Arch at the commit that adds this
+paragraph. That commit changes only the script `diag/amend10_i2b.py` and this text; the candidate's code is
+`b57b5a39`'s. There are 10 workers.
+- **Rows.** The selection is fixed by `amend10_i2b.py select` before any run. It comes from `amend10.run`'s job list,
+  in its order, and from the 0ce80072 records:
+  - all 1,400 jobs of setting none;
+  - every 10th job (index ≡ 0 mod 10) of settings b, d and e, 140 each. Setting b is added to what was proposed: it
+    is the setting in which the most P_J bounds are solved, not injected (386,724 in R2);
+  - in d and e, also the 20 jobs outside those with the most fallback events in their 0ce80072 record (all
+    `FALLBACK` counters summed), ties broken by the sha256 of the key.
+  - That is 1,860 jobs, about 25 CPU-hours.
+- **Comparison.** As I1 and I2a: every field except `seconds`, `step_ms` and `fold_step_ms`, against the R1–R2
+  drive's records on Arch (`0ce80072`).
+- **If every record is equal:**
+  - I2b passes;
+  - with I2a, I2c and I3, R1–R3 stand for `b57b5a39`;
+  - setting none's full run also gives U1 at the frozen code itself (`amend10.py summary` on it, reported).
+- **If any record differs:** as I2 says. The difference is written down, and that setting is run again in full at
+  the new commit. That is a large run on Arch, so it waits for Can's go.
