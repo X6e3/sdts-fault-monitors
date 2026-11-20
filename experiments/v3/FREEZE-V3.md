@@ -9,14 +9,19 @@ are Can's to set. Everything here is a proposal until the status line says APPRO
 to generate validation data until then (section 6).
 
 **Open items before review** (each is filled in from its own record, as it comes out):
-- I1b: the third addendum's change, on all of R-none on Arch (section 2);
-- R1–R3 and the criteria U1–U3 (section 5);
-- the independent summary of the R runs (review K7d) and the written proof (review M1) (section 5);
+- I1b: the change at the frozen code against 0ce80072, on all of R-none on Arch (section 2);
+- R1–R3 and the criteria U1–U3, with the check that each injection ran the code path it names (section 5);
+- U5: the forced-fallback coverage test (section 4, the slab rule's condition);
+- tests of the scorer on small constructed row sets, one per verdict branch and per counter (section 4);
+- the independent summary of the R runs (review K7d) (section 5);
+- [M1's gaps G1 and G2 (section 1): a fourth addendum, proposed, Can decides];
 - the manifest at the frozen code, and the DEV rehearsal at the freeze commit (sections 2 and 8).
 
-**Decisions for Can** (proposals in brackets):
-- the slab rule (section 4) [reported, not deciding];
-- the seed block and its size (section 3) [440400–440599, 200 seeds, as freeze 1 and 2].
+**Decided by Can Koç on 2026-11-20:**
+- the slab rule (section 4): reported, not deciding, on the conditions written there;
+- the seed block (section 3): 440400–440599, 200 seeds, as freeze 1 and 2;
+- the target (0.80), W = 256, B = 16 and K_cap = 64: unchanged;
+- no approval before I1b, U1–U3, U5 and the scorer tests are in.
 
 ## 0. What is tested, and why there is a freeze 3
 
@@ -67,6 +72,17 @@ addendum).
 the three attempts of F: `highs-ds` without presolve, `highs-ipm` without presolve, `highs-ds` with presolve), or it
 has **failed** (any other status, an empty slab included). F3 never uses a value from a failed LP.
 
+| what the solver returns | F3's outcome | what F3 may use from it |
+|---|---|---|
+| status 0 (optimal) | solved | a fold or alarm bound: only its certified weak-duality bound (`certified_max`). An as-range side: its value, as a gate only (below) |
+| status 2 (infeasible) | failed | nothing. A solver's "infeasible" is not a certificate, and on admissible data the window is never empty, so F3 never reads it as a proof of a fault |
+| status 4, any other status | failed | nothing |
+| an empty slab, before any solve | failed (kind `slab`) | nothing |
+| an exception from the solver, or status 0 with a non-finite value or multiplier | [fourth addendum, proposed: failed. At 000cd215: an exception in a fold ends the run with an uncertified alarm, scored FAIL; elsewhere it stops the run] | nothing |
+
+F and F3 differ here on purpose. F read status 2 as "the window is empty" and stopped. F3 has no third outcome:
+infeasible is one more way to fail. An alarm needs a certified separation, never a solver's claim.
+
 | where the LP fails | what F3 uses instead | why it is sound |
 |---|---|---|
 | one side of the as-range | that side's box bound (HI = 2 or LO = −2); z_t is not kept | the box contains every state |
@@ -74,20 +90,28 @@ has **failed** (any other status, an empty slab included). F3 never uses a value
 | one direction of a fold | the certified maximum over P_J ∩ box, J = the solved faces of the same fold; if that 3-variable LP fails too, the a priori clamp | the ideal window's states lie in P_J ∩ box |
 | every direction of a fold | an atomic reset: base = the a priori clamps, no kept measurements, τ += B | the clamps hold under the exact recurrence |
 
-- The as-range and certificate bounds are always clipped to the box (N2 addendum). A z_0 outside the box raises a
-  box-certified alarm at t = 0.
+- The as-range values and the certificate bounds are always clipped to the box (N2 addendum). A z_0 outside the box
+  raises a box-certified alarm at t = 0.
+- The as-range is a gate, not a bound (review M1, G3). Its solved side is the LP's primal value, not certified. It
+  decides only whether to try a certificate and whether to keep z_t. No alarm and no fold bound uses it, and both of
+  its decisions are sound whatever the value: an alarm still needs its certificate, keeping z_t adds a constraint that
+  admissible data satisfy, and dropping it only widens the window.
 - An empty slab cannot occur after t = 0: a z_t whose slab misses the box fails the alarm test against the clipped
   range and is never kept (N2 addendum). It is counted all the same (section 4).
 - Every fallback is counted by its kind (status 2, 4, slab, other) in the record's `failsafe` field.
 
 **The memory bound** (third addendum). The eviction comes before the keep, and the eviction record is pruned with
-the window. So, at every point of every step, at most K_cap + 1 = 65 measurements are held, and the eviction record
-has no key outside them. Neither change alters a decision (section 5, I1).
+the window. So, at every point of every step, at most K_cap + 1 = 65 measurements are held. At the end of every step
+the eviction record has no key outside them; inside an eviction or a fold, between two assignments, it briefly can
+(review M1, G4; the third addendum's "at every point" is too strong for this half). Neither change alters a
+decision (section 5, I1).
 
 **What is a theorem and what is not:**
 - **Soundness** holds by construction under the model, by FREEZE-V2.md's invariant chain with one more link: each
   fallback above is a superset bound of what it replaces. The written proof, checked against the code, is review M1
-  (section 5). [Its summary goes here once checked.]
+  (section 5). It proves S1 (no alarm on an admissible run) and S3 (every alarm separates z_t's slab from a certified
+  outer bound) under the model and a stated floating-point model, with the solver reporting every failure as a
+  status. Its gaps G1 and G2 are where that last condition can break (table above).
 - **No alarm on a healthy run, and none before t\*:** as FREEZE-V2.md section 1. The fallbacks only widen F3's sets,
   so they can only remove or delay alarms.
 - **Outside the chain:** the solver's tolerance, and how often the solver fails. Freeze 2 saw one failed fold LP
@@ -133,7 +157,7 @@ start and recorded.
 
 ## 3. Data
 
-**Seeds 440400–440599** (200 seeds), generated only after approval, by `run_validation_v3.py`. They use the
+**Seeds 440400–440599** (200 seeds; Can's decision, 2026-11-20), generated only after approval, by `run_validation_v3.py`. They use the
 validation namespace (`v3val:`) and the laws of freeze 1 and 2. 440600–440999 stay reserved.
 
 **Per seed, 48 runs, as in freeze 1 and 2:** 11 cells × E0, E1 × `rw`, `ramp` with uniform noise (44 runs, 4 of them
@@ -160,9 +184,32 @@ a holdout for anything.
 **Reported, not deciding:** as freeze 2, plus F3's `failsafe` counters summed over the rows, the number of rows with
 any fallback, and the count of empty-slab failures.
 
-**The slab rule** [proposal, Can decides]: an empty slab after t = 0 is reported, not deciding. F3 handles it soundly,
-like any failed LP, and the hypothesis is about soundness and lag, not about which path ran. The alternative is to
-make it a FAIL, as an "impossible" case that would show a gap in the reasoning of section 1.
+**The slab rule** (Can's decision, 2026-11-20): an empty slab after t = 0 is reported, not deciding. F3 handles it
+soundly, like any failed LP, and the hypothesis is about soundness and lag, not about which path ran. Two conditions
+come with it:
+- **Any empty slab in the validation is an invariant violation.** Section 1 says it cannot happen. The record lists
+  each one (row, sample, role), and the cause is found and written down before any claim is made from the result.
+  The verdict does not change.
+- **U5 passes before approval.** U5 forces the empty-slab path on DEV rows and checks that the fallback keeps the true
+  state (below).
+
+**U5, the forced-fallback coverage test** (DEV seeds 430000 and 430001, F3a, its plan committed before it runs):
+- **Rows:** the 16 healthy rows of the two seeds (8 uniform noise, 8 edge noise) and 4 fault rows.
+- **Forcing:** at t = 300, 1000 and 2000, a measurement whose slab misses the box is put into the window directly,
+  past the keep gate (as R0 does). Every LP that holds it fails with kind `slab`, until the next fold resets.
+- **Truth:** the generator's own states in the model's coordinates, x = (Tc − Sc, Ts − Ss, TA) − 25, with S the
+  known command response at zero ambient.
+- **Pass if all hold:**
+  - no alarm on a healthy row, and every alarm on a fault row certified;
+  - at every fold, the true state at τ satisfies d_i·x ≤ base_i + 1e-9 °C for all 42 directions;
+  - at every alarm certificate computed, the true a_s at t lies inside its two certified bounds;
+  - each forcing leads to slab failures and one full reset, and the counters say so;
+  - every fault row detects after the last reset (the lag is reported);
+  - the exact audit finds no violation.
+
+**Tests of the scorer** (before approval): small constructed row sets, one for each branch of the verdict order and
+one for each counter (failsafe totals, rows with a fallback, the slab list). Each expected output is written down
+before the test runs. Freeze 2's rows, scored again, give freeze 2's numbers exactly (done: FAIL, 0.9949).
 
 ## 5. DEV reference (DEV, not validation)
 
@@ -186,7 +233,8 @@ and the fallback takes the P_J bound −0.20897 °C from the 41 solved faces (a 
 **The memory bound (I1).**
 - I1a (Mac): with and without the third addendum's change, 16 records on 8 rows under settings none and d are equal
   in every field but wall-clock time.
-- With the change, |zs| ≤ 65 and the eviction record ⊆ zs at all 48,460 checks. Without it, 66 and 317.
+- With the change, |zs| ≤ 65 and the eviction record ⊆ zs at all 48,460 checks, taken after each step. Without it,
+  66 and 317.
 - [I1b, Arch: all of R-none.]
 
 **Independent reviews:**
@@ -200,7 +248,16 @@ and the fallback takes the P_J bound −0.20897 °C from the 41 solved faces (a 
   - 440243's fallback confirmed independently: exact maximum −0.208974, bound −0.208973.
   - Its two memory findings are what the third addendum closes.
   - [K7d: the independent summary of R1–R2.]
-- [**M1:** the written proof and its trace to the code.]
+- **M1 (the written proof, traced to 000cd215 line by line):**
+  - lemmas L1–L8 and the theorem: S1, S3 and |zs| ≤ 65 under the model and a stated floating-point model;
+  - a new exact check: the frozen clamp set is invariant under one step of the exact recurrence (all 42 vertices,
+    rational arithmetic);
+  - its own reruns: R0 13 of 13 at 000cd215;
+  - seven gaps. G1 (a solver exception in a fold becomes an uncertified alarm) and G2 (no finiteness check on a
+    status-0 answer) concern the solver boundary: [fourth addendum, proposed]. G3 (the as-range is a gate) and G4
+    (the record's subset holds after each step, not inside it) are wording, fixed in section 1. G5 (W, K and the
+    template are the caller's) is closed for the validation by the manifest. G6 and G7 are scope and record-keeping
+    notes for the write-up.
 
 ## 6. Order of operations
 
