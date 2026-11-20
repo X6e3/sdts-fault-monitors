@@ -9,9 +9,11 @@ are Can's to set. Everything here is a proposal until the status line says APPRO
 to generate validation data until then (section 6).
 
 **Open items before review** (each is filled in from its own record, as it comes out):
-- I2b: the frozen code against 0ce80072, on all of R-none, R-d and R-e on Arch (replaces I1b; section 5);
+- I2b: the frozen code against 0ce80072 on Arch; its size is Can's to set (no big runs on Arch without his go);
+  I2c: R4 with the exact audit (section 5);
 - R1–R3 and the criteria U1–U3, with the check that each injection ran the code path it names (section 5);
-- U5: the forced-fallback coverage test (section 4, the slab rule's condition);
+- U5: the forced-fallback coverage test (section 4, the slab rule's condition): failed as written on its fault-row
+  criteria (two rows had no detectable event); U5b proposed, needs Can's OK (section 5);
 - tests of the scorer on small constructed row sets, one per verdict branch and per counter (section 4);
 - the independent summary of the R runs (review K7d) (section 5);
 - the fourth addendum (M1's G1 and G2, Can's decision 2026-11-20): U0b and the identity check I2 (section 5);
@@ -243,9 +245,18 @@ and the fallback takes the P_J bound −0.20897 °C from the 41 solved faces (a 
 - With the change, |zs| ≤ 65 and the eviction record ⊆ zs at all 48,460 checks, taken after each step. Without it,
   66 and 317.
 - I1b is replaced by I2 (fourth addendum), which compares the frozen code with 0ce80072 directly:
-  [I2a, Mac: the 16 records of I1a] [I2b, Arch: all of R-none, R-d and R-e] [I2c: R4 with the exact audit].
-- [U0b: the ten solver-boundary path tests, and R0's 13 again at the frozen code.]
-- [U5: the forced-fallback coverage test.]
+  - **I2a (Mac): passes.** The 16 records of I1a, new code against 0ce80072: equal in every field but wall-clock
+    time; |zs| ≤ 65 and the record ⊆ zs at all 48,460 checks.
+  - [I2b, Arch: size to be set by Can.] [I2c: R4 with the exact audit.]
+- **U0b: passes, 10 of 10**, and R0 13 of 13 at `8c55e19e`: solver exceptions and non-finite answers take their
+  fallbacks under their own reason codes; our own errors (a NaN input, a `TypeError` in a fold, a `MemoryError`)
+  propagate.
+- **U5: fails as written, on 2 of 7 criteria, both about fault rows.** Two of its four fault rows (stuck, E0) have no
+  oracle detection, so no sound method can detect them, and F3 does not, forced or not. Everything about the
+  fallback passes: no alarm on 16 healthy rows; the true state inside the new base at all 3,388 checked folds
+  (closest −0.00023 °C); one full reset per forcing; no audit violation; the two drift rows detect at the oracle's t*,
+  forced or not. The certificate-coverage check was never exercised. [U5b: the fault part again on rows the oracle
+  detects, proposed, needs Can's OK.]
 
 **Independent reviews:**
 - **N2 (code) and AG1 (documents against code):** their findings were closed by the addenda before any R1–R3 result

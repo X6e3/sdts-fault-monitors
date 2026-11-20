@@ -824,3 +824,10 @@ and `fold_step_ms`):
   - the exact audit finds no violation.
 - **Reported, not deciding:** the measurements dropped, the samples from forcing to reset, and each fault row's lag
   against the same row without forcing.
+
+**U5b, proposed after U5's result was read (2026-11-20 05:40; not run, needs Can's OK).** U5 failed two criteria
+because two of its four fault rows (stuck, E0) have no oracle detection, so no sound method could detect them
+(DIAG-3-RESULTS). U5b repeats only U5's fault part, unchanged in every other respect (F3a, the forcing at t = 250,
+the same checks and tolerances), on the four fault rows: 430000 and 430001 × (drift_0.002, E0, rw, uniform) and
+(stuck, E1, rw, uniform), whose oracle t* are 506, 652, 412 and 596. Its fault-row criteria apply to rows with an
+oracle t*, as they should have in U5. The healthy part of U5 passed and is not repeated. U5 stays recorded as failed.

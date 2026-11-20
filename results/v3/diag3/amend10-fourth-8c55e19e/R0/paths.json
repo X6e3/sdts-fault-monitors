@@ -1,0 +1,70 @@
+{
+ "ok": {
+  "range_one_side": true,
+  "range_both_sides": true,
+  "box_alarm": true,
+  "cert_one_side": true,
+  "cert_both_sides": true,
+  "fold_implied": true,
+  "fold_apriori": true,
+  "full_reset": true,
+  "full_reset_continues": true,
+  "z0_outside_box": true,
+  "range_overshoot": true,
+  "overshoot_online": true,
+  "slab_empty": true
+ },
+ "U0": true,
+ "details": {
+  "box_alarm": {
+   "certified": true,
+   "certified_margin_mC": -699.9999989999997,
+   "box_sides": [
+    "up",
+    "down"
+   ]
+  },
+  "cert": {
+   "base_detect": 420,
+   "one_side": [
+    425,
+    {
+     "certified": true,
+     "certified_margin_mC": -154.2781886200506,
+     "box_sides": []
+    }
+   ],
+   "both_sides": [
+    425,
+    {
+     "certified": true,
+     "certified_margin_mC": -154.2781886200506,
+     "box_sides": []
+    },
+    1
+   ]
+  },
+  "fold_implied_base40": [
+   -0.7158146664625802,
+   1.68331144581706
+  ],
+  "range_overshoot": {
+   "certified": true,
+   "certified_margin_mC": -4.999999525523435e-06,
+   "box_sides": [
+    "up",
+    "down"
+   ]
+  },
+  "overshoot_online": {
+   "certified": true,
+   "certified_margin_mC": -4.999999525523435e-06,
+   "box_sides": [
+    "up"
+   ]
+  }
+ },
+ "healthy_row": "430000-healthy-E0-rw-uniform",
+ "fault_row": "430000-jump_0.2-E0-rw-uniform",
+ "git_head": "8c55e19ee1df58ce48cdcd0bb099c7453516ce8f"
+}

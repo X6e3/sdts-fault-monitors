@@ -666,3 +666,36 @@ Outputs are in `results/v3/diag3/amend10-i1a-000cd215/`; scripts `diag/amend10_i
 - On edge noise every z_t cuts the range, so each edge row keeps a measurement at every step. That gives 3,535
   evictions and 15,934 LPs on all four rows. The data differ between the rows: `n_retry` is 0 on rw and 1 on ramp.
 - **I1b** (all of R-none on Arch with the new code) follows after all.done.
+
+**Fourth addendum (the solver boundary, M1's G1 and G2), at `8c55e19e`** (U5 at `1c0439cd`, which adds only its
+script). Mac, 2026-11-20 04:10–05:30, nice 19, while R3 ran. Outputs in `results/v3/diag3/amend10-fourth-8c55e19e/`.
+- **U0b: passes, 10 of 10** (`diag/amend10_u0b.py`, R0's healthy and fault rows):
+  - an exception on the first attempt only: solved by the second, `n_retry` 0 → 1, no failsafe counter;
+  - an exception on all three attempts of a fold direction: `fold_dir_fallbacks` {exception: 1}, the P_J bound taken;
+  - status 0 with a NaN inequality multiplier (t = 289): {nonfinite: 1}; finite multipliers of −1.5e308 that make
+    the certified bound overflow: {nonfinite: 1}, solved on the first attempt, so the certificate is what failed;
+  - a non-finite "up" certificate at the fault row's detection (t = 420): `cert_fallbacks` {nonfinite: 1}, "up" in
+    `box_sides`, the alarm unproved there; the row detects at 425, certified;
+  - an exception on all attempts of one as-range side: {exception: 1}, that z_t not kept;
+  - a NaN in our own LP input raises `ValueError`; a `TypeError` in our own fold code and a `MemoryError` inside the
+    solver call both propagate out of `online()`; the kinds read `exception` and `nonfinite`.
+- **R0 at `8c55e19e`: 13 of 13.**
+- **I2a: passes.** The 16 records of I1a with the new code against the `0ce80072` records already on the Mac: all 16
+  equal in every field except `seconds`, `step_ms` and `fold_step_ms`. Memory as I1a: |zs| ≤ 65 and
+  keys(last_active) ⊆ keys(zs) at all 48,460 checks.
+- **U5: fails as written, on 2 of its 7 criteria; the cause is the test's row choice, not F3.**
+  - Passes: no alarm on the 16 healthy rows; at every checked fold of the 20 forced rows (3,388 folds; on fault rows
+    only before the onset) the generator's true state lies in the new base on all 42 directions (largest
+    d_i·x − base_i: −0.00023 °C); each forcing gives slab failures and
+    exactly one full reset (healthy: resets 5, 9 and 1 samples after the forcings at 300, 1000 and 2000; fault: 23
+    samples after 250), with 42 slab fold failures per reset; the exact audit finds no violation (smallest slack
+    3.7e-15 °C).
+  - Fails: "every alarm on a fault row certified" and "every fault row detects after its last forced reset". The two
+    `stuck` rows (430000 and 430001, E0 rw uniform) have no oracle detection: the full-history oracle certifies the
+    whole record consistent (t* = None). F3 raises no alarm on them, forced or not, which is what soundness requires.
+    The rows were chosen without checking the oracle; under E0 a stuck sensor reads a value the model can explain.
+  - The two `drift_0.002` rows detect at 506 and 652, certified: the oracle's t* exactly, and the same sample as the
+    unforced run.
+  - The certificate-coverage check was never exercised: no alarm certificate was computed before an onset.
+- **U5b** (DIAG-3-PLAN, proposed after U5's result, not run): the fault part again with rows the oracle detects.
+- **I2b and I2c:** not run. Can, 2026-11-20 04:40: no big runs on Arch without his go; I2b's size is his to set.

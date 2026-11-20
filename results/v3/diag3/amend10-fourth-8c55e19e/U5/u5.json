@@ -1,0 +1,153 @@
+{
+ "ok": {
+  "no_alarm_healthy": true,
+  "fault_alarms_certified": false,
+  "fold_coverage": true,
+  "cert_coverage": true,
+  "forcing_counters": true,
+  "recovery": false,
+  "audit": true
+ },
+ "U5": false,
+ "details": {
+  "lag_vs_unforced": {
+   "430000/drift_0.002/E0/rw/uniform": [
+    506,
+    506
+   ],
+   "430000/stuck/E0/rw/uniform": [
+    null,
+    null
+   ],
+   "430001/drift_0.002/E0/rw/uniform": [
+    652,
+    652
+   ],
+   "430001/stuck/E0/rw/uniform": [
+    null,
+    null
+   ]
+  },
+  "measurements_not_kept": {
+   "430000/healthy/E0/rw/uniform": 15,
+   "430000/healthy/E0/rw/edge": 15,
+   "430000/healthy/E0/ramp/uniform": 15,
+   "430000/healthy/E0/ramp/edge": 15,
+   "430000/healthy/E1/rw/uniform": 15,
+   "430000/healthy/E1/rw/edge": 15,
+   "430000/healthy/E1/ramp/uniform": 15,
+   "430000/healthy/E1/ramp/edge": 15,
+   "430001/healthy/E0/rw/uniform": 15,
+   "430001/healthy/E0/rw/edge": 15,
+   "430001/healthy/E0/ramp/uniform": 15,
+   "430001/healthy/E0/ramp/edge": 15,
+   "430001/healthy/E1/rw/uniform": 15,
+   "430001/healthy/E1/rw/edge": 15,
+   "430001/healthy/E1/ramp/uniform": 15,
+   "430001/healthy/E1/ramp/edge": 15,
+   "430000/drift_0.002/E0/rw/uniform": 23,
+   "430000/stuck/E0/rw/uniform": 23,
+   "430001/drift_0.002/E0/rw/uniform": 23,
+   "430001/stuck/E0/rw/uniform": 23
+  },
+  "samples_force_to_reset": {
+   "430000/healthy/E0/rw/uniform": [
+    5,
+    9,
+    1
+   ],
+   "430000/healthy/E0/rw/edge": [
+    5,
+    9,
+    1
+   ],
+   "430000/healthy/E0/ramp/uniform": [
+    5,
+    9,
+    1
+   ],
+   "430000/healthy/E0/ramp/edge": [
+    5,
+    9,
+    1
+   ],
+   "430000/healthy/E1/rw/uniform": [
+    5,
+    9,
+    1
+   ],
+   "430000/healthy/E1/rw/edge": [
+    5,
+    9,
+    1
+   ],
+   "430000/healthy/E1/ramp/uniform": [
+    5,
+    9,
+    1
+   ],
+   "430000/healthy/E1/ramp/edge": [
+    5,
+    9,
+    1
+   ],
+   "430001/healthy/E0/rw/uniform": [
+    5,
+    9,
+    1
+   ],
+   "430001/healthy/E0/rw/edge": [
+    5,
+    9,
+    1
+   ],
+   "430001/healthy/E0/ramp/uniform": [
+    5,
+    9,
+    1
+   ],
+   "430001/healthy/E0/ramp/edge": [
+    5,
+    9,
+    1
+   ],
+   "430001/healthy/E1/rw/uniform": [
+    5,
+    9,
+    1
+   ],
+   "430001/healthy/E1/rw/edge": [
+    5,
+    9,
+    1
+   ],
+   "430001/healthy/E1/ramp/uniform": [
+    5,
+    9,
+    1
+   ],
+   "430001/healthy/E1/ramp/edge": [
+    5,
+    9,
+    1
+   ],
+   "430000/drift_0.002/E0/rw/uniform": [
+    23
+   ],
+   "430000/stuck/E0/rw/uniform": [
+    23
+   ],
+   "430001/drift_0.002/E0/rw/uniform": [
+    23
+   ],
+   "430001/stuck/E0/rw/uniform": [
+    23
+   ]
+  },
+  "max_fold_excess_C": -0.00022881885476798425,
+  "max_cert_excess_C": null,
+  "min_audit_slack_C": 3.7192471324942744e-15
+ },
+ "git_head": "1c0439cd557e047a55eb105ffb03677f3dd212f6",
+ "git_dirty_tracked": false
+}
