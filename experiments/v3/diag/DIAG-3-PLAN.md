@@ -880,3 +880,23 @@ here on the Mac). G1 and G2 are closed only in part:
 - **I3:** on R0's and I2a's rows, the strict bound equals the fourth addendum's bit for bit wherever the latter is
   finite. If any record differs, the difference is written down before anything else is decided.
 - **The proof:** L1 is restated with the absolute term and checked by the reviewer of M1 and M2.
+
+**Decision (Can, 2026-11-20, about 10:55): accepted; I2c is to be run.** Applied in the commit that adds this
+paragraph, together with the scripts `diag/amend10_u0c.py` (U0c) and `diag/amend10_i3.py` (I3). Neither script had
+run when the commit was made.
+- **The absolute term as coded.**
+  - It counts N = 6n + 4 + Σ (2 · stored entries + rows) over the two matrices. That is every product evaluated,
+    generously: s and its absolute value, multiplier times right-hand side, per variable s·lb, s·ub, the γ term and
+    the harden term, and the final pad's products.
+  - It is formed as ⌈N (1 + 2 max |x|)⌉ units of 2^−1074, which is exact.
+  - It enters the `fsum` as one more part, so the existing pad covers its rounding like any other part's.
+  - If it overflows, the bound is NaN and the LP takes its fallback.
+- **The new checks in `solve_f3`.** An attempt with malformed multipliers returns `Failed("nonfinite")`, and its
+  message names both causes. `lb > ub` raises. In `lp()` an empty slab is caught before this check, as `slab`.
+- **I3 is checked by wrapping `certified_max`.** The new value is returned unchanged. The fourth addendum's function
+  (verbatim from `1c0439cd`, checked against git at run time) is evaluated on the same LP and compared.
+- **I2 now applies to this commit.**
+  - I2a runs again here, on the Mac.
+  - I2c runs at this commit on Arch. It is compared with R4 of the R1–R2 drive (Arch, `0ce80072`), which is the
+    record d207c9d1 reported.
+  - I2b's size is still open.

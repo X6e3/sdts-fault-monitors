@@ -104,7 +104,32 @@ def certified_max(harden=False, strict=False):
     themselves (each one correctly rounded from its exact value, so off by less than 2u |a|), so that the bound holds
     for the LP with the exact coefficients (exact powers of M), not only for its float64 copy. strict (F3, fourth
     addendum): NaN instead of a bound when a term is not finite or the sum overflows; finite terms give the same
-    value as without it."""
+    value as without it. Fifth addendum, strict only: evaluated under np.errstate(all="ignore"), so the caller's
+    numpy error state cannot change the result, and with one absolute term for gradual underflow (_underflow_term)."""
+    if strict:
+        with np.errstate(all="ignore"):
+            return _certified_max(harden, True)
+    return _certified_max(harden, False)
+
+
+def _underflow_term(kw, n_prod_extra, xmax):
+    """fifth addendum: under IEEE binary64 with gradual underflow a product's absolute error beyond the relative model
+    is at most 2^-1075, and sums and differences need none. Each product evaluated is counted once, generously: the
+    sparse products for s and for its absolute value (2 per stored entry), the multiplier-times-right-hand-side
+    products, and per variable the six of s*lb, s*ub, the gamma term and the harden term, plus the final pad's.
+    An error in s reaches the bound times at most max|x|. The term 2^-1074 * N * (1 + 2 max|x|) is twice that need;
+    it is formed as a whole number of units 2^-1074, rounded up, which is exact; inf (so no bound) if it overflows."""
+    n = len(kw["bounds"])
+    N = 6 * n + n_prod_extra
+    for a_name, b_name in (("A_ub", "b_ub"), ("A_eq", "b_eq")):
+        A = kw.get(a_name)
+        if A is not None:
+            N += 2 * (A.nnz if sp.issparse(A) else int(np.count_nonzero(A))) + len(kw[b_name])
+    v = N * (1.0 + 2.0 * xmax)
+    return math.ldexp(math.ceil(v), -1074) if math.isfinite(v) else math.inf
+
+
+def _certified_max(harden, strict):
     c, kw, res = Rec.last
     bnd = kw["bounds"]
     lb, ub = bnd[:, 0], bnd[:, 1]
@@ -126,6 +151,8 @@ def certified_max(harden=False, strict=False):
     parts.append(2 * _gam(k + 1) * sa * xm)
     if harden:
         parts.append(2 * U * (sa - np.abs(c)) * xm)
+    if strict:                                                     # fifth addendum: gradual underflow
+        parts.append(np.array([_underflow_term(kw, 4, float(np.max(xm)))]))
     p = np.concatenate(parts)
     if not strict:
         tot = math.fsum(p)
@@ -209,33 +236,46 @@ SOLVER_ERRORS = (RuntimeError, ValueError, IndexError, OverflowError, ZeroDivisi
 
 def _check_inputs(cvec, kw):
     """F3 (fourth addendum): the LP we built must be finite and of consistent shape before the solver sees it.
-    If it is not, that is our error: it is raised here, and never counted as a solver failure."""
-    n = len(cvec)
-    arrays = [np.asarray(cvec, dtype=float), np.asarray(kw["bounds"], dtype=float)]
+    If it is not, that is our error: it is raised here, and never counted as a solver failure. Fifth addendum: the
+    objective and each right-hand side are of rank 1, a right-hand side is given if and only if its matrix is, and
+    lb <= ub in every row of the bounds."""
+    cv = np.asarray(cvec, dtype=float)
+    if cv.ndim != 1:
+        raise ValueError(f"F3: an objective of shape {cv.shape}")
+    n = len(cv)
+    arrays = [cv, np.asarray(kw["bounds"], dtype=float)]
     if arrays[1].shape != (n, 2):
         raise ValueError(f"F3: bounds of shape {arrays[1].shape} for {n} variables")
     for a_name, b_name in (("A_ub", "b_ub"), ("A_eq", "b_eq")):
         A = kw.get(a_name)
+        if (A is None) != (kw.get(b_name) is None):
+            raise ValueError(f"F3: {a_name} and {b_name} must be given together")
         if A is None:
             continue
         b = np.asarray(kw[b_name], dtype=float)
+        if b.ndim != 1:
+            raise ValueError(f"F3: {b_name} of shape {b.shape}")
         if A.shape != (len(b), n):
             raise ValueError(f"F3: {a_name} of shape {A.shape} for {len(b)} rows and {n} variables")
         arrays += [b, np.asarray(A.data if sp.issparse(A) else A, dtype=float)]
     if not all(np.all(np.isfinite(a)) for a in arrays):
         raise ValueError("F3: a non-finite LP input")
+    if not np.all(arrays[1][:, 0] <= arrays[1][:, 1]):
+        raise ValueError("F3: a lower bound above its upper bound")
 
 
 def _usable(res, kw):
-    """F3 (fourth addendum): status 0 with a finite value and finite multipliers for every part the LP has"""
+    """F3 (fourth addendum): status 0 with a finite value and finite multipliers for every part the LP has. Fifth
+    addendum: each multiplier array also has its part's length (n for the bounds, the row count for the others)."""
     if res.status != 0 or res.fun is None or not math.isfinite(res.fun):
         return False
-    parts = [res.lower.marginals, res.upper.marginals]
+    n = len(kw["bounds"])
+    parts = [(res.lower.marginals, n), (res.upper.marginals, n)]
     if kw.get("A_ub") is not None:
-        parts.append(res.ineqlin.marginals)
+        parts.append((res.ineqlin.marginals, len(kw["b_ub"])))
     if kw.get("A_eq") is not None:
-        parts.append(res.eqlin.marginals)
-    return all(m is not None and np.all(np.isfinite(m)) for m in parts)
+        parts.append((res.eqlin.marginals, len(kw["b_eq"])))
+    return all(m is not None and np.shape(m) == (k,) and np.all(np.isfinite(m)) for m, k in parts)
 
 
 def solve_f3(win, cvec, **kw):
@@ -255,8 +295,8 @@ def solve_f3(win, cvec, **kw):
             if _usable(res, kw):
                 fail = None
                 break
-            fail = (Failed(int(res.status), str(res.message)) if res.status != 0
-                    else Failed("nonfinite", "status 0 with a non-finite value or multiplier"))
+            fail = (Failed(int(res.status), str(res.message)) if res.status != 0 else
+                    Failed("nonfinite", "status 0 with a non-finite value or a non-finite or malformed multiplier"))
         win.n_retry += 1
     win.lp_seconds += time.monotonic() - t0
     win.n_lp += 1
