@@ -51,6 +51,24 @@ ce04b06f72498ab63d36700d85ea2022a6b61bd73aafda74bcfc69780c165ff2  meta.json
   checked file by file against Arch (sha256 of the sorted concatenation).
 - The rows were scored again on the Mac with the frozen `score_validation_v3.py`, from a clean worktree at
   `948b46b0`, with the same Python, numpy and scipy versions. The resulting `scores.json` is byte-identical.
+- **An independent scorer** scored the same files again (2026-11-21, on the Mac). It is freeze 2's (written from
+  `FREEZE-V2.md` section 4 alone, standard library only; sha256 `1dab8670…`). Only its constants were changed:
+  - the run's paths, the commit, `MANIFEST-V3.json`, `FREEZE-V3.md` and the approval date;
+  - five added lines that read the record key `F3` as `F`, in the rows and in the official scores.
+
+  The changed script has sha256 `e202c079…`.
+  - It reproduces every number it computes and the verdict: D_paired, the bootstrap, the misses, the lags, the cell
+    table, the soundness and certificate keys, and the count later than v2.
+  - Its checks pass: the manifest's 18 files at the commit and in the Mac's worktree, the 11 metadata checks
+    (including the approval line) and the identity.
+  - It finds a finite, negative certified margin on each of the 7,258 certified alarms. This checks the recorded
+    margins; it does not recompute the certificates.
+  - It does not score the failsafe counters, which are reported, not deciding.
+  - Separately, the 18 manifest files in the run's own clone on Arch match the manifest, at `948b46b0`, with a clean
+    tree.
+  - Outputs are outside the repository, in `~/Downloads/sdts-runs/v3-freeze3-independent/` on the Mac: both
+    scripts, the diff, and `independent-score.json` (sha256
+    `02b5e909661401e631fb1a4bf10c5c6361f4c1f95f17bbfda22848f2b31963f0`).
 
 ## Verdict
 
@@ -218,8 +236,6 @@ The block 440400–440599 is now used. 440600–440999 stay reserved.
 
 ## Open, not started
 
-- **An independent re-scoring** of these rows, as was done for freeze 2. It would check the numbers, not change the
-  verdict.
 - **The post-freeze code fixes** listed in `FREEZE-V3.md` section 5:
   - the two docstrings;
   - a check for at least one variable;
