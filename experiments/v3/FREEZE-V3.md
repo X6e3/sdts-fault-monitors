@@ -4,25 +4,25 @@ Status: DRAFT, not approved
 
 Manifest sha256: 0a40cbdf863da6eb046a1c76726d53bf2e967bfa3e0056b1ac15b87cbc7b85c7
 
-Prepared 2026-11-20 on branch `sdts-v3/template-state` for Can Koç's review. The target and the reading of a failure
-are Can's to set. Everything here is a proposal until the status line says APPROVED. `run_validation_v3.py` refuses
-to generate validation data until then (section 6).
+Author: Can Koç. Written 2026-11-20 on branch `sdts-v3/template-state`. Every decision recorded here is the author's,
+with its date. Everything here is a proposal until the status line says APPROVED. `run_validation_v3.py` refuses to
+generate validation data until then (section 6).
 
 **Before review: every item is in.** Section 5 holds each record, section 8 the rehearsal.
 - I2a, I2b and I2c pass, and so does I3, so R1–R3 stand for the frozen code. U1, U2 and U3 pass.
-- The fourth and fifth addenda (reviews M1 and M2, Can's decisions 2026-11-20): U0b and U0c pass. Review M3 is in.
+- The fourth and fifth addenda (reviews M1 and M2; decided 2026-11-20): U0b and U0c pass. Review M3 is in.
 - U5 and U5b: the slab rule's condition is met (section 4).
 - The scorer tests (section 4): review M2's 20 constructed row sets, at the frozen scorer, all as expected.
 - The independent summary of the R runs (review K7d) agrees.
 - The manifest at the frozen code (section 2), and the DEV rehearsal at the manifest's commit: passes (section 8).
 
-**Decided by Can Koç on 2026-11-20:**
+**Decided on 2026-11-20:**
 - the slab rule (section 4): reported, not deciding, on the conditions written there;
 - the seed block (section 3): 440400–440599, 200 seeds, as freeze 1 and 2;
-- the target (0.80), W = 256, B = 16 and K_cap = 64: unchanged;
+- the target (0.80), W = 256, B = 16 and K_cap = 64: unchanged (first decided 2026-11-19);
 - the fourth addendum: solver exceptions and non-finite answers are failures with their own reason codes; our own
   errors are raised, never counted as fallbacks;
-- no approval before I2, U0b, U1–U3, U5 and the scorer tests are in.
+- no approval before I2, U0b, U1–U3, U5 and the scorer tests are in (U5's condition is met with U5b, section 4).
 
 ## 0. What is tested, and why there is a freeze 3
 
@@ -45,7 +45,7 @@ The frozen F3:
 - and reduces v2's paired lag (section 4) by **at least 80 %**;
 
 all on fresh seeds of the v3 scenario distribution. The target, W = 256, B = 16 and K_cap = 64 are freeze 2's,
-unchanged (Can's decision, 2026-11-19).
+unchanged (decided 2026-11-19, confirmed 2026-11-20).
 
 **A FAIL rejects H-F3 at this configuration, and nothing else.** It does not reject:
 - freeze 1's results (H-inv4 and H-cyl16, validated on 440000–440199);
@@ -66,12 +66,13 @@ next unused seed block (440600 onwards).
 ## 1. The candidate
 
 **F3 is F (FREEZE-V2.md section 1, unchanged and not repeated here) with two additions:** a sound path for every LP
-the solver does not solve (DIAG-3 amendment 10, its N2 and AG1 addenda), and an exact memory bound (its third
-addendum).
+the solver does not solve (DIAG-3 amendment 10: its N2 and AG1 addenda, the fourth addendum's solver boundary, and the
+fifth addendum's input checks and underflow term), and an exact memory bound (its third addendum).
 
 **The solver path.** Every LP that F3 solves has two outcomes only. It is **solved** (scipy status 0, after at most
 the three attempts of F: `highs-ds` without presolve, `highs-ipm` without presolve, `highs-ds` with presolve), or it
-has **failed** (any other status, an empty slab included). F3 never uses a value from a failed LP.
+has **failed** (any other status, an empty slab, an exception from the solver call, or a non-finite answer; table
+below). F3 never uses a value from a failed LP.
 
 | what the solver returns | F3's outcome | what F3 may use from it |
 |---|---|---|
@@ -81,7 +82,7 @@ has **failed** (any other status, an empty slab included). F3 never uses a value
 | an empty slab, before any solve | failed (kind `slab`) | nothing |
 | an exception from the solver call (`RuntimeError`, `ValueError`, `IndexError`, `OverflowError`, `ZeroDivisionError`, `FloatingPointError`) | failed (kind `exception`; fourth addendum) | nothing |
 | status 0 with a non-finite value or multiplier, or a non-finite certified bound | failed (kind `nonfinite`; fourth addendum) | nothing |
-| a non-finite or inconsistent LP input, `MemoryError`, any error outside the solver call | not a solver outcome: our own error. It is raised, never counted as a fallback. A `RuntimeError` (or a subclass) raised in a fold ends the run with an uncertified alarm (scored FAIL). Any other error, in a fold or elsewhere, stops the run. The gaps review M2 found at `8c55e19e` are closed by the fifth addendum (`b57b5a39`; review M3a). Known limits that remain (review M3a), none of which F3's own LP builders can produce: an LP with no variables passes the check and is counted as a solver `exception`; a solver answer with no multiplier field at all raises `AttributeError` and stops the run | nothing |
+| a non-finite or inconsistent LP input, `MemoryError`, any error outside the solver call | not a solver outcome: our own error. It is raised, never counted as a fallback. A `RuntimeError` (or a subclass) raised in a fold ends the run with an uncertified alarm (scored FAIL). Any other error, in a fold or elsewhere, stops the run. The gaps review M2 found at `1c0439cd` are closed by the fifth addendum (`b57b5a39`; review M3a). Two known limits remain (review M3a). An LP with no variables passes the check and is counted as a solver `exception`; F3's LP builders never build one. A solver answer with no multiplier field at all raises `AttributeError` and stops the run; whether scipy ever returns one is not known | nothing |
 
 F and F3 differ here on purpose. F read status 2 as "the window is empty" and stopped. F3 has no third outcome:
 infeasible is one more way to fail. An alarm needs a certified separation, never a solver's claim.
@@ -93,8 +94,8 @@ infeasible is one more way to fail. An alarm needs a certified separation, never
 | one direction of a fold | the certified maximum over P_J ∩ box, J = the solved faces of the same fold; if that 3-variable LP fails too, the a priori clamp | the ideal window's states lie in P_J ∩ box |
 | every direction of a fold | an atomic reset: base = the a priori clamps, no kept measurements, τ += B | the clamps hold under the exact recurrence |
 
-- The as-range values and the certificate bounds are always clipped to the box (N2 addendum). A z_0 outside the box
-  raises a box-certified alarm at t = 0.
+- The as-range values and the certificate bounds are always clipped to the box (N2 addendum). At t = 0, F3 raises
+  a box-certified alarm if z_0's slab, rounded outward, misses the box.
 - The as-range is a gate, not a bound (review M1, G3). Its solved side is the LP's primal value, not certified. It
   decides only whether to try a certificate and whether to keep z_t. No alarm and no fold bound uses it, and both of
   its decisions are sound whatever the value: an alarm still needs its certificate, keeping z_t adds a constraint that
@@ -120,14 +121,15 @@ decision (section 5, I1).
 - **The floating-point model** (fifth addendum): IEEE binary64, round to nearest with ties to even, gradual
   underflow. A product's error beyond the relative model is at most 2^−1075, sums and differences need no absolute
   term, and `math.fsum` is correctly rounded and not regrouped. Under this model and the candidate's sizes (W = 256,
-  B = 16, every box within ±2), every finite strict bound is an upper bound of the ideal LP: L1 restated with the
-  underflow term (review M3b). The term's exactness is shown for these sizes only. For other boxes it must be shown
-  again (review M3a).
+  B = 16, every box within ±2, the largest box end exactly 2, as in F3's LP builders), every finite strict bound is an
+  upper bound of the ideal LP: L1 restated with the underflow term (review M3b). The term's exactness is shown for
+  these sizes only. For other boxes it must be shown again (review M3a).
 - **The audit variant F3a** is a check of F3, not part of the candidate. One of its extra statistics (the
   coefficient term) is evaluated outside the error-state guard of the strict bound. Under `np.errstate(all="raise")`
   it can raise; every run used numpy's default state (review M3a).
-- **No alarm on a healthy run, and none before t\*:** as FREEZE-V2.md section 1. The fallbacks only widen F3's sets,
-  so they can only remove or delay alarms.
+- **No alarm on a healthy run, and none before t\*:** as FREEZE-V2.md section 1. Every fallback keeps F3's sets outer
+  bounds, so soundness holds. It does not follow that a fallback can only delay an alarm: a measurement not kept
+  changes which measurements the cap keeps later. On DEV no fallback made a detection earlier (R2, section 5).
 - **Outside the chain:** the solver's tolerance, and how often the solver fails. Freeze 2 saw one failed fold LP
   among 54,535,429 LPs. That is a count, not a rate.
 - **There is no dominance theorem over v2.** Runs where F3 is later than v2 are reported, not judged.
@@ -155,11 +157,11 @@ freeze 2.
 | `a6f6af87` | R1 and R2 results (U1 and U2 pass) |
 | `44c95dbe` | review M2 folded in; the fifth addendum proposed |
 | `b57b5a39` | the fifth addendum applied: `diag3_cw.py` as frozen, with the U0c and I3 scripts |
-| `1ca4df40` | I2b as set by Can, and its script, before it ran |
+| `1ca4df40` | I2b, at the size decided, and its script, before it ran |
 | `1798a822` | review M3 folded in; no sixth addendum |
 | `855d7f8a` | R3 (U3 passes) and the fifth addendum's tests (U0c, I2a, I3 and I2c pass) |
 | `44ddd682`, `d2683a02` | U5b, its script before it ran, and its result (passes) |
-| `d3b4f61c` | the slab rule's U5 condition met (Can's decision) |
+| `d3b4f61c` | decision: the slab rule's U5 condition is met |
 | `e81c549b` | the manifest at the frozen code; the DEV rehearsal ran at this commit |
 | this commit | I2b, review K7d and the rehearsal recorded |
 
@@ -208,8 +210,8 @@ start and recorded.
 
 ## 3. Data
 
-**Seeds 440400–440599** (200 seeds; Can's decision, 2026-11-20), generated only after approval, by `run_validation_v3.py`. They use the
-validation namespace (`v3val:`) and the laws of freeze 1 and 2. 440600–440999 stay reserved.
+**Seeds 440400–440599** (200 seeds; decided 2026-11-20), generated only after approval, by `run_validation_v3.py`.
+They use the validation namespace (`v3val:`) and the laws of freeze 1 and 2. 440600–440999 stay reserved.
 
 **Per seed, 48 runs, as in freeze 1 and 2:** 11 cells × E0, E1 × `rw`, `ramp` with uniform noise (44 runs, 4 of them
 healthy), plus healthy × E0, E1 × `rw`, `ramp` with edge noise (4 runs). That is 9600 runs: about 7300 detection
@@ -230,24 +232,26 @@ a holdout for anything.
 - the paired lag, D_paired = 1 − L_F3 / L_v2 over B = {r ∈ R : v2 detects r}, an F3 miss in B counting N − t*;
 - the identity and integrity checks;
 - the verdict order: INCONCLUSIVE (integrity) → FAIL (a soundness violation or an uncertified alarm) → INCONCLUSIVE
-  (missing rows, |U| > 1 % of |F|) → FAIL (more misses than v2, D_paired < 0.80) → PASS.
+  (missing rows, |U| > 1 % of |F|) → FAIL (more misses than v2, or D_paired < 0.80 or undefined) → PASS.
+  D_paired is undefined when v2's paired lag is 0; the scorer then gives FAIL.
 
 **Reported, not deciding:** as freeze 2, plus F3's `failsafe` counters summed over the rows, the number of rows with
 any fallback, the count of empty-slab failures, and each row that has one.
 
-**The slab rule** (Can's decision, 2026-11-20): an empty slab after t = 0 is reported, not deciding. F3 handles it
+**The slab rule** (decided 2026-11-20): an empty slab after t = 0 is reported, not deciding. F3 handles it
 soundly, like any failed LP, and the hypothesis is about soundness and lag, not about which path ran. Two conditions
 come with it:
 - **Any empty slab in the validation is an invariant violation.** Section 1 says it cannot happen. The scorer lists
   each row that has one, with its count by counter (role). The sample is found by replaying the row, which is
   deterministic. The cause is found and written down before any claim is made from the result. The verdict does not
   change.
-- **U5 passes before approval.** U5 forces the empty-slab path on DEV rows and checks that the fallback keeps the true
-  state (below). **Met** (Can, 2026-11-20). U5 failed as written, but only on two fault rows the oracle itself does not
-  detect. Its healthy part passed, and U5b passed the fault part on rows the oracle detects, with nothing else
-  changed.
+- **U5 passes before approval. Met (decided 2026-11-20): U5's healthy part and U5b together were judged sufficient.**
+  U5 forces the empty-slab path on DEV rows and checks that the fallback keeps the true state (below). The original U5
+  stays recorded as FAIL as written: it failed only on two fault rows the oracle itself does not detect. U5b passed
+  the fault part on rows the oracle detects, with nothing else changed. In neither test was the certificate check
+  before an onset exercised: no alarm certificate was computed there.
 
-**U5, the forced-fallback coverage test** (DEV seeds 430000 and 430001, F3a, its plan committed before it runs):
+**U5, the forced-fallback coverage test** (DEV seeds 430000 and 430001, F3a, its plan committed before it ran):
 - **Rows:** the 16 healthy rows of the two seeds (8 uniform noise, 8 edge noise) and 4 fault rows.
 - **Forcing:** at t = 300, 1000 and 2000, a measurement whose slab misses the box is put into the window directly,
   past the keep gate (as R0 does). Every LP that holds it fails with kind `slab`, until the next fold resets.
@@ -264,10 +268,13 @@ come with it:
 **Tests of the scorer** (before approval): small constructed row sets, one for each branch of the verdict order and
 one for each counter (failsafe totals, rows with a fallback, the slab list). Each expected output is written down
 before the test runs. Freeze 2's rows, scored again, give freeze 2's numbers exactly (done: FAIL, 0.9949).
+**Done** (review M2c, section 5): 20 constructed row sets, 20 of 20 as expected. The scorer files have not changed
+since.
 
 ## 5. DEV reference (DEV, not validation)
 
-All of this is in `diag/DIAG-3-RESULTS.md`. The plans and criteria were committed before each run.
+The runs are in `diag/DIAG-3-RESULTS.md`; the plans and criteria were committed before each run. The independent
+reviews are summarized here; their reports are kept with the project's notes, outside this repository.
 
 **F3 without failures equals F (U1, R1): passes.** Arch, at `0ce80072`, on the 1320 DEV comparison rows and the 80
 edge-noise rows.
@@ -290,7 +297,8 @@ edge-noise rows.
   - c: D_paired 0.944, 18 later detections, 37,122 measurements dropped;
   - d: −5.19, 40 misses;
   - f: −29.33, 232 misses.
-- Each failure made a detection later or missed it, never wrong. Setting f fails every upper certificate. An alarm
+- On DEV no failure made a detection earlier or wrong. Where one changed a detection, it made it later or missed it.
+  Setting f fails every upper certificate. An alarm
   that only the upper side can prove then waits until z leaves the box.
 
 R1 and R2 ran at `0ce80072`. They stand for the frozen code only if every I2 record is equal (below). I2a, I2b and
@@ -340,14 +348,14 @@ and the fallback takes the P_J bound −0.20897 °C from the 41 solved faces (a 
   fallback passes: no alarm on 16 healthy rows; the true state inside the new base at all 3,388 checked folds
   (closest −0.00023 °C); one full reset per forcing; no audit violation; the two drift rows detect at the oracle's t*,
   forced or not. The certificate-coverage check was never exercised.
-- **U5b: passes, all 8 criteria** (Can's OK, at the frozen code). This is U5's fault part on four rows the oracle
-  detects: 430000 and 430001 × drift_0.002 E0 and stuck E1.
+- **U5b: passes, all 8 criteria** (run as decided 2026-11-20, at the frozen code). This is U5's fault part on four
+  rows the oracle detects: 430000 and 430001 × drift_0.002 E0 and stuck E1.
   - Each forcing at 250 gives one full reset, 23 samples later.
   - The true state stays inside the base at every fold before the onset (closest −0.00026 °C).
   - Every row detects at the oracle's t*, certified, after the reset, forced or not.
   - The exact audit finds no violation.
   - The certificate check again had no case. No certificate was computed up to an onset.
-  - Can, 2026-11-20: U5's healthy part and U5b together meet the slab rule's condition (section 4). U5 stays
+  - Decided 2026-11-20: U5's healthy part and U5b together meet the slab rule's condition (section 4). U5 stays
     recorded as failed as written.
 
 **Independent reviews:**
@@ -394,7 +402,7 @@ and the fallback takes the P_J bound −0.20897 °C from the 41 solved faces (a 
     - R1 and R2 ran about 60 million LPs with no exception (at `0ce80072` one would have stopped the run or raised an
       uncertified alarm);
     - whether a multiplier on F3's data can be small enough to underflow is not shown.
-  - Fixed by the fifth addendum (DIAG-3-PLAN; Can's decision 2026-11-20, `b57b5a39`), checked by review M3.
+  - Fixed by the fifth addendum (DIAG-3-PLAN; decided 2026-11-20, `b57b5a39`), checked by review M3.
   - **Wording, fixed in section 1:**
     - a `RuntimeError` in a fold becomes an uncertified alarm, but any other error stops the run;
     - a fold uses max(value + PAD, certified), never less than the certified bound.
@@ -413,7 +421,7 @@ and the fallback takes the P_J bound −0.20897 °C from the 41 solved faces (a 
     builders were read for shapes, and 662 LPs of a control run passed.
   - **M3b, L1 restated.** Under the floating-point model of section 1 and the candidate's sizes, every finite strict
     bound is an upper bound of the ideal LP. The proof covers the underflow of the final pad's own products. With
-    every box within ±2 and N ≤ 14,795 products, the term is exactly 5N · 2^−1074.
+    every box within ±2, the largest box end exactly 2, and N ≤ 14,795 products, the term is exactly 5N · 2^−1074.
   - **New findings, all reproduced here on the Mac. None gives a wrong bound:**
     - an LP with no variables passes `_check_inputs` and is counted as a solver `exception`;
     - a solver answer with no multiplier field raises `AttributeError` in `_usable` and stops the run (whether
@@ -423,9 +431,10 @@ and the fallback takes the P_J bound −0.20897 °C from the 41 solved faces (a 
       max|x| = 2^−54 give 10 units of 2^−1074 where 11 are needed;
     - two sentences were wrong: a strict bound "equals the non-strict one", and the term "changes no value". I3 is
       a measurement on its rows, not a proof.
-  - **Decision (Can, 2026-11-20): no sixth addendum.**
-    - The first three are listed as known limits in section 1. F3's LP builders cannot produce them, and none makes
-      a bound wrong.
+  - **Decision (2026-11-20): no sixth addendum.**
+    - The first three are listed as known limits in section 1, and none makes a bound wrong. F3's LP builders never
+      build an LP with no variables, and F3's runs use numpy's default error state. Whether scipy can return an
+      answer with no multiplier field is not known.
     - The wording is corrected in section 1 and DIAG-3-PLAN.
     - `diag3_cw.py` stays byte for byte as at `b57b5a39`, the file every test of the fifth addendum and I2b ran. Its
       two docstrings that state the wrong sentences stay as they are until after the freeze.
@@ -439,13 +448,13 @@ and the fallback takes the P_J bound −0.20897 °C from the 41 solved faces (a 
 ## 6. Order of operations
 
 As freeze 2 (FREEZE-V2.md section 6), with the V3 files:
-1. **Can reviews this file.** Any change he asks for is made, the manifest regenerated, and this file updated before
-   approval.
+1. **Review.** The author reviews this file, and any change is made before approval. The manifest is regenerated only
+   if a file it lists changes; this file is not one of them.
 2. **Approval.** The status line becomes exactly `Status: APPROVED by Can Koç on YYYY-MM-DD` in a commit that changes
    nothing else.
-3. **Run.** On Arch: `run_validation_v3.py OUT`, from a clean checkout. It checks the tree, the environment lock,
-   every manifest hash, the quoted manifest sha256 and the approval line, and the seed block. Only then does it
-   unlock the validation seeds.
+3. **Run.** On Arch: `run_validation_v3.py OUT`, from a clean checkout of the approval commit. It checks the tree, the
+   environment lock, every manifest hash, the quoted manifest sha256 and the approval line, and the seed block. Only
+   then does it unlock the validation seeds.
 4. **Score.** `score_validation_v3.py OUT`. Then a dated record with the verdict as it comes out.
 5. **Infrastructure failure:** the identical command, on the same block, into a new output directory. A needed code
    change outside the candidate and the rules gets a dated addendum here. The candidate, the target and the scoring
@@ -460,8 +469,9 @@ box, detection at the noise bound, sensor faults an ambient path reproduces, ind
 In addition:
 - **How often the solver fails.** The validation will meet whatever failures occur naturally, perhaps none. The
   fallback paths were exercised on DEV with simulated failures (R2, K7), not on validation seeds.
-- **The cost of a fallback.** A fallback bound is looser than the LP it replaces, so it can delay a detection. R2
-  measures that on DEV under the injection rates of settings a–f, which are not a model of real failure rates.
+- **The cost of a fallback.** A fallback bound is looser than the LP it replaces, so it can delay a detection.
+  Through the cap it can also change later detections (section 1). R2 measures the cost on DEV under the injection
+  rates of settings a–f, which are not a model of real failure rates. No detection there came earlier.
 - **The memory bound is a count of measurements,** not a measurement of bytes or time on a microcontroller.
 
 ## 8. DEV rehearsal of the full pipeline (DEV seeds, not validation)
@@ -470,13 +480,16 @@ In addition:
 - **Command:** `run_validation_v3.py --rehearsal --seeds 430096 430097 --workers 4`, then `score_validation_v3.py`.
 - **Outputs:** `results/v3/freeze3/rehearsal-dev-430096-e81c549b/`.
 - **The record:** the runner checked every file against the manifest. It wrote the manifest's sha256 (`0a40cbdf…`),
-  this file's, the environment and the commit into the record. `approval` is null, as a rehearsal's must be.
+  this file's sha256 as it was at that commit (`8ef9fad0…`; the approved version differs), the environment and the
+  commit into the record. `approval` is null, as a rehearsal's must be.
 - **Identity:** 96 runs, none missing, extra or repeated, and no integrity problem.
 - **F3: PASS.** D_paired 1.0 against the 0.80 target, with no miss, no soundness violation and no uncertified alarm.
   All 74 events are detected at the oracle's t*. No row took a fallback, and there was no slab.
 - **Against freeze 2's rehearsal** on the same seeds (`rehearsal-dev-430096-9dc1af3`, F):
-  - every score and every cell's table is the same, field for field, with F3 in F's place;
-  - row by row, all 96 rows are the same except for three fields: the oracle's wall-clock seconds, F3's `failsafe`
-    counters (all 0) and the certificate's new `box_sides` (empty).
+  - every score and every cell's table is the same, field for field, with F3 in F's place. The only addition is F3's
+    `failsafe` block (all 0);
+  - row by row, all 96 rows are the same except for wall-clock time (the oracle's `seconds`, and F3's `seconds`,
+    `step_ms` and `fold_step_ms`) and two new fields: F3's `failsafe` counters (all 0) and the certificate's
+    `box_sides` (empty).
 - **Time:** 1,501 s against freeze 2's 468.5 s. That run had 14 workers; this one had 4, on a machine shared with
   I2b.
