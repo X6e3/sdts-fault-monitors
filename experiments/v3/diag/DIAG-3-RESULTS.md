@@ -775,7 +775,8 @@ script). Mac, 2026-11-20 04:10–05:30, nice 19, while R3 ran. Outputs in `resul
   - The two `drift_0.002` rows detect at 506 and 652, certified: the oracle's t* exactly, and the same sample as the
     unforced run.
   - The certificate-coverage check was never exercised: no alarm certificate was computed before an onset.
-- **U5b** (DIAG-3-PLAN, proposed after U5's result, not run): the fault part again with rows the oracle detects.
+- **U5b** (DIAG-3-PLAN, proposed after U5's result): the fault part again with rows the oracle detects. Run on Can's OK
+  at `44ddd682`, below.
 - **I2b and I2c:** not run at `8c55e19e`. Can, 2026-11-20 04:40: no big runs on Arch without his go; I2b's size is
   his to set. Both run at the fifth addendum's commit (below).
 
@@ -809,3 +810,26 @@ script). Mac, 2026-11-20 04:10–05:30, nice 19, while R3 ran. Outputs in `resul
   (DIAG-3-PLAN).
 - **Review M3** checked this commit (FREEZE-V3 section 5). There is no sixth addendum, and `diag3_cw.py` stays byte for
   byte as at `b57b5a39`.
+
+**U5b: passes, all 8 criteria.** Mac, 2026-11-20 12:31–12:32, at `44ddd682`, 4 workers, nice 19. The code is the
+frozen candidate's: `diag3_cw.py` as at `b57b5a39`. The script and the criteria were committed before the run.
+Outputs are in `results/v3/diag3/amend10-u5b-44ddd682-mac/`.
+
+| row | oracle t* | onset | detection, forced | detection, unforced | folds checked before onset | largest d_i·x − base_i | bounds audited |
+|---|---|---|---|---|---|---|---|
+| 430000 drift_0.002 E0 rw uniform | 506 | 407 | 506, certified | 506 | 9 | −0.0062 °C | 710 |
+| 430001 drift_0.002 E0 rw uniform | 652 | 594 | 652, certified | 652 | 21 | −0.00026 °C | 1,124 |
+| 430000 stuck E1 rw uniform | 412 | 407 | 412, certified | 412 | 9 | −0.0062 °C | 434 |
+| 430001 stuck E1 rw uniform | 596 | 594 | 596, certified | 596 | 21 | −0.00026 °C | 984 |
+
+- **Preconditions:** every row has an oracle t*, and every onset (407–594) comes after the forcing at 250.
+- **The forcing:** in each row it gives exactly one full reset, at t = 273, 23 samples after the forcing. It also
+  gives 42 slab fold failures and slab range failures. 23 measurements were not kept.
+- **Detection:** every forced row detects after the reset, with a certified alarm, at the oracle's t*. The lag against
+  the unforced run is 0.
+- **The exact audit:** no violation. The smallest slack is 1.5e-14 °C.
+- **Not exercised:** the certificate check, as in U5. No alarm certificate was computed at or before an onset, so
+  that criterion holds without a case. The certificates themselves are covered by the exact audit (U3) and by L1.
+- **U5 stays recorded as failed as written.** Its healthy part passed, and U5b passes its fault part. Whether the two
+  together meet the slab rule's condition ("U5 passes before approval", FREEZE-V3 section 4) is Can's decision.
+

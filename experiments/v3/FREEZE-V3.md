@@ -11,8 +11,9 @@ to generate validation data until then (section 6).
 **Open items before review** (each is filled in from its own record, as it comes out):
 - I2b: the frozen code against 0ce80072 on Arch, set by Can (all of setting none, a sample of b, d and e), running
   (section 5). R1–R3 are in: U1, U2 and U3 pass, and so do I2a, I2c and I3 (section 5);
-- U5: the forced-fallback coverage test (section 4, the slab rule's condition): failed as written on its fault-row
-  criteria (two rows had no detectable event); U5b proposed, needs Can's OK (section 5);
+- U5: the forced-fallback coverage test (section 4, the slab rule's condition). It failed as written on its fault-row
+  criteria, because two rows had no detectable event. Its healthy part passed, and U5b, its fault part on rows the
+  oracle detects, passes (section 5). Whether the two together meet the condition is Can's decision;
 - tests of the scorer on small constructed row sets, one per verdict branch and per counter (section 4);
 - the independent summary of the R runs (review K7d) (section 5);
 - the fourth and fifth addenda (reviews M1 and M2, Can's decisions 2026-11-20): U0b, U0c, I3 and the identity
@@ -298,8 +299,14 @@ and the fallback takes the P_J bound −0.20897 °C from the 41 solved faces (a 
   oracle detection, so no sound method can detect them, and F3 does not, forced or not. Everything about the
   fallback passes: no alarm on 16 healthy rows; the true state inside the new base at all 3,388 checked folds
   (closest −0.00023 °C); one full reset per forcing; no audit violation; the two drift rows detect at the oracle's t*,
-  forced or not. The certificate-coverage check was never exercised. [U5b: the fault part again on rows the oracle
-  detects, proposed, needs Can's OK.]
+  forced or not. The certificate-coverage check was never exercised.
+- **U5b: passes, all 8 criteria** (Can's OK, at the frozen code). This is U5's fault part on four rows the oracle
+  detects: 430000 and 430001 × drift_0.002 E0 and stuck E1.
+  - Each forcing at 250 gives one full reset, 23 samples later.
+  - The true state stays inside the base at every fold before the onset (closest −0.00026 °C).
+  - Every row detects at the oracle's t*, certified, after the reset, forced or not.
+  - The exact audit finds no violation.
+  - The certificate check again had no case. No certificate was computed up to an onset.
 
 **Independent reviews:**
 - **N2 (code) and AG1 (documents against code):** their findings were closed by the addenda before any R1–R3 result

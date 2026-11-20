@@ -1,0 +1,125 @@
+{
+ "ok": {
+  "rows_have_oracle_tstar": true,
+  "onsets_after_forcing": true,
+  "fault_alarms_certified": true,
+  "fold_coverage": true,
+  "cert_coverage": true,
+  "forcing_counters": true,
+  "recovery": true,
+  "audit": true
+ },
+ "U5b": true,
+ "details": {
+  "430000/drift_0.002/E0/rw/uniform": {
+   "oracle_t_star": 506,
+   "onset": 407,
+   "detect_unforced": 506,
+   "detect_forced": 506,
+   "certified_forced": true,
+   "resets_at": [
+    273
+   ],
+   "samples_force_to_reset": [
+    23
+   ],
+   "measurements_not_kept": 23,
+   "fold_checks": 9,
+   "max_fold_excess_C": -0.006179253522108225,
+   "cert_checks": 0,
+   "max_cert_excess_C": null,
+   "audit": {
+    "n": 710,
+    "min_slack_C": 1.4618544558628813e-14,
+    "violations": 0,
+    "max_gap_to_value_C": 1.4115951185722508e-07,
+    "max_coefficient_term_C": 9.370282327836321e-14,
+    "n_implied": 0,
+    "min_slack_implied_C": Infinity
+   }
+  },
+  "430001/drift_0.002/E0/rw/uniform": {
+   "oracle_t_star": 652,
+   "onset": 594,
+   "detect_unforced": 652,
+   "detect_forced": 652,
+   "certified_forced": true,
+   "resets_at": [
+    273
+   ],
+   "samples_force_to_reset": [
+    23
+   ],
+   "measurements_not_kept": 23,
+   "fold_checks": 21,
+   "max_fold_excess_C": -0.0002637535388050338,
+   "cert_checks": 0,
+   "max_cert_excess_C": null,
+   "audit": {
+    "n": 1124,
+    "min_slack_C": 1.8474617538814305e-14,
+    "violations": 0,
+    "max_gap_to_value_C": 6.257337472614921e-07,
+    "max_coefficient_term_C": 9.414691248821327e-14,
+    "n_implied": 0,
+    "min_slack_implied_C": Infinity
+   }
+  },
+  "430000/stuck/E1/rw/uniform": {
+   "oracle_t_star": 412,
+   "onset": 407,
+   "detect_unforced": 412,
+   "detect_forced": 412,
+   "certified_forced": true,
+   "resets_at": [
+    273
+   ],
+   "samples_force_to_reset": [
+    23
+   ],
+   "measurements_not_kept": 23,
+   "fold_checks": 9,
+   "max_fold_excess_C": -0.006179253522108225,
+   "cert_checks": 0,
+   "max_cert_excess_C": null,
+   "audit": {
+    "n": 434,
+    "min_slack_C": 1.461854455862881e-14,
+    "violations": 0,
+    "max_gap_to_value_C": 1.8166316340106903e-08,
+    "max_coefficient_term_C": 9.370282327836321e-14,
+    "n_implied": 0,
+    "min_slack_implied_C": Infinity
+   }
+  },
+  "430001/stuck/E1/rw/uniform": {
+   "oracle_t_star": 596,
+   "onset": 594,
+   "detect_unforced": 596,
+   "detect_forced": 596,
+   "certified_forced": true,
+   "resets_at": [
+    273
+   ],
+   "samples_force_to_reset": [
+    23
+   ],
+   "measurements_not_kept": 23,
+   "fold_checks": 21,
+   "max_fold_excess_C": -0.0002637535388050338,
+   "cert_checks": 0,
+   "max_cert_excess_C": null,
+   "audit": {
+    "n": 984,
+    "min_slack_C": 1.8606320075326733e-14,
+    "violations": 0,
+    "max_gap_to_value_C": 6.257337472614921e-07,
+    "max_coefficient_term_C": 9.414691248821327e-14,
+    "n_implied": 0,
+    "min_slack_implied_C": Infinity
+   }
+  }
+ },
+ "git_head": "44ddd6820f36acc020551e846d5561f25b31b2f4",
+ "git_dirty_tracked": false
+}
