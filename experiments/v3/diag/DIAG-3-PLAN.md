@@ -920,3 +920,24 @@ paragraph. That commit changes only the script `diag/amend10_i2b.py` and this te
   - setting none's full run also gives U1 at the frozen code itself (`amend10.py summary` on it, reported).
 - **If any record differs:** as I2 says. The difference is written down, and that setting is run again in full at
   the new commit. That is a large run on Arch, so it waits for Can's go.
+
+**Fifth addendum, corrections after review M3 (2026-11-20, about 12:00; Can's decision: no sixth addendum).**
+Review M3 (`~/Research/sdts-runs/v3-proof/M3/` on Arch, at `b57b5a39`) closes M2's four findings and restates L1
+with the underflow term. Two sentences above are wrong as written. They stay as written, and are corrected here:
+- **"It is formed as ⌈N (1 + 2 max |x|)⌉ units of 2^−1074, which is exact"** (the decision paragraph).
+  - The ceiling is taken of the floating-point v = N (1 + 2 max|x|), which can round down.
+  - Counterexample (M3a): N = 10 and max|x| = 2^−54 give 10 units where 11 are needed.
+  - For the candidate the term is exact: every box is within ±2, N ≤ 14,795 and 5N < 2^52 (M3b, section 5). For
+    other boxes it must be shown again.
+- **"On O(1) data this term is far below one unit in the last place of the bound, so it changes no value"**
+  (proposed change, item 3).
+  - The term enters the `fsum`, so it can change a bound's rounding.
+  - I3 found no change on its 90,153 bounds. That is a measurement on those rows, not a property.
+- **Not fixed in freeze 3, listed as known limits in FREEZE-V3 section 1** (M3a; F3's LP builders cannot produce
+  them):
+  - an LP with no variables is counted as a solver exception;
+  - an answer with no multiplier field stops the run with `AttributeError`;
+  - F3a's audit evaluates one statistic outside the error-state guard.
+- **Docstrings.** Two docstrings in `diag3_cw.py` state the same claims: a strict bound "equals the non-strict one",
+  and the term "is exact". The file stays byte for byte as at `b57b5a39`, so that the frozen file is the one every
+  test ran on. The docstrings are corrected after the freeze, with the general fixes.

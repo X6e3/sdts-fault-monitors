@@ -16,7 +16,8 @@ to generate validation data until then (section 6).
   criteria (two rows had no detectable event); U5b proposed, needs Can's OK (section 5);
 - tests of the scorer on small constructed row sets, one per verdict branch and per counter (section 4);
 - the independent summary of the R runs (review K7d) (section 5);
-- the fourth addendum (M1's G1 and G2, Can's decision 2026-11-20): U0b and the identity check I2 (section 5);
+- the fourth and fifth addenda (reviews M1 and M2, Can's decisions 2026-11-20): U0b, U0c, I3 and the identity
+  check I2 (section 5); review M3 is in (section 5);
 - the manifest at the frozen code, and the DEV rehearsal at the freeze commit (sections 2 and 8).
 
 **Decided by Can Koç on 2026-11-20:**
@@ -84,7 +85,7 @@ has **failed** (any other status, an empty slab included). F3 never uses a value
 | an empty slab, before any solve | failed (kind `slab`) | nothing |
 | an exception from the solver call (`RuntimeError`, `ValueError`, `IndexError`, `OverflowError`, `ZeroDivisionError`, `FloatingPointError`) | failed (kind `exception`; fourth addendum) | nothing |
 | status 0 with a non-finite value or multiplier, or a non-finite certified bound | failed (kind `nonfinite`; fourth addendum) | nothing |
-| a non-finite or inconsistent LP input, `MemoryError`, any error outside the solver call | not a solver outcome: our own error. It is raised, never counted as a fallback. A `RuntimeError` (or a subclass) raised in a fold ends the run with an uncertified alarm (scored FAIL). Any other error, in a fold or elsewhere, stops the run. Known gaps at `8c55e19e` (review M2): an input of the wrong rank, or a right-hand side without its matrix, passes the check and reaches the solver; a status-0 answer with multiplier arrays of the wrong length passes `_usable`. See the fifth addendum, proposed | nothing |
+| a non-finite or inconsistent LP input, `MemoryError`, any error outside the solver call | not a solver outcome: our own error. It is raised, never counted as a fallback. A `RuntimeError` (or a subclass) raised in a fold ends the run with an uncertified alarm (scored FAIL). Any other error, in a fold or elsewhere, stops the run. The gaps review M2 found at `8c55e19e` are closed by the fifth addendum (`b57b5a39`; review M3a). Known limits that remain (review M3a), none of which F3's own LP builders can produce: an LP with no variables passes the check and is counted as a solver `exception`; a solver answer with no multiplier field at all raises `AttributeError` and stops the run | nothing |
 
 F and F3 differ here on purpose. F read status 2 as "the window is empty" and stopped. F3 has no third outcome:
 infeasible is one more way to fail. An alarm needs a certified separation, never a solver's claim.
@@ -118,8 +119,17 @@ decision (section 5, I1).
   fallback above is a superset bound of what it replaces. The written proof, checked against the code, is review M1
   (section 5). It proves S1 (no alarm on an admissible run) and S3 (every alarm separates z_t's slab from a certified
   outer bound) under the model and a stated floating-point model, with the solver reporting every failure as a
-  status. Its gaps G1 and G2 are where that last condition can break; the fourth addendum closes both (table
-  above).
+  status. Its gaps G1 and G2 are where that last condition can break. The fourth addendum closes them in part and
+  the fifth closes the rest (reviews M2 and M3a; table above).
+- **The floating-point model** (fifth addendum): IEEE binary64, round to nearest with ties to even, gradual
+  underflow. A product's error beyond the relative model is at most 2^−1075, sums and differences need no absolute
+  term, and `math.fsum` is correctly rounded and not regrouped. Under this model and the candidate's sizes (W = 256,
+  B = 16, every box within ±2), every finite strict bound is an upper bound of the ideal LP: L1 restated with the
+  underflow term (review M3b). The term's exactness is shown for these sizes only. For other boxes it must be shown
+  again (review M3a).
+- **The audit variant F3a** is a check of F3, not part of the candidate. One of its extra statistics (the
+  coefficient term) is evaluated outside the error-state guard of the strict bound. Under `np.errstate(all="raise")`
+  it can raise; every run used numpy's default state (review M3a).
 - **No alarm on a healthy run, and none before t\*:** as FREEZE-V2.md section 1. The fallbacks only widen F3's sets,
   so they can only remove or delay alarms.
 - **Outside the chain:** the solver's tolerance, and how often the solver fails. Freeze 2 saw one failed fold LP
@@ -315,7 +325,7 @@ and the fallback takes the P_J bound −0.20897 °C from the 41 solved faces (a 
     - R1 and R2 ran about 60 million LPs with no exception (at `0ce80072` one would have stopped the run or raised an
       uncertified alarm);
     - whether a multiplier on F3's data can be small enough to underflow is not shown.
-  - Fixes are proposed for a fifth addendum (DIAG-3-PLAN). It needs Can's decision.
+  - Fixed by the fifth addendum (DIAG-3-PLAN; Can's decision 2026-11-20, `b57b5a39`), checked by review M3.
   - **Wording, fixed in section 1:**
     - a `RuntimeError` in a fold becomes an uncertified alarm, but any other error stops the run;
     - a fold uses max(value + PAD, certified), never less than the certified bound.
@@ -328,6 +338,34 @@ and the fallback takes the P_J bound −0.20897 °C from the 41 solved faces (a 
     - a literature note on certified LP bounds: Neumaier and Shcherbina 2004; Jansson 2003, 2004; Applegate et al.
       2007; Cook et al. 2013; Steffy and Wolter 2013; Higham 2002. All 7 DOIs were confirmed here on OpenAlex or
       Crossref.
+- **M3 (the fifth addendum checked, at b57b5a39):**
+  - **M3a, closure: all four findings of M2 are closed.** 19 comparisons on constructed LPs and DEV 430000, each
+    expected outcome derived from the code first, all as expected. The new checks reject no natural LP: F3's two LP
+    builders were read for shapes, and 662 LPs of a control run passed.
+  - **M3b, L1 restated.** Under the floating-point model of section 1 and the candidate's sizes, every finite strict
+    bound is an upper bound of the ideal LP. The proof covers the underflow of the final pad's own products. With
+    every box within ±2 and N ≤ 14,795 products, the term is exactly 5N · 2^−1074.
+  - **New findings, all reproduced here on the Mac. None gives a wrong bound:**
+    - an LP with no variables passes `_check_inputs` and is counted as a solver `exception`;
+    - a solver answer with no multiplier field raises `AttributeError` in `_usable` and stops the run (whether
+      scipy can return one is not known);
+    - F3a's audit evaluates one statistic outside the strict bound's error-state guard (section 1);
+    - the plan's "the term is exact" holds for the candidate's boxes only. Counterexample: N = 10 and
+      max|x| = 2^−54 give 10 units of 2^−1074 where 11 are needed;
+    - two sentences were wrong: a strict bound "equals the non-strict one", and the term "changes no value". I3 is
+      a measurement on its rows, not a proof.
+  - **Decision (Can, 2026-11-20): no sixth addendum.**
+    - The first three are listed as known limits in section 1. F3's LP builders cannot produce them, and none makes
+      a bound wrong.
+    - The wording is corrected in section 1 and DIAG-3-PLAN.
+    - `diag3_cw.py` stays byte for byte as at `b57b5a39`, the file every test of the fifth addendum and I2b ran. Its
+      two docstrings that state the wrong sentences stay as they are until after the freeze.
+    - The general fixes wait until after the freeze, for the code release and the next plant:
+      - the two docstrings;
+      - a check for at least one variable;
+      - a missing multiplier field counted as a failed attempt;
+      - an exact term for any box;
+      - the guard extended to F3a's audit.
 
 ## 6. Order of operations
 
