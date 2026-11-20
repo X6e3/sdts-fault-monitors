@@ -1,0 +1,304 @@
+{
+ "meta": {
+  "setting": "d",
+  "variant": "F3",
+  "W": 256,
+  "K": 64,
+  "workers": 14,
+  "git_head": "0ce80072f6eead16b12c5d7d4cb6170004efbc38",
+  "git_dirty_tracked": false,
+  "machine": "x86_64",
+  "platform": "Linux-7.3.4-arch1-2-x86_64-with-glibc2.44",
+  "started": "2026-11-20T04:26:41+0300",
+  "finished": "2026-11-20T05:31:08+0300"
+ },
+ "rows": 1400,
+ "expected": 1400,
+ "soundness_violations": [],
+ "early_alarms": [],
+ "uncertified_alarms": [],
+ "max_kept": 65,
+ "counter_mismatches": [],
+ "n_counter_mismatches": 0,
+ "detect_differs_from_F": [
+  [
+   "430003-jump_0.2-E0-rw-uniform",
+   539,
+   535
+  ],
+  [
+   "430012-jump_0.2-E0-rw-uniform",
+   333,
+   331
+  ],
+  [
+   "430018-jump_0.2-E0-rw-uniform",
+   342,
+   341
+  ],
+  [
+   "430027-jump_0.2-E0-rw-uniform",
+   360,
+   351
+  ],
+  [
+   "430029-jump_0.2-E0-rw-uniform",
+   479,
+   478
+  ],
+  [
+   "430002-jump_0.2-E0-ramp-uniform",
+   470,
+   467
+  ],
+  [
+   "430001-jump_0.2-E0-ramp-uniform",
+   609,
+   602
+  ],
+  [
+   "430012-jump_0.2-E0-ramp-uniform",
+   333,
+   331
+  ],
+  [
+   "430021-jump_0.2-E0-ramp-uniform",
+   558,
+   552
+  ],
+  [
+   "430004-jump_0.2-E0-rw-uniform",
+   null,
+   327
+  ],
+  [
+   "430003-jump_0.2-E1-rw-uniform",
+   539,
+   535
+  ],
+  [
+   "430008-jump_0.2-E0-rw-uniform",
+   null,
+   452
+  ],
+  [
+   "430012-jump_0.2-E1-rw-uniform",
+   333,
+   331
+  ],
+  [
+   "430025-jump_0.2-E0-rw-uniform",
+   null,
+   325
+  ],
+  [
+   "430018-jump_0.2-E1-rw-uniform",
+   342,
+   341
+  ],
+  [
+   "430027-jump_0.2-E1-rw-uniform",
+   360,
+   351
+  ],
+  [
+   "430020-jump_0.2-E0-rw-uniform",
+   null,
+   393
+  ],
+  [
+   "430029-jump_0.2-E1-rw-uniform",
+   479,
+   478
+  ],
+  [
+   "430002-jump_0.2-E1-ramp-uniform",
+   470,
+   467
+  ],
+  [
+   "430001-jump_0.2-E1-ramp-uniform",
+   609,
+   602
+  ],
+  [
+   "430004-jump_0.2-E0-ramp-uniform",
+   3519,
+   327
+  ],
+  [
+   "430012-jump_0.2-E1-ramp-uniform",
+   333,
+   331
+  ],
+  [
+   "430008-jump_0.2-E0-ramp-uniform",
+   null,
+   452
+  ],
+  [
+   "430020-jump_0.2-E0-ramp-uniform",
+   null,
+   393
+  ],
+  [
+   "430025-jump_0.2-E0-ramp-uniform",
+   null,
+   325
+  ],
+  [
+   "430021-jump_0.2-E1-ramp-uniform",
+   558,
+   552
+  ],
+  [
+   "430029-jump_0.2-E0-ramp-uniform",
+   null,
+   479
+  ],
+  [
+   "430004-jump_0.5-E0-rw-uniform",
+   327,
+   324
+  ],
+  [
+   "430004-jump_0.2-E1-rw-uniform",
+   null,
+   327
+  ],
+  [
+   "430008-jump_0.2-E1-rw-uniform",
+   null,
+   452
+  ],
+  [
+   "430020-jump_0.2-E1-rw-uniform",
+   null,
+   393
+  ],
+  [
+   "430025-jump_0.5-E0-rw-uniform",
+   325,
+   324
+  ],
+  [
+   "430025-jump_0.2-E1-rw-uniform",
+   null,
+   325
+  ],
+  [
+   "430004-jump_0.5-E0-ramp-uniform",
+   327,
+   324
+  ],
+  [
+   "430004-jump_0.2-E1-ramp-uniform",
+   3519,
+   327
+  ],
+  [
+   "430008-jump_0.2-E1-ramp-uniform",
+   null,
+   452
+  ],
+  [
+   "430020-jump_0.2-E1-ramp-uniform",
+   null,
+   393
+  ],
+  [
+   "430025-jump_0.5-E0-ramp-uniform",
+   325,
+   324
+  ],
+  [
+   "430004-jump_0.5-E1-rw-uniform",
+   327,
+   324
+  ],
+  [
+   "430025-jump_0.2-E1-ramp-uniform",
+   null,
+   325
+  ],
+  [
+   "430025-jump_0.5-E1-rw-uniform",
+   325,
+   324
+  ],
+  [
+   "430029-jump_0.2-E1-ramp-uniform",
+   null,
+   479
+  ],
+  [
+   "430004-jump_0.5-E1-ramp-uniform",
+   327,
+   324
+  ],
+  [
+   "430008-jump_0.5-E0-rw-uniform",
+   null,
+   451
+  ],
+  [
+   "430025-jump_0.5-E1-ramp-uniform",
+   325,
+   324
+  ],
+  [
+   "430008-jump_0.5-E0-ramp-uniform",
+   null,
+   451
+  ],
+  [
+   "430005-drift_0.0005-E0-rw-uniform",
+   1129,
+   1127
+  ],
+  [
+   "430001-drift_0.0005-E0-ramp-uniform",
+   917,
+   747
+  ],
+  [
+   "430025-drift_0.0005-E0-rw-uniform",
+   1615,
+   1524
+  ],
+  [
+   "430008-jump_0.5-E1-rw-uniform",
+   null,
+   451
+  ]
+ ],
+ "n_detect_differs_from_F": 417,
+ "totals": {
+  "box_alarms": 104,
+  "fold_dir_fallbacks|2": 543817,
+  "fold_dir_fallbacks|4": 543689,
+  "fold_full_resets": 25893,
+  "fold_implied": 0,
+  "measurements_not_kept": 0,
+  "range_fallbacks|both": 0,
+  "range_fallbacks|one": 0
+ },
+ "harness_totals": {
+  "fold|2|injected": 543817,
+  "fold|4|injected": 543689
+ },
+ "misses": 40,
+ "misses_F": 0,
+ "lag_sum": 215321,
+ "lag_sum_F": 26,
+ "D_paired_dev": -5.192346241457859,
+ "D_paired_dev_F": 0.9992103264996204,
+ "after_reset_detections": 1019,
+ "seconds": 53854.2,
+ "complete": true,
+ "slab_failures": {},
+ "U2_soundness": true,
+ "U2_memory": true,
+ "U2_injections_match": true,
+ "U2_no_slab": true
+}

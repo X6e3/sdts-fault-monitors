@@ -647,7 +647,71 @@ The box-proved alarm has a certified margin of −700.0 mC on both sides.
   overall and 3.9e-14 °C on the P_J bound.
 - Re-evaluated at `6c3af845` under the strict U4 of the second addendum: passes.
 
-**R1–R3:** running (R1, R2 on Arch; R3 on the Mac). Not read yet.
+**R1 and R2:** Arch, at `0ce80072`, clean tree, 14 workers, one setting after another, 2026-11-19 23:14 to
+2026-11-20 08:42. Summaries and criteria by `amend10.py` at `6c3af845` on the Mac, from copies of the outputs.
+Everything is in `results/v3/diag3/amend10-r1r2-0ce80072-arch/`, including R0 and R4 of the same drive.
+- While it waited, the drive printed the last lines of each summary made with `0ce80072`'s own `amend10.py`. Those
+  are kept as `R-*.summary-0ce80072.json`.
+- Every flag and count they share with the `6c3af845` summaries is the same.
+
+**R1, setting none (U1): passes.**
+- All 1400 keys: 1320 DEV rows and 80 edge-noise rows. 18.7 CPU-hours.
+- F3 detects at the same sample as F on every row:
+  - 1082 alarms, all certified, all on fault rows;
+  - none on the 120 healthy or 80 edge-noise rows.
+- Every certified margin equals F's. The box exception was never needed: no alarm's margin differs.
+- No fallback: every fallback counter is 0.
+  - 53 attempts failed in 7,545,950 LPs.
+  - Each of those LPs was solved by a later attempt.
+- At most 65 measurements kept.
+- D_paired 0.99921 and no miss: F's figures.
+
+**R2, settings a–f (U2): passes.**
+- On every setting:
+  - the key set is complete;
+  - no alarm on an admissible row, no early alarm, and every alarm certified;
+  - at most 65 kept;
+  - on every row, the window's failure counters equal the harness's log, role by role;
+  - no slab failure.
+- **Paths**, totals over a–f, every one above 0:
+  - `fold_dir_fallbacks`: 949,259 (status 2) and 949,198 (status 4);
+  - `fold_apriori_fallbacks`: 192,920 and 192,274;
+  - `range_failures`: 18,678 and 18,638;
+  - `cert_fallbacks`: 66,010 and 66,346;
+  - `range_fallbacks` one side 36,956, both sides 180;
+  - `fold_full_resets` 25,893, `fold_implied` 425,757, `measurements_not_kept` 37,122;
+  - `box_alarms` 695 (reported, not a criterion).
+- **Recovery (d):** 1,019 fault rows detect after at least one full reset.
+
+Reported, not deciding (against R1; detections compared with F's on each row):
+
+| setting | injected failures | alarms, all certified | later than F | missed | D_paired | full resets | z not kept | CPU-h |
+|---|---|---|---|---|---|---|---|---|
+| none | 0 | 1082 | 0 | 0 | 0.99921 | 0 | 0 | 18.7 |
+| a | 39,033 fold directions | 1082 | 0 | 0 | 0.99921 | 0 | 0 | 18.6 |
+| b | 386,724 fold directions | 1082 | 0 | 0 | 0.99921 | 0 | 0 | 17.2 |
+| c | 37,316 as-range, 18 certificate | 1082 | 18 (median 2, max 850 samples) | 0 | 0.94442 | 0 | 37,122 | 18.2 |
+| d | 1,087,506 fold directions | 1042 | 377 (median 32, max 3192) | 40 | −5.19 | 25,893 | 0 | 15.0 |
+| e | 385,194 fold directions, 385,194 P_J | 1082 | 0 | 0 | 0.99921 | 0 | 0 | 16.5 |
+| f | 132,338 upper certificates | 850 | 691 (median 219, max 3081) | 232 | −29.33 | 0 | 0 | 27.9 |
+
+No setting made a detection earlier than F's.
+
+**What it shows (INFERRED):**
+- **a, b, e:** a failed fold direction costs no detection on DEV. This holds both when the P_J bound replaces it
+  (a, b) and when the a priori support does (e).
+- **c:** a failed as-range side drops that z_t. 37,122 measurements were dropped, and 18 detections came later.
+- **d:** a full reset every fourth fold discards the window. Detection then needs new evidence, so 377 alarms come
+  later and 40 events are missed.
+- **f:** with every upper certificate failing, the box's upper bound replaces it. An alarm whose upper side decides
+  cannot be proved until z leaves the box. 131,488 alarm tests fired unproved and raised no alarm (amendment 8:
+  certified alarms only).
+- In every setting a failure made a detection later or missed it, never wrong. These rates were chosen to reach every
+  path; they are not a model of real failure rates (FREEZE-V3 section 7).
+
+**R3, the exact audit (U3):** on the Mac, at `0ce80072`, settings a, b and e with F3a.
+- Settings a and b are done.
+- Setting e is running. Not read yet.
 
 **Third addendum, I1a: passes.** Mac, 2026-11-20 02:10–02:50. The old code (`0ce80072`) and the new (`000cd215`) ran
 side by side, two processes at nice 19, while R3 ran. Inputs: 4 healthy edge rows (430070 E0/E1 × rw/ramp) and 4
@@ -665,7 +729,7 @@ Outputs are in `results/v3/diag3/amend10-i1a-000cd215/`; scripts `diag/amend10_i
   - the subset fails at 6,860 of 7,342 checks on an edge row under setting none.
 - On edge noise every z_t cuts the range, so each edge row keeps a measurement at every step. That gives 3,535
   evictions and 15,934 LPs on all four rows. The data differ between the rows: `n_retry` is 0 on rw and 1 on ramp.
-- **I1b** (all of R-none on Arch with the new code) follows after all.done.
+- **I1b** (all of R-none on Arch with the new code) is replaced by I2b (fourth addendum).
 
 **Fourth addendum (the solver boundary, M1's G1 and G2), at `8c55e19e`** (U5 at `1c0439cd`, which adds only its
 script). Mac, 2026-11-20 04:10–05:30, nice 19, while R3 ran. Outputs in `results/v3/diag3/amend10-fourth-8c55e19e/`.

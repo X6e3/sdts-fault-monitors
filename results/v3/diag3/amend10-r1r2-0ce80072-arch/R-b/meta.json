@@ -1,0 +1,13 @@
+{
+ "setting": "b",
+ "variant": "F3",
+ "W": 256,
+ "K": 64,
+ "workers": 14,
+ "git_head": "0ce80072f6eead16b12c5d7d4cb6170004efbc38",
+ "git_dirty_tracked": false,
+ "machine": "x86_64",
+ "platform": "Linux-7.3.4-arch1-2-x86_64-with-glibc2.44",
+ "started": "2026-11-20T01:54:40+0300",
+ "finished": "2026-11-20T03:08:35+0300"
+}

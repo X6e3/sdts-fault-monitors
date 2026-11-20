@@ -11,7 +11,7 @@ to generate validation data until then (section 6).
 **Open items before review** (each is filled in from its own record, as it comes out):
 - I2b: the frozen code against 0ce80072 on Arch; its size is Can's to set (no big runs on Arch without his go);
   I2c: R4 with the exact audit (section 5);
-- R1–R3 and the criteria U1–U3, with the check that each injection ran the code path it names (section 5);
+- R3 and U3 (R1–R2 are in: U1 and U2 pass, section 5);
 - U5: the forced-fallback coverage test (section 4, the slab rule's condition): failed as written on its fault-row
   criteria (two rows had no detectable event); U5b proposed, needs Can's OK (section 5);
 - tests of the scorer on small constructed row sets, one per verdict branch and per counter (section 4);
@@ -224,14 +224,35 @@ before the test runs. Freeze 2's rows, scored again, give freeze 2's numbers exa
 
 All of this is in `diag/DIAG-3-RESULTS.md`. The plans and criteria were committed before each run.
 
-**F3 without failures equals F.** [U1, R1: on the 1320 DEV comparison rows and the 80 edge-noise rows, F3's
-detections equal F's, and its margins equal F's or F's clipped to the box. F's DEV reference is FREEZE-V2.md section
-5: D_paired 0.99921, no miss, no soundness violation, 1082 certified alarms.]
+**F3 without failures equals F (U1, R1): passes.** Arch, at `0ce80072`, on the 1320 DEV comparison rows and the 80
+edge-noise rows.
+- F3 detects at the same sample as F on every row, with the same certified margin.
+- 1082 certified alarms, all on fault rows; none on a healthy or edge-noise row.
+- No fallback occurred.
+- D_paired is 0.99921 with no miss: F's DEV reference in FREEZE-V2.md section 5.
 
-**F3 with simulated failures** [U2, R2: settings a–f, every status kind in every role, soundness, the memory bound,
-counters equal to the injections, no slab, recovery after full resets in setting d. D_paired per setting, reported.]
+**F3 with simulated failures (U2, R2): passes.** Settings a–f.
+- Every setting:
+  - is complete;
+  - has no alarm on an admissible row, no early alarm, and no uncertified alarm;
+  - keeps at most 65 measurements;
+  - has counters equal to the injection log on every row;
+  - has no slab failure.
+- Every fallback counter is above 0 for both injected status kinds.
+- In setting d, 1,019 fault rows detect after a full reset.
+- Reported:
+  - a, b and e (fold directions failing, with the P_J or the a priori fallback) change no detection;
+  - c: D_paired 0.944, 18 later detections, 37,122 measurements dropped;
+  - d: −5.19, 40 misses;
+  - f: −29.33, 232 misses.
+- Each failure made a detection later or missed it, never wrong. Setting f fails every upper certificate. An alarm
+  that only the upper side can prove then waits until z leaves the box.
 
-**The exact audit** [U3, R3 on the Mac: settings a, b and e with F3a, no violation].
+R1 and R2 ran at `0ce80072`. They stand for the frozen code only if every I2 record is equal (below). I2a passes; I2b
+and I2c are open.
+
+**The exact audit** [U3, R3 on the Mac: settings a, b and e with F3a, no violation]. Settings a and b are done; e is
+running.
 
 **The path tests (U0, R0): 13 of 13 pass.**
 

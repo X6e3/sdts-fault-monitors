@@ -1,0 +1,161 @@
+{
+ "meta": {
+  "setting": "c",
+  "variant": "F3",
+  "W": 256,
+  "K": 64,
+  "workers": 14,
+  "git_head": "0ce80072f6eead16b12c5d7d4cb6170004efbc38",
+  "git_dirty_tracked": false,
+  "machine": "x86_64",
+  "platform": "Linux-7.3.4-arch1-2-x86_64-with-glibc2.44",
+  "started": "2026-11-20T03:08:37+0300",
+  "finished": "2026-11-20T04:26:39+0300"
+ },
+ "rows": 1400,
+ "expected": 1400,
+ "soundness_violations": [],
+ "early_alarms": [],
+ "uncertified_alarms": [],
+ "max_kept": 65,
+ "counter_mismatches": [],
+ "n_counter_mismatches": 0,
+ "detect_differs_from_F": [
+  [
+   "430011-drift_0.02-E0-ramp-uniform",
+   589,
+   588
+  ],
+  [
+   "430013-noise_x2-E1-ramp-uniform",
+   461,
+   459
+  ],
+  [
+   "430027-drift_0.002-E1-rw-uniform",
+   1429,
+   579
+  ],
+  [
+   "430011-drift_0.002-E1-ramp-uniform",
+   1277,
+   1275
+  ],
+  [
+   "430014-drift_0.02-E1-ramp-uniform",
+   385,
+   374
+  ],
+  [
+   "430015-drift_0.005-E1-rw-uniform",
+   536,
+   521
+  ],
+  [
+   "430027-drift_0.002-E0-rw-uniform",
+   1429,
+   579
+  ],
+  [
+   "430021-drift_0.02-E1-ramp-uniform",
+   559,
+   558
+  ],
+  [
+   "430018-drift_0.0005-E1-ramp-uniform",
+   1356,
+   1300
+  ],
+  [
+   "430026-jump_0.2-E0-rw-uniform",
+   594,
+   591
+  ],
+  [
+   "430028-jump_0.5-E0-ramp-uniform",
+   439,
+   438
+  ],
+  [
+   "430011-jump_0.2-E0-ramp-uniform",
+   578,
+   574
+  ],
+  [
+   "430012-drift_0.001-E1-ramp-uniform",
+   418,
+   417
+  ],
+  [
+   "430005-drift_0.0005-E0-rw-uniform",
+   1129,
+   1127
+  ],
+  [
+   "430000-jump_0.5-E1-ramp-uniform",
+   409,
+   408
+  ],
+  [
+   "430015-jump_0.2-E1-rw-uniform",
+   513,
+   511
+  ],
+  [
+   "430012-drift_0.005-E1-ramp-uniform",
+   352,
+   351
+  ],
+  [
+   "430027-jump_0.5-E1-rw-uniform",
+   351,
+   350
+  ]
+ ],
+ "n_detect_differs_from_F": 18,
+ "totals": {
+  "box_alarms": 1,
+  "cert_fallbacks|2": 7,
+  "cert_fallbacks|4": 11,
+  "fold_full_resets": 0,
+  "fold_implied": 0,
+  "measurements_not_kept": 37122,
+  "range_failures|2": 18678,
+  "range_failures|4": 18638,
+  "range_fallbacks|both": 180,
+  "range_fallbacks|one": 36956
+ },
+ "harness_totals": {
+  "cert|2|injected": 7,
+  "cert|4|injected": 11,
+  "range|2|injected": 18678,
+  "range|4|injected": 18638
+ },
+ "misses": 0,
+ "misses_F": 0,
+ "lag_sum": 1830,
+ "lag_sum_F": 26,
+ "D_paired_dev": 0.9444191343963554,
+ "D_paired_dev_F": 0.9992103264996204,
+ "after_reset_detections": 0,
+ "seconds": 65468.9,
+ "complete": true,
+ "missing_keys": [],
+ "extra_keys": [],
+ "slab_failures": {},
+ "U2_soundness": true,
+ "U2_memory": true,
+ "U2_injections_match": true,
+ "U2_no_slab": true,
+ "fallback_totals": {
+  "fold_implied": 0,
+  "fold_full_resets": 0,
+  "range_fallbacks|one": 36956,
+  "range_fallbacks|both": 180,
+  "range_failures|4": 18638,
+  "range_failures|2": 18678,
+  "measurements_not_kept": 37122,
+  "cert_fallbacks|4": 11,
+  "cert_fallbacks|2": 7
+ }
+}
