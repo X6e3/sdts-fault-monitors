@@ -78,13 +78,13 @@ has **failed** (any other status, an empty slab included). F3 never uses a value
 
 | what the solver returns | F3's outcome | what F3 may use from it |
 |---|---|---|
-| status 0 (optimal) | solved | a fold or alarm bound: only its certified weak-duality bound (`certified_max`). An as-range side: its value, as a gate only (below) |
+| status 0 (optimal) | solved | an alarm bound: its certified weak-duality bound (`certified_max`). A fold bound: max(value + PAD, certified bound), never below the certified bound, on which its soundness rests. An as-range side: its value, as a gate only (below) |
 | status 2 (infeasible) | failed | nothing. A solver's "infeasible" is not a certificate, and on admissible data the window is never empty, so F3 never reads it as a proof of a fault |
 | status 4, any other status | failed | nothing |
 | an empty slab, before any solve | failed (kind `slab`) | nothing |
 | an exception from the solver call (`RuntimeError`, `ValueError`, `IndexError`, `OverflowError`, `ZeroDivisionError`, `FloatingPointError`) | failed (kind `exception`; fourth addendum) | nothing |
 | status 0 with a non-finite value or multiplier, or a non-finite certified bound | failed (kind `nonfinite`; fourth addendum) | nothing |
-| a non-finite or inconsistent LP input, `MemoryError`, any error outside the solver call | not a solver outcome: our own error. It is raised, never counted as a fallback. In a fold it ends the run with an uncertified alarm (scored FAIL); elsewhere it stops the run | nothing |
+| a non-finite or inconsistent LP input, `MemoryError`, any error outside the solver call | not a solver outcome: our own error. It is raised, never counted as a fallback. A `RuntimeError` (or a subclass) raised in a fold ends the run with an uncertified alarm (scored FAIL). Any other error, in a fold or elsewhere, stops the run. Known gaps at `8c55e19e` (review M2): an input of the wrong rank, or a right-hand side without its matrix, passes the check and reaches the solver; a status-0 answer with multiplier arrays of the wrong length passes `_usable`. See the fifth addendum, proposed | nothing |
 
 F and F3 differ here on purpose. F read status 2 as "the window is empty" and stopped. F3 has no third outcome:
 infeasible is one more way to fail. An alarm needs a certified separation, never a solver's claim.
@@ -300,6 +300,34 @@ and the fallback takes the P_J bound −0.20897 °C from the 41 solved faces (a 
     (the record's subset holds after each step, not inside it) are wording, fixed in section 1. G5 (W, K and the
     template are the caller's) is closed for the validation by the manifest. G6 and G7 are scope and record-keeping
     notes for the write-up.
+- **M2 (the fourth addendum checked, at 1c0439cd):**
+  - **G1 and G2: closed only in part.** Solver exceptions and non-finite status-0 answers now take their fallbacks,
+    as U0b showed. Three paths remain:
+    - **Wrong shapes.** An LP input of the wrong rank passes `_check_inputs`, and so does a right-hand side given
+      without its matrix. scipy then raises `ValueError`, which is counted as a solver `exception`, not raised as
+      our error.
+    - **Empty multipliers.** A status-0 answer whose multiplier arrays are empty passes `_usable`. The activity
+      update then raises `IndexError` and stops the run.
+    - **Underflow.** The certificate's error terms are relative. In a constructed one-variable LP with a subnormal
+      objective (−2^−1074), the strict bound returns 0 where the exact maximum is 2^−1076.
+  - All three were reproduced here on the Mac. No natural case of any of them is known:
+    - F3's LP builder only ever passes rank-1, paired inputs;
+    - R1 and R2 ran about 60 million LPs with no exception (at `0ce80072` one would have stopped the run or raised an
+      uncertified alarm);
+    - whether a multiplier on F3's data can be small enough to underflow is not shown.
+  - Fixes are proposed for a fifth addendum (DIAG-3-PLAN). It needs Can's decision.
+  - **Wording, fixed in section 1:**
+    - a `RuntimeError` in a fold becomes an uncertified alarm, but any other error stops the run;
+    - a fold uses max(value + PAD, certified), never less than the certified bound.
+  - **The other new results:**
+    - the no-event identity, checked line by line, and F/Fa unchanged (`strict=False` bit-identical);
+    - scorer tests: 20 constructed row sets, expectations hashed before the run, 20 of 20 as expected. They were
+      rerun here: identical.
+    - a scipy/HiGHS note: the status table, the exception translation and the marginal signs. scipy status 2 also
+      covers HiGHS `kModelError`.
+    - a literature note on certified LP bounds: Neumaier and Shcherbina 2004; Jansson 2003, 2004; Applegate et al.
+      2007; Cook et al. 2013; Steffy and Wolter 2013; Higham 2002. All 7 DOIs were confirmed here on OpenAlex or
+      Crossref.
 
 ## 6. Order of operations
 

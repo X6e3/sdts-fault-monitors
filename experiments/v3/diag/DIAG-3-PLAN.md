@@ -831,3 +831,52 @@ because two of its four fault rows (stuck, E0) have no oracle detection, so no s
 the same checks and tolerances), on the four fault rows: 430000 and 430001 × (drift_0.002, E0, rw, uniform) and
 (stuck, E1, rw, uniform), whose oracle t* are 506, 652, 412 and 596. Its fault-row criteria apply to rows with an
 oracle t*, as they should have in U5. The healthy part of U5 passed and is not repeated. U5 stays recorded as failed.
+
+### Amendment 10, fifth addendum, proposed after review M2 (2026-11-20 08:50; not applied, needs Can's decision)
+
+**What M2 found** (`~/Research/sdts-runs/v3-proof/M2/M2a/CLOSURE.md` on Arch, at `1c0439cd`; each finding reproduced
+here on the Mac). G1 and G2 are closed only in part:
+1. **Wrong shapes.** `_check_inputs` checks that the bounds are (n, 2), that each matrix matches its right-hand side,
+   and that all values are finite.
+   - It does not check the rank of the objective or of a right-hand side.
+   - It skips a right-hand side whose matrix is None.
+   - scipy then raises `ValueError` inside the call, which is caught and counted as `exception`. It is our error, and
+     the fourth addendum says it should be raised.
+   - Reproduced: a (2, 2) objective, and `b_ub` without `A_ub`, both return `Failed("exception")` after 3 attempts.
+2. **Empty multipliers.** `_usable` tests `np.all(isfinite(m))`, which is true for an empty array.
+   - A status-0 answer with multiplier arrays of the wrong length passes.
+   - The activity update in `Compressed.lp` then raises `IndexError`, outside the call, and the run stops.
+   - Not unsound, but a malformed solver answer should be a failed attempt.
+3. **Underflow.** `certified_max` bounds rounding by relative terms (γ_n, the final pad). The standard model it uses
+   holds only without underflow.
+   - Reproduced: one variable in [−1/4, 1/4] with objective −2^−1074 and no rows. The strict bound is 0.0; the exact
+     maximum is 2^−1076.
+   - On F3's data the terms are O(1) °C. A wrong bound would need a multiplier or product below 2.2e-308, and the
+     error is then below about 1e-320 per term. No natural case is known, but S1 as stated does not cover it.
+4. **The numpy error state.** Under `np.errstate(over="raise")` the certificate's products raise
+   `FloatingPointError` before the strict check, outside the solver call, and the run stops. Under numpy's default
+   state (warn), which all runs use, they give inf, and the strict path returns NaN, as U0b test 4 showed.
+
+**Proposed change (F3 and F3a only):**
+1. `_check_inputs`:
+   - the objective and each right-hand side are of rank 1;
+   - a right-hand side is given if and only if its matrix is;
+   - lb ≤ ub in every row of the bounds.
+2. `_usable`: lower and upper multipliers of length n, `ineqlin` of length len(b_ub), `eqlin` of length len(b_eq).
+3. `certified_max(strict=True)`:
+   - the evaluation runs under `np.errstate(all="ignore")`, so the result does not depend on the caller's state;
+   - one absolute term covers underflow: 2^−1074 · (number of products evaluated) · (1 + 2 max |x|). Under IEEE
+     gradual underflow each product's absolute error is at most 2^−1075, and sums of subnormals are exact.
+   - On O(1) data this term is far below one unit in the last place of the bound, so it changes no value. Whether
+     it does is checked, not assumed (I3 below).
+4. FREEZE-V3 section 1 states the floating-point model as IEEE binary64, round to nearest, with gradual underflow
+   covered by the term above.
+
+**Tests, if accepted** (written before any code):
+- **U0c:** M2's own witnesses as path tests. The shape errors raise `ValueError` with no solver call. Empty
+  multipliers make the attempt fail as `nonfinite`. The underflow LP's strict bound is at least 2^−1076 (exact,
+  `Fraction`). Under `np.errstate(all="raise")` the overflow case still returns NaN.
+- **R0, U0b and I2a** again at the new commit.
+- **I3:** on R0's and I2a's rows, the strict bound equals the fourth addendum's bit for bit wherever the latter is
+  finite. If any record differs, the difference is written down before anything else is decided.
+- **The proof:** L1 is restated with the absolute term and checked by the reviewer of M1 and M2.
