@@ -622,7 +622,7 @@ its 6,104 samples.
   is a check, not part of the soundness argument: the argument rests on the certificate's construction (FREEZE-V2
   §1).
 
-## Amendment 10: F3, F with a sound path for solver failures (OBSERVED; in progress, 2026-11-20)
+## Amendment 10: F3, F with a sound path for solver failures (OBSERVED; 2026-11-19/20)
 
 Code `0ce80072` (F3), criteria and summary `6c3af845`. Plan: `DIAG-3-PLAN.md`, amendment 10 and its three addenda.
 DEV only, except R4, which replays freeze 2's deciding row with the validation seeds unlocked by freeze 2's manifest
@@ -806,8 +806,20 @@ script). Mac, 2026-11-20 04:10–05:30, nice 19, while R3 ran. Outputs in `resul
   - the implied-bound log.
 
   U4 passes again.
-- **I2b:** running on Arch at `1ca4df40`, which holds `b57b5a39`'s code. Its selection was fixed before the run
-  (DIAG-3-PLAN).
+- **I2b: passes.** Arch, at `1ca4df40`, which holds `b57b5a39`'s code; the script was committed before the run.
+  Clean tree, 10 workers, 2026-11-20 11:30–13:37. Outputs: `results/v3/diag3/amend10-i2b-1ca4df40-arch/`.
+  - **Selection,** fixed by `amend10_i2b.py select` before any job ran (sha256 `750cc8fc…`):
+    - all 1,400 jobs of setting none;
+    - every tenth job of b, d and e, 140 each;
+    - in d and e, the 20 other jobs with the largest fallback total in their R2 record (2,236 each in d; 1,826 to
+      1,900 in e).
+  - **Comparison** (`amend10_i2b.py compare`, against the R1–R2 drive's records): every selected record is identical
+    in every field but `seconds`, `step_ms` and `fold_step_ms`. That is none 1,400 of 1,400, b 140 of 140, d 160 of
+    160 and e 160 of 160.
+  - So R1, R2 and R3 stand for the frozen code.
+  - **One step after the run failed.** The drive then called `amend10.py summary` on setting none, to print U1's
+    figures at the frozen code. It stopped at once: that summary reads a `meta.json` that the I2b script writes one
+    level up. Its log is kept, and nothing was rerun. The 1,400 records equal R1's, so R1's summary holds for them.
 - **Review M3** checked this commit (FREEZE-V3 section 5). There is no sixth addendum, and `diag3_cw.py` stays byte for
   byte as at `b57b5a39`.
 

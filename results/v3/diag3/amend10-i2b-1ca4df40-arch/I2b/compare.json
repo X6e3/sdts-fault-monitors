@@ -1,0 +1,23 @@
+{
+ "none": {
+  "selected": 1400,
+  "identical_except_wall_clock": 1400,
+  "differ": []
+ },
+ "b": {
+  "selected": 140,
+  "identical_except_wall_clock": 140,
+  "differ": []
+ },
+ "d": {
+  "selected": 160,
+  "identical_except_wall_clock": 160,
+  "differ": []
+ },
+ "e": {
+  "selected": 160,
+  "identical_except_wall_clock": 160,
+  "differ": []
+ },
+ "I2b": true
+}

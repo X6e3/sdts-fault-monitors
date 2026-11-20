@@ -8,14 +8,13 @@ Prepared 2026-11-20 on branch `sdts-v3/template-state` for Can Koç's review. Th
 are Can's to set. Everything here is a proposal until the status line says APPROVED. `run_validation_v3.py` refuses
 to generate validation data until then (section 6).
 
-**Open items before review** (each is filled in from its own record, as it comes out):
-- I2b: the frozen code against 0ce80072 on Arch, set by Can (all of setting none, a sample of b, d and e), running
-  (section 5). R1–R3 are in: U1, U2 and U3 pass, and so do I2a, I2c and I3 (section 5);
-- tests of the scorer on small constructed row sets, one per verdict branch and per counter (section 4);
-- the independent summary of the R runs (review K7d) (section 5);
-- the fourth and fifth addenda (reviews M1 and M2, Can's decisions 2026-11-20): U0b, U0c, I3 and the identity
-  check I2 (section 5); review M3 is in (section 5);
-- the manifest at the frozen code, and the DEV rehearsal at the freeze commit (sections 2 and 8).
+**Before review: every item is in.** Section 5 holds each record, section 8 the rehearsal.
+- I2a, I2b and I2c pass, and so does I3, so R1–R3 stand for the frozen code. U1, U2 and U3 pass.
+- The fourth and fifth addenda (reviews M1 and M2, Can's decisions 2026-11-20): U0b and U0c pass. Review M3 is in.
+- U5 and U5b: the slab rule's condition is met (section 4).
+- The scorer tests (section 4): review M2's 20 constructed row sets, at the frozen scorer, all as expected.
+- The independent summary of the R runs (review K7d) agrees.
+- The manifest at the frozen code (section 2), and the DEV rehearsal at the manifest's commit: passes (section 8).
 
 **Decided by Can Koç on 2026-11-20:**
 - the slab rule (section 4): reported, not deciding, on the conditions written there;
@@ -149,7 +148,20 @@ freeze 2.
 | `8d5ba0e7`, `f9dcb508`, `6c3af845` | the AG1 addendum, two precisions, and the exact criteria in the summary; F3's code unchanged |
 | `000cd215` | the third addendum: the memory bound (F3 only) |
 | `d207c9d1` | R0, R4 and I1a results |
-| this commit | `run_validation_v3.py`, `score_validation_v3.py`, `make_manifest_v3.py` and this file |
+| `b25aae66` | `run_validation_v3.py`, `score_validation_v3.py`, `make_manifest_v3.py` and this file |
+| `8e9357fe` | the slab rule and the seed block decided; review M1 folded in |
+| `8c55e19e`, `1c0439cd` | the fourth addendum (the solver boundary), and the U5 script before it ran |
+| `8eae9517` | U0b, R0 and I2a pass; U5 fails as written |
+| `a6f6af87` | R1 and R2 results (U1 and U2 pass) |
+| `44c95dbe` | review M2 folded in; the fifth addendum proposed |
+| `b57b5a39` | the fifth addendum applied: `diag3_cw.py` as frozen, with the U0c and I3 scripts |
+| `1ca4df40` | I2b as set by Can, and its script, before it ran |
+| `1798a822` | review M3 folded in; no sixth addendum |
+| `855d7f8a` | R3 (U3 passes) and the fifth addendum's tests (U0c, I2a, I3 and I2c pass) |
+| `44ddd682`, `d2683a02` | U5b, its script before it ran, and its result (passes) |
+| `d3b4f61c` | the slab rule's U5 condition met (Can's decision) |
+| `e81c549b` | the manifest at the frozen code; the DEV rehearsal ran at this commit |
+| this commit | I2b, review K7d and the rehearsal recorded |
 
 **The tooling is freeze 2's, with F3 in place of F.**
 - `run_validation_v3.py` is `run_validation_v2.py` with the V3 manifest and document, the record key `F3`, and the
@@ -281,8 +293,8 @@ edge-noise rows.
 - Each failure made a detection later or missed it, never wrong. Setting f fails every upper certificate. An alarm
   that only the upper side can prove then waits until z leaves the box.
 
-R1 and R2 ran at `0ce80072`. They stand for the frozen code only if every I2 record is equal (below). I2a and I2c
-pass; I2b is running.
+R1 and R2 ran at `0ce80072`. They stand for the frozen code only if every I2 record is equal (below). I2a, I2b and
+I2c pass, so they do.
 
 **The exact audit (U3, R3 on the Mac): passes.** F3a on settings a, b and e: 12,572,172 bounds audited in exact
 rational arithmetic, 425,757 of them P_J bounds, with no violation. The smallest slack is 8.2e-16 °C, and 1.7e-14 °C
@@ -309,7 +321,12 @@ and the fallback takes the P_J bound −0.20897 °C from the 41 solved faces (a 
     - the implied-bound log.
   - **I3 (`b57b5a39`): passes.** 90,153 strict bounds are equal bit for bit to the fourth addendum's, on R0's and
     I2a's rows.
-  - [I2b, Arch, at `1ca4df40` (`b57b5a39`'s code): all 1,400 rows of setting none and 460 of b, d and e. Running.]
+  - **I2b (Arch, at `1ca4df40`, which holds `b57b5a39`'s code): passes.** 1,860 records, selected before the run:
+    - all 1,400 of setting none;
+    - 140 each of b, d and e (every tenth job);
+    - 20 more each of d and e, those with the most fallback events in R2.
+
+    Every one equals the `0ce80072` record in every field but wall-clock time. 10 workers, 11:30–13:37.
 - **U0b: passes, 10 of 10**, and R0 13 of 13 at `8c55e19e`, and both again at `b57b5a39`. Solver exceptions and
   non-finite answers take their fallbacks under their own reason codes. Our own errors (a NaN input, a `TypeError`
   in a fold, a `MemoryError`) propagate.
@@ -343,7 +360,15 @@ and the fallback takes the P_J bound −0.20897 °C from the 41 solved faces (a 
   - 95,963 P_J bounds checked by exact vertex enumeration, none below the exact maximum;
   - 440243's fallback confirmed independently: exact maximum −0.208974, bound −0.208973.
   - Its two memory findings are what the third addendum closes.
-  - [K7d: the independent summary of R1–R2.]
+  - **K7d, the independent summary of R1–R2: agrees.** It was computed from the raw row records alone, with its own
+    code:
+    - all 7 settings are complete, 1,400 keys each, none missing, extra or repeated;
+    - the 2,453,323 injected LP failures in 9,800 rows equal the `failsafe` counters row by row. No LP was lost to a
+      natural failure, and there was no slab;
+    - U1 passes: D_paired 0.9992103, 1,082 alarms all certified, no difference from F;
+    - U2 passes: in a–f no alarm on an admissible row, no early or uncertified alarm, at most 65 kept, every path
+      reached; in d, 1,019 rows detect after a reset;
+    - the injections per setting equal R2's above.
 - **M1 (the written proof, traced to 000cd215 line by line):**
   - lemmas L1–L8 and the theorem: S1, S3 and |zs| ≤ 65 under the model and a stated floating-point model;
   - a new exact check: the frozen clamp set is invariant under one step of the exact recurrence (all 42 vertices,
@@ -441,5 +466,17 @@ In addition:
 
 ## 8. DEV rehearsal of the full pipeline (DEV seeds, not validation)
 
-[To run at the freeze commit: `run_validation_v3.py --rehearsal --seeds 430096 430097` on Arch, then
-`score_validation_v3.py`, against freeze 2's rehearsal on the same seeds (`rehearsal-dev-430096-9dc1af3`).]
+**Passes.** Arch, at `e81c549b` (the manifest's commit), clean tree, 2026-11-20 12:59–13:24.
+- **Command:** `run_validation_v3.py --rehearsal --seeds 430096 430097 --workers 4`, then `score_validation_v3.py`.
+- **Outputs:** `results/v3/freeze3/rehearsal-dev-430096-e81c549b/`.
+- **The record:** the runner checked every file against the manifest. It wrote the manifest's sha256 (`0a40cbdf…`),
+  this file's, the environment and the commit into the record. `approval` is null, as a rehearsal's must be.
+- **Identity:** 96 runs, none missing, extra or repeated, and no integrity problem.
+- **F3: PASS.** D_paired 1.0 against the 0.80 target, with no miss, no soundness violation and no uncertified alarm.
+  All 74 events are detected at the oracle's t*. No row took a fallback, and there was no slab.
+- **Against freeze 2's rehearsal** on the same seeds (`rehearsal-dev-430096-9dc1af3`, F):
+  - every score and every cell's table is the same, field for field, with F3 in F's place;
+  - row by row, all 96 rows are the same except for three fields: the oracle's wall-clock seconds, F3's `failsafe`
+    counters (all 0) and the certificate's new `box_sides` (empty).
+- **Time:** 1,501 s against freeze 2's 468.5 s. That run had 14 workers; this one had 4, on a machine shared with
+  I2b.
