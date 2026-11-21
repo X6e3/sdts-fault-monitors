@@ -1,0 +1,24 @@
+{
+ "rows": 1400,
+ "I2_complete": true,
+ "I3_sound": true,
+ "soundness": [],
+ "early": [],
+ "uncertified": [],
+ "I4_counters": true,
+ "counter_mismatches": [],
+ "restart_shortfalls": [],
+ "injected_by_role": {
+  "range": 3655,
+  "cert": 2050,
+  "fold": 8026,
+  "implied": 1589
+ },
+ "natural_restarts": 0,
+ "I5_memory_slab": true,
+ "max_kept": 65,
+ "slab_rows": [],
+ "seconds": 63607.7,
+ "I1_identity": true,
+ "verdict": "PASS"
+}

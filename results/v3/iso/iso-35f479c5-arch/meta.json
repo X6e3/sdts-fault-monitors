@@ -1,0 +1,16 @@
+{
+ "git_head": "35f479c5df414ba9b28e0ac3b082b7564fad7f5b",
+ "git_dirty_tracked": false,
+ "rates": {
+  "fold": 0.002,
+  "range": 0.001,
+  "cert": 0.5,
+  "implied": 0.2
+ },
+ "K": 64,
+ "W": 256,
+ "machine": "x86_64",
+ "platform": "Linux-7.3.4-arch1-2-x86_64-with-glibc2.44",
+ "started": "2026-11-21T20:24:30+0300",
+ "finished": "2026-11-21T22:10:53+0300"
+}

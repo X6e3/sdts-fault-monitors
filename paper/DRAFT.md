@@ -533,8 +533,21 @@ missed. One detection in the 10 % setting came 45 samples later than without inj
 
 <!-- src: RECORD-2026-11-21-fb.md; settings = FB-PLAN.md table -->
 
-[PENDING: process isolation of the solver (F3-iso): identity with WM, and simulated crashes of the solver process
-counted as failed attempts. ISOLATION-PLAN.md.]
+**The solver's process.** In the runs above the LPs run in WM's own process. A solver that ends its process (as the
+interior-point solver did in 8 of the oracle's 117,606 attempts in validation 3, by a segmentation fault) would end
+the run before any fallback could see it. In a variant, WM's LPs run in a long-lived child process; if the child ends
+or does not answer in 120 s, it is replaced and the attempt counts as failed, so the fallbacks of Section 5 apply.
+Without injection the variant equals WM in every recorded field on 6 development rows. On the 1,400 development rows
+the child then ended itself before 15,320 LPs, in all three attempts of each (half by exit, half by a segmentation
+fault; two per thousand fold LPs, one per thousand a_s-range LPs, a fifth of the implied-bound LPs and half of the
+certificate LPs). Every run completed. No alarm came on an admissible run or before t*, every alarm was certified,
+the fallback counters equalled the injection log on every row, and at most 65 measurements were kept. The price was
+again in detection: 497 detections came later (median 5 samples) and 3 slow-drift events were missed; none came
+earlier. Two documented paths lead there: an alarm whose certificate cannot be computed is not raised, and a
+measurement checked against a failed a_s-range LP is not kept. Their shares were not computed.
+
+<!-- src: RECORD-2026-11-21-iso.md; ISOLATION-PLAN.md section 2 (rates); RECORD-2026-11-21-validation.md lines
+193-200 (8 of 117,606 oracle attempts, all highs-ipm) -->
 
 ### 7.6 Precision and microcontrollers
 

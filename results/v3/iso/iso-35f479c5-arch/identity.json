@@ -1,0 +1,35 @@
+{
+ "rows": [
+  {
+   "key": "430019-jump_0.5-E0-ramp-uniform",
+   "differs": [],
+   "restarts": 0
+  },
+  {
+   "key": "430014-gain_0.01-E1-rw-uniform",
+   "differs": [],
+   "restarts": 0
+  },
+  {
+   "key": "430016-jump_0.5-E1-rw-uniform",
+   "differs": [],
+   "restarts": 0
+  },
+  {
+   "key": "430014-drift_0.001-E0-rw-uniform",
+   "differs": [],
+   "restarts": 0
+  },
+  {
+   "key": "430014-healthy-E0-ramp-uniform",
+   "differs": [],
+   "restarts": 0
+  },
+  {
+   "key": "430014-drift_0.02-E1-ramp-uniform",
+   "differs": [],
+   "restarts": 0
+  }
+ ],
+ "I1": true
+}
