@@ -1,0 +1,34 @@
+{
+ "double": {
+  "shortfall_directions": {
+   "14": 1.1102230246251565e-16,
+   "15": 1.1102230246251565e-16
+  },
+  "entries_using_them": 213,
+  "entries_not_covered": 0,
+  "not_covered_first": [],
+  "smallest_slack_fraction_of_pad_among_them": 0.8783863301983921,
+  "at_group_entry_extra": [
+   18,
+   652,
+   2.5878036851494905e-16
+  ]
+ },
+ "float": {
+  "shortfall_directions": {
+   "14": 1.1102230246251565e-16,
+   "15": 1.1102230246251565e-16
+  },
+  "entries_using_them": 213,
+  "entries_not_covered": 0,
+  "not_covered_first": [],
+  "smallest_slack_fraction_of_pad_among_them": 0.7545665556294582,
+  "at_group_entry_extra": [
+   40,
+   1291,
+   2.400986886792831e-16
+  ]
+ },
+ "K1_headers_equal": true,
+ "K5prime_holds": true
+}

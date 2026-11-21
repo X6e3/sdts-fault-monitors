@@ -117,7 +117,8 @@ round-to-nearest-even on the PC):
   - Not proved here: "matched on every tested pair" is a sample, not a proof about avr-libc's routines.
 - The command part S is binary64 on both machines, and its recursion error is covered by no pad, on the PC either
   (section "Precision" of V3_NOTES.md says only that float32 is unbounded). On the board it is faithful, not
-  correctly rounded. Its size over 3600 samples is not measured yet.
+  correctly rounded. Its size over 3600 samples is not measured yet. (Closed in 2g, 2026-11-21: ε = 4.85e-13 °C,
+  9.9e-13 on the Uno.)
 
 **Not done:**
 - the float64 tables, which are the validated form (about 36 KB: too big for the Uno, fits a Mega);
@@ -229,3 +230,67 @@ distance, replayed with full dumps.
 stay outer bounds is still the inferred argument of 2c, not a proof; a difference of 4.5e-7 °C on the less
 conservative side is smaller than the per-direction pads (≈ 5.5e-6 to 3.1e-5 °C) but is not covered by them by
 construction.
+
+## 2g. The C state against the exact recurrence: the S gap (2026-11-21)
+
+**The gap** (2c above; V3_NOTES section 5): the C state computes S in binary64 and its slab from z = y − S with a
+one-ulp outward rounding, so S's rounding error is covered by no pad. Its tables were also built against the float
+matrix M, not the exact recurrence. F3 closed the same gap with DIAG-3 amendment 9 (the exact recurrence and the
+data allowance η = 1e-9 °C); this C state (freeze 1's cyl16p, the code of 2c–2f) has neither.
+
+**The check:** `diag/check_c_state.py`, committed with its criteria before its first run (`1c4cb409`). Exact
+rationals throughout; the model is the exact recurrence MX (thermal.py's `step()` with its float parameters taken
+exactly). Output `results/v3/c-state/check-1c4cb409.json`.
+
+| | double header | float header |
+|---|---|---|
+| K1 header = codegen's output from `frozen/cyl16p.json` | yes | yes |
+| K2 every table entry's pad covers the dot product's rounding and the residual against MX^T d (1318 entries) | yes; smallest slack 87 % of the pad | yes; 75 % |
+| K3 every clamp ≥ the exact recurrence's reachable supremum | yes | yes |
+| K4 every rate pad ≥ ρ_A \|d_3\| | yes | yes |
+| K5 every start support ≥ the start segment's | **no**: directions 14, 15 | **no**: the same |
+| K6 data bound ε < η | ε = 4.85e-13 °C | |
+
+**Verdict of the check: OPEN,** because of K5. Directions 14 and 15 (= −d14) are error-plane directions whose stored
+coordinates sum to ±5.55e-17 instead of 0. Codegen summed them in float (0), so their start supports are the
+smallest subnormal, while the start segment {t (1, 1, 1) : |t| ≤ 2} needs 1.11e-16.
+
+**Follow-up, written after K5 failed** (`diag/check_c_state_start.py`, committed before its run, `fd4f8591`;
+`results/v3/c-state/check-start-fd4f8591.json`): add the shortfall to the start supports and check K2's inequality
+again for every entry at k = 0. The 213 entries that use h[14] or h[15] gain at most 2.6e-16; every entry is still
+covered, smallest slack 88 % (double) and 75 % (float) of the pad. **Holds.** So the first step absorbs the start
+gap, and from k = 1 on K2–K4 carry the induction.
+
+**K6, the data bound (MATH):**
+- For commands in [0, 42] from the P0 steady state, the exact recurrence keeps 0 ≤ ts ≤ 42/H and 0 ≤ tc − ts ≤ 42/K.
+  (With d = tc − ts: ts′ = (1 − H/CS) ts + (K/CS) d and d′ = (23/30) d + p/CC + (H/CS) ts. All coefficients are ≥ 0,
+  the map is monotone, and the steady state at p = 42 is its fixed point.)
+- One float step of S errs by at most R = (9.2e-15, 8.9e-15) (core, surface), from the standard model on each of
+  the step's operations inside that box.
+- The error then propagates through the exact recurrence's 2×2 part A, which is ≥ 0 with row sums 1 and 1 − H/CS.
+  So |e_k| ≤ |e_0| + (I − A)⁻¹ R, with (I − A)⁻¹ = [[52.5, 15], [37.5, 15]] and e_0 = 1.4e-15 (the start's
+  rounding). Surface: 4.82e-13 °C.
+- With z's own rounding (3.0e-15; zs = z − 25 is exact by Sterbenz), ε = 4.85e-13 °C.
+- Measured on DEV commands (31 sequences, 80-digit decimals): at most 3.5e-14.
+
+**What is shown (MATH, with the check's exact results):** for every command sequence in [0, 42], the C state with
+either frozen header, in IEEE 754 arithmetic (binary64 round-to-nearest for S and z, the header's precision for h),
+never flags a record that the exact recurrence explains with |v| ≤ δ − ε, ε = 4.85e-13 °C, and (b), (c), (e). This
+is Theorem 2 for the C state, with δ − ε in place of δ.
+- **ESP32:** every tested operation was IEEE (2d), so this applies to the board's own arithmetic. Its output is
+  also the PC's on 5,040,000 DEV samples (2e).
+- **Uno:** its binary64 is faithful only, so every u doubles: ε = 9.9e-13 °C. Its truncating conversions of lo and hi
+  are followed by one float ulp outward (`DOWN`, `UP`), so the slab stays outward. This replaces the inference
+  of 2c, under two assumptions not proved here: that its float ×, +, − round to nearest (tested on 6,000 pairs), and
+  that `avr_state.c` is `v3_state.c`'s logic (it was written so, not checked).
+
+**Not shown, and what it does not cover:**
+- Records with |v| exactly δ are outside the condition. The simulated edge-noise runs are such records, and their
+  data carry the generator's own float error, up to 1.2e-13 °C (amendment 9). The C state flagged none of the 80
+  on the ESP32 (2e), but no theorem says it cannot.
+- Freeze 1's Python template computes its start supports the same way. It is not checked here.
+- F3 is covered by amendment 9, not by this.
+
+**A clean fix for a later version** (not made: it changes frozen tables and code):
+- start supports from the exact coordinate sums (h[14] and h[15] become 1.2e-16);
+- the slab with δ + η, as in F3, so that the condition becomes |v| ≤ δ.

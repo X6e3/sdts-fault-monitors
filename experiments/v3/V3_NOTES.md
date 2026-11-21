@@ -154,6 +154,8 @@ e2 carries no w term. ∎
   - The template update is sound in float32, because the pads are computed for the stored precision.
   - The command part S must not be float32: its recursion error is unbounded over 3600 steps and is not
     covered by any pad. S is double; on a Cortex-M4 it is about 10 double operations per sample in software.
+  - In binary64 its error is bounded: at most 4.85e-13 °C over any command sequence in [0, 42]. The C state is
+    sound for |v| ≤ δ − ε with ε = 4.85e-13 °C (MCU-NOTES 2g, 2026-11-21). F3 covers it with η (DIAG-3 amendment 9).
 
 The measured tables are in section 6. They are counts from the generated tables, not timings on hardware
 (**OPEN**: Cortex-M timing).
