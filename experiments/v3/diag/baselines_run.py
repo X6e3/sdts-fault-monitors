@@ -122,16 +122,21 @@ def dev(out, workers, only, subset=None):
 
 
 def score(recs, rows):
-    """paired lag against v2, misses, soundness findings; per configuration"""
+    """paired lag against v2, misses, soundness findings; per configuration, over the rows it was run on: all 1400,
+    or the 200-row subset of B1lp (`complete` says which; the tuning rule takes complete configurations only)"""
+    det = {rec["key"]: rec["detect"] for rec in recs}
     by = {key(r): r for r in rows}
+    assert set(det) <= set(by) and len(det) == len(recs)
+    complete = set(det) == set(by)
+    by = {k: r for k, r in by.items() if k in det}
     events = [k for k, r in by.items() if r["status"] == "certified" and r["t_star"] is not None]
     paired = [k for k in events if by[k]["v2"] is not None]
     admissible = [k for k, r in by.items() if r["cell"] == "healthy" or (r["status"] == "certified" and r["t_star"] is None)]
     Lv2 = sum(by[k]["v2"] - by[k]["t_star"] for k in paired)
-    det = {rec["key"]: rec["detect"] for rec in recs}
     lag = sum((T.N if det[k] is None else det[k]) - by[k]["t_star"] for k in paired)
-    return {"rows": len(det), "complete": set(det) == set(by), "paired_lag": lag, "v2_paired_lag": Lv2,
-            "D_paired": 1 - lag / Lv2, "misses": sum(det[k] is None for k in events),
+    return {"rows": len(det), "complete": complete, "events": len(events), "paired": len(paired),
+            "paired_lag": lag, "v2_paired_lag": Lv2, "D_paired": 1 - lag / Lv2 if Lv2 else None,
+            "misses": sum(det[k] is None for k in events),
             "admissible_alarms": [k for k in admissible if det[k] is not None],
             "early": [k for k in events if det[k] is not None and det[k] < by[k]["t_star"]],
             "memory": max(rec["memory"] for rec in recs), "seconds": round(sum(rec["seconds"] for rec in recs), 1),
@@ -150,7 +155,9 @@ def tune(out):
             ok = [(t["paired_lag"], i) for i, t in table.items() if i.startswith(method + ":") and t["complete"]
                   and not t["admissible_alarms"] and not t["early"] and (limit is None or t["memory"] <= limit)]
             chosen[f"{method}@{budget}"] = min(ok)[1] if ok else None
-    (out / "tune.json").write_text(json.dumps({"table": table, "chosen": chosen}, indent=1, default=str) + "\n")
+    head, dirty = git_state()
+    (out / "tune.json").write_text(json.dumps({"git_head": head, "git_dirty_tracked": dirty, "table": table,
+                                               "chosen": chosen}, indent=1, default=str) + "\n")
     (out / "chosen.json").write_text(json.dumps(chosen, indent=1) + "\n")
     print(json.dumps(chosen, indent=1))
 
