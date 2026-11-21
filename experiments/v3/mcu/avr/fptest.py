@@ -3,7 +3,7 @@
 Operands are drawn the way the template state uses them: table weights in [0, 1], supports in [-4, 4], plus random
 bit patterns of normal floats. Reports, per operation, how many results are bit-equal and, for the others, the
 signed error in ulps of the PC result and whether the board's result is nearer to zero (truncation-like).
-usage: python -B fptest.py OUT_JSON [--port /dev/ttyACM0] [--n 2000] [--seed 1]
+usage: python -B fptest.py OUT_JSON [--port /dev/ttyACM0] [--board avr|esp32] [--n 2000] [--seed 1]
 """
 import argparse
 import json
@@ -56,13 +56,12 @@ def main():
     ap.add_argument("--port", default="/dev/ttyACM0")
     ap.add_argument("--n", type=int, default=2000)
     ap.add_argument("--seed", type=int, default=1)
+    ap.add_argument("--board", choices=("avr", "esp32"), default="avr")
     a = ap.parse_args()
     rng = random.Random(a.seed)
-    fd = ST.open_port(a.port)
-    time.sleep(2.5)
-    banner = ST.read_line(fd)
-    if not banner.startswith("FPTEST"):
-        raise SystemExit(f"unexpected banner {banner!r}")
+    fd = ST.open_port(a.port, a.board)
+    time.sleep(2.5 if a.board == "avr" else 0.2)
+    banner = ST.wait_banner(fd, "FPTEST")
     report = {"banner": banner, "n": a.n, "seed": a.seed, "ops": {}}
     with np.errstate(all="ignore"):
         for op, kind in (("m", "f"), ("a", "f"), ("s", "f"), ("M", "d"), ("A", "d"), ("S", "d"), ("c", "d")):

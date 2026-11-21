@@ -123,3 +123,42 @@ round-to-nearest-even on the PC):
 - the float64 tables, which are the validated form (about 36 KB: too big for the Uno, fits a Mega);
 - more runs, and the full DEV comparison;
 - a worst-case timing bound.
+
+## 2d. The template state on an ESP32 (exploratory, DEV only; 2026-11-21)
+
+**Status:** exploratory, not pre-registered. DEV seeds only. The same four DEV runs as 2c.
+
+**Setup:**
+- **Board:** ESP32-WROOM-32 (ESP32-D0WD-V3 rev 3.1, 240 MHz, 4 MB flash), Arduino-ESP32 core 4.0.0 via arduino-cli
+  1.5.1, on Arch over USB serial (CP2102).
+- **Code** (`mcu/esp32/`): the **unchanged** `c/v3_state.c` and `c/v3_state.h` and the frozen table header are copied
+  into the sketch by `prepare.sh`, which checks their sha256 against the sources. No line of the state code is
+  ported.
+- **Flags:** `-ffp-contract=off -fno-fast-math`. `prepare.sh` disassembles the state object and refuses a build
+  with fused multiply-adds. The check was tested: the same file built with GCC's default contraction has 2 of them.
+- **Reference:** `host_trace` (the PC build of the same files), byte for byte after every sample.
+- **Results:** `results/v3/mcu/esp32-20261121/`. The double build's `size.txt` was copied by hand from the compile
+  output; `prepare.sh` saves it from the float build on.
+
+**OBSERVED:**
+
+| build | samples compared | equal to the PC, bit for bit | first inconsistent sample (= PC) | time per sample, median / max |
+|---|---|---|---|---|
+| cyl16p **float64** (the validated form) | 8,149 | **8,149** | 500, 462, 3575, none | 3.72–3.74 ms / 4.47 ms |
+| cyl16p float32 | 8,149 | **8,149** | 500, 462, 3575, none | 0.49 ms / 1.13 ms |
+
+- **Arithmetic** (`fptest`, 2000 operand pairs each, against IEEE 754 round-to-nearest-even): float ×, +, −,
+  binary64 ×, +, −, and the binary64 → float conversion are all equal, 14,000 of 14,000.
+- **Memory:** heap 385 KB, 337 KB free after the runs, at least 305 KB free at any time; 6.6 KB of the loop task's
+  stack never used. The sketch is 327 KB of the 1.3 MB app partition (float64 build).
+
+**INFERRED:**
+- On this board the C code of the validated candidate computes exactly what the PC computes, on these 8,149 samples.
+  So whatever holds for the PC build on these inputs holds for the board's output on them.
+- The difference from the Uno (2c) is the arithmetic: here every tested operation is IEEE round-to-nearest; on the
+  Uno the double-to-float conversion truncates and binary64 is faithful only.
+- A pitfall of the default build: GCC contracts two multiply-adds of `v3_state.c` into fused ones on this core. The
+  result would no longer be bit-equal to the PC, and the pads were computed for separate roundings.
+
+**Not shown:** all of DEV; a worst-case timing bound (the maximum is over these runs only); F3 (it needs an LP
+solver on the board); a real sensor.

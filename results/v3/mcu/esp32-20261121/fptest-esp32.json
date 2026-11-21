@@ -1,0 +1,49 @@
+{
+ "banner": "FPTEST board=esp32 double=8",
+ "n": 2000,
+ "seed": 1,
+ "ops": {
+  "m": {
+   "stats": {
+    "equal": 2000
+   },
+   "examples": []
+  },
+  "a": {
+   "stats": {
+    "equal": 2000
+   },
+   "examples": []
+  },
+  "s": {
+   "stats": {
+    "equal": 2000
+   },
+   "examples": []
+  },
+  "M": {
+   "stats": {
+    "equal": 2000
+   },
+   "examples": []
+  },
+  "A": {
+   "stats": {
+    "equal": 2000
+   },
+   "examples": []
+  },
+  "S": {
+   "stats": {
+    "equal": 2000
+   },
+   "examples": []
+  },
+  "c": {
+   "stats": {
+    "equal": 2000
+   },
+   "examples": []
+  }
+ }
+}

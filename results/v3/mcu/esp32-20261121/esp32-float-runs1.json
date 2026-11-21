@@ -1,0 +1,109 @@
+{
+ "banner": "SDTS-MCU board=esp32 src=948b46b0-cyl16p_float double=8 real=4 N=42 entries=1318 state_bytes=192 cpu_hz=240000000",
+ "build": "board=esp32 table=cyl16p_float tag=948b46b0-cyl16p_float\narduino-cli  Version: 1.5.1 Commit: 01f3d4f2ba7c2eaafb5dc710c8a1903af7762fea Date: \nesp32:esp32 4.0.0     4.0.0  esp32\ncc (GCC) 16.2.1 20260810\nextra flags: -ffp-contract=off -fno-fast-math\nfused multiply-adds: 0\nbd58d7ef83fed4ddb276117f51d327503377bbf48802118216404d6e941c309e  /home/x6e3/Research/sdts-v3-freeze3-948b46b0/experiments/v3/frozen/c/tables_cyl16p_float.h\nacd3fb60e8fd9c443d7915076416dd9ed6274f56db3b8a8cac8759b09012b961  /home/x6e3/Research/sdts-v3-freeze3-948b46b0/experiments/v3/c/v3_state.c\ndf7f9369091cff492bf9e6ed9ef5e3ee11714860170e9153d8ee658df4524878  /home/x6e3/Research/sdts-v3-freeze3-948b46b0/experiments/v3/c/v3_state.h\ndb41ffc001a57e86f186133644699b18d9d3991ac2946e0ea5cf274e4c2ff766  /home/x6e3/Research/sdts-mcu-avr/out/esp32-cyl16p-float/sdts_esp32/build_cfg.h\n791ffc67f27e822f144dd15bfc4c9183b8e1c77a7ba969a63ee4973d7058407e  /home/x6e3/Research/sdts-mcu-avr/out/esp32-cyl16p-float/sdts_esp32/sdts_esp32.ino\nbd58d7ef83fed4ddb276117f51d327503377bbf48802118216404d6e941c309e  /home/x6e3/Research/sdts-mcu-avr/out/esp32-cyl16p-float/sdts_esp32/tables.h\nacd3fb60e8fd9c443d7915076416dd9ed6274f56db3b8a8cac8759b09012b961  /home/x6e3/Research/sdts-mcu-avr/out/esp32-cyl16p-float/sdts_esp32/v3_state.c.inc\ndf7f9369091cff492bf9e6ed9ef5e3ee11714860170e9153d8ee658df4524878  /home/x6e3/Research/sdts-mcu-avr/out/esp32-cyl16p-float/sdts_esp32/v3_state.h\n5d28064d08062849d39433819ad7f0f630c8b3e7055f43a902464fda29c53722  /home/x6e3/Research/sdts-mcu-avr/out/esp32-cyl16p-float/sdts_esp32/v3_wrap.c\ne374b6b8fd9b7027ba2069d9a06b4a2ad9d330a542bbb21ddac0cb5808335430  /home/x6e3/Research/sdts-mcu-avr/out/esp32-cyl16p-float/build/sdts_esp32.ino.bin\n78ff70b9673442528fcbc4d7381efa205adf688b2cb9dd6e0457ba93789dc3cc  /home/x6e3/Research/sdts-mcu-avr/out/esp32-cyl16p-float/host_trace\n",
+ "size": "Sketch uses 310957 bytes (23%) of program storage space. Maximum is 1310720 bytes.\nGlobal variables use 23400 bytes (7%) of dynamic memory, leaving 304280 bytes for local variables. Maximum is 327680 bytes.\n",
+ "runs": [
+  {
+   "key": [
+    430030,
+    "jump_0.5",
+    "E1",
+    "rw",
+    "uniform"
+   ],
+   "init_equal": true,
+   "samples": 504,
+   "mismatches": 0,
+   "first_mismatch": null,
+   "board_first": 500,
+   "host_first": 500,
+   "cycles_summary": {
+    "median": 118381,
+    "max": 270081,
+    "min": 1765,
+    "median_ms": 0.4932541666666666,
+    "max_ms": 1.1253375
+   },
+   "t_f": 499,
+   "wall_s": 3.3
+  },
+  {
+   "key": [
+    430031,
+    "stuck",
+    "E1",
+    "ramp",
+    "uniform"
+   ],
+   "init_equal": true,
+   "samples": 466,
+   "mismatches": 0,
+   "first_mismatch": null,
+   "board_first": 462,
+   "host_first": 462,
+   "cycles_summary": {
+    "median": 118627,
+    "max": 120652,
+    "min": 1773,
+    "median_ms": 0.4942791666666667,
+    "max_ms": 0.5027166666666667
+   },
+   "t_f": 451,
+   "wall_s": 3.1
+  },
+  {
+   "key": [
+    430010,
+    "drift_0.0005",
+    "E0",
+    "ramp",
+    "uniform"
+   ],
+   "init_equal": true,
+   "samples": 3579,
+   "mismatches": 0,
+   "first_mismatch": null,
+   "board_first": 3575,
+   "host_first": 3575,
+   "cycles_summary": {
+    "median": 117294,
+    "max": 119277,
+    "min": 536,
+    "median_ms": 0.48872499999999997,
+    "max_ms": 0.4969875
+   },
+   "t_f": 496,
+   "wall_s": 23.4
+  },
+  {
+   "key": [
+    430030,
+    "healthy",
+    "E0",
+    "ramp",
+    "edge"
+   ],
+   "init_equal": true,
+   "samples": 3600,
+   "mismatches": 0,
+   "first_mismatch": null,
+   "board_first": null,
+   "host_first": null,
+   "cycles_summary": {
+    "median": 117757,
+    "max": 118679,
+    "min": 115348,
+    "median_ms": 0.49065416666666667,
+    "max_ms": 0.4944958333333333
+   },
+   "t_f": 499,
+   "wall_s": 23.5
+  }
+ ],
+ "ram": {
+  "heap_size": 385132,
+  "free_heap": 337256,
+  "min_free_heap": 305064,
+  "loop_stack_unused": 6656
+ }
+}

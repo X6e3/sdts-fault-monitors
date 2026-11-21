@@ -1,0 +1,17 @@
+board=esp32 table=cyl16p_float tag=948b46b0-cyl16p_float
+arduino-cli  Version: 1.5.1 Commit: 01f3d4f2ba7c2eaafb5dc710c8a1903af7762fea Date: 
+esp32:esp32 4.0.0     4.0.0  esp32
+cc (GCC) 16.2.1 20260810
+extra flags: -ffp-contract=off -fno-fast-math
+fused multiply-adds: 0
+bd58d7ef83fed4ddb276117f51d327503377bbf48802118216404d6e941c309e  /home/x6e3/Research/sdts-v3-freeze3-948b46b0/experiments/v3/frozen/c/tables_cyl16p_float.h
+acd3fb60e8fd9c443d7915076416dd9ed6274f56db3b8a8cac8759b09012b961  /home/x6e3/Research/sdts-v3-freeze3-948b46b0/experiments/v3/c/v3_state.c
+df7f9369091cff492bf9e6ed9ef5e3ee11714860170e9153d8ee658df4524878  /home/x6e3/Research/sdts-v3-freeze3-948b46b0/experiments/v3/c/v3_state.h
+db41ffc001a57e86f186133644699b18d9d3991ac2946e0ea5cf274e4c2ff766  /home/x6e3/Research/sdts-mcu-avr/out/esp32-cyl16p-float/sdts_esp32/build_cfg.h
+791ffc67f27e822f144dd15bfc4c9183b8e1c77a7ba969a63ee4973d7058407e  /home/x6e3/Research/sdts-mcu-avr/out/esp32-cyl16p-float/sdts_esp32/sdts_esp32.ino
+bd58d7ef83fed4ddb276117f51d327503377bbf48802118216404d6e941c309e  /home/x6e3/Research/sdts-mcu-avr/out/esp32-cyl16p-float/sdts_esp32/tables.h
+acd3fb60e8fd9c443d7915076416dd9ed6274f56db3b8a8cac8759b09012b961  /home/x6e3/Research/sdts-mcu-avr/out/esp32-cyl16p-float/sdts_esp32/v3_state.c.inc
+df7f9369091cff492bf9e6ed9ef5e3ee11714860170e9153d8ee658df4524878  /home/x6e3/Research/sdts-mcu-avr/out/esp32-cyl16p-float/sdts_esp32/v3_state.h
+5d28064d08062849d39433819ad7f0f630c8b3e7055f43a902464fda29c53722  /home/x6e3/Research/sdts-mcu-avr/out/esp32-cyl16p-float/sdts_esp32/v3_wrap.c
+e374b6b8fd9b7027ba2069d9a06b4a2ad9d330a542bbb21ddac0cb5808335430  /home/x6e3/Research/sdts-mcu-avr/out/esp32-cyl16p-float/build/sdts_esp32.ino.bin
+78ff70b9673442528fcbc4d7381efa205adf688b2cb9dd6e0457ba93789dc3cc  /home/x6e3/Research/sdts-mcu-avr/out/esp32-cyl16p-float/host_trace
