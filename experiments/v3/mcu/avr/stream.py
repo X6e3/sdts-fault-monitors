@@ -26,14 +26,14 @@ T = S.T
 F_CPU = 16_000_000
 
 
-def open_port(path, board="avr"):
+def open_port(path, board="avr", baud=500000):
     fd = os.open(path, os.O_RDWR | os.O_NOCTTY)
     a = termios.tcgetattr(fd)
     a[0] = 0                                  # iflag
     a[1] = 0                                  # oflag
     a[2] = termios.CS8 | termios.CREAD | termios.CLOCAL
     a[3] = 0                                  # lflag
-    a[4] = a[5] = termios.B500000
+    a[4] = a[5] = {500000: termios.B500000, 921600: termios.B921600, 115200: termios.B115200}[baud]
     a[6][termios.VMIN], a[6][termios.VTIME] = 0, 0
     termios.tcsetattr(fd, termios.TCSANOW, a)
     dtr, rts = struct.pack("I", termios.TIOCM_DTR), struct.pack("I", termios.TIOCM_RTS)

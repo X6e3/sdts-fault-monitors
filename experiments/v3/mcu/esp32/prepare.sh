@@ -21,11 +21,13 @@ for p in "$V3/c/v3_state.c:$SK/v3_state.c.inc" "$V3/c/v3_state.h:$SK/v3_state.h"
   [ "$a" = "$b" ] || { echo "copy differs: $p"; exit 1; }
 done
 TAG="$(cd "$V3" && git rev-parse --short=8 HEAD 2>/dev/null || echo nogit)-$TABLE"
-{ echo "#define V3_TABLES \"tables.h\""; [[ $TABLE == *_float ]] && echo "#define V3_FLOAT"; echo "#define SRC_TAG \"$TAG\""; } > "$SK/build_cfg.h"
+BAUD=${BAUD:-500000}
+{ echo "#define V3_TABLES \"tables.h\""; [[ $TABLE == *_float ]] && echo "#define V3_FLOAT"; echo "#define SRC_TAG \"$TAG\""; echo "#define SDTS_BAUD $BAUD"; } > "$SK/build_cfg.h"
 FLAGS="-ffp-contract=off -fno-fast-math"
 arduino-cli compile --fqbn esp32:esp32:esp32 --build-path "$OUT/build" \
   --build-property "compiler.c.extra_flags=$FLAGS" --build-property "compiler.cpp.extra_flags=$FLAGS" \
-  "$SK" 2>&1 | grep -E '^(Sketch uses|Global variables)' | tee "$OUT/size.txt"
+  "$SK" > "$OUT/compile.log" 2>&1 || { tail -20 "$OUT/compile.log"; echo "compile failed"; exit 1; }
+grep -E '^(Sketch uses|Global variables)' "$OUT/compile.log" | tee "$OUT/size.txt"
 OBJ=$(find "$OUT/build" -name 'v3_wrap.c.o' | head -1)
 OBJDUMP=$(find ~/.arduino15/packages/esp32/tools -name 'xtensa-esp32-elf-objdump' -o -name 'xtensa-esp-elf-objdump' | head -1)
 FUSED=$("$OBJDUMP" -d "$OBJ" | grep -c -E '\s(madd|msub|maddn|msubn)\.s\s' || true)
@@ -35,6 +37,6 @@ FLOAT=(); [[ $TABLE == *_float ]] && FLOAT=(-DV3_FLOAT)
 cc -O2 -std=c99 -ffp-contract=off -fno-fast-math "${FLOAT[@]}" -DV3_TABLES="\"$FROZEN\"" -I"$V3/c" \
   -o "$OUT/host_trace" "$HERE/../avr/host_trace.c" "$V3/c/v3_state.c" -lm
 { echo "board=esp32 table=$TABLE tag=$TAG"; arduino-cli version; arduino-cli core list | grep esp32; cc --version | head -1;
-  echo "extra flags: $FLAGS"; echo "fused multiply-adds: $FUSED";
+  echo "extra flags: $FLAGS"; echo "fused multiply-adds: $FUSED"; echo "baud: $BAUD";
   sha256sum "$FROZEN" "$V3/c/v3_state.c" "$V3/c/v3_state.h" "$SK"/* "$OUT/build/sdts_esp32.ino.bin" "$OUT/host_trace"; } > "$OUT/build.txt"
 ls -la "$OUT/build/sdts_esp32.ino.bin"
