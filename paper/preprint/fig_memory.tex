@@ -1,0 +1,40 @@
+% Figure: D_paired against memory. Data: figdata/fig1_*.dat (paper/figures/make_data.py, fig1).
+\begin{tikzpicture}
+\begin{semilogxaxis}[paperaxis,
+  width=0.92\linewidth, height=6.2cm,
+  xmin=1.6, xmax=170, ymin=-0.14, ymax=1.12,
+  xtick={2,16,42,60,87,107}, xticklabels={2,16,42,60,87,107},
+  minor xtick={}, ytick={0,0.2,0.4,0.6,0.8,1},
+  xlabel={numbers kept between samples (log scale)},
+  ylabel={$\Dp$},
+  legend style={at={(0.03,0.97)}, anchor=north west},
+  legend cell align=left]
+% the development curve, in memory order
+\addplot[muted!55, line width=0.5pt, forget plot] table[x=mem, y=D] {figdata/fig1_dev.dat};
+% development points: filled; validation points: open
+\addplot[only marks, mark=*, mark size=2.4pt, cIM, forget plot]
+  table[x=mem, y=D, restrict expr to domain={\thisrow{fam}}{0:0}] {figdata/fig1_dev.dat};
+\addplot[only marks, mark=square*, mark size=2.2pt, cTS, forget plot]
+  table[x=mem, y=D, restrict expr to domain={\thisrow{fam}}{1:1}] {figdata/fig1_dev.dat};
+\addplot[only marks, mark=diamond*, mark size=2.8pt, cWM, forget plot]
+  table[x=mem, y=D, restrict expr to domain={\thisrow{fam}}{2:2}] {figdata/fig1_dev.dat};
+\addplot[only marks, mark=square, mark size=3.6pt, cTS, line width=0.8pt, forget plot]
+  table[x=mem, y=D, restrict expr to domain={\thisrow{fam}}{1:1}] {figdata/fig1_val.dat};
+\addplot[only marks, mark=diamond, mark size=4.2pt, cWM, line width=0.8pt, forget plot]
+  table[x=mem, y=D, restrict expr to domain={\thisrow{fam}}{2:2}] {figdata/fig1_val.dat};
+% legend entries for the two data sets (ink markers)
+\addlegendimage{only marks, mark=*, mark size=2.2pt, ink}
+\addlegendentry{development (1,081 events)}
+\addlegendimage{only marks, mark=o, mark size=3pt, ink, line width=0.8pt}
+\addlegendentry{validation (fresh blocks)}
+% direct labels (layout only; values are in the data files)
+\node[lab, anchor=north west] at (axis cs:2.1,-0.02) {IM (reference)};
+\node[lab, anchor=north] at (axis cs:16,0.10) {inv4p};
+\node[lab, anchor=west] at (axis cs:46,0.38) {TS};
+\node[lab, anchor=east] at (axis cs:57,0.66) {$W=64$};
+\node[lab, anchor=south east] at (axis cs:69.5,0.825) {$W=128$};
+\node[lab, anchor=north west] at (axis cs:78,0.815) {$W=192$};
+\node[lab, anchor=south east] at (axis cs:85,1.0) {$W=256$};
+\node[lab, anchor=north west] at (axis cs:109,0.985) {WM};
+\end{semilogxaxis}
+\end{tikzpicture}

@@ -15,6 +15,24 @@
 \usepackage{xcolor}
 \usepackage{microtype}
 \usepackage[font=small,skip=6pt,position=top]{caption}
+\usepackage{pgfplots}
+\usepgfplotslibrary{groupplots}
+\usetikzlibrary{arrows.meta,decorations.pathreplacing,shapes.geometric}
+\pgfplotsset{compat=1.18}
+% figure colours: categorical slots 1-3 of the dataviz reference palette (validated: CVD and normal-vision separation
+% pass for all pairs; the third is below 3:1 contrast, so every series also has its own dash pattern or marker and a
+% direct label)
+\definecolor{cIM}{HTML}{2A78D6}
+\definecolor{cTS}{HTML}{EB6834}
+\definecolor{cWM}{HTML}{1BAF7A}
+\definecolor{ink}{HTML}{0B0B0B}
+\definecolor{muted}{HTML}{52514E}
+\definecolor{gridc}{HTML}{E4E3DF}
+\pgfplotsset{paperaxis/.style={axis line style={muted, line width=0.4pt}, tick style={muted, line width=0.4pt},
+  major tick length=3pt, ticklabel style={font=\footnotesize, text=ink}, label style={font=\small, text=ink},
+  title style={font=\small, text=ink}, grid style={gridc, line width=0.3pt}, xmajorgrids, ymajorgrids,
+  legend style={font=\footnotesize, draw=none, fill=white, fill opacity=0.85, text opacity=1}}}
+\tikzset{lab/.style={font=\scriptsize, text=muted, inner sep=1.5pt}}
 \usepackage[hidelinks]{hyperref}
 
 \newtheorem{theorem}{Theorem}
@@ -398,7 +416,15 @@ Keeping the measurements themselves, over a window, avoids the hull.
 The window monitor WM (\emph{F3} in the records) keeps, between samples, a base at time $\tau$ (the 42 supports of the
 template TS, with its clamps), the measurements kept since $\tau$ (at most $K_{\mathrm{cap}} = 64$), and $\tau$ itself.
 At each sample $t$ it solves LPs over the samples $\tau,\dots,t$, at most $W+B+1 = 273$ transitions, with $W = 256$
-and $B = 16$.
+and $B = 16$. Figure~\ref{fig:window} shows the window between two folds.
+
+\begin{figure}[t]
+\centering
+\input{fig_window}
+\caption{The window of WM between two folds (schematic, not to scale). The states $(a_c, a_s)$ appear at the nodes
+only: the base at $\tau$, the kept measurements, $\tau+16$ and the current sample; $T_A$ appears at every sample.}
+\label{fig:window}
+\end{figure}
 
 Between nodes the steps are exact:
 $x_b = M^L x_a + \sum_{k<L} M^k e_3 w_{b-1-k}$, with every $|w_j|\le\rho$ explicit. $M^L$ and $M^k e_3$ are the exact
@@ -509,7 +535,17 @@ scipy 1.18.1 and HiGHS 1.12.0.
 
 \subsection{Development: loss against memory}
 
-Table~\ref{tab:dev} gives development results only (1,081 certified detection events), not a validation.
+Table~\ref{tab:dev} gives development results only (1,081 certified detection events), not a validation. Figure~\ref{fig:memory} places these monitors, and the validated ones, by the numbers they keep.
+
+\begin{figure}[t]
+\centering
+\input{fig_memory}
+\caption{$\Dp$ against the numbers a monitor keeps between samples. Filled markers: development (1,081 certified
+events); open markers: validation (inv4p and TS on validation 1, WM on validation 3). For a window the count is the 42
+supports of its base plus the largest number of measurements it kept on that data; their sample indices, $\tau$ and
+the LP workspace are not counted. IM is the reference, with $\Dp = 0$ by definition.}
+\label{fig:memory}
+\end{figure}
 
 \begin{table}[ht]
 \centering\small
@@ -529,15 +565,27 @@ window $W = 256$ & $\le45$ kept & 0.9992 & 0 & 1079\\
 
 The curve is not smooth: between $W = 192$ and 256 the gain comes from a few runs with slow drift whose separating
 information lies far back. On 430010 (drift 0.0005\,\degC/s, ramp ambient), $W = 192$ detects at 3,449 and $W = 256$ at
-$\tstar = 695$. With a cap of 64, development data never kept more than 45 measurements, so nothing was evicted. Caps of
+$\tstar = 695$. Figure~\ref{fig:trace} shows this run. With a cap of 64, development data never kept more than 45 measurements, so nothing was evicted. Caps of
 40 and 32 detected identically on all 1,320 rows, with 420 and 21,821 evictions.
 % src: DIAG-3-RESULTS.md "size-loss curve"; amendment 6 part 2 (K1, K2, K = 40 table, K = 32)
+% src (figures): paper/figures/make_data.py -> figdata/figures.json; inv4p DEV D_paired 0.147 scored there
 
 \paragraph{Smoothing against filtering.} On the four diagnosis runs, the filtering fold never recovers run 430027 at
 any $W$ (it stays at 1,429 against $\tstar = 579$), and recovers 430010 only to 3,449 at $W = 256$ ($\tstar = 695$). The
 smoothing fold detects both at $\tstar$ (at $W = 128$ and $W = 256$). \pending{B5, the forward window, on the validation
 block.}
 % src: DIAG-3-RESULTS.md phase 1 tables
+
+\begin{figure}[t]
+\centering
+\input{fig_trace}
+\caption{Development run 430010 (drift 0.0005\,\degC/s from sample 496, E0, ramp ambient; $\tstar = 695$).
+(a)~The upper edge of the band each measurement is tested against, $\bar a_s+\delta$, with $\bar a_s$ the top of the
+monitor's $a_s$-range given the past; a measurement above a monitor's edge is an alarm of that monitor. At sample 695
+the measurement lies 0.3\,m\degC\ above WM's edge and about 5\,m\degC\ below the edges of IM and TS. (b)~The width of
+the $a_s$-range; WM's curve ends at its alarm.}
+\label{fig:trace}
+\end{figure}
 
 \subsection{Validation 1: the template tier}
 
@@ -589,6 +637,17 @@ WM / F3 & 0.80 & 0.9952 & $[0.9899, 0.9995]$ & 0 & 0 & PASS\\
 \bottomrule
 \end{tabular}
 \end{table}
+
+Figure~\ref{fig:cells} shows where the lag of each monitor lies.
+
+\begin{figure}[t]
+\centering
+\input{fig_cells}
+\caption{Validation 3: the lag of IM and WM in each fault cell, summed over the cell's certified events, with a miss
+counted as $N-\tstar$ (log scale). WM's lag is 0 in seven cells (open diamonds at the left edge). IM's 27 misses are
+in the three labelled cells.}
+\label{fig:cells}
+\end{figure}
 
 \begin{itemize}
 \item No soundness finding. 7,255 certified events; 7,243 detected exactly at $\tstar$ (IM: 5,257). Lag p90 0\,s and

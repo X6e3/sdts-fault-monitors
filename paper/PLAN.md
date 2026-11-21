@@ -32,15 +32,21 @@ text goes into `main.tex` only.
 | 9 Related work | draft | primary texts below |
 | 10 Limitations | draft | — |
 | 11 Reproducibility | draft | public URL |
-| Figures | none yet | see below |
+| Figures | four drafted (2026-11-21) | baselines on Figure 2 after the block run |
 
-## Figures to make
+## Figures (drafted 2026-11-21)
 
-1. The memory-loss curve: D_paired against state size (IM, inv4p, TS, W = 64…256), development and validation
-   points marked apart; baselines added when they exist.
-2. One run (430010 drift 0.0005 ramp): z, the as-ranges of IM, TS and WM, t*.
-3. The window's anatomy: base at τ, nodes, kept measurements, fold at τ + 16 (diagram).
-4. Per-cell lag, IM against WM (validation 3).
+In `preprint/fig_*.tex` (pgfplots and TikZ, compiled with the paper). Data from `figures/make_data.py`, which writes
+`preprint/figdata/` (the `.dat` files and `figures.json`) from the records and from DEV runs it regenerates. Colours:
+slots 1 to 3 of the dataviz reference palette, validated; IM, TS and WM keep one colour, dash pattern and marker each
+in every figure.
+
+1. The window between two folds (schematic), section 5.2.
+2. D_paired against the numbers kept, development and validation, section 7.1. Baselines go here after the block
+   run.
+3. Run 430010: the upper edge of each monitor's band near t*, and the running median width of the a_s-range,
+   section 7.1.
+4. Validation 3: the lag per fault cell, IM against WM, section 7.4.
 
 ## Before submission
 

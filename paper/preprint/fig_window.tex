@@ -1,0 +1,36 @@
+% Figure: the window of WM between two folds (schematic; not to scale).
+\begin{tikzpicture}[x=0.47cm, y=1cm, font=\footnotesize]
+% sample axis
+\draw[muted, line width=0.4pt] (0,0) -- (26.5,0);
+\foreach \i in {0,...,26} \draw[muted!60] (\i,-0.06) -- (\i,0.06);
+% T_A at every sample
+\foreach \i in {0,...,26} \fill[muted!70] (\i,-0.7) circle (1.3pt);
+\node[anchor=east, muted, align=right] at (-0.4,-0.7) {$T_A$ at\\every sample};
+% nodes: base, kept measurements, the fold target, the current sample
+\node[draw=ink, fill=cWM!18, rounded corners=1pt, minimum width=1.25cm, minimum height=0.62cm, align=center,
+      font=\scriptsize] (base) at (0,1.05) {base at $\tau$\\42 supports};
+\draw[ink] (0,0) -- (base.south);
+\foreach \i in {3,7,12,19,22} {\fill[cWM] (\i,0.45) circle (2.6pt); \draw[cWM, line width=0.5pt] (\i,0) -- (\i,0.37);}
+\draw[muted, line width=0.6pt] (9,0.45) circle (2.6pt);
+\draw[muted, line width=0.6pt] (8.8,0.27) -- (9.2,0.63) (8.8,0.63) -- (9.2,0.27);
+\node[anchor=south, muted, font=\scriptsize, align=center] at (9,0.75) {redundant at\\arrival: dropped};
+\node[anchor=south, font=\scriptsize, align=center] at (20.5,0.8) {kept measurements\\($\le K_{\mathrm{cap}} = 64$)};
+\draw[muted, line width=0.4pt] (20.2,0.82) -- (19.15,0.58);
+\draw[muted, line width=0.4pt] (20.8,0.82) -- (21.85,0.58);
+\draw[ink, line width=0.6pt] (16,0) -- (16,0.35);
+\node[draw=ink, fill=white, minimum size=6pt, inner sep=0pt] at (16,0.35) {};
+\node[anchor=north, font=\scriptsize] at (16,-0.9) {$\tau+16$};
+\node[anchor=north, font=\scriptsize] at (0,-0.9) {$\tau$};
+\node[anchor=north, font=\scriptsize] at (26,-0.9) {$t$};
+% the current sample: the alarm test
+\draw[ink, line width=0.6pt] (26,0) -- (26,0.55);
+\node[star, star points=5, star point ratio=2.2, fill=ink, inner sep=1.1pt] at (26,0.55) {};
+\node[anchor=south east, align=right, font=\scriptsize] at (26.3,2.45) {alarm test at $t$: the $a_s$-range\\given $z$ up to $t-1$, against $z_t\pm(\delta+\eta)$};
+\draw[ink, line width=0.4pt] (26,0.75) -- (26,2.45);
+% the fold: smoothing uses every measurement up to t
+\draw[-{Stealth[length=4pt]}, ink, line width=0.5pt] (16,1.5) -- (16,0.55);
+\node[anchor=south, align=center, font=\scriptsize] at (13,1.5) {fold every $B=16$ samples: new supports at $\tau+16$\\from the window with all measurements up to $t$ (smoothing)};
+% the window length
+\draw[decorate, decoration={brace, mirror, amplitude=4pt}, muted] (0,-1.45) -- (26,-1.45)
+  node[midway, below=4pt, muted, font=\scriptsize] {exact steps between nodes; at most $W+B+1 = 273$ transitions};
+\end{tikzpicture}
