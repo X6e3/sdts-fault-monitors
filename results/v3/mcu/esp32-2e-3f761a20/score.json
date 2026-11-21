@@ -1,0 +1,14 @@
+{
+ "verdict": "PASS",
+ "rows": 1400,
+ "expected_rows": 1400,
+ "missing": 0,
+ "extra": 0,
+ "samples": 5040000,
+ "rows_with_any_difference": 0,
+ "first_inconsistent_equal_rows": 1400,
+ "flagged_rows_board": 1078,
+ "cycles_max": 1094108,
+ "cycles_median_of_row_medians": 1846,
+ "bad_examples": []
+}

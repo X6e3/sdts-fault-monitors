@@ -163,6 +163,41 @@ round-to-nearest-even on the PC):
 **Not shown:** all of DEV; a worst-case timing bound (the maximum is over these runs only); F3 (it needs an LP
 solver on the board); a real sensor.
 
+## 2e. MCU-2E result: the ESP32 equals the PC bit for bit on all 1400 DEV rows (2026-11-21)
+
+Plan `MCU-2E-PLAN.md`, committed before the run (`3f761a20`). Arch; the board flashed from `prepare.sh
+cyl16p_double` at that commit (`BAUD=921600`); the six script files on Arch were checked against the commit
+(sha256) before flashing. Run 03:49:54 to 06:44:23 (+0300). Results in `results/v3/mcu/esp32-2e-3f761a20/`.
+
+**Verdict: PASS.** All 1400 rows complete with 3600 samples each, 5,040,000 samples. The init states are equal
+byte for byte, and on every sample the flag and the 16-byte hash of the state dump are equal: no row has any
+difference. 1078 rows flag, at the same sample on the board and the PC; 322 flag on neither. No infrastructure
+restart. Rescored on the Mac from `rows.jsonl` (the row set against `dev_full.rows()`, the counts): the same.
+
+**Before the run** (`controls.txt`, not counted):
+- Rehearsal: the first two rows through the hash path, and one of them again through the full-dump path of 2d:
+  no difference.
+- Negative controls, changing only the PC side: P + 1e-6 at sample 1000 gives 2600 differing samples (all from
+  1000 on); one flipped bit of the PC dump at sample 2000 gives exactly 1. One-ulp changes of y or P at sample 1000
+  give none, because the state they produce is the same; they do not test the comparison.
+- A first control was wrongly designed (the float32 PC build against the float64 board) and was discarded.
+
+**Reported, not deciding:**
+- Cycles per sample at 240 MHz, on the 322 rows that never flag: median of the row medians 871,410 (3.63 ms);
+  largest row p99 922,834 (3.85 ms); maximum 1,094,108 (4.56 ms). After a flag the state returns at once
+  (`v3_state.c` line 46), so the median of the flagged rows' medians is 1,844 cycles; `score.json`'s
+  `cycles_median_of_row_medians` (1,846) mixes both kinds of row and is not the cost of a sample.
+- Memory after the run: heap 373,852 bytes, 317,560 free, at least 293,784 free at any time; 6,656 bytes of the
+  loop task's stack never used. The sketch is 331,777 of 1,310,720 bytes.
+- Wall time 2 h 54 min, 16.0 to 16.1 s for a row that never flags.
+
+**INFERRED:** on these 1400 DEV rows, whatever holds for the PC build of freeze 1's cyl16p (float64) holds for
+the board's output, because the output is the same bit for bit. On other inputs this is an inference from the
+arithmetic of 2d (every tested operation IEEE round-to-nearest), not a test.
+
+**Not shown:** a real sensor or plant; F3 (no LP solver on the board); other boards, compilers or flags; a
+worst-case timing bound (the maximum is over these runs).
+
 ## 2f. MCU-2F result: the Uno's decisions equal the PC's on 30 DEV rows (2026-11-21)
 
 Plan `MCU-2F-PLAN.md`, committed before the run (`82af2a44`). Arch, clean clone at that commit, the Uno flashed

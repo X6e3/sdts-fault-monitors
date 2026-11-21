@@ -1,0 +1,39 @@
+MCU-2E: rehearsal and negative controls, 2026-11-21, Arch, before the main run (times +0300).
+The scripts printed these lines to the terminal; they were not saved to files at the time. Copied here verbatim.
+Board build: out/esp32-2e-3f761a20 (prepare.sh cyl16p_double at 3f761a20, BAUD=921600), the same as the main run.
+Before flashing, the six script files on Arch were checked against the commit (sha256): all the same.
+
+03:47 rehearsal, the first 2 rows through the hashed batch path (dev_full.py --limit 2, out/2e-rehearsal,
+      copied to rehearsal/):
+  430000 healthy E0 rw uniform    samples 3600, mismatches 0, flag_mismatches 0, init_equal true
+  430001 healthy E0 rw uniform    samples 3600, mismatches 0, flag_mismatches 0, init_equal true
+
+03:47 rehearsal, row 430000 healthy E0 rw uniform again through the full-dump path (stream.py run_one, byte
+      comparison of every 357-byte dump as in MCU-NOTES 2d):
+  {"key": [430000, "healthy", "E0", "rw", "uniform"], "samples": 3600, "mismatches": 0, "board_first": null,
+   "host_first": null, "init_equal": true}
+
+Negative controls: the PC side's input or output is changed, the board's is not; the hashed comparison must see it.
+
+03:47 discarded: a first control compared the board's float64 build against the float32 host_trace. dev_full.py
+      stopped with three infrastructure errors ("no batch reply at 0"), not with a difference. Wrong design; its
+      output directories were deleted and it is not counted.
+
+03:48 y[1000] one ulp up (math.nextafter), PC side only:
+  {"key": [430000, "healthy", "E0", "rw", "uniform"], "samples": 3600, "mismatches": 0, "first_mismatch": null,
+   "flag_mismatches": 0, "init_equal": true}
+  The change is absorbed by the arithmetic: the state is the same, so there is nothing to see.
+
+03:48 P[1000] one ulp up, PC side only:
+  {"key": [430000, "healthy", "E0", "rw", "uniform"], "samples": 3600, "mismatches": 0, "first_mismatch": null,
+   "flag_mismatches": 0, "board_first": null, "host_first": null}
+  {"key": [430000, "drift_0.002", "E1", "ramp", "uniform"], "samples": 3600, "mismatches": 0,
+   "first_mismatch": null, "flag_mismatches": 0, "board_first": 809, "host_first": 809}
+  Absorbed as well.
+
+03:49 two controls that change the state, 430000 healthy E0 rw uniform:
+  a: P[1000] + 1e-6 on the PC {"samples": 3600, "mismatches": 2600, "first_mismatch": 1000, "flag_mismatches": 0}
+  b: one bit of the PC dump at 2000 {"samples": 3600, "mismatches": 1, "first_mismatch": 2000, "flag_mismatches": 0}
+  a: every sample from 1000 on differs (3600 - 1000 = 2600). b: exactly the one changed sample differs.
+
+03:49:54 main run started (run.log).
