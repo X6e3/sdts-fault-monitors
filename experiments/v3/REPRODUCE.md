@@ -70,11 +70,27 @@ generation of a block has not been run yet.
 `--rehearsal --seeds 430096 430097` runs the same pipeline on two development seeds in a few minutes, without the
 approval.
 
+## The independent scorer (validations 2 and 3)
+
+`independent/independent_score.py` was written from section 4 of `FREEZE-V2.md` alone and imports only the Python
+standard library. It scores the recorded rows again, checks `meta.json` and the manifest's files at the approval
+commit (and, with `--worktree`, in a checkout of it), and compares every number with the run's `scores.json`:
+
+```
+python3 -I experiments/v3/independent/independent_score.py --freeze 3 --repo REPO \
+    --run REPO/results/v3/freeze3/validation-440400-440599-948b46b0 --out /tmp/independent-v3.json
+```
+
+The file is the two scripts that scored the validations (`RECORD-2026-11-19-validation.md`,
+`RECORD-2026-11-21-validation.md`), cleaned on 2026-11-22: the paths became arguments and the two variants one file
+(`--freeze 2` or `3`); the scoring is unchanged. Checked on 2026-11-22: for both validations its output equals the
+recorded output in every field but the task name (288 fields for validation 2, whose recorded output has sha256
+`2811e6326c2746b40a7ff4127fd618b670b4deae3f1c17af13df6eb053acd631`, and 247 for validation 3, `02b5e909…`).
+
 ## Not in this repository
 
 - The oracle's per-attempt solver logs of each block (`solver_attempts/`, 9 to 30 MB per block); the records give the
   sha256 of each archive.
-- The independent scorer that reproduced validations 2 and 3.
 
 ## Development results
 

@@ -295,7 +295,7 @@ only be later than $\tstar$, and every sample of its delay is information its re
 \end{corollary}
 
 What IM discards is the error state $e = (a_c - T_A,\ a_s - T_A)$. In particular the velocity of $a_s$,
-$v\cdot s_k = a_s[k+1]-a_s[k]$ with $v = M^\top e_2 - e_2$, is itself a state with dynamics: a surface that has risen at
+$\psi\cdot s_k = a_s[k+1]-a_s[k]$ with $\psi = M^\top e_2 - e_2$, is itself a state with dynamics: a surface that has risen at
 the full rate cannot fall at the full rate one sample later, because the core lags. The interval allows $\pm\rho$ at
 every step independently.
 
@@ -308,7 +308,7 @@ support $h_E(q) = \rho\sum_j|q\cdot F^j g|$.
 \end{lemma}
 
 For this plant $|a_c - T_A|\le 0.135$, $|a_s - T_A|\le 0.105$ and $|a_c - a_s|\le 0.030$\,\degC, and in the direction
-of the $a_s$ velocity $h_E = \rho$ exactly: IM's lemma is one face of $E_\infty$. The supports are computed offline with
+$\psi$ of the $a_s$ velocity $h_E(\psi) = \rho$ exactly: IM's lemma is one face of $E_\infty$. The supports are computed offline with
 a bounded tail, and checked in exact rational arithmetic against the exact model (smallest slack \sci{2.2}{-15}\,\degC\
 over all 42 clamps).
 % src: V3_NOTES.md Lemma 2; slack = FREEZE-V2.md section 1 "The clamps" (check_model.py)
@@ -382,14 +382,14 @@ $\lambda$ to the stored precision.
 \end{proof}
 
 \begin{theorem}[never later than IM]\label{thm:dom}
-Suppose $\pm e_2$ and $\pm\hat v\in D$, with $\hat v = v/|v|$, the clamps are applied, for the targets
-$\pm M^\top e_2$ a basis $\{\pm e_2, \pm\hat v, x\}$ is kept, and the $a_s$-range uses the unit bases of $\pm e_2$, so
+Suppose $\pm e_2$ and $\pm\hat\psi\in D$, with $\hat\psi = \psi/|\psi|$, the clamps are applied, for the targets
+$\pm M^\top e_2$ a basis $\{\pm e_2, \pm\hat\psi, x\}$ is kept, and the $a_s$-range uses the unit bases of $\pm e_2$, so
 that it is $[-h(-e_2),\ h(e_2)]$. Then $\pi_2(\mathcal{P}_k\cap\text{slab}_k)\subseteq I_k$
 for all $k$, so the template state flags no later than IM.
 \end{theorem}
 \begin{proof}
-$M^\top e_2 = e_2 + v$. With the kept basis, $\operatorname{supp}_{\mathcal{P}_{k+1}}(e_2)\le h(e_2) + |v|\,h(\hat v)$.
-By induction $h(e_2)\le\max I_k$, and the clamp gives $|v|\,h(\hat v)\le h_E(v) = \rho$. So the upper end is at most
+$M^\top e_2 = e_2 + \psi$. With the kept basis, $\operatorname{supp}_{\mathcal{P}_{k+1}}(e_2)\le h(e_2) + |\psi|\,h(\hat\psi)$.
+By induction $h(e_2)\le\max I_k$, and the clamp gives $|\psi|\,h(\hat\psi)\le h_E(\psi) = \rho$. So the upper end is at most
 $\max I_k + \rho$; the lower end is symmetric, and intersecting with the slab and the box gives
 $\pi_2\subseteq I_{k+1}$. The direction $e_2$ carries no $w$ term.
 \end{proof}
@@ -406,11 +406,11 @@ Section~\ref{sec:mcu}), and two start supports \sci{1.1}{-16}\,\degC\ short, whi
 \subsection{The frozen template}\label{sec:frozen}
 
 The validated template TS (\emph{cyl16p} in the records) has 42 directions: the six axis directions, four differences of
-coordinates, $\pm\hat v$, eight directions in the error plane $\{d : d_1+d_2+d_3 = 0\}$, and 16 angles in the
+coordinates, $\pm\hat\psi$, eight directions in the error plane $\{d : d_1+d_2+d_3 = 0\}$, and 16 angles in the
 $(a_c, a_s)$ plane with both signs, after removing duplicates. The last family has normals orthogonal to $e_3$, as do
 the faces that the Minkowski sum with the ambient segment creates. Its base tables were pruned to the bases used on 120
 selection runs (development seeds outside the evaluation range): 1,318 entries, about 20\,KB of float32 tables. A
-smaller template (\emph{inv4p}: the axis and difference directions, $\pm\hat v$ and four directions in the error plane;
+smaller template (\emph{inv4p}: the axis and difference directions, $\pm\hat\psi$ and four directions in the error plane;
 16 numbers, 231 entries, 3.7\,KB) was validated alongside it.
 % src: template_state.py directions("cyl"); RESULTS.md budget table (selection runs: 430050-052 for cyl16p,
 % 430050-069 for inv4p; evaluation 430000-430029); FREEZE-V1.md
@@ -442,14 +442,15 @@ and $B = 16$; the first fold comes when $t-\tau > W+B$. Figure~\ref{fig:window} 
 \centering
 \input{fig_window}
 \caption{The window of WM between two folds (schematic, not to scale). The states $(a_c, a_s)$ appear at the nodes
-only: the base at $\tau$, the kept measurements, $\tau+16$ and the current sample; $T_A$ appears at every sample.}
+only: in the LPs of the alarm at $t$, the base at $\tau$, the kept measurements and $t$; in the fold LP, the base, the
+measurements kept up to $t$ and the target $\tau+16$. $T_A$ appears at every sample.}
 \label{fig:window}
 \end{figure}
 
 Between nodes the steps are exact:
 $x_b = M^L x_a + \sum_{k<L} M^k e_3 w_{b-1-k}$, with every $|w_j|\le\rho$ explicit. $M^L$ and $M^k e_3$ are the exact
 powers of the exact model, each rounded once. The states $(a_c, a_s)$ appear at the nodes only ($\tau$, the kept
-measurements, $\tau+16$ and the objective sample) and $T_A$ at every sample. Between nodes, $a_c$ and $a_s$ stay in the
+measurements and the objective sample: $t$ for the alarm, $\tau+16$ for a fold) and $T_A$ at every sample. Between nodes, $a_c$ and $a_s$ stay in the
 box by convexity, so only the box rows of $T_A$ are needed. Apart from dropped measurements, the window is exact.
 
 A measurement that the primal $a_s$-range (not
