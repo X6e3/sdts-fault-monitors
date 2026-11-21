@@ -1,0 +1,150 @@
+{
+ "a": {
+  "A0": {
+   "runs": 60,
+   "v2": {
+    "alarms": 0,
+    "share": 0.0,
+    "median": null,
+    "min": null
+   },
+   "cyl16p": {
+    "alarms": 0,
+    "share": 0.0,
+    "median": null,
+    "min": null
+   },
+   "F3": {
+    "alarms": 0,
+    "share": 0.0,
+    "median": null,
+    "min": null
+   }
+  },
+  "A1": {
+   "runs": 60,
+   "v2": {
+    "alarms": 42,
+    "share": 0.7,
+    "median": 0,
+    "min": 0
+   },
+   "cyl16p": {
+    "alarms": 42,
+    "share": 0.7,
+    "median": 0,
+    "min": 0
+   },
+   "F3": {
+    "alarms": 42,
+    "share": 0.7,
+    "median": 0,
+    "min": 0
+   },
+   "runs_with_TA_outside": 42
+  },
+  "A2": {
+   "runs": 60,
+   "v2": {
+    "alarms": 0,
+    "share": 0.0,
+    "median": null,
+    "min": null
+   },
+   "cyl16p": {
+    "alarms": 0,
+    "share": 0.0,
+    "median": null,
+    "min": null
+   },
+   "F3": {
+    "alarms": 0,
+    "share": 0.0,
+    "median": null,
+    "min": null
+   }
+  },
+  "A3": {
+   "runs": 60,
+   "v2": {
+    "alarms": 0,
+    "share": 0.0,
+    "median": null,
+    "min": null
+   },
+   "cyl16p": {
+    "alarms": 0,
+    "share": 0.0,
+    "median": null,
+    "min": null
+   },
+   "F3": {
+    "alarms": 4,
+    "share": 0.067,
+    "median": 3111,
+    "min": 482
+   }
+  },
+  "A4": {
+   "runs": 60,
+   "v2": {
+    "alarms": 60,
+    "share": 1.0,
+    "median": 1006,
+    "min": 1001
+   },
+   "cyl16p": {
+    "alarms": 60,
+    "share": 1.0,
+    "median": 1006,
+    "min": 1001
+   },
+   "F3": {
+    "alarms": 60,
+    "share": 1.0,
+    "median": 1005,
+    "min": 1001
+   }
+  }
+ },
+ "b": {
+  "rows": 1320,
+  "v2_identity_at_frozen_box": 1320,
+  "v2@23-27": {
+   "lag_all_events": 44363,
+   "lag_drift": 38070,
+   "misses": 8,
+   "admissible_alarms": 0
+  },
+  "v2@22-28": {
+   "lag_all_events": 126606,
+   "lag_drift": 120313,
+   "misses": 32,
+   "admissible_alarms": 0
+  },
+  "v2@21-29": {
+   "lag_all_events": 154723,
+   "lag_drift": 148430,
+   "misses": 55,
+   "admissible_alarms": 0
+  },
+  "cyl16p@23-27": {
+   "lag_all_events": 26680,
+   "lag_drift": 20404,
+   "misses": 4,
+   "admissible_alarms": 0
+  },
+  "cyl16p@22-28": {
+   "lag_all_events": 108995,
+   "lag_drift": 102719,
+   "misses": 28,
+   "admissible_alarms": 0
+  },
+  "cyl16p@21-29": {
+   "lag_all_events": 137518,
+   "lag_drift": 131242,
+   "misses": 51,
+   "admissible_alarms": 0
+  }
+ }
+}

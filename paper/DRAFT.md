@@ -582,9 +582,27 @@ BASELINE-PLAN.md. Report memory against D_paired and misses, with WM and TS.]
 
 ### 7.8 How much the results lean on the ambient box
 
-[PENDING: AMBIENT-PLAN.md. (a) false alarms of IM, TS and WM on healthy runs whose ambient breaks (b) or (c);
-(b) detection delay of IM and TS when the assumed box is widened to [22, 28] and [21, 29].] Development data already
-showed that slow-drift detection leans on the box. In those cells the alarm often comes when z exceeds the top of the
+A descriptive study on development seeds, pre-registered without pass or fail, asked two questions.
+
+*A wider assumed box.* On the 1,320 development rows (true ambient within [23, 27]), widening the assumed box to
+[22, 28] multiplied IM's lag against the frozen-box t* by 2.9 and TS's by 4.1; to [21, 29], by 3.5 and 5.2. Misses
+rose from 8 to 32 and 55 (IM) and from 4 to 28 and 51 (TS). The whole increase is in the three slowest drift cells;
+jumps, faster drifts, gain, noise and stuck faults do not depend on the box. TS stays about 17,500 s of lag ahead of
+IM at every box, so its relative gain falls from 40 % to 14 % and 11 %. No monitor flagged an admissible row or flagged
+before t*, at any box. These lags mix two losses: what a monitor discards, and what the weaker assumption no longer
+gives (the exact detector is later too; its wider-box t* was not computed). WM was not run with a wider box, since
+the box enters its LP, certificates and fallbacks.
+
+*Broken assumptions, healthy sensor.* With the frozen assumptions and healthy sensors, an ambient rate twice the bound
+caused no alarm in any monitor on 60 runs. A rate five times the bound caused certified alarms of WM on 4 of 60 runs
+(two paths, both arms) and none of IM or TS: the most informed monitor is the first to prove that the model is
+violated. A 1 °C step in the ambient was flagged by all three on every run, 1 to 10 samples after the step. An
+ambient path starting outside the box was flagged by all three within 3 samples of the start; a slow excursion out of
+the box was not tested. Every one of these alarms is correct about the model and wrong about the sensor.
+
+<!-- src: RECORD-2026-11-21-ambient.md; results/v3/ambient/amb-443d8b30-mac/ (summary.json, report.json) -->
+
+Development data had already shown why slow-drift detection leans on the box. In those cells the alarm often comes when z exceeds the top of the
 box plus δ, so that every healthy explanation has to push T_A against the wall: on every development run where a
 window variant without T_A box rows between nodes was later than the full window, z reached 2.22–2.30 (shifted
 units) in the 256 samples before t*.

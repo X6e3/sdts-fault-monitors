@@ -20,9 +20,9 @@ installation exists yet on either machine.
 | 4 Template tier, Theorems 2–3 | draft | — |
 | 5 Window tier, certificates, fallback | draft | decide: full proof in an appendix? |
 | 6 Protocol | draft | — |
-| 7.1–7.6 Results | draft | C1 Y5 (ESP32) record |
+| 7.1–7.6 Results | draft | — |
 | 7.7 Baselines | placeholder | DEV tuning (Arch), freeze of configs, block run on 440400–440599 |
-| 7.8 Ambient box | placeholder | AMBIENT-PLAN.md run (Mac) |
+| 7.8 Ambient box | draft | — |
 | 7.5 Process isolation | placeholder | ISOLATION-PLAN.md run (Arch) |
 | 8 What went wrong | draft | — |
 | 9 Related work | draft | primary texts below |
