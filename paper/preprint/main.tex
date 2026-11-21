@@ -799,10 +799,34 @@ fresh seeds. The same check of the validated Python template is open at the $10^
 
 \subsection{Baselines}\label{sec:baselines}
 
-\pending{B1 constrained zonotopes \citep{scott2016}, B2 zonotopes with strip intersection \citep{alamo2005}, B3 a
-zonotopic observer with constant gain \citep{combastel2015}, B4 an interval observer, B5 the forward window (in the
-style of \citealt{kesavan2001}), tuned on development rows and frozen before the block run on the window's validation
-block (BASELINE-PLAN.md). Report memory against $\Dp$ and misses, with WM and TS.}
+The comparison was planned, and its configurations frozen, before it ran (approval commit \texttt{9438dffa}). It runs
+on the block of validation 3, whose results for WM and IM were already known, so it is a fixed comparison on a used
+block and not a new validation. Five families get the same prior as ours, the box of $T_A$ and the boxes of $a_c$ and
+$a_s$ it implies, at every sample: B1 constrained zonotopes \citep{scott2016}; B2 zonotopes with strip intersection
+\citep{alamo2005}; B3 a zonotopic observer with constant gain \citep{combastel2015}; B4 an interval observer in
+cooperative form; B5 WM with the smoothing fold turned off, a forward window in the style of \citet{kesavan2001}. B1
+to B4 run in plain binary64 as published, without outward rounding; an alarm they raise on an admissible run or
+before $\tstar$ would be reported as a soundness finding of that implementation. Each family was tuned on development
+rows: at each memory budget, the configuration with the smallest paired lag among those with no such alarm.
+
+\paragraph{Memory.} A monitor's memory is the number of reals it stores between samples, tables and code excluded:
+TS 42 supports; WM the 42 supports of its base and at most 65 measurements, 107 in all (their sample indices are not
+counted); B1 the centre, generators and constraints of its set; B2 and B3 the centre and generators; B4 six bounds. The
+workspace of an LP within a sample is not counted for any method; for the methods that solve LPs (B1, B5 and WM) the
+largest LP is given. The budget M1 is about 42 reals, TS's. The plan named WM's memory as the budget M2, but the
+tuning set no upper limit there, and the configuration it chose for B1 stores 203 reals, nearly twice WM's 107. The
+comparison at M2 therefore favours B1.
+
+\paragraph{Hypotheses.} Fixed before the run, each judged by a seed bootstrap (2,000 draws over the 200 seeds) of the
+difference of paired lags, ours minus the baseline's: \emph{supported} if its 95\,\% interval lies below 0,
+\emph{refuted} if it lies above 0, \emph{not resolved} otherwise. H-B1: at M1, TS's paired lag is below that of each
+of B1 to B4. H-B2: WM's paired lag is below B5's. H-B3: at M2, WM's paired lag is below B1's. On development rows
+every configuration of every family was behind IM; the nearest, B1 at 203 reals, had 2.1 times IM's paired lag.
+% src: BASELINE-PLAN.md sections 3, 4, 6 and 9 (approved 9438dffa); RECORD-2026-11-21-baselines-dev.md (DEV, the M2 note)
+
+\pending{the block's results: per method memory, largest LP, $\Dp$, misses, detections at $\tstar$, soundness
+findings and time per sample; the verdicts of H-B1 to H-B3, from the repository's scorer and from an independent
+scorer written from the plan alone.}
 
 \subsection{How much the results lean on the ambient box}\label{sec:ambient}
 
