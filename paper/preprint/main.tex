@@ -807,8 +807,8 @@ The records keep every failure. These changed the method:
 bounded uncertainty. Consistency tests with parallelotopes \citep{ingimundarson2005}, with zonotopes
 \citep{ingimundarson2009} and with constrained zonotopes \citep{scott2016} give sound detectors with bounded complexity;
 set-valued observers do the same for LTV and LPV systems \citep{rosa2010,silvestre2017}. Interval observers are the
-other main family \citep{pourasghar2019,tang2019}. \citet{saccani2022} apply a set-based approach to thermal faults of a
-lithium-ion cell and report earlier detection than an interval method based on constraint propagation. These works
+other main family \citep{pourasghar2019,tang2019}. \citet{saccani2022} apply constrained zonotopes to thermal faults of a
+lithium-ion cell and compare them with an interval method based on inclusion functions and constraint propagation. These works
 compare detectors with one another; here every detector is compared with the exact detection time.
 
 \paragraph{Bounded memory and the exact set.} The complexity of the exact set cannot be bounded a priori, which
@@ -828,8 +828,12 @@ base update is the smoothing form, used for detection in a bounded window.
 \citet{neumaier2004} and \citet{jansson2004}, reviewed by \citet{guilbeau2017}; they are used in exact MIP
 \citep{cook2013} and in program analysis with template polyhedra \citep{wang2021}.
 
-\paragraph{Embedded solvers.} DAQP \citep{arnstrom2022} and EIQP \citep{wu2025} target embedded LPs and QPs with
-bounded iteration counts; they are dense, and WM's sparse LP of up to 445 rows and 679 variables does not fit them as
+% src (2026-11-22): saccani2022 = OpenAlex abstract (constrained zonotopes; compared with an interval method relying on
+% inclusion functions and constraint propagation; the abstract makes no "earlier than" claim); arnstrom2022 = arXiv
+% 2103.16236v2 (Remark 1: singular Hessian by proximal point iterations; Remark 10: dense QPs from condensed MPC)
+\paragraph{Embedded solvers.} DAQP \citep{arnstrom2022} and EIQP \citep{wu2025} are QP solvers for embedded use whose
+cost in the worst case can be certified offline; DAQP handles a singular Hessian, so an LP, by proximal point
+iterations. Both work on dense problems, and WM's sparse LP of up to 445 rows and 679 variables does not fit them as
 is. Because the certificate holds for any multiplier vector, a solver stopped at an iteration cap would keep WM sound
 and cost only delay (Section~\ref{sec:cert}); its worst-case time is not shown.
 
