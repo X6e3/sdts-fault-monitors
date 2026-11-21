@@ -1,0 +1,26 @@
+{
+ "setting": "f",
+ "rows": 6,
+ "differ": [],
+ "oracle_checked": [
+  [
+   "430019-jump_0.5-E0-ramp-uniform",
+   382,
+   "certified",
+   382,
+   "certified",
+   382,
+   382
+  ],
+  [
+   "430014-healthy-E0-ramp-uniform",
+   null,
+   "certified",
+   null,
+   "certified",
+   null,
+   null
+  ]
+ ],
+ "oracle_differ": []
+}

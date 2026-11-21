@@ -104,6 +104,12 @@ records.
    a certified t\* and one healthy. Any difference stops the test; it is recorded and the plan is revised.
    (A first rehearsal at `7fb68b64` picked the first 6 rows, all healthy; it passed, and the choice was changed
    so that fault rows and certificates are reached.)
+   **Rehearsal result** (2026-11-21, Arch, clean clone of `626fb2ec`, 12 workers at nice 19; outputs in
+   `results/v3/fb/rehearsal-626fb2ec/`): **passes.** All 18 records (b, d and f on the same 6 rows: two jump_0.5,
+   gain_0.01, drift_0.001, drift_0.02, healthy) equal amendment 10's R2 records in every field but wall-clock time.
+   The injections reached fold failures (b: 1853, d: 4536) and upper-certificate failures (f: 400), each about
+   half status 2, half status 4. The oracle job gave the DEV rows' t\*, status and v2 on 430019 jump_0.5 E0 ramp
+   (t\* 382) and 430014 healthy E0 ramp (certified consistent).
 3. **Approval:** the status line becomes `Status: APPROVED by Can Koç on YYYY-MM-DD` in a commit that changes
    nothing else.
 4. **Runs:** `fb_run.py oracle OUT`, then `fb_run.py run OUT --setting S` for none and a–f on Arch, and
