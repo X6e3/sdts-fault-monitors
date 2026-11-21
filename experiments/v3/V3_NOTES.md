@@ -136,7 +136,13 @@ e2 carries no w term. ∎
   output is a function of (y, P) gives the faulty run an output it also gives a healthy run.
 - In particular, no state of any size (the full history included) can bound the sensor error below sup|e| over
   such twins.
-- A slow linear drift (rate ≤ ρ_A, with box room) is such an error.
+- A slow linear drift can be such an error, but a rate ≤ ρ_A and room in the box are not enough: whether an
+  admissible twin exists depends on the onset, the noise and the plant's lag. Counterexample: from the P0
+  steady state every healthy explanation has as[1] = as[0] (section 3). A drift of rate 0 < r ≤ ρ_A from
+  sample 1, with noise −δ at sample 0 and +δ at sample 1, needs as[0] ≤ 25 °C and as[1] ≥ 25 + r °C: the
+  record is inconsistent at sample 1. The DEV witnesses below are runs where a twin does exist.
+  (Corrected 2026-11-21 after an independent review; before, this line read as if rate and box room were
+  enough.)
 - **DEV witness** (certified oracle, full history): 430056 and 430059, drift_0.001/E0. The oracle's *exact*
   constant-offset interval is [−0.70, 0.12] and [−0.48, 0.24]; inside ±1. The true end error is 3.17 and
   3.18 °C.
@@ -189,8 +195,11 @@ No novelty is claimed without a literature check. What is specific here:
 ## 8. Model-consistent is not sensor-correct
 
 - **TUTARSIZ** proves the record violates the model and the assumptions. It does not say which fault.
-- **Not TUTARSIZ** says only that some admissible explanation exists. Any fault in the indistinguishable set
-  passes (Theorem 4).
+- **Not TUTARSIZ** from the exact test (X_k ≠ ∅, as the oracle decides) says that some admissible explanation
+  exists. From an outer approximation (the template state, F3) it says only that inconsistency is not proved
+  yet: cyl16p missed 16 events that the oracle certified (`RECORD-2026-11-18-validation.md`). In both cases any
+  fault in the indistinguishable set passes (Theorem 4). (Corrected 2026-11-21 after an independent review;
+  before, this line did not separate the exact test from its outer approximations.)
 - The state's bounds on (ac, as, TA) are conditional on the healthy hypothesis. They are not measurements of
   the plant.
 
