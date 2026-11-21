@@ -1,0 +1,62 @@
+{
+ "meta": {
+  "stage": "run",
+  "approval": "Status: APPROVED by Can Ko\u00e7 on 2026-11-21",
+  "setting": "f",
+  "variant": "F3",
+  "W": 256,
+  "K": 64,
+  "workers": 13,
+  "git_head": "459e68133325eb3d02c363dfa3d62e198983d8e7",
+  "git_dirty_tracked": false,
+  "manifest_sha256": "0a40cbdf863da6eb046a1c76726d53bf2e967bfa3e0056b1ac15b87cbc7b85c7",
+  "namespace": "v3fb",
+  "oracle_sha256": "7693b5429b79cbef82e2baef31289272c9935a31b1ab62c44e5605d46920180b",
+  "machine": "x86_64",
+  "platform": "Linux-7.3.4-arch1-2-x86_64-with-glibc2.44",
+  "started": "2026-11-21T11:00:36+0300",
+  "finished": "2026-11-21T12:47:23+0300"
+ },
+ "rows": 1200,
+ "expected": 1200,
+ "complete": true,
+ "missing_keys": [],
+ "extra_keys": [],
+ "soundness_violations": [],
+ "early_alarms": [],
+ "uncertified_alarms": [],
+ "max_kept": 65,
+ "counter_mismatches": [],
+ "n_counter_mismatches": 0,
+ "totals": {
+  "box_alarms": 511,
+  "cert_fallbacks|2": 57495,
+  "cert_fallbacks|4": 57175,
+  "fold_full_resets": 0,
+  "fold_implied": 0,
+  "measurements_not_kept": 0,
+  "range_fallbacks|both": 0,
+  "range_fallbacks|one": 0
+ },
+ "slab_failures": {},
+ "harness_totals": {
+  "cert|2|injected": 57495,
+  "cert|4|injected": 57175
+ },
+ "reported": {
+  "events": 900,
+  "misses": 174,
+  "detect_differs_from_none": 794,
+  "earlier_than_none": [],
+  "n_earlier_than_none": 0,
+  "D_paired": -29.24198132358912,
+  "after_reset_detections": 0,
+  "box_alarms": 511,
+  "seconds": 82411.3
+ },
+ "C1_complete": true,
+ "C2_C3_C4_sound": true,
+ "C5_memory": true,
+ "C6_counters": true,
+ "C7_no_slab": true
+}

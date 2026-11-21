@@ -1,0 +1,18 @@
+{
+ "stage": "run",
+ "approval": "Status: APPROVED by Can Ko\u00e7 on 2026-11-21",
+ "setting": "e",
+ "variant": "F3a",
+ "W": 256,
+ "K": 64,
+ "workers": 8,
+ "git_head": "459e68133325eb3d02c363dfa3d62e198983d8e7",
+ "git_dirty_tracked": false,
+ "manifest_sha256": "0a40cbdf863da6eb046a1c76726d53bf2e967bfa3e0056b1ac15b87cbc7b85c7",
+ "namespace": "v3fb",
+ "oracle_sha256": "7693b5429b79cbef82e2baef31289272c9935a31b1ab62c44e5605d46920180b",
+ "machine": "arm64",
+ "platform": "macOS-27.0-arm64-arm-64bit",
+ "started": "2026-11-21T08:20:07+0300",
+ "finished": "2026-11-21T12:05:49+0300"
+}
