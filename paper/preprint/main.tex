@@ -876,7 +876,7 @@ the code references are left out here. Detection delay, completeness, any compar
 the proof.
 % src: FREEZE-V2.md section 1 "What is a theorem" (the invariant chain); FREEZE-V3.md section 1 (fallbacks, memory
 % bound, floating-point model) and section 5 (reviews M1 and M3: lemmas L1-L8, the theorem, L1 restated with the
-% underflow term, the known limits)
+% underflow term, the known limits); released code = RECORD-2026-11-22-postfreeze-fixes.md
 
 \subsection{Setting}
 
@@ -934,8 +934,9 @@ every box within $\pm2$, so $N\le14{,}795$, $5N<2^{52}$, and the term is compute
 any point makes the bound not finite, and the LP counts as failed.
 \end{proof}
 
-The exactness of the absolute term is shown for these boxes only. In general it fails: with $N = 10$ and largest box end
-$2^{-54}$ the code gives 10 units of $2^{-1074}$ where 11 are needed.
+The exactness of the absolute term is shown for these boxes only. In general the frozen code's evaluation fails: with
+$N = 10$ and largest box end $2^{-54}$ it gives 10 units of $2^{-1074}$ where 11 are needed. The released code computes
+the term in rational arithmetic for any box and gives the same value for the candidate's.
 
 \subsection{The window contains the explanations}
 
@@ -1067,7 +1068,8 @@ explanation with radius $\delta + \sci{5.0}{-13} < d$, and WM does not flag befo
 
 Two known limits of the frozen code do not give a wrong bound. An LP with no variables would be counted as a solver
 exception; WM's LP builders never build one. A solver answer with no multiplier field would stop the run; whether the
-solver library can return one is not known. The exact audit of Section~\ref{sec:cert} measures the bounds on its rows
+solver library can return one is not known. The released code rejects the first as an input error and counts the
+second as a failed attempt; on development rows it gives the same records as the frozen code, run times aside. The exact audit of Section~\ref{sec:cert} measures the bounds on its rows
 and is not part of the proof.
 
 \bibliographystyle{plainnat}

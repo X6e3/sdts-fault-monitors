@@ -57,4 +57,4 @@ in every figure.
 - The AI-use statement: written 2026-11-22 (general form, no tool list; the author's choice). A journal that asks
   for tool names gets a provider-level line at submission.
 - An outside reading of the whole draft.
-- The post-freeze code fixes of FREEZE-V3.md §5 before the code is released.
+- The post-freeze code fixes of FREEZE-V3.md §5: done 2026-11-22 (`a04ec554`, RECORD-2026-11-22-postfreeze-fixes.md).
