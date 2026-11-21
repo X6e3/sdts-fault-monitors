@@ -162,3 +162,35 @@ round-to-nearest-even on the PC):
 
 **Not shown:** all of DEV; a worst-case timing bound (the maximum is over these runs only); F3 (it needs an LP
 solver on the board); a real sensor.
+
+## 2f. MCU-2F result: the Uno's decisions equal the PC's on 30 DEV rows (2026-11-21)
+
+Plan `MCU-2F-PLAN.md`, committed before the run (`82af2a44`). Arch, clean clone at that commit, the Uno flashed
+from it. Results in `results/v3/mcu/uno-2f-82af2a44/`.
+
+**Verdict: PASS.** On all 30 rows the board's first flagged sample equals the PC float32 build's: 26 rows flag,
+at the same sample; 4 flag on neither.
+
+**Reported, not deciding:**
+- 37,181 samples compared; the whole state is bit-equal on 1,654 of them.
+- S (tc, ts) differs on 17,527 samples, on 19 of the 30 rows. The board's binary64 is faithful, not correctly
+  rounded (2c).
+- h components below the PC's: 292,082 component-samples; above: 311,434. The largest distances are 1,988,608 ulps
+  below and 331,776 above.
+- Cycles per sample: at most 1,209,720 (75.6 ms at 16 MHz).
+- One infrastructure restart: a serial timeout on 430013 drift_0.002 E0 ramp, at its first attempt. The row was
+  restarted from its first sample and completed.
+
+**Diagnosis after the verdict** (not deciding; `diagnosis-430005-noise_x2.txt`): the row with the largest ulp
+distance, replayed with full dumps.
+- The 1,988,608 ulps are at a value near zero: h[13] at sample 460 is −2.64e-6 on the board and −2.19e-6 on the PC.
+  That is 4.5e-7 °C, on the less conservative side.
+- The largest absolute difference in h in that row is 7.2e-7 °C (about 3 ulps of −2.23).
+- S differs by at most 1.1e-14 °C.
+- Ulp counts mislead near zero. The absolute differences of the other 29 rows were not recorded.
+
+**INFERRED:** the decisions agree although the states drift apart in the last bits, because the differences
+(≤ 7.2e-7 °C where measured) are far below the margins at which the alarm test turns. Whether the board's bounds
+stay outer bounds is still the inferred argument of 2c, not a proof; a difference of 4.5e-7 °C on the less
+conservative side is smaller than the per-direction pads (≈ 5.5e-6 to 3.1e-5 °C) but is not covered by them by
+construction.

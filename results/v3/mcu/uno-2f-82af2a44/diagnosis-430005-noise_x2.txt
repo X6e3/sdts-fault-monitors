@@ -1,0 +1,5 @@
+Diagnosis after the verdict (not deciding), 2026-11-21, the Uno, same firmware and PC reference:
+row (430005, noise_x2, E1, ramp, uniform) replayed with full dumps, samples 0-587.
+largest ulp distance: -1988608 at sample 460 h[13] board -2.6432096547068795e-06 PC -2.1910525447310647e-06 abs diff 4.521571099758148e-07
+largest absolute difference in h: 7.152557373046875e-07 at (575, 20, -2.231276035308838, -2.231276750564575)
+largest |S difference| (tc, ts): 1.0658141036401503e-14
