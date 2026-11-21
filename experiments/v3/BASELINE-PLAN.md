@@ -45,10 +45,10 @@ explanation exists.
 |---|---|---|---|---|
 | cyl16p | v3 template state (freeze 1), LP-free | 42 supports | fixed | as-range misses the slab |
 | F3 | v3 window tracker (freeze 3) | W = 256, K = 64 | fixed (recorded) | certified alarm |
-| B1 | constrained zonotope CZ (Scott et al. 2016) | constraints n_c, order o | n_c ∈ {2, 4, 8, 16, 32, 64}, o ∈ {1, 2, 4, 8}; elimination policy fifo or greedy; prior box or box+err | LP range test of x_2 (Scott, Prop. 2) |
+| B1 | constrained zonotope CZ (Scott et al. 2016) | constraints n_c, order o | (n_c, o) ∈ {(2, 1), (1, 2), (3, 1)} (within M1) and n_c ∈ {4, 16, 64} × o ∈ {2, 8}, policy fifo, prior box or box+err; and (8, 4) greedy; Scott's LP rescaling for (8, 4) on a fixed 200-row DEV subset, reported only (it costs 15–20 times more) | LP range test of x_2 (Scott, Prop. 2) |
 | B2 | strip-intersection zonotope (Alamo, Bravo, Camacho 2005), F-radius weight | order o | o ∈ {2, 4, 8, 16, 32}; prior box or box+err | strip test |
 | B3 | zonotopic observer, constant gain (Combastel 2015) | order o, weight q | o ∈ {2, 4, 8, 16, 32}, q ∈ {1e-2, 1, 1e2, 1e4}; prior box or box+err | residual-set test |
-| B4 | interval observer (cooperative form) | gain L | a grid of gains for which A − L C is nonnegative and Schur | output-interval test |
+| B4 | interval observer (cooperative form) | gain L | L = (a·M₁₂, b·M₂₂, c), a ∈ {0, ½, 1}, b ∈ {0, ¼, ½, ¾, 1}, c ∈ {0, −0.01, −0.05}: A − L C ≥ 0 (the boxes keep the TA mode bounded) | output-interval test |
 | B5 | forward-only window: F3 with the smoothing fold off | W = 256, K = 64 | fixed (F3's) | certified alarm |
 
 - B1–B3 get the TA box and the implied ac, as boxes as intersections (B1) or virtual strips (B2, B3) at every

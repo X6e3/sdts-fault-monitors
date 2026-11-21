@@ -31,8 +31,8 @@ TOL = 1e-12
 
 
 class ConZono:
-    def __init__(self, n_c, order, policy="fifo", prior="box+err"):
-        self.n_c, self.order, self.policy, self.prior = n_c, order, policy, prior
+    def __init__(self, n_c, order, policy="fifo", prior="box+err", rescale="interval"):
+        self.n_c, self.order, self.policy, self.prior, self.rescale = n_c, order, policy, prior, rescale
         self.t, self.age = 0, np.zeros(0)
         self.ng_max = 3 * order + n_c
         self.c, self.G = np.zeros(3), np.full((3, 1), HI)
@@ -86,10 +86,40 @@ class ConZono:
         self.max_con = max(self.max_con, self.A.shape[0])
 
     # ---- reduction -----------------------------------------------------------------------------------------------
+    def _tight_bounds(self):
+        """the exact range of each xi over {|xi| <= 1, A xi = b} (Scott section 4.1, by LP); None if empty"""
+        ng = self.G.shape[1]
+        lo, hi = -np.ones(ng), np.ones(ng)
+        if self.A.shape[0] == 0:
+            return lo, hi
+        for j in range(ng):
+            for s in (1.0, -1.0):
+                f = np.zeros(ng)
+                f[j] = s
+                self.n_lp += 1
+                r = linprog(f, A_eq=self.A, b_eq=self.b, bounds=(-1, 1), method="highs-ds")
+                if r.status == 2:
+                    return None
+                if r.status != 0:
+                    self.lp_fail += 1
+                    continue
+                if s > 0:
+                    lo[j] = max(-1.0, r.fun)
+                else:
+                    hi[j] = min(1.0, -r.fun)
+        return lo, hi
+
     def _rescale(self, sweeps=3):
         A, b = self.A, self.b
         ng = self.G.shape[1]
         lo, hi = -np.ones(ng), np.ones(ng)
+        if self.rescale == "lp":
+            tb = self._tight_bounds()
+            if tb is None:
+                self.empty = True
+                return
+            lo, hi = tb
+            sweeps = 0
         absA = np.abs(A)
         nz = absA > TOL
         for _ in range(sweeps):
@@ -198,4 +228,5 @@ class ConZono:
         return True
 
 
-BL.METHODS["B1"] = lambda cfg: ConZono(cfg["n_c"], cfg["order"], cfg.get("policy", "fifo"), cfg.get("prior", "box+err"))
+BL.METHODS["B1"] = lambda cfg: ConZono(cfg["n_c"], cfg["order"], cfg.get("policy", "fifo"), cfg.get("prior", "box+err"),
+                                        cfg.get("rescale", "interval"))
