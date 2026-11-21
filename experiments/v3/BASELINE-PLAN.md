@@ -30,7 +30,11 @@ Every method gets exactly the assumptions of FREEZE-V3 section 1:
 - the model: the exact recurrence of `thermal.py` (DIAG-3 amendment 9), its matrix rounded once;
 - the noise bound δ + η (η = 1e-9 °C, the data allowance of F3);
 - the ambient rate ρ_A and the box TA ∈ [23, 27] °C, with the implied boxes of ac and as;
-- the start: the P0 steady state, the segment {t (1, 1, 1)}.
+- the start: the P0 steady state, the segment {t (1, 1, 1)};
+- the reachable-set bounds of Lemma 2 (V3_NOTES section 4), which follow from the model and (b)–(c): in the four
+  error-plane directions ac − TA, as − TA, ac − as and the as-velocity v. Given to B1–B3 as constraints or virtual
+  strips; whether a method uses them is a tuning option (`box` or `box+err`), because an outer intersection with a
+  thin strip can widen the set in other directions. B4 (intervals) can use the boxes only.
 
 The decision is the same for all: an alarm at the first sample at which the method proves that no admissible
 explanation exists.
@@ -41,9 +45,9 @@ explanation exists.
 |---|---|---|---|---|
 | cyl16p | v3 template state (freeze 1), LP-free | 42 supports | fixed | as-range misses the slab |
 | F3 | v3 window tracker (freeze 3) | W = 256, K = 64 | fixed (recorded) | certified alarm |
-| B1 | constrained zonotope CZ (Scott et al. 2016) | constraints n_c, order o | n_c ∈ {0, 1, 2, 4, 8}, o ∈ {2, 4, 8, 16} | LP emptiness test (Scott, Prop. 2) |
-| B2 | strip-intersection zonotope (Alamo, Bravo, Camacho 2005) | order o | o ∈ {2, 4, 8, 16, 32} | strip test |
-| B3 | zonotopic Kalman observer (Combastel 2015) | order o | o ∈ {2, 4, 8, 16, 32} | residual-set test |
+| B1 | constrained zonotope CZ (Scott et al. 2016) | constraints n_c, order o | n_c ∈ {2, 4, 8, 16, 32, 64}, o ∈ {1, 2, 4, 8}; elimination policy fifo or greedy; prior box or box+err | LP range test of x_2 (Scott, Prop. 2) |
+| B2 | strip-intersection zonotope (Alamo, Bravo, Camacho 2005), F-radius weight | order o | o ∈ {2, 4, 8, 16, 32}; prior box or box+err | strip test |
+| B3 | zonotopic observer, constant gain (Combastel 2015) | order o, weight q | o ∈ {2, 4, 8, 16, 32}, q ∈ {1e-2, 1, 1e2, 1e4}; prior box or box+err | residual-set test |
 | B4 | interval observer (cooperative form) | gain L | a grid of gains for which A − L C is nonnegative and Schur | output-interval test |
 | B5 | forward-only window: F3 with the smoothing fold off | W = 256, K = 64 | fixed (F3's) | certified alarm |
 
@@ -53,6 +57,12 @@ explanation exists.
 - B5 is F3's code with the fold's information horizon set to the window base instead of the current sample (the
   `smooth` switch of the DIAG-3 window); everything else (certificates, cap, failsafe) is F3's. It isolates the gain
   of the smoothing fold.
+- B3 uses a constant gain, the steady-state Kalman gain for weights Q = q ρ² e3 e3′ and R = (δ + η)². With the gain
+  re-optimized at every sample for the F-radius it would equal B2 (Combastel's own result), so the constant gain is
+  the distinct, cheaper variant.
+- B1's complexity control (`baselines_cz.py`): rescaling by interval propagation; constraint elimination (an exact
+  one first, else the oldest constraint (`fifo`) or the globally cheapest (`greedy`)); Girard's reduction on the
+  lifted zonotope. Every step is an outer approximation.
 - B1–B4 run in plain binary64 as published, without outward rounding. An alarm they raise on an admissible run or
   before t\* is reported as a soundness finding of that implementation.
 
