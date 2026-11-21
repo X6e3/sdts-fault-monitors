@@ -313,7 +313,9 @@ def identity(out, setting, n, workers):
     c = m["candidate"]
     ref_dir = ROOT / "results" / "v3" / "diag3" / "amend10-r1r2-0ce80072-arch" / f"R-{setting}"
     dev = [json.loads(l) for l in A.D.ROWS.read_text().splitlines() if l.strip()]
-    dev = [r for r in dev if (ref_dir / f"{A.D.key(r)}.json").exists()][:n]
+    import hashlib                           # a fixed, spread choice: the n keys with the smallest sha256
+    dev = sorted((r for r in dev if (ref_dir / f"{A.D.key(r)}.json").exists()),
+                 key=lambda r: hashlib.sha256(A.D.key(r).encode()).hexdigest())[:n]
     d = out / f"identity-{setting}"
     d.mkdir(parents=True, exist_ok=True)
     jobs = [(A.D.key(r), None, r["oracle"].get("t_star"), setting, "F3", str(d)) for r in dev]
@@ -338,7 +340,9 @@ def identity(out, setting, n, workers):
             bad.append([k, diff])
     # the oracle stage's job on the first two DEV rows, against the DEV rows file (no fresh seed is generated)
     orc = []
-    for r in dev[:2]:
+    fault = [r for r in dev if r["oracle"]["t_star"] is not None][:1]
+    healthy = [r for r in dev if r["cell"] == "healthy"][:1] or [r for r in dev if r not in fault][:1]
+    for r in fault + healthy:
         t = (r["seed"], r["cell"], r["arm"], r["ambient"], r["noise"])
         o = oracle_job((t, str(d)))
         orc.append([A.D.key(r), o["oracle"]["t_star"], o["oracle"]["status"], r["oracle"]["t_star"],

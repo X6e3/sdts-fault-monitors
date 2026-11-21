@@ -98,9 +98,12 @@ records.
 
 1. **This plan**, committed with `fb_run.py`.
 2. **Rehearsal** on Arch, from a clean clone of the plan commit (DEV rows only; no `v3fb` seed is generated):
-   `fb_run.py identity` for settings b, d and f on 6 DEV rows each. Each record must equal amendment 10's R2
-   record of the same row in every field but wall-clock time, and the oracle stage's job must give the DEV rows'
-   t\*, status and v2 on two rows. Any difference stops the test; it is recorded and the plan is revised.
+   `fb_run.py identity` for settings b, d and f on 6 DEV rows each: the 6 keys with the smallest sha256, a fixed
+   choice that spreads over cells. Each record must equal amendment 10's R2 record of the same row in every field
+   but wall-clock time. The oracle stage's job must give the DEV rows' t\*, status and v2 on two of them, one with
+   a certified t\* and one healthy. Any difference stops the test; it is recorded and the plan is revised.
+   (A first rehearsal at `7fb68b64` picked the first 6 rows, all healthy; it passed, and the choice was changed
+   so that fault rows and certificates are reached.)
 3. **Approval:** the status line becomes `Status: APPROVED by Can Koç on YYYY-MM-DD` in a commit that changes
    nothing else.
 4. **Runs:** `fb_run.py oracle OUT`, then `fb_run.py run OUT --setting S` for none and a–f on Arch, and
