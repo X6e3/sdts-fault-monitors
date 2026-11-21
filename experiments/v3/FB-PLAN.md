@@ -1,6 +1,6 @@
 # H-FB: F3's solver-failure path on fresh seeds, under injected failures (plan, 2026-11-21)
 
-Status: DRAFT, not approved
+Status: APPROVED by Can Koç on 2026-11-21
 
 Author: Can Koç. Written 2026-11-21 on branch `sdts-v3/template-state`. Nothing in this plan is generated before the
 status line above says APPROVED, in a commit that changes only that line.
