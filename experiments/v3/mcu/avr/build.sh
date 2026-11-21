@@ -3,23 +3,27 @@
 # usage: build.sh MCU TABLE OUTDIR      e.g. build.sh atmega328p cyl16p_float out/uno-cyl16p-float
 #   MCU   atmega328p (Uno) or atmega2560 (Mega)
 #   TABLE cyl16p_float, cyl16p_double, inv4p_float, inv4p_double (from experiments/v3/frozen/c/)
+#   SRC (v3_state.c/.h for the PC reference), TABLES (the header directory) and AVR_STATE (the AVR port) default to
+#   the frozen c/, frozen/c/ and avr_state.c; C1-PLAN.md sets them to c1/, c1/ and avr_state_c1.c.
 set -euo pipefail
 MCU=$1; TABLE=$2; mkdir -p "$3"; OUT=$(cd "$3" && pwd)
 HERE=$(cd "$(dirname "$0")" && pwd)
 V3=${V3:-$(cd "$HERE/../.." && pwd)}
-FROZEN=$V3/frozen/c/tables_$TABLE.h
+SRC=${SRC:-$V3/c}
+FROZEN=${TABLES:-$V3/frozen/c}/tables_$TABLE.h
+AVR_STATE=${AVR_STATE:-$HERE/avr_state.c}
 mkdir -p "$OUT"
 python3 -B "$HERE/make_progmem.py" "$FROZEN" "$OUT/tables_progmem.h"
 FLOAT=(); [[ $TABLE == *_float ]] && FLOAT=(-DV3_FLOAT)
 TAG="$(cd "$V3" && git rev-parse --short=8 HEAD 2>/dev/null || echo nogit)-$TABLE"
 FLAGS=(-std=c11 -Os -ffp-contract=off -fno-fast-math -mdouble=64 -mlong-double=64 -Wall -Wextra)
 avr-gcc -mmcu="$MCU" -DF_CPU=16000000UL "${FLAGS[@]}" "${FLOAT[@]}" -DSRC_TAG="\"$TAG\"" \
-  -DV3_TABLES="\"$OUT/tables_progmem.h\"" -I"$V3/c" \
-  -o "$OUT/fw.elf" "$HERE/main.c" "$HERE/avr_state.c" -lm
+  -DV3_TABLES="\"$OUT/tables_progmem.h\"" -I"$SRC" \
+  -o "$OUT/fw.elf" "$HERE/main.c" "$AVR_STATE" -lm
 avr-objcopy -O ihex -R .eeprom "$OUT/fw.elf" "$OUT/fw.hex"
 avr-size --format=avr --mcu="$MCU" "$OUT/fw.elf" > "$OUT/size.txt" 2>/dev/null || avr-size -A "$OUT/fw.elf" > "$OUT/size.txt"
-cc -O2 -std=c99 -ffp-contract=off -fno-fast-math "${FLOAT[@]}" -DV3_TABLES="\"$FROZEN\"" -I"$V3/c" \
-  -o "$OUT/host_trace" "$HERE/host_trace.c" "$V3/c/v3_state.c" -lm
+cc -O2 -std=c99 -ffp-contract=off -fno-fast-math "${FLOAT[@]}" -DV3_TABLES="\"$FROZEN\"" -I"$SRC" \
+  -o "$OUT/host_trace" "$HERE/host_trace.c" "$SRC/v3_state.c" -lm
 { echo "mcu=$MCU table=$TABLE tag=$TAG"; avr-gcc --version | head -1; cc --version | head -1;
-  echo "avr flags: ${FLAGS[*]} ${FLOAT[*]}"; sha256sum "$FROZEN" "$OUT/tables_progmem.h" "$HERE/main.c" "$HERE/avr_state.c" "$HERE/host_trace.c" "$V3/c/v3_state.c" "$OUT/fw.hex" "$OUT/host_trace"; } > "$OUT/build.txt"
+  echo "avr flags: ${FLAGS[*]} ${FLOAT[*]}"; sha256sum "$FROZEN" "$OUT/tables_progmem.h" "$HERE/main.c" "$AVR_STATE" "$HERE/host_trace.c" "$SRC/v3_state.c" "$OUT/fw.hex" "$OUT/host_trace"; } > "$OUT/build.txt"
 cat "$OUT/size.txt"

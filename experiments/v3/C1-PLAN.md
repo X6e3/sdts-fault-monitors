@@ -56,3 +56,22 @@ Infrastructure (a serial timeout, a board reset) restarts a row, at most three a
   same decisions as freeze 1's C state on DEV and the PC's output on the ESP32.
 - **Does not show:** anything about validation seeds (c1 is not validated; freeze 1's validation was of the Python
   template); the Uno (its port, `avr_state.c`, is not changed here); a real sensor.
+
+## Addendum: the Uno (added 2026-11-21, before any Uno result of c1)
+
+The ESP32 runs `c1/v3_state.c` itself; the Uno runs a port, `mcu/avr/avr_state.c` (tables read from flash, bit-level
+nextafter), in float32 (the float64 tables do not fit). The c1 port is `mcu/avr/avr_state_c1.c`. `mcu/avr/build.sh`
+takes `SRC`, `TABLES` and `AVR_STATE` from the environment (defaults unchanged).
+
+- **U1 code:** `avr_state_c1.c` differs from `avr_state.c` only in the ETA define and the two slab lines, as in Y2.
+- **U2 tables:** the Uno's flash header is `make_progmem.py`'s copy of `c1/tables_cyl16p1_float.h`; its own check
+  (nothing differs but PROGMEM) passes, and its first line names that file's sha256.
+- **U3 Uno decisions** (`uno_2f.py`, MCU-2F's 30 rows and protocol): on every row, the Uno c1 float32 build's first
+  flagged sample equals the PC c1 float32 build's (`host_trace` with `c1/v3_state.c` and the c1 float header).
+- **Reported, not deciding:** the same first flags as MCU-2F's frozen builds or not; bit-equal samples; h below and
+  above the PC in ulps; a negative control (the Uno c1 build against the frozen PC float32 build on one row).
+
+**Verdict for the Uno:** ACCEPT if U1–U3 hold; REJECT if U1 or U2 fails or a first flag differs; INCOMPLETE if rows
+are missing. Its soundness then rests on Y3 for the float header, K6 with a faithful binary64 (ε = 9.9e-13 °C < η),
+and MCU-NOTES 2g's two assumptions for the Uno: its float ×, +, − round to nearest (tested, not proved), and the
+port is `v3_state.c`'s logic (written so, not checked).
