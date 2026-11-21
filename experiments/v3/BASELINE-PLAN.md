@@ -1,6 +1,6 @@
 # BASELINES: the v3 trackers against standard set-membership detectors, with the same prior (plan, 2026-11-21)
 
-Status: DRAFT (implementation and DEV tuning come first; the configurations are frozen in a later commit, before any
+Status: FROZEN (approved by Can Koç on 2026-11-21; the configurations of section 9 are frozen before any
 run on the comparison block)
 
 Author: Can Koç. Written 2026-11-21 on branch `sdts-v3/template-state`.
