@@ -1,0 +1,360 @@
+{
+ "containment": {
+  "B1:{\"n_c\": 1, \"order\": 2, \"policy\": \"fifo\", \"prior\": \"box+err\"}": [
+   {
+    "run": "430000-E0-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430000-E0-ramp",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430000-E1-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430000-E1-ramp",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430001-E0-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430001-E0-ramp",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430001-E1-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430001-E1-ramp",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430002-E0-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430002-E0-ramp",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430002-E1-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430002-E1-ramp",
+    "detect": null,
+    "truth_outside": 0
+   }
+  ],
+  "B1:{\"n_c\": 4, \"order\": 8, \"policy\": \"fifo\", \"prior\": \"box+err\"}": [
+   {
+    "run": "430000-E0-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430000-E0-ramp",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430000-E1-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430000-E1-ramp",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430001-E0-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430001-E0-ramp",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430001-E1-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430001-E1-ramp",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430002-E0-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430002-E0-ramp",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430002-E1-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430002-E1-ramp",
+    "detect": null,
+    "truth_outside": 0
+   }
+  ],
+  "B2:{\"order\": 2, \"prior\": \"box\"}": [
+   {
+    "run": "430000-E0-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430000-E0-ramp",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430000-E1-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430000-E1-ramp",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430001-E0-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430001-E0-ramp",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430001-E1-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430001-E1-ramp",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430002-E0-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430002-E0-ramp",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430002-E1-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430002-E1-ramp",
+    "detect": null,
+    "truth_outside": 0
+   }
+  ],
+  "B3:{\"order\": 2, \"prior\": \"box\", \"q\": 0.01}": [
+   {
+    "run": "430000-E0-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430000-E0-ramp",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430000-E1-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430000-E1-ramp",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430001-E0-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430001-E0-ramp",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430001-E1-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430001-E1-ramp",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430002-E0-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430002-E0-ramp",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430002-E1-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430002-E1-ramp",
+    "detect": null,
+    "truth_outside": 0
+   }
+  ],
+  "B4:{\"L\": [0.06666666666666667, 0.7666666666666666, -0.01]}": [
+   {
+    "run": "430000-E0-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430000-E0-ramp",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430000-E1-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430000-E1-ramp",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430001-E0-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430001-E0-ramp",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430001-E1-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430001-E1-ramp",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430002-E0-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430002-E0-ramp",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430002-E1-rw",
+    "detect": null,
+    "truth_outside": 0
+   },
+   {
+    "run": "430002-E1-ramp",
+    "detect": null,
+    "truth_outside": 0
+   }
+  ]
+ },
+ "b5_equals_f3_before_any_fold": [
+  {
+   "run": "430000-E0-rw",
+   "detect": [
+    null,
+    null
+   ],
+   "n_lp": [
+    512,
+    512
+   ]
+  },
+  {
+   "run": "430000-E0-ramp",
+   "detect": [
+    null,
+    null
+   ],
+   "n_lp": [
+    512,
+    512
+   ]
+  },
+  {
+   "run": "430000-E1-rw",
+   "detect": [
+    null,
+    null
+   ],
+   "n_lp": [
+    512,
+    512
+   ]
+  },
+  {
+   "run": "430000-E1-ramp",
+   "detect": [
+    null,
+    null
+   ],
+   "n_lp": [
+    512,
+    512
+   ]
+  }
+ ]
+}

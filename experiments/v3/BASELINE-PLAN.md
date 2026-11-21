@@ -108,3 +108,24 @@ For each: **supported** if the interval of (ours − baseline) lies below 0; **r
   certified reference.
 - **Cannot show:** anything on another plant, under model mismatch, or with priors the baselines would choose
   differently in practice (for example without the ambient box).
+
+## 9. The freeze (proposed 2026-11-21; in force when the status line above is changed by the approval commit)
+
+DEV tuning: `RECORD-2026-11-21-baselines-dev.md`. The configurations are those the rule of section 3 chose, as run
+(`results/v3/baselines/dev-58db0897/chosen.json`):
+
+- B1@M1: constrained zonotope, n_c = 1, o = 2, fifo, box+err (32 reals)
+- B1@M2: constrained zonotope, n_c = 4, o = 8, fifo, box+err (203 reals)
+- B2 (M1 and M2): strip zonotope, o = 2, box (21 reals)
+- B3 (M1 and M2): constant-gain zonotopic observer, o = 2, box, q = 0.01 (21 reals)
+- B4 (M1 and M2): interval observer, L = (M₁₂, M₂₂, −0.01) (6 reals)
+- B5: F3 with the fold off, W = 256, K = 64 (fixed)
+
+Chosen sha256: d8c4704d045eba5c03589cafc82d51abc2c0fbf2d3bbe5fcc481230643831893
+Block rows sha256: d9b90cef1c9b932468888fa375ff11c8373520ce0d972337b5631cbee3f6988f
+
+**The block run:** `diag/baselines_run.py block` on Arch, from a clean clone at the approval commit, 14 workers,
+after the F3-iso run has finished; then `score`. It runs the 48-run identity check first and stops if v2 differs.
+Estimated cost about 145 CPU-hours (B5 about as much as F3's 453,078 CPU-seconds on this block, B1 about 66,000,
+the rest under 5,000): about 10–11 hours with 14 workers. The hypotheses of section 6 are scored as written,
+with 2000 bootstrap draws over the 200 seeds.
