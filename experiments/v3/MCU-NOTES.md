@@ -291,6 +291,18 @@ is Theorem 2 for the C state, with δ − ε in place of δ.
 - Freeze 1's Python template computes its start supports the same way. It is not checked here.
 - F3 is covered by amendment 9, not by this.
 
+**The same check for freeze 1's Python template** (the validated candidate; `diag/check_py_template.py`, criteria
+P1–P5′ committed before its run, `b72bb6f1`; `results/v3/c-state/check-py-template-b72bb6f1.json`). Its support
+adds GAMMA4 Σλ max|h| + res·cap(h) at every step instead of a fixed pad. **Verdict: OPEN.**
+- P1 (frozen file = manifest), P2 (every stored residual ≥ the exact residual against MX; smallest slack
+  2.8e-15), P3 (clamps): hold.
+- P5: the same start gap as the C state (directions 14, 15, 1.11e-16); P5′: the first step absorbs it (213 entries,
+  smallest margin 7.1e-15). Holds.
+- P4: the rate pads of ±v̂ (directions 10, 11) are computed as fl(ρ_A |d₃|) and are 2.1e-21 below the exact
+  value. The prediction then adds 2 eps |out| and one ulp, which covers 2.1e-21 whenever |out| ≥ 5e-6; that
+  |out| stays above this is not shown. **Open**, at the 1e-21 level.
+- K6's ε applies unchanged (the same S recursion and z).
+
 **A clean fix for a later version** (not made: it changes frozen tables and code):
 - start supports from the exact coordinate sums (h[14] and h[15] become 1.2e-16);
 - the slab with δ + η, as in F3, so that the condition becomes |v| ≤ δ.

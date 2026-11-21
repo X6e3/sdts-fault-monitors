@@ -1,0 +1,46 @@
+{
+ "P1_sha256": "7f9cc8700fdd70782ddaf4a7e99a2e2c2f5818ce4aafa970f897b40e90a7747e",
+ "P1": true,
+ "P2": true,
+ "P2_detail": {
+  "entries_short": 0,
+  "first": [],
+  "smallest_slack": 2.7815768109589515e-15,
+  "at_group_entry": [
+   30,
+   8
+  ]
+ },
+ "P3": true,
+ "P3_detail": {
+  "caps_not_proved": []
+ },
+ "P4": false,
+ "P4_detail": {
+  "short_directions": [
+   [
+    10,
+    2.0555254788106817e-21
+   ],
+   [
+    11,
+    2.0555254788106817e-21
+   ]
+  ]
+ },
+ "P5": false,
+ "P5_detail": {
+  "short_directions": {
+   "14": 1.1102230246251565e-16,
+   "15": 1.1102230246251565e-16
+  }
+ },
+ "P5prime": true,
+ "P5prime_detail": {
+  "entries_using_short": 213,
+  "not_covered": [],
+  "smallest_margin": 7.074669820383792e-15
+ },
+ "eps_data": 4.852840351978194e-13,
+ "verdict": "OPEN"
+}
