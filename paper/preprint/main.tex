@@ -67,14 +67,16 @@ linear plant with bounded noise and a bounded unknown input, the exact detector 
 description is not bounded in advance, so an embedded detector keeps a bounded outer approximation and detects later.
 We measure that loss directly. On a two-node thermal plant with one temperature sensor, a known heat input, an unknown
 ambient temperature and ten classes of sensor fault, a certified linear program over the full history gives the exact
-detection time of every run. Bounded monitors are compared with it under the same assumptions and the same decision
-rule, so every difference is information that the representation discarded. We study two tiers. The first is a
+detection time of every run it certifies. Bounded monitors are compared with it under the same assumptions and the same decision
+rule, so every difference is information that the representation discarded, apart from a floating-point allowance of
+$10^{-9}$\,\degC. We study two tiers. The first is a
 template polyhedron whose support computations are replaced by LP bases computed offline and bounded by clamps from
 the reachable set. It needs no solver, is proved sound and never later than the interval monitor it extends, and its C
-implementation runs on an ESP32 bit for bit like the PC build on 5.04 million development samples. On 9,600 fresh,
+implementation on an ESP32 matches the PC build bit for bit, by a hash of the full state after every sample, on 5.04
+million development samples. On 9,600 fresh,
 preregistered runs it removed 38.7\,\% of the interval monitor's paired detection lag. The second is a window LP over
 256 samples whose base is updated by a smoothing rule, with a weak-duality certificate on every alarm and every base
-update. On a second fresh block of 9,600 runs it removed 99.5\,\% of the lag with no missed event (the interval monitor
+update it solves; an LP that fails falls back to an analytic outer bound. On a second fresh block of 9,600 runs it removed 99.5\,\% of the lag with no missed event (the interval monitor
 missed 27), and all 7,258 alarms were certified. A previous freeze of the same window failed its validation, because a
 single LP the solver could not solve became an uncertified alarm; we report that failure, the sound fallback that
 replaced it, and its tests under injected solver failures. We also show that no memory budget can certify the error of
@@ -89,7 +91,7 @@ A set-membership fault detector treats the noise and the unknown inputs as unkno
 when the measured record has no explanation that respects the model and the bounds. Within those bounds it cannot
 raise a false alarm \citep{ingimundarson2005,scott2016,puig2010}. The exact detector keeps the set of states that some
 admissible past explains, the information state of \citet{witsenhausen1968} and \citet{schweppe1968}. For a linear plant
-with bounded noise and inputs it is a convex polytope, and its complexity is not bounded a priori
+with polyhedral bounds on noise and inputs it is a convex polytope, and its complexity is not bounded a priori
 \citep{sznaier2011,blanchini2012}. Practical detectors keep a bounded outer approximation instead: intervals,
 parallelotopes, zonotopes, constrained zonotopes, or the data of a moving window. An outer approximation keeps the
 guarantee against false alarms. What it gives up is detection: an alarm that comes later, or not at all.
@@ -103,8 +105,11 @@ exact reference cannot say how much is left to gain.
 This paper measures the loss in detection time against the exact detector, run by run. The exact detection time
 $\tstar$ of each run comes from an LP over the full history whose verdicts carry certificates in both directions
 (Section~\ref{sec:oracle}). The bounded monitors use the same assumptions and the same decision as that LP: the first
-sample at which no admissible explanation exists. So a monitor can only be later than $\tstar$, and every sample of
-delay is information its representation discarded (Corollary~\ref{cor:im}). We report the delay as the share of a
+sample at which no admissible explanation exists. So a sound monitor can only be later than $\tstar$, and every sample
+of delay is information its representation discarded (Corollary~\ref{cor:im}), apart from a floating-point allowance:
+the window monitor widens the noise bound by $\eta = 10^{-9}$\,\degC\ (Section~\ref{sec:cert}), so a record that
+exceeds the bound by less than that at $\tstar$ can be flagged later for that reason alone. On the window's validation
+block this accounts for none of its delays (Section~\ref{sec:val3}). We report the delay as the share of a
 reference monitor's lag that a candidate removes, on preregistered validation blocks of fresh seeds.
 
 The plant is a lumped thermal model with two nodes, core and surface, and a known heat input. One sensor reads the
@@ -123,8 +128,9 @@ The contributions are these.
   removed 38.7\,\% of the interval monitor's paired lag and missed 16 events against the interval monitor's 24. Its C
   implementation runs on an ESP32 at 3.6\,ms per sample and on an 8-bit AVR at 75\,ms per sample
   (Section~\ref{sec:mcu}).
-\item A window LP over 256 samples whose base is updated by a smoothing rule, with at most 65 kept measurements and a
-  certified weak-duality bound on every alarm and every base update. On another 9,600 fresh runs it removed
+\item A window LP over 256 samples whose base is updated by a smoothing rule, with at most 65 kept measurements, a
+  certified weak-duality bound on every alarm and on every base update it solves, and analytic outer bounds when an
+  LP fails. On another 9,600 fresh runs it removed
   99.5\,\% of the paired lag with no missed event, and every alarm was certified. On development data $\Dp$ runs from
   0.386 (template only) through 0.643, 0.815 and 0.824 to 0.9992 for windows of 0, 64, 128, 192 and 256 samples.
 \item The first validation of the window failed on one unsolved LP. We report the failure, its diagnosis, the sound
@@ -164,7 +170,8 @@ with $C_c = 30$, $C_s = 12$, $K = 2$, $H = 0.8$ and $P[k]\in[0,42]$\,W. The disc
 \item the command $P$ is known (it is the controller's own);
 \item the record starts at the steady state of $P = 20$\,W at the unknown initial ambient.
 \end{enumerate}
-No distribution is assumed anywhere. Assumption (e) gives no absolute temperature.
+The decision rule and the proofs assume no distribution; the scenarios below draw the noise and the ambient path
+from fixed laws. Assumption (e) gives no absolute temperature.
 
 \subsection{Reduction to the ambient part}\label{sec:reduce}
 
@@ -187,7 +194,7 @@ parameters taken as exact rationals. The matrix built entry by entry in binary64
 its rows sum to $1+2^{-56}$ and $1+3\cdot2^{-56}$. Section~\ref{sec:wrong} tells how this mattered.
 % src: FREEZE-V2.md section 1 "The model" (DIAG-3 amendment 9)
 
-\subsection{Decision}
+\subsection{Decision}\label{sec:decision}
 
 A prefix $z_0,\dots,z_k$ is \emph{consistent} if some admissible start, ambient path and noise explain it under
 (a)--(e). The exact detection time $\tstar$ of a record is the first $k$ at which the prefix is inconsistent; $\tstar$
@@ -211,7 +218,8 @@ word:
 \item otherwise the prefix is \emph{undetermined}, reported and never guessed.
 \end{itemize}
 $\tstar$ is found by bisection over prefixes (consistency of prefixes is monotone). It is \emph{certified} when the
-final inconsistent prefix is certified. Each solver attempt runs in its own process. Undetermined runs are excluded
+longest consistent prefix and the shortest inconsistent prefix both carry certificates; otherwise the reported index is
+an estimate. Each solver attempt runs in its own process. Undetermined runs are excluded
 from the scored sets, and the validation rules bound their number (Section~\ref{sec:protocol}).
 % src: experiments/oracle/thermal_oracle.py docstring and first_inconsistent()
 
@@ -323,8 +331,8 @@ class. A slow drift can have such a twin, but a rate at most $\rho$ and room in 
 exists depends on the onset, the noise and the plant's lag. From the steady state (e), every healthy explanation has
 $a_s[1] = a_s[0]$; a drift of rate $0<r\le\rho$ from sample 1, with noise $-\delta$ at sample 0 and $+\delta$ at sample
 1, needs $a_s[0]\le0$ and $a_s[1]\ge r$ (shifted units), so that record is inconsistent at sample 1. Twins do exist on
-development runs 430056 and 430059 (drift 0.001\,\degC/s, E0): the oracle's exact interval of constant offsets over the
-whole record is $[-0.70, 0.12]$ and $[-0.48, 0.24]$\,\degC, while the true error at the end is 3.17 and 3.18\,\degC.
+development runs 430056 and 430059 (drift 0.001\,\degC/s, E0, rw ambient, uniform noise): the oracle's certified
+interval of constant offsets consistent with the whole record is $[-0.70, 0.12]$ and $[-0.48, 0.24]$\,\degC, while the true error at the end is 3.17 and 3.18\,\degC.
 % src: V3_NOTES.md Theorem 4 (corrected 2026-11-21) and its DEV witness
 
 \section{Tier 1: a template state without a solver}
@@ -358,8 +366,9 @@ from parametric programming. Without the clamps, templates are worse than IM on 
 \subsection{Guarantees}
 
 \begin{theorem}[soundness]\label{thm:sound}
-For any $D$ containing the axis directions, any subset of each direction's bases, and outward rounding of every
-computed support, $\mathcal{P}_k\supseteq X_k$ for all $k$. Hence the template state never flags before $\tstar$ and
+For any $D$ containing the axis directions, any nonempty subset of the valid bases of each target, outward
+rounding of every computed support, and start supports, rate pads and the subtraction of the command each rounded in
+the safe direction, $\mathcal{P}_k\supseteq X_k$ for all $k$. Hence the template state never flags before $\tstar$ and
 never flags an admissible record.
 \end{theorem}
 \begin{proof}
@@ -373,8 +382,9 @@ $\lambda$ to the stored precision.
 \end{proof}
 
 \begin{theorem}[never later than IM]\label{thm:dom}
-Suppose $\pm e_2$ and $\pm\hat v\in D$, with $\hat v = v/|v|$, the clamps are applied, and for the targets
-$\pm M^\top e_2$ a basis $\{\pm e_2, \pm\hat v, x\}$ is kept. Then $\pi_2(\mathcal{P}_k\cap\text{slab}_k)\subseteq I_k$
+Suppose $\pm e_2$ and $\pm\hat v\in D$, with $\hat v = v/|v|$, the clamps are applied, for the targets
+$\pm M^\top e_2$ a basis $\{\pm e_2, \pm\hat v, x\}$ is kept, and the $a_s$-range uses the unit bases of $\pm e_2$, so
+that it is $[-h(-e_2),\ h(e_2)]$. Then $\pi_2(\mathcal{P}_k\cap\text{slab}_k)\subseteq I_k$
 for all $k$, so the template state flags no later than IM.
 \end{theorem}
 \begin{proof}
@@ -384,8 +394,14 @@ $\max I_k + \rho$; the lower end is symmetric, and intersecting with the slab an
 $\pi_2\subseteq I_{k+1}$. The direction $e_2$ carries no $w$ term.
 \end{proof}
 
-Theorem~\ref{thm:dom} holds in the arithmetic of the proof. Section~\ref{sec:mcu} shows that a float32 build, sound by
-Theorem~\ref{thm:sound}, is later than IM on some runs.
+The condition on the $a_s$-range is needed: with a looser valid basis for the target $+e_2$, the range can exceed
+$h(e_2)$, the proof's first step fails, and the template can miss an alarm that IM raises. The frozen tables keep both
+unit bases. Theorem~\ref{thm:dom} holds in the arithmetic of the proof. Section~\ref{sec:mcu} shows that a float32
+build, sound by Theorem~\ref{thm:sound}, is later than IM on some runs. The frozen Python template meets the rounding
+conditions of Theorem~\ref{thm:sound} except two rate pads, \sci{2.1}{-21}\,\degC\ below their exact value (open,
+Section~\ref{sec:mcu}), and two start supports \sci{1.1}{-16}\,\degC\ short, which the first step absorbs.
+% src: the a_s-range condition = outside review 2026-11-22 (a constructed looser basis; RECORD-2026-11-22-review-checks.md);
+% rate pads and start supports = MCU-NOTES 2g (P4, P5, P5')
 
 \subsection{The frozen template}\label{sec:frozen}
 
@@ -420,7 +436,7 @@ Keeping the measurements themselves, over a window, avoids the hull.
 The window monitor WM (\emph{F3} in the records) keeps, between samples, a base at time $\tau$ (the 42 supports of the
 template TS, with its clamps), the measurements kept since $\tau$ (at most $K_{\mathrm{cap}} = 64$), and $\tau$ itself.
 At each sample $t$ it solves LPs over the samples $\tau,\dots,t$, at most $W+B+1 = 273$ transitions, with $W = 256$
-and $B = 16$. Figure~\ref{fig:window} shows the window between two folds.
+and $B = 16$; the first fold comes when $t-\tau > W+B$. Figure~\ref{fig:window} shows the window between two folds.
 
 \begin{figure}[t]
 \centering
@@ -436,7 +452,9 @@ powers of the exact model, each rounded once. The states $(a_c, a_s)$ appear at 
 measurements, $\tau+16$ and the objective sample) and $T_A$ at every sample. Between nodes, $a_c$ and $a_s$ stay in the
 box by convexity, so only the box rows of $T_A$ are needed. Apart from dropped measurements, the window is exact.
 
-A measurement redundant at arrival is dropped. Above $K_{\mathrm{cap}}$ kept measurements, the one inactive longest is
+A measurement that the primal $a_s$-range (not
+certified) shows redundant at arrival is dropped; dropping only removes a constraint, so it is sound whatever that value
+is. Above $K_{\mathrm{cap}}$ kept measurements, the one inactive longest is
 evicted. Both only remove constraints.
 
 The alarm at $t$ uses the $a_s$-range of the window given $z$ up to $t-1$. WM flags only when a \emph{certified} bound
@@ -444,7 +462,8 @@ separates it from $[z_t-\delta-\eta,\ z_t+\delta+\eta]$, with $\eta = 10^{-9}$\,
 primal value that points to an alarm the certificate cannot prove raises nothing; $z_t$ is then dropped.
 
 Every $B = 16$ samples the base is folded from $\tau$ to $\tau+16$. Each of the 42 new supports is the maximum of
-$d_i\cdot x_{\tau+16}$ over the window \emph{with every measurement up to the current sample $t$}, raised to at least
+$d_i\cdot x_{\tau+16}$ over the window \emph{with every measurement kept up to the current
+sample $t$}, raised to at least
 its certified bound and then clamped. This is the smoothing rule: the new base carries what later measurements say
 about the past state. The filtering rule would use the measurements up to $\tau+16$ only.
 
@@ -487,8 +506,11 @@ Appendix~\ref{app:proof}.
 \subsection{When the solver does not solve}\label{sec:fallback}
 
 Every LP of WM has two outcomes: \emph{solved} (status optimal, after at most three attempts: dual simplex without
-presolve, interior point without presolve, dual simplex with presolve) or \emph{failed} (any other status, an exception
-from the solver call, or an answer that is not finite). WM never uses a value from a failed LP. A solver's
+presolve, interior point without presolve, dual simplex with presolve) or \emph{failed} (any other status; an exception
+of one of six types from the solver call: \texttt{RuntimeError}, \texttt{ValueError}, \texttt{IndexError},
+\texttt{OverflowError}, \texttt{ZeroDivisionError} or \texttt{FloatingPointError}; or an answer that is not finite).
+Any other exception stops the run without an alarm. An error raised inside a fold outside the solver call is recorded
+as an uncertified alarm, which the scoring rules count as a soundness failure. Neither happened in validation 3. WM never uses a value from a failed LP. A solver's
 ``infeasible'' is one more failure, not a proof: an alarm needs a certified separation. The fallbacks are outer bounds
 (Table~\ref{tab:fallback}).
 
@@ -547,29 +569,33 @@ Table~\ref{tab:dev} gives development results only (1,081 certified detection ev
 \caption{$\Dp$ against the numbers a monitor keeps between samples. Filled markers: development (1,081 certified
 events); open markers: validation (inv4p and TS on validation 1, WM on validation 3). For a window the count is the 42
 supports of its base plus the largest number of measurements it kept on that data; their sample indices, $\tau$ and
-the LP workspace are not counted. IM is the reference, with $\Dp = 0$ by definition.}
+the LP workspace are not counted. IM is the reference, with $\Dp = 0$ by definition. The development points of the windows come from the
+compressed window of the records (version E), which WM equals at $W = 256$ on these rows.}
 \label{fig:memory}
 \end{figure}
 
 \begin{table}[ht]
 \centering\small
-\caption{Development: $\Dp$ against the memory of the monitor.}\label{tab:dev}
-\begin{tabular}{lllll}
+\caption{Development: $\Dp$ against the memory of the monitor. The windows are the compressed window of the
+records (version E), which WM equals on these rows at $W = 256$. ``At $\tstar$'': detections at $\tstar$. Last column: without the ten rows of
+the four diagnosis runs and their control.}\label{tab:dev}
+\begin{tabular}{llllll}
 \toprule
-monitor & state & $\Dp$ & misses & detections at $\tstar$\\
+monitor & state & $\Dp$ & misses & at $\tstar$ & $\Dp$ without diagnosis rows\\
 \midrule
-template TS only & 42 numbers & 0.386 & 4 & 897\\
-window $W = 64$ & $\le18$ kept & 0.643 & 0 & 1037\\
-window $W = 128$ & $\le28$ kept & 0.815 & 0 & 1063\\
-window $W = 192$ & $\le35$ kept & 0.824 & 0 & 1073\\
-window $W = 256$ & $\le45$ kept & 0.9992 & 0 & 1079\\
+template TS only & 42 numbers & 0.386 & 4 & 897 & 0.512\\
+window $W = 64$ & $\le18$ kept & 0.643 & 0 & 1037 & 0.904\\
+window $W = 128$ & $\le28$ kept & 0.815 & 0 & 1063 & 0.980\\
+window $W = 192$ & $\le35$ kept & 0.824 & 0 & 1073 & 0.986\\
+window $W = 256$ & $\le45$ kept & 0.9992 & 0 & 1079 & 0.9987\\
 \bottomrule
 \end{tabular}
 \end{table}
 
 The curve is not smooth: between $W = 192$ and 256 the gain comes from a few runs with slow drift whose separating
 information lies far back. On 430010 (drift 0.0005\,\degC/s, ramp ambient), $W = 192$ detects at 3,449 and $W = 256$ at
-$\tstar = 695$. Figure~\ref{fig:trace} shows this run. With a cap of 64, development data never kept more than 45 measurements, so nothing was evicted. Caps of
+$\tstar = 695$; its two arms give 5,508 of the 5,768 samples of paired lag that $W = 256$ gains over $W = 192$
+(95.5\,\%). Figure~\ref{fig:trace} shows this run. With a cap of 64, development data never kept more than 45 measurements, so nothing was evicted. Caps of
 40 and 32 detected identically on all 1,320 rows, with 420 and 21,821 evictions.
 % src: DIAG-3-RESULTS.md "size-loss curve"; amendment 6 part 2 (K1, K2, K = 40 table, K = 32)
 % src (figures): paper/figures/make_data.py -> figdata/figures.json; inv4p DEV D_paired 0.147 scored there
@@ -585,9 +611,11 @@ block.}
 \input{fig_trace}
 \caption{Development run 430010 (drift 0.0005\,\degC/s from sample 496, E0, ramp ambient; $\tstar = 695$).
 (a)~The upper edge of the band each measurement is tested against, $\bar a_s+\delta$, with $\bar a_s$ the top of the
-monitor's $a_s$-range given the past; a measurement above a monitor's edge is an alarm of that monitor. At sample 695
-the measurement lies 0.3\,m\degC\ above WM's edge and about 5\,m\degC\ below the edges of IM and TS. (b)~The width of
-the $a_s$-range; WM's curve ends at its alarm.}
+monitor's $a_s$-range given the past; for IM and TS a measurement above the edge is an alarm. For WM the edge drawn is
+the primal value of its range LP; its alarm uses the certified bound and the slab $\delta+\eta$, with a certified
+margin of $-0.29$\,m\degC\ at sample 695. There the measurement lies 0.3\,m\degC\ above WM's edge and about
+5\,m\degC\ below the edges of IM and TS. (b)~The width of the $a_s$-range as a median over 61 samples centred on each
+sample, so each curve stops 30 samples before its last sample.}
 \label{fig:trace}
 \end{figure}
 
@@ -625,7 +653,7 @@ the 42 fold directions; the other 41 solved faces bound that direction at $-0.20
 was $-0.187$ and its a priori bound 1.683). That observation became the fallback of Section~\ref{sec:fallback}.
 % src: RECORD-2026-11-19-validation.md (verdict, diagnosis)
 
-\subsection{Validation 3: the window tier with its fallback path}
+\subsection{Validation 3: the window tier with its fallback path}\label{sec:val3}
 
 Block 440400--440599.
 
@@ -656,16 +684,48 @@ in the three labelled cells.}
 \begin{itemize}
 \item No soundness finding. 7,255 certified events; 7,243 detected exactly at $\tstar$ (IM: 5,257). Lag p90 0\,s and
   maximum 212\,s (IM: 55\,s and 2,215\,s). No run was later than IM.
-\item 7,258 alarms, all certified, the largest certified margin $-0.0147$\,m\degC; three of them on fault runs the
-  oracle left undetermined.
+\item 7,258 alarms, each recorded with its certificate flag and a finite negative certified margin (the largest
+  $-0.0147$\,m\degC); three of them on fault runs the oracle left undetermined. The LP data behind the certificates
+  are not archived.
 \item The remaining lag sits in three cells: drift 0.0005 and 0.001\,\degC/s with ramp ambient, and drift
-  0.002\,\degC/s with rw ambient. Drifts carry 99.8\,\% of IM's lag.
+  0.002\,\degC/s with rw ambient. Drifts carry 99.8\,\% of IM's paired lag; over all certified events with
+  a miss counted as $N-\tstar$, as in Figure~\ref{fig:cells}, 91.8\,\%.
+\item WM detected 12 events after $\tstar$, all in slow drift cells. At each of them the oracle's lower bound on $d^\ast$
+  at $\tstar$ exceeds $\delta$ by at least \sci{1.06}{-7}\,\degC, more than 100 times $\eta$ plus the model gap of
+  Corollary~\ref{cor:wm}. So none of these delays comes from WM's wider slab or its exact matrix: with WM's own
+  semantics the full history is already inconsistent at $\tstar$.
 \item The fallback path never ran on this block. WM solved 53,968,652 LPs with 722 retries (on 320 runs), and every LP was solved
   within its three attempts. The validation supports the window's accuracy and the soundness of its normal path; the
   fallback path rests on its proof and on Section~\ref{sec:inject}.
 \item At most 65 measurements kept, at most 445 LP rows and 679 variables.
 \end{itemize}
 % src: RECORD-2026-11-21-validation.md
+% src (12 late events): RECORD-2026-11-22-review-checks.md, diag/eta_check.py
+
+\paragraph{Other metrics.} $\Dp$ weighs large lags heavily: on validation 3 the three slowest drift cells carry
+97.9\,\% of IM's paired lag. Table~\ref{tab:metrics} scores the validated monitors over all certified events, with
+every lag capped at 30\,s, and by percentiles of the lag; the order of the monitors is the same under each. The
+targets of the hypotheses (0.10, 0.25 and 0.80) were fixed for the point estimate of $\Dp$; the bootstrap intervals are
+descriptive and are not part of the decision rule.
+
+\begin{table}[ht]
+\centering\small
+\caption{The validated monitors under other metrics. ``All events'': the ratio $1-L_m/L_{\mathrm{IM}}$ over every
+certified event, a miss counted as $N-\tstar$; ``capped'': the same with every lag capped at 30\,s. Percentiles over
+the detected events, with linear interpolation.}\label{tab:metrics}
+\begin{tabular}{llllll}
+\toprule
+monitor (block) & $\Dp$ & all events & capped & lag p90 / p99 (s) & misses / events\\
+\midrule
+IM (validation 1) & 0 & 0 & 0 & 53 / 808 & 24 / 7,201\\
+inv4p (validation 1) & 0.152 & 0.132 & 0.263 & 38 / 749 & 20 / 7,201\\
+TS (validation 1) & 0.387 & 0.368 & 0.389 & 21 / 527 & 16 / 7,201\\
+IM (validation 3) & 0 & 0 & 0 & 55 / 833 & 27 / 7,255\\
+WM (validation 3) & 0.9952 & 0.9960 & 0.9929 & 0 / 0 & 0 / 7,255\\
+\bottomrule
+\end{tabular}
+\end{table}
+% src: diag/metric_sensitivity.py on the recorded rows (RECORD-2026-11-22-review-checks.md)
 
 \subsection{The fallback path under injected solver failures}\label{sec:inject}
 
@@ -775,8 +835,9 @@ full window, $z$ reached 2.22 to 2.30 (shifted units) in the 256 samples before 
 
 The records keep every failure. These changed the method:
 \begin{enumerate}
-\item One unsolved LP failed a validation (Section~\ref{sec:val2}). The window's rules said an unsolved fold is an
-  uncertified alarm; the rule was sound but incomplete. The fallback path of Section~\ref{sec:fallback} replaced it and
+\item One unsolved LP failed a validation (Section~\ref{sec:val2}). The window's rules turned an unsolved fold into an
+  uncertified alarm; on a healthy record such an alarm violates soundness as defined in Section~\ref{sec:decision},
+  and the validation failed on it. The fallback path of Section~\ref{sec:fallback} replaced it and
   was tested on a new block and under injection.
 \item The binary64 model was not the exact model. The first window LP and the template tables were built against the
   binary64 matrix, whose rows do not sum to one, and against data with their own simulation error. A later revision
@@ -835,7 +896,8 @@ base update is the smoothing form, used for detection in a bounded window.
 cost in the worst case can be certified offline; DAQP handles a singular Hessian, so an LP, by proximal point
 iterations. Both work on dense problems, and WM's sparse LP of up to 445 rows and 679 variables does not fit them as
 is. Because the certificate holds for any multiplier vector, a solver stopped at an iteration cap would keep WM sound
-and cost only delay (Section~\ref{sec:cert}); its worst-case time is not shown.
+(Section~\ref{sec:cert}). Its effect on detection time is not shown: a looser bound changes which measurements are
+kept, and with them the later windows. Its worst-case time is not shown either.
 
 \section{Limitations and open problems}
 
@@ -846,11 +908,14 @@ and cost only delay (Section~\ref{sec:cert}); its worst-case time is not shown.
   healthy record inconsistent.
 \item WM runs on a desktop with HiGHS. An embedded LP solver with a bounded iteration count is the open step; the
   certificate makes early stopping safe but not free.
-\item No worst-case execution time for either tier; the microcontroller times are maxima over the runs shown.
+\item No worst-case execution time for either tier; the microcontroller times are maxima over the runs shown. On
+  the desktop, in runs with 14 workers, WM's median step took 14\,ms, but on 5 of the 9,600 runs of validation 3 a fold
+  took longer than the sampling period of 1\,s (the longest 34\,s). A deadline is not met by construction.
 \item WM's fallback path was never exercised on validation seeds; it rests on its proof and on injected failures.
 \item The facet count of $X_k$, and a principled minimal template, are open.
-\item The undetermined oracle runs (healthy runs with noise exactly at $\pm\delta$, about half of them) are judged by
-  ground truth, not by the oracle.
+\item The oracle leaves some runs undetermined: in validation 3, 389 of the 800 healthy runs with noise exactly at
+  $\pm\delta$, one healthy run with uniform noise (440582, E1, ramp) and 3 fault runs. Healthy runs are admissible by
+  construction and are judged as such, not by the oracle.
 \end{itemize}
 
 \section{Reproducibility}
@@ -888,14 +953,19 @@ the stored binary64 value of 0.002. The first two rows of $M$ are convex weights
 $[-2,2]$. The stored slab radius $d = \mathrm{fl}(\delta+\eta)$ satisfies $d\ge\delta+\eta$. An \emph{explanation} of
 $z_0,\dots,z_r$ is a trajectory of the model with $|z_j-(s_j)_2|\le d$ for every $j\le r$, and $\mathfrak{X}^{(r)}_j$ is
 the set of the states at time $j$ of all explanations of $z_0,\dots,z_r$. An explanation of a longer prefix also
-explains every shorter one, so $\mathfrak{X}^{(r')}_j\subseteq\mathfrak{X}^{(r)}_j$ for $r'\ge r$.
+explains every shorter one, so $\mathfrak{X}^{(r')}_j\subseteq\mathfrak{X}^{(r)}_j$ for $r'\ge r$. For $j>r$ the
+trajectory runs on past $r$ under the model's dynamics, increment bounds and box, with no measurement imposed after
+$r$.
 
 \paragraph{Arithmetic.} IEEE binary64, rounding to nearest with ties to even, gradual underflow, $u = 2^{-53}$. A
 product with exact value $p$ is computed as $p(1+\epsilon_1)+\epsilon_2$ with $|\epsilon_1|\le u$ and
 $|\epsilon_2|\le2^{-1075}$. Sums and differences have no absolute error term. \texttt{math.fsum} is not regrouped, and
 the proof allows it a relative error of $4u$.
 
-\paragraph{Execution.} The inputs are finite. A solver call either returns or raises an exception. Each LP of WM is
+\paragraph{Execution.} The inputs are finite. A solver call either returns or raises one of the
+six exception types of Section~\ref{sec:fallback}. Any other exception stops the run without an alarm, and an error
+raised inside a fold outside the solver call is recorded as an uncertified alarm; Theorem~\ref{thm:wm} covers neither,
+and the scoring rules count the second as a failure. Each LP of WM is
 either \emph{solved} (status optimal, with a finite value, finite multipliers and a finite certified bound) or
 \emph{failed}, and WM uses no value from a failed LP (Section~\ref{sec:fallback}). A process that ends inside the solver
 is outside this proof; Section~\ref{sec:inject} tests that case.
@@ -919,7 +989,7 @@ s_\ast^\top x$, and each coordinate of $x$ lies in its box. The multipliers need
 value need not be correct.
 
 The code evaluates $s = c + A^\top y + E^\top\nu$ and $T = |c| + |A|^\top y + |E|^\top|\nu|$ in floating point and
-subtracts pads. Each stored coefficient is its exact value rounded once, so $|A_\ast - A|\le 2u|A|$ entrywise, and the
+adds pads to the bound. Each stored coefficient is its exact value rounded once, so $|A_\ast - A|\le 2u|A|$ entrywise, and the
 same holds for $E$; structural zeros are exact. No coefficient is subnormal: the exact $M$ has diagonal entries of at
 least $3/4$ and positive entries off the diagonal of at least $1/16$, so a positive entry of $M^L$ is at least
 $2^{-8-L}$, and the tables stop at $L = 292$. Hence $|s_{\ast j} - s_j|\le 2u(T_j - |c_j|)$. With
@@ -931,7 +1001,8 @@ cover both relative errors with room $\gamma(1-2\gamma-2u)\,T_j q_j$, since $\ga
 are summed with \texttt{math.fsum}; a final pad $4(\gamma_4\,\mathrm{fsum}(|p|) + u\,|\mathrm{tot}|)$ covers the
 rounding of each term, which takes at most three roundings, and of the sum. Last, an absolute term $5N\cdot2^{-1074}$
 covers the $e_j$ and the underflow of the final pad's own two products, where $N$ counts the products that can underflow.
-Every LP of the candidate has at most 1,095 variables, 821 equality rows with 3,553 nonzeros and 42 template rows, with
+In the candidate the largest box end is exactly 2,
+and $b$, $f$, $c$ and the boxes are taken as stored. Every LP of the candidate has at most 1,095 variables, 821 equality rows with 3,553 nonzeros and 42 template rows, with
 every box within $\pm2$, so $N\le14{,}795$, $5N<2^{52}$, and the term is computed exactly. A value that is not finite at
 any point makes the bound not finite, and the LP counts as failed.
 \end{proof}
@@ -958,7 +1029,8 @@ fold the window has no base; equality rows put its first state on the start segm
 \end{proof}
 
 \begin{alemma}[dropping and eviction]\label{lem:drop}
-Removing a measurement from the window, and with it a node that carries no other measurement, can only enlarge the
+Removing a measurement from the window, and with it its node if that node carries no other measurement and is
+not the base, the fold target or the objective sample, can only enlarge the
 projection of the window LP on each remaining node.
 \end{alemma}
 \begin{proof}
@@ -998,8 +1070,9 @@ For $d\cdot x = \sigma T_A + q\cdot e$, with $\sigma = \sum_i d_i$, $q = (d_1, d
 Lemma~\ref{lem:err}, the clamp is $2|\sigma| + \rho\sum_{j\ge0}|q\cdot F^j g|$. The series is summed exactly for 6,000
 terms and its tail is bounded through $\|F^{64}\|_\infty<1$. For a step from $x\in\mathcal{C}$, the maximum of
 $d_i\cdot x'$ takes $w = \min(\rho, 2 - T_A)$ or $w = \max(-\rho, -2 - T_A)$, by the sign of $(d_i)_3$. It is affine in
-$x$ on each piece cut by $T_A = 2-\rho$ and $T_A = -2+\rho$, so the vertices of the pieces suffice. All 42 vertices of
-$\mathcal{C}$, each the intersection of three of its planes, were checked in exact rational arithmetic, with both ends
+$x$ on each piece cut by $T_A = 2-\rho$ and $T_A = -2+\rho$, so the vertices of the pieces suffice. The 28 vertices of
+$\mathcal{C}$ and the 14 more that the two cuts add, each the intersection of three planes, were checked in exact
+rational arithmetic, with both ends
 of $w$ and every direction: no step exceeds a clamp. Every base is clamped, so it lies in $\mathcal{C}$, and a feasible
 point of the window LP extends by the exact recurrence to every sample between its nodes.
 \end{proof}
@@ -1041,7 +1114,8 @@ At most one measurement, the one at $\tau$, is held besides the $n$.
 
 \begin{atheorem}\label{thm:wm}
 Under the model, the arithmetic and the execution assumptions above, WM raises no alarm at a sample $t$ for which
-$z_0,\dots,z_t$ has an explanation, and every alarm it raises carries a certified separation.
+$z_0,\dots,z_t$ has an explanation, and every alarm it raises through
+Lemma~\ref{lem:alarm} carries a certified separation.
 \end{atheorem}
 \begin{proof}
 The hypothesis of Lemma~\ref{lem:embed} holds at the start (equality rows on the start segment) and after every fold
@@ -1050,7 +1124,7 @@ $\mathfrak{X}^{(r+1)}_\tau\subseteq\mathfrak{X}^{(r)}_\tau$. Dropping and evicti
 alarm at $t$ needs the separation of Lemma~\ref{lem:alarm}, which shows that $z_0,\dots,z_t$ has no explanation.
 \end{proof}
 
-\begin{acorollary}
+\begin{acorollary}\label{cor:wm}
 WM never flags a healthy run of the simulator, and never flags before the oracle's $\tstar$.
 \end{acorollary}
 \begin{proof}
