@@ -39,6 +39,9 @@
 \newtheorem{proposition}{Proposition}
 \newtheorem{lemma}{Lemma}
 \newtheorem{corollary}{Corollary}
+\newtheorem{alemma}{Lemma}[section]
+\newtheorem{atheorem}[alemma]{Theorem}
+\newtheorem{acorollary}[alemma]{Corollary}
 
 \newcommand{\pending}[1]{\textcolor{red!70!black}{[PENDING: #1]}}
 \newcommand{\tocheck}[1]{\textcolor{orange!80!black}{[CHECK: #1]}}
@@ -163,7 +166,7 @@ with $C_c = 30$, $C_s = 12$, $K = 2$, $H = 0.8$ and $P[k]\in[0,42]$\,W. The disc
 \end{enumerate}
 No distribution is assumed anywhere. Assumption (e) gives no absolute temperature.
 
-\subsection{Reduction to the ambient part}
+\subsection{Reduction to the ambient part}\label{sec:reduce}
 
 The plant is linear and $P$ is known, so $y = S + a_s + v$, where $S$ is the response to the command from the steady
 state at zero ambient and $a_s$ is the surface's response to the ambient. The monitor sees $z = y - S$. Shift
@@ -477,8 +480,8 @@ contains the projection of the explanations at $\tau$: its rows are the model's 
 hold by convexity, and the $w$ and $T_A$ boxes are the model's. The certificate bounds the ideal window, not the
 solver's rounded one. The start is the template's start. Dropping and evicting only remove constraints. Each fold
 support is at least the maximum over the ideal window and the clamps hold for every reachable state, so the new base
-contains the explanations at $\tau+16$. An alarm needs a certified separation. The full proof, checked line by line
-against the code, is in the repository \tocheck{decide whether it goes into an appendix}.
+contains the explanations at $\tau+16$. An alarm needs a certified separation. The full proof is in
+Appendix~\ref{app:proof}.
 \end{proof}
 
 \subsection{When the solver does not solve}\label{sec:fallback}
@@ -855,7 +858,213 @@ after release}. Each validation is identified by its approval commit and manifes
 
 \section*{Declarations}
 
-Funding: none. Competing interests: none. Use of AI tools: \pending{statement by the author}.
+Funding: none. Competing interests: none. Use of AI tools: AI assistants (large language
+models) were used for code, analysis and drafting of text. The author directed the study, made every decision, and
+takes full responsibility for the content; every claim is traced to a dated record in the repository.
+
+\appendix
+
+\section{Soundness of the window monitor}\label{app:proof}
+
+This appendix proves Proposition~\ref{prop:wm} for the frozen candidate: $W = 256$, $B = 16$, $K_{\mathrm{cap}} = 64$,
+and the 42 directions and clamps of TS. An independent review traced each step below to the frozen code, line by line;
+the code references are left out here. Detection delay, completeness, any comparison with IM and run time are outside
+the proof.
+% src: FREEZE-V2.md section 1 "What is a theorem" (the invariant chain); FREEZE-V3.md section 1 (fallbacks, memory
+% bound, floating-point model) and section 5 (reviews M1 and M3: lemmas L1-L8, the theorem, L1 restated with the
+% underflow term, the known limits)
+
+\subsection{Setting}
+
+\paragraph{Model.} In the shifted coordinates of Section~\ref{sec:reduce}, $s_{k+1} = M s_k + e_3 w_k$ with $M$ the exact matrix of
+the simulator's recurrence, $|w_k|\le\rho$, $(s_k)_3\in[-2,2]$ and $s_0 = t\,(1,1,1)^\top$ with $t\in[-2,2]$; $\rho$ is
+the stored binary64 value of 0.002. The first two rows of $M$ are convex weights, so $(s_k)_1$ and $(s_k)_2$ also lie in
+$[-2,2]$. The stored slab radius $d = \mathrm{fl}(\delta+\eta)$ satisfies $d\ge\delta+\eta$. An \emph{explanation} of
+$z_0,\dots,z_r$ is a trajectory of the model with $|z_j-(s_j)_2|\le d$ for every $j\le r$, and $\mathfrak{X}^{(r)}_j$ is
+the set of the states at time $j$ of all explanations of $z_0,\dots,z_r$. An explanation of a longer prefix also
+explains every shorter one, so $\mathfrak{X}^{(r')}_j\subseteq\mathfrak{X}^{(r)}_j$ for $r'\ge r$.
+
+\paragraph{Arithmetic.} IEEE binary64, rounding to nearest with ties to even, gradual underflow, $u = 2^{-53}$. A
+product with exact value $p$ is computed as $p(1+\epsilon_1)+\epsilon_2$ with $|\epsilon_1|\le u$ and
+$|\epsilon_2|\le2^{-1075}$. Sums and differences have no absolute error term. \texttt{math.fsum} is not regrouped, and
+the proof allows it a relative error of $4u$.
+
+\paragraph{Execution.} The inputs are finite. A solver call either returns or raises an exception. Each LP of WM is
+either \emph{solved} (status optimal, with a finite value, finite multipliers and a finite certified bound) or
+\emph{failed}, and WM uses no value from a failed LP (Section~\ref{sec:fallback}). A process that ends inside the solver
+is outside this proof; Section~\ref{sec:inject} tests that case.
+
+\subsection{The certified bound}
+
+\begin{alemma}[boxed weak duality]\label{lem:L1}
+Let $A_\ast$ and $E_\ast$ be exact, and let $A$ and $E$ store them with each nonzero entry rounded once. For the LP
+$\max\{-c^\top x : A_\ast x\le b,\ E_\ast x = f,\ \ell\le x\le h\}$, any $y\ge0$ and any $\nu$, put
+$s_\ast = c + A_\ast^\top y + E_\ast^\top\nu$. Every feasible $x$ satisfies
+\[
+-c^\top x\ \le\ y^\top b + \nu^\top f - \textstyle\sum_j \min(s_{\ast j}\ell_j,\ s_{\ast j}h_j).
+\]
+For the LPs of the frozen candidate, under the arithmetic above, every finite value of WM's certified bound, computed
+from $A$, $E$ and the solver's multipliers, is at least this right side, and so at least the maximum of the LP with
+exact coefficients.
+\end{alemma}
+\begin{proof}
+For feasible $x$, $-c^\top x = y^\top A_\ast x + \nu^\top E_\ast x - s_\ast^\top x \le y^\top b + \nu^\top f -
+s_\ast^\top x$, and each coordinate of $x$ lies in its box. The multipliers need not be optimal and the solver's primal
+value need not be correct.
+
+The code evaluates $s = c + A^\top y + E^\top\nu$ and $T = |c| + |A|^\top y + |E|^\top|\nu|$ in floating point and
+subtracts pads. Each stored coefficient is its exact value rounded once, so $|A_\ast - A|\le 2u|A|$ entrywise, and the
+same holds for $E$; structural zeros are exact. No coefficient is subnormal: the exact $M$ has diagonal entries of at
+least $3/4$ and positive entries off the diagonal of at least $1/16$, so a positive entry of $M^L$ is at least
+$2^{-8-L}$, and the tables stop at $L = 292$. Hence $|s_{\ast j} - s_j|\le 2u(T_j - |c_j|)$. With
+$k = 1 + \max_j\mathrm{nnz}(A_{\cdot j}) + \max_j\mathrm{nnz}(E_{\cdot j})$, $\gamma_n = nu/(1-nu)$ and
+$\gamma = \gamma_{k+1}$, the computed values satisfy $|\hat s_j - s_j|\le\gamma T_j + e_j$ and
+$\hat T_j\ge(1-\gamma)T_j - e_j$, where $e_j$ collects the absolute errors of the products in column $j$. The box term is
+Lipschitz in $s_j$ with constant $q_j = \max(|\ell_j|, |h_j|)$. The pads $(2\gamma\hat T_j + 2u(\hat T_j - |c_j|))\,q_j$
+cover both relative errors with room $\gamma(1-2\gamma-2u)\,T_j q_j$, since $\gamma<1/4$ for these LP sizes. The terms
+are summed with \texttt{math.fsum}; a final pad $4(\gamma_4\,\mathrm{fsum}(|p|) + u\,|\mathrm{tot}|)$ covers the
+rounding of each term, which takes at most three roundings, and of the sum. Last, an absolute term $5N\cdot2^{-1074}$
+covers the $e_j$ and the underflow of the final pad's own two products, where $N$ counts the products that can underflow.
+Every LP of the candidate has at most 1,095 variables, 821 equality rows with 3,553 nonzeros and 42 template rows, with
+every box within $\pm2$, so $N\le14{,}795$, $5N<2^{52}$, and the term is computed exactly. A value that is not finite at
+any point makes the bound not finite, and the LP counts as failed.
+\end{proof}
+
+The exactness of the absolute term is shown for these boxes only. In general it fails: with $N = 10$ and largest box end
+$2^{-54}$ the code gives 10 units of $2^{-1074}$ where 11 are needed.
+
+\subsection{The window contains the explanations}
+
+\begin{alemma}\label{lem:embed}
+Suppose the base at $\tau$ satisfies $\mathfrak{X}^{(u)}_\tau\subseteq\{x : Dx\le h_\tau\}$ for some $u\le r$, and the
+window holds measurements of $z_{\tau},\dots,z_r$. Take the window LP with exact coefficients: the exact powers of $M$,
+and the box, slabs, base and $D$ as stored. Every explanation of $z_0,\dots,z_r$ gives a feasible point of it, and its
+projection on the state at any node $j$ contains $\mathfrak{X}^{(r)}_j$.
+\end{alemma}
+\begin{proof}
+An explanation fixes the states at the nodes, $T_A$ at every sample and every increment $w$. Between nodes $i<j$ the
+relation $x_j = M^{j-i}x_i + \sum_{k<j-i}M^k e_3 w_{j-1-k}$ holds exactly, and $T_A$ is linked from sample to sample
+by its increment; these are the LP's equality rows. The boxes of $T_A$ and $w$ are the model's. The boxes of $a_c$ and
+$a_s$ hold by convexity. Each slab has radius $d$ and outward rounded ends. The explanation also explains
+$z_0,\dots,z_u$, so its state at $\tau$ lies in $\mathfrak{X}^{(u)}_\tau$ and meets the base rows. Before the first
+fold the window has no base; equality rows put its first state on the start segment.
+\end{proof}
+
+\begin{alemma}[dropping and eviction]\label{lem:drop}
+Removing a measurement from the window, and with it a node that carries no other measurement, can only enlarge the
+projection of the window LP on each remaining node.
+\end{alemma}
+\begin{proof}
+Removing a row enlarges the feasible set. Two exact transitions in a row compose into one exact transition.
+\end{proof}
+
+\subsection{The alarm}
+
+\begin{alemma}[alarm]\label{lem:alarm}
+Let $t\ge1$, and let $C_+$ and $C_-$ be the certified bounds of Lemma~\ref{lem:L1} on the maxima of $a_s$ and $-a_s$
+over the window LP with exact coefficients and measurements up to $t-1$, with the box end 2 in place of a failed side.
+Put $L_t = \max(-2, -C_-)$ and $U_t = \min(2, C_+)$, and let $\underline z$ and $\bar z$ be the ends of
+$[z_t - d,\ z_t + d]$ rounded outward. If $\bar z < L_t$ or $U_t < \underline z$, then $z_0,\dots,z_t$ has no
+explanation.
+\end{alemma}
+\begin{proof}
+By Lemmas~\ref{lem:L1} and~\ref{lem:embed}, every state in $\mathfrak{X}^{(t-1)}_t$ has $a_s\in[L_t, U_t]$; the box
+holds by the model. An explanation of $z_0,\dots,z_t$ would put a state of $\mathfrak{X}^{(t-1)}_t$ within $d$ of
+$z_t$, so its $a_s$ would lie in both intervals. The code compares through a rounded difference, and rounding cannot
+change its sign. At $t = 0$, where $a_s$ can be anywhere in the box, the same test runs against the box.
+\end{proof}
+
+WM also solves the two LPs of the $a_s$-range without a certificate. Their values decide only whether to try a
+certificate and whether to keep $z_t$. Neither decision can make WM unsound: an alarm still needs
+Lemma~\ref{lem:alarm}, keeping $z_t$ adds a row that every explanation of $z_0,\dots,z_t$ satisfies, and not keeping it
+removes one (Lemma~\ref{lem:drop}).
+
+\subsection{The fold}
+
+\begin{alemma}[clamps]\label{lem:clamp}
+Let $\kappa$ be the a priori clamps and $\mathcal{C} = \{x : Dx\le\kappa\}$. The start segment lies in $\mathcal{C}$,
+and one exact step with any admissible $w$ maps $\mathcal{C}$ into itself. Hence every reachable state lies in
+$\mathcal{C}$, and so does the projection of the window LP on each of its nodes.
+\end{alemma}
+\begin{proof}
+For $d\cdot x = \sigma T_A + q\cdot e$, with $\sigma = \sum_i d_i$, $q = (d_1, d_2)$ and $e$ the error of
+Lemma~\ref{lem:err}, the clamp is $2|\sigma| + \rho\sum_{j\ge0}|q\cdot F^j g|$. The series is summed exactly for 6,000
+terms and its tail is bounded through $\|F^{64}\|_\infty<1$. For a step from $x\in\mathcal{C}$, the maximum of
+$d_i\cdot x'$ takes $w = \min(\rho, 2 - T_A)$ or $w = \max(-\rho, -2 - T_A)$, by the sign of $(d_i)_3$. It is affine in
+$x$ on each piece cut by $T_A = 2-\rho$ and $T_A = -2+\rho$, so the vertices of the pieces suffice. All 42 vertices of
+$\mathcal{C}$, each the intersection of three of its planes, were checked in exact rational arithmetic, with both ends
+of $w$ and every direction: no step exceeds a clamp. Every base is clamped, so it lies in $\mathcal{C}$, and a feasible
+point of the window LP extends by the exact recurrence to every sample between its nodes.
+\end{proof}
+
+\begin{alemma}[fold]\label{lem:fold}
+Let the fold at sample $t$ move the base from $\tau$ to $s = \tau + B$, and let $Y$ be the projection on $s$ of the
+window LP with exact coefficients and the measurements kept up to $t$. Under the hypothesis of Lemma~\ref{lem:embed},
+every new support bounds $Y$, and so $\mathfrak{X}^{(t)}_s\subseteq\{x : Dx\le h_s\}$.
+\end{alemma}
+\begin{proof}
+$\mathfrak{X}^{(t)}_s\subseteq Y$ by Lemma~\ref{lem:embed}, and $Y\subseteq\mathcal{C}$ by Lemma~\ref{lem:clamp}.
+
+If every direction is solved, $h_{s,i} = \min\bigl(\kappa_i,\ \max(v_i + 10^{-6}, C_i)\bigr)\ge\min(\kappa_i, C_i)$,
+and both $\kappa_i$ and the certified $C_i$ bound $d_i\cdot x$ on $Y$.
+
+If some directions fail, let $J$ be the solved ones. Their supports, after the clamp, bound $Y$, so
+$Y\subseteq P_J\cap[-2,2]^3$ with $P_J = \{x : d_j\cdot x\le h_{s,j},\ j\in J\}$. For a failed direction $i$, the
+certified maximum of $d_i\cdot x$ over $P_J\cap[-2,2]^3$, an LP in three variables bounded by Lemma~\ref{lem:L1}, bounds
+$Y$; WM keeps its minimum with $\kappa_i$, or $\kappa_i$ alone if that LP fails too. $J$ and its supports are fixed
+before any failed direction is filled, so no filled value enters $P_J$.
+
+If every direction fails, the base becomes $\kappa$, the kept measurements are cleared and $\tau$ advances by $B$;
+$\mathcal{C}\supseteq Y$.
+\end{proof}
+
+\subsection{Memory}
+
+\begin{alemma}\label{lem:mem}
+At every point of every step WM holds at most $K_{\mathrm{cap}} + 1 = 65$ measurements.
+\end{alemma}
+\begin{proof}
+Let $n$ count the kept measurements after $\tau$; at the start $n = 0$. When a measurement is to be kept and
+$n = K_{\mathrm{cap}}$, one measurement after $\tau$ is evicted first; every other insertion starts with
+$n < K_{\mathrm{cap}}$. A fold advances $\tau$ and removes the measurements before it, and a reset removes all of them.
+At most one measurement, the one at $\tau$, is held besides the $n$.
+\end{proof}
+
+\subsection{The result}
+
+\begin{atheorem}\label{thm:wm}
+Under the model, the arithmetic and the execution assumptions above, WM raises no alarm at a sample $t$ for which
+$z_0,\dots,z_t$ has an explanation, and every alarm it raises carries a certified separation.
+\end{atheorem}
+\begin{proof}
+The hypothesis of Lemma~\ref{lem:embed} holds at the start (equality rows on the start segment) and after every fold
+(Lemma~\ref{lem:fold}). Between folds it carries over from $r$ to $r+1$, because
+$\mathfrak{X}^{(r+1)}_\tau\subseteq\mathfrak{X}^{(r)}_\tau$. Dropping and eviction keep it (Lemma~\ref{lem:drop}). An
+alarm at $t$ needs the separation of Lemma~\ref{lem:alarm}, which shows that $z_0,\dots,z_t$ has no explanation.
+\end{proof}
+
+\begin{acorollary}
+WM never flags a healthy run of the simulator, and never flags before the oracle's $\tstar$.
+\end{acorollary}
+\begin{proof}
+A healthy run: each simulated step makes at most ten roundings per state on values below 250 in magnitude, so it errs
+by at most $10u\cdot250\approx\sci{2.8}{-13}$\,\degC. The error propagates through the exact recurrence, whose
+$(a_c, a_s)$ block $F$ is nonnegative with $(I-F)^{-1}$ row sums 67.5 and 52.5, so each of the two simulations stays
+within \sci{1.9}{-11}\,\degC\ of the exact one at every length. Forming $z$ adds three operations, and moving the ambient
+path onto the exact rate bound changes $a_s$ by at most \sci{6.4}{-12}\,\degC. So an admissible run of the exact model
+explains the data with radius $\delta + \sci{5}{-11} < d$, and Theorem~\ref{thm:wm} applies at every sample.
+
+Before $\tstar$: the oracle certifies the prefix up to $\tstar-1$ as consistent with an ambient path that is exactly
+admissible and explains it with radius $\delta$ under the binary64 matrix; its upper certificate encloses its own
+rounding. For every admissible ambient path, $a_s$ under the exact recurrence and under the binary64 matrix differ by
+at most \sci{5.0}{-13}\,\degC\ over 3,600 steps, as checked in exact rational arithmetic. So the prefix has an
+explanation with radius $\delta + \sci{5.0}{-13} < d$, and WM does not flag before $\tstar$.
+\end{proof}
+
+Two known limits of the frozen code do not give a wrong bound. An LP with no variables would be counted as a solver
+exception; WM's LP builders never build one. A solver answer with no multiplier field would stop the run; whether the
+solver library can return one is not known. The exact audit of Section~\ref{sec:cert} measures the bounds on its rows
+and is not part of the proof.
 
 \bibliographystyle{plainnat}
 \bibliography{refs}

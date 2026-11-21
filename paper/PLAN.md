@@ -22,7 +22,7 @@ text goes into `main.tex` only.
 | 2 Problem | draft | — |
 | 3 Information state, IM, Lemma 1, Proposition 4 | draft | — |
 | 4 Template tier, Theorems 2–3 | draft | — |
-| 5 Window tier, certificates, fallback | draft | decide: full proof in an appendix? |
+| 5 Window tier, certificates, fallback | draft | — (full proof in Appendix A, 2026-11-22) |
 | 6 Protocol | draft | — |
 | 7.1–7.6 Results | draft | — |
 | 7.7 Baselines | placeholder | block run on 440400–440599 (configurations frozen 2026-11-21, `9438dffa`) |
@@ -32,6 +32,7 @@ text goes into `main.tex` only.
 | 9 Related work | draft | primary texts below |
 | 10 Limitations | draft | — |
 | 11 Reproducibility | draft | public URL |
+| Appendix A (proof of Proposition 3) | draft (2026-11-22) | — |
 | Figures | four drafted (2026-11-21) | baselines on Figure 2 after the block run |
 
 ## Figures (drafted 2026-11-21)
@@ -53,6 +54,7 @@ in every figure.
 - Read the primary texts marked UNVERIFIED or ABSTRACT that the draft leans on: Kesavan and Lee 2001, Saccani et al.
   2022, Rosa et al. 2010, Alamo et al. 2005, Combastel 2015, Sankaranarayanan et al. 2008.
 - Every number in DRAFT.md against its `src` comment; every [CHECK] and [PENDING] resolved.
-- The AI-use statement (author's decision; Elsevier and Wiley require one).
+- The AI-use statement: written 2026-11-22 (general form, no tool list; the author's choice). A journal that asks
+  for tool names gets a provider-level line at submission.
 - An outside reading of the whole draft.
 - The post-freeze code fixes of FREEZE-V3.md §5 before the code is released.
