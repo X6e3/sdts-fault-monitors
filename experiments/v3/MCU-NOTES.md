@@ -74,3 +74,52 @@ bases mapped, with no failure):
   - the warm start of the fold's first direction.
 
   These are the 2b items, together with a WCET-certified solver (the DAQP or EIQP line).
+
+## 2c. The template state on an 8-bit board (exploratory, DEV only; 2026-11-21)
+
+**Status:** exploratory, not pre-registered. DEV seeds only; no validation seed was generated. The candidate is
+freeze 1's cyl16p, in its **float32 C build** (`frozen/c/tables_cyl16p_float.h`), not the validated float64 form.
+
+**Setup:**
+- **Board:** an Arduino Uno (ATmega328P, 16 MHz, 2 KB SRAM, 32 KB flash), driven from Arch over USB serial.
+- **Code** (`mcu/avr/`):
+  - `avr_state.c` is `c/v3_state.c` with the tables read from flash and `nextafter` written on the bit patterns.
+  - The tables are a copy of the frozen header with `PROGMEM` added. `make_progmem.py` checks that nothing else
+    differs.
+  - The command part S is binary64 (avr-gcc 16.2, `-mdouble=64`); a static assert refuses any other build.
+- **Reference:** `host_trace.c` runs the unchanged `c/v3_state.c` on the PC with the same inputs. After every sample
+  the board's state (k, tc, ts, flag, h) is compared with the PC's, byte for byte.
+- **Results:** `results/v3/mcu/avr-uno-20261121/` (runs, the arithmetic test, build facts, hashes).
+
+**OBSERVED, four DEV runs** (430030 jump_0.5 E1 rw, 430031 stuck E1 ramp, 430010 drift_0.0005 E0 ramp, 430030
+healthy E0 ramp edge):
+
+| | |
+|---|---|
+| first inconsistent sample, board = PC | on all four: 500, 462, 3575, none |
+| time per sample | median 74.1–74.7 ms, max 75.3 ms (1 s sampling: about 13× margin) |
+| SRAM | 602 of 2048 bytes at peak (271 static), by stack painting |
+| flash | 28,064 of 32,768 bytes |
+| state equal to the PC's, bit for bit | at the start, and on few samples after; most samples differ by 1–2 ulp in h |
+
+**OBSERVED, the board's arithmetic** (`fptest`, 2000 operand pairs per operation, against IEEE 754
+round-to-nearest-even on the PC):
+- float ×, +, −: equal on all 6000.
+- double → float conversion: 1002 of 2000 are one ulp toward zero. The conversion truncates.
+- binary64 (libf7) ×: 128 of 2000 differ by ±1 ulp; + and −: 22 each. Faithful, not correctly rounded.
+
+**INFERRED, to be checked before any claim:**
+- The h differences come from the truncating conversion of the slab bounds lo and hi.
+  - The code steps one float ulp outward after that conversion (`DOWN`, `UP`). That covers any conversion error
+    below one ulp, so the board's lo and hi stay outer bounds; they are just tighter than the PC's.
+  - The supports are monotone in h (the table weights are ≥ 0), and the float operations matched IEEE on every
+    tested pair. So the board's h stays an outer bound under the float model the pads were computed for.
+  - Not proved here: "matched on every tested pair" is a sample, not a proof about avr-libc's routines.
+- The command part S is binary64 on both machines, and its recursion error is covered by no pad, on the PC either
+  (section "Precision" of V3_NOTES.md says only that float32 is unbounded). On the board it is faithful, not
+  correctly rounded. Its size over 3600 samples is not measured yet.
+
+**Not done:**
+- the float64 tables, which are the validated form (about 36 KB: too big for the Uno, fits a Mega);
+- more runs, and the full DEV comparison;
+- a worst-case timing bound.

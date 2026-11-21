@@ -1,0 +1,129 @@
+{
+ "banner": "SDTS-AVR src=948b46b0-cyl16p_float double=8 real=4 N=42 entries=1318 state_bytes=189",
+ "build": "mcu=atmega328p table=cyl16p_float tag=948b46b0-cyl16p_float\navr-gcc (GCC) 16.2.0\ncc (GCC) 16.2.1 20260810\navr flags: -std=c11 -Os -ffp-contract=off -fno-fast-math -mdouble=64 -mlong-double=64 -Wall -Wextra -DV3_FLOAT\nbd58d7ef83fed4ddb276117f51d327503377bbf48802118216404d6e941c309e  /home/x6e3/Research/sdts-v3-freeze3-948b46b0/experiments/v3/frozen/c/tables_cyl16p_float.h\na12277dd81fbb0367249efaaddcd73ab03848fe92ffda0b382cb71fe095a3947  /home/x6e3/Research/sdts-mcu-avr/out/uno-cyl16p-float/tables_progmem.h\n5be695012d6f91adebda03394b5fab0f3db560aaa2412a005d76a7665a355037  /home/x6e3/Research/sdts-mcu-avr/src/main.c\ne477b0ab918fc1747ae6dad6398e7e51d57c04dcfccbc19c4484ae5dc53f1879  /home/x6e3/Research/sdts-mcu-avr/src/avr_state.c\n75e197aa55c5d0568a6c2b7637d84e429e83a6cbfbbabb7850ae68394ef09a3d  /home/x6e3/Research/sdts-mcu-avr/src/host_trace.c\nacd3fb60e8fd9c443d7915076416dd9ed6274f56db3b8a8cac8759b09012b961  /home/x6e3/Research/sdts-v3-freeze3-948b46b0/experiments/v3/c/v3_state.c\nea4ecdc735905a6a6856b07fc38cc1dee98f6dbe683239f7f35c4ac09c26842d  /home/x6e3/Research/sdts-mcu-avr/out/uno-cyl16p-float/fw.hex\n78ff70b9673442528fcbc4d7381efa205adf688b2cb9dd6e0457ba93789dc3cc  /home/x6e3/Research/sdts-mcu-avr/out/uno-cyl16p-float/host_trace\n",
+ "size": "AVR Memory Usage\n----------------\nDevice: atmega328p\n\nProgram:   28064 bytes (85.6% Full)\n(.text + .data + .bootloader)\n\nData:        271 bytes (13.2% Full)\n(.data + .bss + .noinit)\n\n\n",
+ "runs": [
+  {
+   "key": [
+    430030,
+    "jump_0.5",
+    "E1",
+    "rw",
+    "uniform"
+   ],
+   "init_equal": true,
+   "samples": 504,
+   "mismatches": 498,
+   "first_mismatch": {
+    "sample": 0,
+    "flag_board": 0,
+    "flag_host": 0,
+    "field": "h[1]"
+   },
+   "board_first": 500,
+   "host_first": 500,
+   "cycles_summary": {
+    "median": 1194918,
+    "max": 1200895,
+    "min": 18392,
+    "median_ms": 74.682375,
+    "max_ms": 75.0559375
+   },
+   "t_f": 499,
+   "wall_s": 41.0
+  },
+  {
+   "key": [
+    430031,
+    "stuck",
+    "E1",
+    "ramp",
+    "uniform"
+   ],
+   "init_equal": true,
+   "samples": 466,
+   "mismatches": 443,
+   "first_mismatch": {
+    "sample": 0,
+    "flag_board": 0,
+    "flag_host": 0,
+    "field": "h[0]"
+   },
+   "board_first": 462,
+   "host_first": 462,
+   "cycles_summary": {
+    "median": 1192990,
+    "max": 1202178,
+    "min": 18391,
+    "median_ms": 74.561875,
+    "max_ms": 75.13612499999999
+   },
+   "t_f": 451,
+   "wall_s": 37.9
+  },
+  {
+   "key": [
+    430010,
+    "drift_0.0005",
+    "E0",
+    "ramp",
+    "uniform"
+   ],
+   "init_equal": true,
+   "samples": 3579,
+   "mismatches": 3232,
+   "first_mismatch": {
+    "sample": 0,
+    "flag_board": 0,
+    "flag_host": 0,
+    "field": "h[0]"
+   },
+   "board_first": 3575,
+   "host_first": 3575,
+   "cycles_summary": {
+    "median": 1185926,
+    "max": 1201376,
+    "min": 11651,
+    "median_ms": 74.120375,
+    "max_ms": 75.086
+   },
+   "t_f": 496,
+   "wall_s": 292.9
+  },
+  {
+   "key": [
+    430030,
+    "healthy",
+    "E0",
+    "ramp",
+    "edge"
+   ],
+   "init_equal": true,
+   "samples": 3600,
+   "mismatches": 3593,
+   "first_mismatch": {
+    "sample": 6,
+    "flag_board": 0,
+    "flag_host": 0,
+    "field": "h[3]"
+   },
+   "board_first": null,
+   "host_first": null,
+   "cycles_summary": {
+    "median": 1189808,
+    "max": 1205208,
+    "min": 1168623,
+    "median_ms": 74.363,
+    "max_ms": 75.3255
+   },
+   "t_f": 499,
+   "wall_s": 294.9
+  }
+ ],
+ "ram": {
+  "total": 2048,
+  "static": 271,
+  "never_touched": 1446,
+  "peak_used": 602
+ }
+}
