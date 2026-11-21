@@ -122,7 +122,7 @@ The contributions are these.
 \item A window LP over 256 samples whose base is updated by a smoothing rule, with at most 65 kept measurements and a
   certified weak-duality bound on every alarm and every base update. On another 9,600 fresh runs it removed
   99.5\,\% of the paired lag with no missed event, and every alarm was certified. On development data $\Dp$ runs from
-  0.39 (template only) through 0.64, 0.82 and 0.82 to 0.999 for windows of 0, 64, 128, 192 and 256 samples.
+  0.386 (template only) through 0.643, 0.815 and 0.824 to 0.9992 for windows of 0, 64, 128, 192 and 256 samples.
 \item The first validation of the window failed on one unsolved LP. We report the failure, its diagnosis, the sound
   fallback path that replaced it and its tests under injected solver failures, together with the precision gaps we
   found in our own implementations and how they were closed (Section~\ref{sec:wrong}).
@@ -525,8 +525,8 @@ the same order:
 \item Nothing is rerun except after an infrastructure failure as defined in advance; the verdict is recorded as it
   came out, with a dated record.
 \end{enumerate}
-Every score was reproduced byte for byte on a second machine and again by an independent scorer written from the rules
-alone, using only the Python standard library. Each block was used once. A failed candidate is not repaired on its
+Every score was reproduced byte for byte on a second machine. The scores of validations 2 and 3 were also reproduced by
+an independent scorer written from the rules alone, using only the Python standard library. Each block was used once. A failed candidate is not repaired on its
 block: a new candidate needs a new freeze and the next unused block. The environment was CPython 3.12.13, numpy 2.5.5,
 scipy 1.18.1 and HiGHS 1.12.0.
 % src: FREEZE-V1/V2/V3.md; RECORD-2026-11-19 and -21 "Provenance"
@@ -618,7 +618,7 @@ reached. The accuracy numbers are reported with the failure and are not a valida
 
 A diagnosis afterwards, outside the scored run, replayed the row deterministically. The failure was confined to one of
 the 42 fold directions; the other 41 solved faces bound that direction at $-0.209$\,\degC\ (its previous base bound
-was $-0.187$ and its clamp 1.683). That observation became the fallback of Section~\ref{sec:fallback}.
+was $-0.187$ and its a priori bound 1.683). That observation became the fallback of Section~\ref{sec:fallback}.
 % src: RECORD-2026-11-19-validation.md (verdict, diagnosis)
 
 \subsection{Validation 3: the window tier with its fallback path}
@@ -656,7 +656,7 @@ in the three labelled cells.}
   oracle left undetermined.
 \item The remaining lag sits in three cells: drift 0.0005 and 0.001\,\degC/s with ramp ambient, and drift
   0.002\,\degC/s with rw ambient. Drifts carry 99.8\,\% of IM's lag.
-\item The fallback path never ran on this block. WM solved 53,968,652 LPs; 722 needed a retry, and every LP was solved
+\item The fallback path never ran on this block. WM solved 53,968,652 LPs with 722 retries (on 320 runs), and every LP was solved
   within its three attempts. The validation supports the window's accuracy and the soundness of its normal path; the
   fallback path rests on its proof and on Section~\ref{sec:inject}.
 \item At most 65 measurements kept, at most 445 LP rows and 679 variables.
@@ -673,16 +673,20 @@ All criteria held in every setting: no alarm on an admissible run, none before $
 375,725 implied $P_J$ bounds and 22,600 full resets). The exact audit of two settings checked 7,300,179 bounds with no
 violation.
 
-The cost was in detection: with every fourth fold reset, 30 events were missed and $\Dp$ was $-5.21$; with every upper
-certificate failing, 174 were missed and $\Dp$ was $-29.24$. With 1\,\% and 10\,\% fold failures nothing was missed.
-One detection in the 10\,\% setting came 45 samples later than without injection.
-% src: RECORD-2026-11-21-fb.md; settings = FB-PLAN.md table
+The cost was in detection. With 1\,\% and 10\,\% fold failures nothing was missed; one detection in the 10\,\% setting
+came 45 samples later than without injection. With 1\,\% of the $a_s$-range and certificate LPs failing, 22 detections
+came later (median 6 samples), nothing was missed and $\Dp$ was 0.977; 14 events that IM detects were detected after
+IM. With every fourth fold reset, 30 events were missed and $\Dp$ was $-5.21$; with every upper certificate failing,
+174 were missed and $\Dp$ was $-29.24$. In these two settings WM was later than IM, or missed, on 232 and 752 of the
+events that IM detects.
+% src: RECORD-2026-11-21-fb.md (settings table: later, missed, D_paired, later than v2 or missed where v2 detects);
+% settings = FB-PLAN.md table
 
 \paragraph{The solver's process.} In the runs above the LPs run in WM's own process. A solver that ends its process (as
 the interior-point solver did in 8 of the oracle's 117,606 attempts in validation 3, by a segmentation fault) would end
 the run before any fallback could see it. In a variant, WM's LPs run in a child process that persists across LPs; if
 the child ends or does not answer in 120\,s, it is replaced and the attempt counts as failed, so the fallbacks of
-Section~\ref{sec:fallback} apply. Without injection the variant equals WM in every recorded field on 6 development
+Section~\ref{sec:fallback} apply. Without injection the variant equals WM in every recorded field but time on 6 development
 rows. On the 1,400 development rows the child then ended itself before 15,320 LPs, in all three attempts of each (half
 by exit, half by a segmentation fault; two per thousand fold LPs, one per thousand $a_s$-range LPs, a fifth of the LPs
 of implied bounds and half of the certificate LPs). Every run completed. No alarm came on an admissible run or before
@@ -705,7 +709,8 @@ Theorem~\ref{thm:dom} holds in exact arithmetic, not in float32. Neither float32
 \paragraph{ESP32 with float64 tables.} The C implementation of TS with the validated float64 tables ran on an ESP32
 (240\,MHz) on all 1,400 development rows, 5,040,000 samples. On every sample the alarm flag and a 16-byte hash of the
 full state equalled the PC build's (preregistered; negative controls detected a change of $10^{-6}$ in one input and a
-single flipped bit). Per sample: 3.63\,ms median, 4.56\,ms maximum over these runs; a float32 build takes 0.49\,ms.
+single flipped bit). Per sample, on the 322 rows that never flag (after a flag the state stops): 3.63\,ms median,
+4.56\,ms maximum. On four earlier rows a float32 build took 0.49\,ms median against 3.72 to 3.74\,ms for float64.
 % src: MCU-NOTES 2d, 2e
 
 \paragraph{8-bit AVR with float32 tables.} On an ATmega328P (16\,MHz, 2\,KB SRAM) the float32 build used at most 602
