@@ -1,6 +1,6 @@
 # How much of the record does a sound fault monitor need? Bounded-memory set-membership sensor-fault detection measured against the exact oracle
 
-Draft v0.1, 2026-11-21. Not for circulation.
+Draft v0.1, 2026-11-21. Not for circulation. Superseded by `preprint/main.tex` (v0.2); kept as it was.
 
 Can Koç, independent researcher. Contact: TBD.
 

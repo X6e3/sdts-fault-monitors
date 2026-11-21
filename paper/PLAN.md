@@ -1,11 +1,15 @@
 # Paper plan (2026-11-21)
 
-Working draft: `DRAFT.md` (Markdown with plain-text math). Converted to LaTeX once the content is stable; no TeX
-installation exists yet on either machine.
+Source: `preprint/main.tex` and `preprint/refs.bib` (v0.2, 2026-11-21), built with Tectonic 0.17.0 on the Mac
+(`tectonic -X compile main.tex`; installed with Homebrew on 2026-11-21, chosen over TeX Live because the Mac had 7 GB
+free). The source is standard LaTeX and also builds with pdflatex and BibTeX. `DRAFT.md` is v0.1, kept as it was; new
+text goes into `main.tex` only.
 
 ## Form
 
-- First target: a full-length preprint (no page limit), then a journal or conference version cut from it.
+- First target: a full-length preprint (no page limit), then a journal or conference version cut from it. Decided
+  2026-11-21 (preprint first). arXiv category to choose (eess.SY is the likely one); a first submission there may
+  need an endorsement.
 - Candidate venues (RELATED-WORK-NOTES.md §3): Automatica, IEEE TCST, IJRNC; IFAC SAFEPROCESS, CDC, ACC.
 - Sole author.
 
