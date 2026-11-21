@@ -103,9 +103,10 @@ def certified_max(harden=False, strict=False):
     variable boxed, float rounding bounded explicitly. harden: also enclose the rounding of the LP coefficients
     themselves (each one correctly rounded from its exact value, so off by less than 2u |a|), so that the bound holds
     for the LP with the exact coefficients (exact powers of M), not only for its float64 copy. strict (F3, fourth
-    addendum): NaN instead of a bound when a term is not finite or the sum overflows; finite terms give the same
-    value as without it. Fifth addendum, strict only: evaluated under np.errstate(all="ignore"), so the caller's
-    numpy error state cannot change the result, and with one absolute term for gradual underflow (_underflow_term)."""
+    addendum): NaN instead of a bound when a term is not finite or the sum overflows. Fifth addendum, strict only:
+    evaluated under np.errstate(all="ignore"), so the caller's numpy error state cannot change the result, and with
+    one absolute term for gradual underflow (_underflow_term). The strict bound is therefore not the non-strict one:
+    it is larger by that term, up to rounding (post-freeze fix 1, 2026-11-22: this docstring said they were equal)."""
     if strict:
         with np.errstate(all="ignore"):
             return _certified_max(harden, True)
@@ -117,16 +118,26 @@ def _underflow_term(kw, n_prod_extra, xmax):
     is at most 2^-1075, and sums and differences need none. Each product evaluated is counted once, generously: the
     sparse products for s and for its absolute value (2 per stored entry), the multiplier-times-right-hand-side
     products, and per variable the six of s*lb, s*ub, the gamma term and the harden term, plus the final pad's.
-    An error in s reaches the bound times at most max|x|. The term 2^-1074 * N * (1 + 2 max|x|) is twice that need;
-    it is formed as a whole number of units 2^-1074, rounded up, which is exact; inf (so no bound) if it overflows."""
+    An error in s reaches the bound times at most max|x|. The term 2^-1074 * N * (1 + 2 max|x|) is twice that need.
+    Post-freeze fix 4 (2026-11-22): the number of units 2^-1074 is the exact ceiling of N (1 + 2 max|x|), computed in
+    rational arithmetic, and the float returned is rounded up, so the term is an upper bound for any box. The frozen
+    code formed N * (1.0 + 2.0 * xmax) in floating point, which is exact for the candidate's boxes only (N = 10 with
+    max|x| = 2^-54 gave 10 units where 11 are needed, and an overflow of that product gave inf where a finite term
+    exists). For the candidate's boxes both give the same float. inf (so no bound) only if max|x| is not finite."""
     n = len(kw["bounds"])
     N = 6 * n + n_prod_extra
     for a_name, b_name in (("A_ub", "b_ub"), ("A_eq", "b_eq")):
         A = kw.get(a_name)
         if A is not None:
             N += 2 * (A.nnz if sp.issparse(A) else int(np.count_nonzero(A))) + len(kw[b_name])
-    v = N * (1.0 + 2.0 * xmax)
-    return math.ldexp(math.ceil(v), -1074) if math.isfinite(v) else math.inf
+    if not math.isfinite(xmax):
+        return math.inf
+    q = Fraction(math.ceil(N * (1 + 2 * Fraction(xmax))), 2 ** 1074)
+    try:
+        f = float(q)
+    except OverflowError:
+        return math.inf
+    return f if Fraction(f) >= q else math.nextafter(f, math.inf)
 
 
 def _certified_max(harden, strict):
@@ -238,11 +249,13 @@ def _check_inputs(cvec, kw):
     """F3 (fourth addendum): the LP we built must be finite and of consistent shape before the solver sees it.
     If it is not, that is our error: it is raised here, and never counted as a solver failure. Fifth addendum: the
     objective and each right-hand side are of rank 1, a right-hand side is given if and only if its matrix is, and
-    lb <= ub in every row of the bounds."""
+    lb <= ub in every row of the bounds. Post-freeze fix 2 (2026-11-22): the LP has at least one variable."""
     cv = np.asarray(cvec, dtype=float)
     if cv.ndim != 1:
         raise ValueError(f"F3: an objective of shape {cv.shape}")
     n = len(cv)
+    if n == 0:
+        raise ValueError("F3: an LP with no variables")              # post-freeze fix 2 (2026-11-22)
     arrays = [cv, np.asarray(kw["bounds"], dtype=float)]
     if arrays[1].shape != (n, 2):
         raise ValueError(f"F3: bounds of shape {arrays[1].shape} for {n} variables")
@@ -270,12 +283,19 @@ def _usable(res, kw):
     if res.status != 0 or res.fun is None or not math.isfinite(res.fun):
         return False
     n = len(kw["bounds"])
-    parts = [(res.lower.marginals, n), (res.upper.marginals, n)]
+    parts = [(_marginals(res, "lower"), n), (_marginals(res, "upper"), n)]
     if kw.get("A_ub") is not None:
-        parts.append((res.ineqlin.marginals, len(kw["b_ub"])))
+        parts.append((_marginals(res, "ineqlin"), len(kw["b_ub"])))
     if kw.get("A_eq") is not None:
-        parts.append((res.eqlin.marginals, len(kw["b_eq"])))
+        parts.append((_marginals(res, "eqlin"), len(kw["b_eq"])))
     return all(m is not None and np.shape(m) == (k,) and np.all(np.isfinite(m)) for m, k in parts)
+
+
+def _marginals(res, name):
+    """post-freeze fix 3 (2026-11-22): a solver answer without the field, or without its marginals, gives None, so
+    _usable returns False and the attempt fails like any other; the frozen code raised AttributeError and stopped"""
+    part = getattr(res, name, None)
+    return None if part is None else getattr(part, "marginals", None)
 
 
 def solve_f3(win, cvec, **kw):
@@ -521,7 +541,9 @@ class Audited(Compressed):
         a["min_slack_C"] = min(a["min_slack_C"], float(slack))
         a["violations"] += slack < 0
         a["max_gap_to_value_C"] = max(a["max_gap_to_value_C"], cub - v)
-        a["max_coefficient_term_C"] = max(a["max_coefficient_term_C"], cub - certified_max(False))
+        with np.errstate(all="ignore"):                            # post-freeze fix 5 (2026-11-22): a statistic only
+            loose = certified_max(False)
+        a["max_coefficient_term_C"] = max(a["max_coefficient_term_C"], cub - loose)
 
     def lp_cert(self, *args):
         v = self.lp(*args)
