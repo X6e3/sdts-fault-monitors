@@ -1,0 +1,14 @@
+{
+ "rows": 1400,
+ "expected": 1400,
+ "complete": true,
+ "c1_earlier": [],
+ "first_differs": [],
+ "edge_rows_flagging": [],
+ "flagged_rows": 1078,
+ "rows_with_state_differences": 1400,
+ "samples_differing": 5040000,
+ "init_differs_rows": 1400,
+ "seconds": 24.0,
+ "Y4_holds": true
+}

@@ -564,11 +564,14 @@ test turns but not covered by the pads by construction.
 (i) The command part S is computed in binary64 and its rounding is covered by no pad: the frozen C state is sound
 against the exact model for |v| ≤ δ − ε, with ε = 4.85e-13 °C (9.9e-13 °C on the AVR). (ii) Two start supports were
 1.11e-16 °C short; the first step absorbs the shortfall. A revised C state closes both by construction, with the
-slab δ + η and exact start sums; it made the same decisions as the frozen one on all development rows
-[PENDING: its ESP32 bit-equality run, Y5]. The same check of the validated Python template is open at the 1e-21 level
-(two rate pads 2.1e-21 °C below their exact value).
+slab δ + η and exact start sums, so that it is sound for |v| ≤ δ. Pre-registered checks accepted it: the same first
+flag as the frozen C state on all 1,400 development rows, bit-equality with its PC build on the ESP32 over 5,040,000
+samples, and the same first flag as its PC build on the AVR on 30 rows. On development data the fix cost no
+detection. It is not validated on fresh seeds. The same check of the validated Python template is open at the 1e-21
+level (two rate pads 2.1e-21 °C below their exact value).
 
-<!-- src: MCU-NOTES 2g; C1-PLAN.md; [PENDING C1 record] -->
+<!-- src: MCU-NOTES 2g, 2h; C1-PLAN.md -->
+
 
 ### 7.7 Baselines
 

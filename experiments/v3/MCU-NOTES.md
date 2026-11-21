@@ -306,3 +306,65 @@ adds GAMMA4 Σλ max|h| + res·cap(h) at every step instead of a fixed pad. **Ve
 **A clean fix for a later version** (not made: it changes frozen tables and code):
 - start supports from the exact coordinate sums (h[14] and h[15] become 1.2e-16);
 - the slab with δ + η, as in F3, so that the condition becomes |v| ≤ δ.
+
+## 2h. C1 result: the clean fix is ACCEPTED on the ESP32 and on the Uno (2026-11-21)
+
+Plan `C1-PLAN.md` (`b68f865d`) and its Uno addendum (`df40c058`), both committed before any result of c1. DEV seeds
+only; no validation seed was generated. Results in `results/v3/c-state/c1-b68f865d/`.
+
+**Verdict: ACCEPT** for the ESP32 (Y1–Y5 hold) and for the Uno (U1–U3 hold). c1 is the C state of later MCU work.
+
+| check | result | file |
+|---|---|---|
+| Y1 tables | holds: each c1 header differs from the frozen one only in its first comment line and in V3_H0, and there only at entries 14 and 15, where the frozen value was below the exact start support | `y123.json` |
+| Y2 code | holds: `c1/v3_state.c` differs from `c/v3_state.c` only in the ETA define and the two slab lines | `y123.json` |
+| Y3 soundness checks | holds for both headers: K1–K5 (K5 without the follow-up), and K6 with ε = 4.85e-13 °C < η = 1e-9 °C | `y123.json` |
+| Y4 DEV, PC (Arch) | holds: 1400 of 1400 rows; c1 never earlier; the first flagged sample equal to the frozen C state's on every row (1078 flag); no edge-noise row flags | `y4/score.json` |
+| Y5 ESP32 | **PASS**: 1400 of 1400 rows, 5,040,000 samples; the init state and, on every sample, the flag and the 16-byte hash of the state dump equal the c1 PC build's; 1078 rows flag at the same sample, 322 on neither | `y5/score.json`, `y5/rows.jsonl` |
+| U1 Uno code | holds: `avr_state_c1.c` differs from `avr_state.c` only in the ETA define and the two slab lines | `u3-df40c058/u12.json` |
+| U2 Uno tables | holds: the flash header is `make_progmem.py`'s copy of `c1/tables_cyl16p1_float.h` (sha256 `77eba0c9…`, named in its first line) | `u3-df40c058/u12.json` |
+| U3 Uno decisions | **PASS**: on all 30 rows of MCU-2F the Uno c1 float32 build's first flagged sample equals the PC c1 float32 build's (26 flag, 4 none) | `u3-df40c058/score.json` |
+
+**Y5 run** (Arch; the board flashed from a clean clone at `b68f865d`, `prepare.sh cyl16p1_double` with
+`SRC=TABLES=c1`, 921600 baud): 2026-11-21 14:00:10 to 16:54:17 (+0300). No infrastructure restart. The build has no
+fused multiply-add (`-ffp-contract=off`, 0 found). Output hashes (equal on Arch and in the repository copy):
+
+```
+9fd0afed484dc761fa77506fc8d8f74902f49ae596b6f8620c6f758b5199eb3f  y5/meta.json
+735ed7befdeab225a454c0a7e00db97f86d4fe346c0cec1b3e68b14503beefa5  y5/memory.json
+759fc9daa10150bc25a4c944fa765f6c3d52872109a325c6d7e69f5d930a7c67  y5/rows.jsonl
+47ee351818622de84fea826a7554883e3114a838ba999965a7b87b66d36ec442  y5/score.json
+0f8cbd17308f0b9a99082db03a84e4be68eecd6435e14679bb6b37a2dddd8b43  y5/run.log
+```
+
+`run.log` is ignored by `.gitignore` (`*.log`), as in 2e; it is kept next to the tracked files.
+
+**Before the Y5 run** (`y5-rehearsal/controls.txt`, not counted): the first two rows matched; the c1 board against
+the *frozen* PC build differs on all 3600 samples of a row from sample 0 (init state), with no flag difference, so
+the board runs c1 and the comparison sees the change.
+
+**Reported, not deciding:**
+- **ESP32 cycles** on the 322 rows that never flag: median of the row medians 871,411 (3.63 ms at 240 MHz), largest
+  row p99 922,832, maximum over all rows 1,087,250 (4.53 ms). As in 2e, `score.json`'s 1,846 mixes flagged rows,
+  which return at once after the flag.
+- ESP32 memory after the run: heap 373,852 bytes, at least 293,784 free at any time; 6,656 bytes of the loop task's
+  stack never used. Sketch 331,777 bytes, as the frozen build.
+- **The first flags of c1 equal those of the frozen builds:** on the ESP32 on all 1400 rows (against MCU-2E), and on
+  the Uno on all 30 rows (against MCU-2F). On DEV the fix cost no detection.
+- **Uno** (U3, clean clone at `df40c058`): 37,181 samples, 1,629 bit-equal; S differs on 17,527 (faithful binary64,
+  as in 2f); h below the PC on 292,507 component-samples and above on 308,277, at most 1,988,608 ulps below and
+  331,776 above (ulps near zero; 2f's diagnosis); at most 1,209,731 cycles per sample (75.6 ms). Program 28,088
+  bytes, data 273 bytes. One infrastructure restart: a serial timeout at the first attempt of 430020 drift_0.001 E0
+  rw (`infrastructure.log`); the row was restarted from its first sample and completed.
+- **Uno negative control** (`u3-df40c058/controls.txt`): the Uno c1 build against the frozen PC float32 build on
+  430021 jump_0.5 E0 rw: the init states differ (h0[14], h0[15]), 95 of 555 samples equal, the same first flag (551).
+  In float32, η is below the resolution of lo and hi, so later states can coincide with the frozen build's.
+
+**What this shows (MATH from Y3 and 2g, OBSERVED from Y4, Y5, U3):** a C state whose soundness against the exact
+recurrence holds by construction for |v| ≤ δ, with the same decisions as freeze 1's C state on DEV, bit-equal to its
+PC build on the ESP32 over 5,040,000 DEV samples. On the Uno, soundness rests on Y3 for the float header, K6 with a
+faithful binary64 (ε = 9.9e-13 °C < η) and 2g's two Uno assumptions (float ×, +, − round to nearest, tested on 6,000
+pairs; the port is `v3_state.c`'s logic, written so, not checked).
+
+**Not shown:** anything on validation seeds (c1 is not validated; freeze 1 validated the Python template, whose own
+check is open at 2.1e-21, 2g); a real sensor or plant; a worst-case timing bound.

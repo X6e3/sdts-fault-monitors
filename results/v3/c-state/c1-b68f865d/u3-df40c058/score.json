@@ -1,0 +1,14 @@
+{
+ "verdict": "PASS",
+ "rows": 30,
+ "first_inconsistent_differs": [],
+ "flagged_rows": 26,
+ "samples": 37181,
+ "samples_bit_equal": 1629,
+ "S_differs_samples": 17527,
+ "h_below_total": 292507,
+ "h_above_total": 308277,
+ "max_ulp_below": 1988608,
+ "max_ulp_above": 331776,
+ "cycles_max": 1209731
+}

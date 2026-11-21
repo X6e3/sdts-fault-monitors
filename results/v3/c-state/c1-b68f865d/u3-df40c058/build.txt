@@ -1,0 +1,12 @@
+mcu=atmega328p table=cyl16p1_float tag=df40c058-cyl16p1_float
+avr-gcc (GCC) 16.2.0
+cc (GCC) 16.2.1 20260810
+avr flags: -std=c11 -Os -ffp-contract=off -fno-fast-math -mdouble=64 -mlong-double=64 -Wall -Wextra -DV3_FLOAT
+77eba0c975d316d7e2b42e038e55dbe6fb8efa0476b537445538617df5fa2663  /home/x6e3/Research/sdts-v3-c1uno-df40c058/experiments/v3/c1/tables_cyl16p1_float.h
+1097ad98463e6203ec06a6e11fe38200add6f6b12331a25df0959d229849c223  /home/x6e3/Research/sdts-mcu-avr/out/uno-c1-df40c058/tables_progmem.h
+5be695012d6f91adebda03394b5fab0f3db560aaa2412a005d76a7665a355037  /home/x6e3/Research/sdts-v3-c1uno-df40c058/experiments/v3/mcu/avr/main.c
+f116e1aacd57079007a98faa2b56028390a9aa2b2d594c173f438a7d34f5cbf8  /home/x6e3/Research/sdts-v3-c1uno-df40c058/experiments/v3/mcu/avr/avr_state_c1.c
+75e197aa55c5d0568a6c2b7637d84e429e83a6cbfbbabb7850ae68394ef09a3d  /home/x6e3/Research/sdts-v3-c1uno-df40c058/experiments/v3/mcu/avr/host_trace.c
+c9f6c6383efd40db8a337ace2a4b2dda550e3404ef36e93dddd2f78ec4503dab  /home/x6e3/Research/sdts-v3-c1uno-df40c058/experiments/v3/c1/v3_state.c
+6bf0a1cff2bd6c08cd8bb8549c9845284bb14fe914a2ceeab0b8b090faa59dee  /home/x6e3/Research/sdts-mcu-avr/out/uno-c1-df40c058/fw.hex
+a6069a55c1a8d00e58b67e70623565650416a686cb50274533119b6c1263e7ca  /home/x6e3/Research/sdts-mcu-avr/out/uno-c1-df40c058/host_trace

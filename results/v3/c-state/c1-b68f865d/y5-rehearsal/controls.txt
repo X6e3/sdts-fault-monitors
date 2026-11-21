@@ -1,0 +1,12 @@
+C1-PLAN.md Y5: rehearsal and a negative control, 2026-11-21, Arch, before the main run. Printed to the terminal,
+copied here verbatim. Board build: out/esp32-c1-b68f865d (prepare.sh cyl16p1_double with SRC=TABLES=c1, BAUD=921600,
+from a clean clone at b68f865d); upload: 4 x "Hash of data verified".
+
+Rehearsal, the first 2 rows (dev_full.py --limit 2, rows.jsonl here):
+  430000 healthy E0 rw uniform    samples 3600, mismatches 0, init_equal true
+  430001 healthy E0 rw uniform    samples 3600, mismatches 0, init_equal true
+
+Negative control: the c1 board against the FROZEN PC build (old_host_trace: c/v3_state.c with
+frozen/c/tables_cyl16p_double.h; sha256 aa581fb2..., the same binary as MCU-2E's host_trace):
+  c1 board vs FROZEN PC: {"samples": 3600, "mismatches": 3600, "first_mismatch": 0, "flag_mismatches": 0, "init_equal": false}
+  So the board runs c1, and the comparison sees the change from the first state on.

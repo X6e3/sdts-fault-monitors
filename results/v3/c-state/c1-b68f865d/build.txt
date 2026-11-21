@@ -1,0 +1,18 @@
+board=esp32 table=cyl16p1_double tag=b68f865d-cyl16p1_double
+arduino-cli  Version: 1.5.1 Commit: 01f3d4f2ba7c2eaafb5dc710c8a1903af7762fea Date: 
+esp32:esp32 4.0.0     4.0.0  esp32
+cc (GCC) 16.2.1 20260810
+extra flags: -ffp-contract=off -fno-fast-math
+fused multiply-adds: 0
+baud: 921600
+a94986c992fcbd67bcf0249c2a66876e5095b0049f694fdb5fa04d6a0053e70c  /home/x6e3/Research/sdts-v3-c1-b68f865d/experiments/v3/c1/tables_cyl16p1_double.h
+c9f6c6383efd40db8a337ace2a4b2dda550e3404ef36e93dddd2f78ec4503dab  /home/x6e3/Research/sdts-v3-c1-b68f865d/experiments/v3/c1/v3_state.c
+df7f9369091cff492bf9e6ed9ef5e3ee11714860170e9153d8ee658df4524878  /home/x6e3/Research/sdts-v3-c1-b68f865d/experiments/v3/c1/v3_state.h
+1a8cf4019508591ac4f97f4e5d3d239c849be674441ffc743d675b62d97a484c  /home/x6e3/Research/sdts-mcu-avr/out/esp32-c1-b68f865d/sdts_esp32/build_cfg.h
+3ce776b1320d959277376acaa81a3e22ea3850e40e6698bb859b127780febec9  /home/x6e3/Research/sdts-mcu-avr/out/esp32-c1-b68f865d/sdts_esp32/sdts_esp32.ino
+a94986c992fcbd67bcf0249c2a66876e5095b0049f694fdb5fa04d6a0053e70c  /home/x6e3/Research/sdts-mcu-avr/out/esp32-c1-b68f865d/sdts_esp32/tables.h
+c9f6c6383efd40db8a337ace2a4b2dda550e3404ef36e93dddd2f78ec4503dab  /home/x6e3/Research/sdts-mcu-avr/out/esp32-c1-b68f865d/sdts_esp32/v3_state.c.inc
+df7f9369091cff492bf9e6ed9ef5e3ee11714860170e9153d8ee658df4524878  /home/x6e3/Research/sdts-mcu-avr/out/esp32-c1-b68f865d/sdts_esp32/v3_state.h
+5d28064d08062849d39433819ad7f0f630c8b3e7055f43a902464fda29c53722  /home/x6e3/Research/sdts-mcu-avr/out/esp32-c1-b68f865d/sdts_esp32/v3_wrap.c
+476367dfa893986108fbb17169f9ea44ef84525ad7b5ea6b4e5201ee7b2e9323  /home/x6e3/Research/sdts-mcu-avr/out/esp32-c1-b68f865d/build/sdts_esp32.ino.bin
+5d4fddeea11b3aa842e4101d16e843bf7a730443b99158ad3022ce12d9afff95  /home/x6e3/Research/sdts-mcu-avr/out/esp32-c1-b68f865d/host_trace

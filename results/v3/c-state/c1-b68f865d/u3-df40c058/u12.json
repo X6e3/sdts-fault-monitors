@@ -1,0 +1,20 @@
+{
+ "U1": {
+  "removed": [
+   "v3_real lo = DOWN((v3_real)down_d(down_d(zs) - DELTA));",
+   "v3_real hi = UP((v3_real)up_d(up_d(zs) + DELTA));"
+  ],
+  "added": [
+   "#define ETA 1e-9   /* c1: allowance for the float error of S and of the data, F3's value (C1-PLAN.md) */",
+   "v3_real lo = DOWN((v3_real)down_d(down_d(zs) - (DELTA + ETA)));",
+   "v3_real hi = UP((v3_real)up_d(up_d(zs) + (DELTA + ETA)));"
+  ],
+  "holds": true
+ },
+ "U2": {
+  "source_sha256": "77eba0c975d316d7e2b42e038e55dbe6fb8efa0476b537445538617df5fa2663",
+  "first_line": "/* AVR copy of tables_cyl16p1_float.h (sha256 77eba0c975d316d7e2b42e038e55dbe6fb8efa0476b537445538617df5fa2663); tables in PROGMEM; made by make_progmem.py */",
+  "holds": true
+ },
+ "U1_U2_hold": true
+}

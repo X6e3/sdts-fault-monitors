@@ -1,0 +1,10 @@
+C1-PLAN.md addendum, U3: the negative control, 2026-11-21 ~15:02 (+0300), Arch, after the main run. Printed to the
+terminal, copied here verbatim. The Uno runs the c1 float32 build (out/uno-c1-df40c058, from a clean clone at
+df40c058); the PC side is the FROZEN float32 build of MCU-2F (out/uno-2f-82af2a44/host_trace).
+
+SDTS-AVR src=df40c058-cyl16p1_float double=8 real=4 N=42 entries=1318 state_bytes=189
+Uno c1 vs FROZEN PC float32: {"key": [430021, "jump_0.5", "E0", "rw", "uniform"], "init_equal": false, "samples": 555,
+  "samples_equal": 95, "board_first": 551, "host_first": 551}
+
+The init states differ (h0[14], h0[15]), so the comparison sees the change. In float32 the slab's eta (1e-9) is below
+the resolution of lo and hi, so later states can coincide with the frozen build's; the first flags agree.

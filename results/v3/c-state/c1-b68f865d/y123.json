@@ -1,0 +1,131 @@
+{
+ "headers": {
+  "double": {
+   "Y1": {
+    "lines_differing": [
+     0,
+     17
+    ],
+    "h0_line": 17,
+    "h0_entries_changed": [
+     14,
+     15
+    ],
+    "frozen_h0_below_start_support": [
+     14,
+     15
+    ],
+    "holds": true
+   },
+   "K1_header_equal": true,
+   "K2_pads": {
+    "groups": 44,
+    "entries": 1318,
+    "negative_lambdas": 0,
+    "entries_not_covered": 0,
+    "not_covered_first": [],
+    "smallest_slack_fraction_of_pad": 0.8732740830620366,
+    "at_group_entry": [
+     4,
+     148
+    ],
+    "need_and_pad_there": [
+     1.419958579062221e-14,
+     1.1204958017840488e-13
+    ]
+   },
+   "K3_clamps": {
+    "caps_not_proved": [],
+    "smallest_slack_C": 0.0
+   },
+   "K4_rate_pads": {
+    "rate_pads_too_small": []
+   },
+   "K5_start": {
+    "start_supports_too_small": [],
+    "smallest_slack_C": 0.0
+   },
+   "holds": {
+    "Y1": true,
+    "K1": true,
+    "K2": true,
+    "K3": true,
+    "K4": true,
+    "K5": true
+   }
+  },
+  "float": {
+   "Y1": {
+    "lines_differing": [
+     0,
+     17
+    ],
+    "h0_line": 17,
+    "h0_entries_changed": [
+     14,
+     15
+    ],
+    "frozen_h0_below_start_support": [
+     14,
+     15
+    ],
+    "holds": true
+   },
+   "K1_header_equal": true,
+   "K2_pads": {
+    "groups": 44,
+    "entries": 1318,
+    "negative_lambdas": 0,
+    "entries_not_covered": 0,
+    "not_covered_first": [],
+    "smallest_slack_fraction_of_pad": 0.7482349835147304,
+    "at_group_entry": [
+     4,
+     143
+    ],
+    "need_and_pad_there": [
+     7.898911849424394e-06,
+     3.137414387310855e-05
+    ]
+   },
+   "K3_clamps": {
+    "caps_not_proved": [],
+    "smallest_slack_C": 0.0
+   },
+   "K4_rate_pads": {
+    "rate_pads_too_small": []
+   },
+   "K5_start": {
+    "start_supports_too_small": [],
+    "smallest_slack_C": 0.0
+   },
+   "holds": {
+    "Y1": true,
+    "K1": true,
+    "K2": true,
+    "K3": true,
+    "K4": true,
+    "K5": true
+   }
+  }
+ },
+ "Y2": {
+  "removed": [
+   "v3_real lo = DOWN((v3_real)nextafter(nextafter(zs, -INFINITY) - DELTA, -INFINITY));",
+   "v3_real hi = UP((v3_real)nextafter(nextafter(zs, INFINITY) + DELTA, INFINITY));"
+  ],
+  "added": [
+   "#define ETA 1e-9   /* c1: allowance for the float error of S and of the data, F3's value (C1-PLAN.md) */",
+   "v3_real lo = DOWN((v3_real)nextafter(nextafter(zs, -INFINITY) - (DELTA + ETA), -INFINITY));",
+   "v3_real hi = UP((v3_real)nextafter(nextafter(zs, INFINITY) + (DELTA + ETA), INFINITY));"
+  ],
+  "header_same": true,
+  "holds": true
+ },
+ "K6_data": {
+  "eps": 4.852840351978194e-13,
+  "ETA": 1e-09,
+  "holds": true
+ },
+ "Y1_Y2_Y3_hold": true
+}
