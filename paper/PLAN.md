@@ -10,7 +10,6 @@ text goes into `main.tex` only.
 - First target: a full-length preprint (no page limit), then a journal or conference version cut from it. Decided
   2026-11-21 (preprint first). arXiv category to choose (eess.SY is the likely one); a first submission there may
   need an endorsement.
-- Candidate venues (RELATED-WORK-NOTES.md §3): Automatica, IEEE TCST, IJRNC; IFAC SAFEPROCESS, CDC, ACC.
 - Sole author.
 
 ## Status by section

@@ -8,12 +8,6 @@
 All DOIs were checked against Crossref or OpenAlex on 2026-11-19. "Not found" means not found in the papers read
 and the targeted searches of this pass, not that it does not exist.
 
-**To check before submission:**
-1. Kesavan and Lee (2001), full text: the window LP and the forward-only update of the initial set.
-2. Jansson (2004): the printed Theorem 6.1. Only a PostScript copy of the 2002 report was read.
-3. The IEEE (PSPB Operations Manual 8.2.1.B.10) and IFAC AI-use policy pages. Scripted fetches were refused, so read
-   them in a browser.
-
 ## 1. What SDTS adds
 
 1. **The yardstick: detection-delay loss against the exact full-history oracle, as a function of memory**
@@ -86,42 +80,6 @@ and the targeted searches of this pass, not that it does not exist.
 because every variable is boxed. A solver stopped at an iteration cap therefore gives a looser fold, or an alarm left
 uncertified and so not raised. Neither is unsound; the cost is detection delay. A custom sparse dual simplex with a
 cap therefore keeps the soundness guarantee. Its worst-case time would still have to be shown.
-
-## 3. What a reviewer will ask, and what answers it
-
-**"How does this compare with standard set-membership methods?"** Baselines that run on our plant:
-
-| | baseline | parameters | fault decision | notes |
-|---|---|---|---|---|
-| B1 | Constrained zonotopes CZ(n_c, o) (Scott et al. 2016; CZN-A in CORA) | n_c, the order o | an LP emptiness test (Proposition 2) | **The baseline reviewers will expect first.** The TA box and the measurement strips enter as exact intersections. Sweeping (n_c, o) gives its own memory–loss curve against our oracle. |
-| B2 | Strip-intersection zonotopes (Alamo, Bravo, Camacho 2005; FRad-A in CORA) | the order o; the reduction (Girard, Combastel) | analytic: \|y − C c\| > ‖C G‖₁ + δ | The TA box must be given to it as a virtual strip at every step, so that it has the same prior as SDTS. |
-| B3 | Zonotopic Kalman-gain observer (Combastel 2015; FRad-C in CORA) | the order o | the residual-set test | Report both the plain version and one with the TA box. |
-| B4 | Interval observer (Tang et al. 2019; Hinf-G in CORA) | a gain L with A − LC Schur | the output-interval test | The other main family (Pourasghar et al. 2019). |
-| B5 | ROBP, and a window with a forward-only base (Chisci, Garulli, Zappa 1996; the Kesavan and Lee style) | W | the strip test; LP infeasibility | The forward-only window is our own filtering ablation from DIAG-3. It isolates the gain of the smoothing fold. |
-
-Proposal (unchanged): run the baselines in a separate pre-registered study on a fresh block (440400+), after freeze 2.
-
-**"One plant, known parameters."** Candidate second plants:
-- **The DC motor of Scott et al. (2016), section 6 (VERIFIED):** the matrices are printed, so their Fig. 7 can be
-  rerun with the exact oracle added. This is the most direct comparison.
-- **The quadruple tank** (Johansson 2000), as in Ingimundarson et al. (2005) and CORA: linear and small.
-- **The wind-turbine benchmark** (Odgaard, Stoustrup, Kinnaert 2013; ABSTRACT): the wind speed is a bounded unmeasured
-  input, and the benchmark has sensor faults. Set-membership detection has been tried on it before (Tabatabaeipour et
-  al. 2012; UNVERIFIED).
-
-DAMADICS and Tennessee Eastman are strongly nonlinear. They fit only a model-mismatch extension, if anything.
-
-**"Can it run on an MCU?"** See the MCU paragraph above, and `MCU-NOTES.md`.
-
-**Venues:** Automatica, IEEE TCST, IEEE TAC, IJRNC; for conferences, IFAC SAFEPROCESS, CDC and ACC.
-
-**AI-use policies:**
-- **Elsevier** (Automatica, IFAC-PapersOnLine; VERIFIED, 2026-11-19): a declaration at submission. Where AI tools are
-  used in the research process rather than in writing, that use "should be described in detail in the Methods
-  section".
-- **Wiley** (IJRNC; VERIFIED): a disclosure at submission of the tools, their purpose, and how the authors checked the
-  outputs.
-- **IEEE and IFAC:** UNVERIFIED; check in a browser.
 
 ## Sources
 
