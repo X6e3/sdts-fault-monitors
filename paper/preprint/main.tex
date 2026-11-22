@@ -67,10 +67,13 @@ rule, so a difference is what a bounded monitor loses against the full history: 
 discards, and what its conservative arithmetic gives up (for the window, a noise allowance of $10^{-9}$\,\degC\ and
 outward rounding). We study two tiers. The first is a
 template polyhedron whose support computations are replaced by LP bases computed offline and bounded by clamps from
-the reachable set. It needs no solver, is proved sound and never later than the interval monitor it extends, and its C
-implementation on an ESP32 gives the PC build's alarm flag and a 16-byte hash of its full state after every one of
-5.04 million development samples. On 9,600 fresh,
-preregistered runs it removed 38.7\,\% of the interval monitor's paired detection lag. The second is a window LP over
+the reachable set. It needs no solver, is proved sound under explicit rounding conditions and, in exact arithmetic,
+never later than the interval monitor it extends. Its frozen float64 implementations, in Python and C, meet those
+conditions only
+for noise at least $4.85\times10^{-13}$\,\degC\ inside the bound; a revised C state meets them in full but has not
+been validated on fresh seeds. The frozen C implementation on an ESP32 gives the PC build's alarm flag and a 16-byte
+hash of its full state after every one of 5.04 million development samples. On 9,600 fresh,
+preregistered runs the template removed 38.7\,\% of the interval monitor's paired detection lag. The second is a window LP over
 256 samples whose base is updated by a smoothing rule, with a weak-duality certificate on every alarm and every base
 update it solves; an LP that fails falls back to an analytic outer bound. On a second fresh block of 9,600 runs it removed 99.5\,\% of the lag with no missed certified event (the interval monitor
 missed 27 of 7,255), and all 7,258 alarms were certified. A previous freeze of the same window failed its validation, because a
@@ -126,11 +129,12 @@ The contributions are these.
   bounded monitor below is scored against it under identical semantics.
 \item A template polyhedron with 42 directions that needs no solver. Its support computations are replaced by LP bases
   enumerated offline, and clamps from the reachable error set bound its growth. It is sound
-  (Theorem~\ref{thm:sound}) and never later than the interval monitor (Theorem~\ref{thm:dom}); its frozen
-  implementations meet the theorem's rounding conditions only for noise at least \sci{4.85}{-13}\,\degC\ inside the
-  bound (Section~\ref{sec:mcu}). On 9,600 fresh runs it
+  under explicit rounding conditions (Theorem~\ref{thm:sound}) and, in exact arithmetic, never later than the interval
+  monitor (Theorem~\ref{thm:dom}); its frozen float64 implementations meet the rounding conditions only for noise at least
+  \sci{4.85}{-13}\,\degC\ inside the bound, and a revised C state that meets them in full is not validated on fresh
+  seeds (Section~\ref{sec:mcu}). On 9,600 fresh runs it
   removed 38.7\,\% of the interval monitor's paired lag and missed 16 certified events against the interval monitor's
-  24. Its C implementation with the validated float64 tables gives the PC build's alarm flag and state hash after every
+  24. Its frozen C implementation with the validated float64 tables gives the PC build's alarm flag and state hash after every
   sample on an ESP32, at 3.6\,ms per sample. A build with float32 tables fits an 8-bit AVR (602 bytes of SRAM, 75\,ms per sample), but it is not the
   validated monitor: scored on the PC on validation 1, it reached $\Dp = 0.212$ against the target 0.25
   (Section~\ref{sec:mcu}).
@@ -803,7 +807,7 @@ and was later than IM on 52 runs; inv4p in float32 reached 0.004 with 28 misses 
 Theorem~\ref{thm:dom} holds in exact arithmetic, not in float32. Neither float32 build was the object of a hypothesis.
 % src: RECORD-2026-11-18-validation.md lines 92-105
 
-\paragraph{ESP32 with float64 tables.} The C implementation of TS with the validated float64 tables ran on an ESP32
+\paragraph{ESP32 with float64 tables.} The frozen C implementation of TS with the validated float64 tables ran on an ESP32
 (240\,MHz) on all 1,400 development rows, 5,040,000 samples. On every sample the alarm flag and a 16-byte hash of the
 full state equalled the PC build's (preregistered; negative controls detected a change of $10^{-6}$ in one input and a
 single flipped bit). Per sample, on the 322 rows that never flag (after a flag the state stops): 3.63\,ms median,
@@ -1039,7 +1043,8 @@ kept, and with them the later windows. Its worst-case time is not shown either.
 \item One plant with known parameters, in simulation, under assumed laws of noise and ambient. With uncertain
   parameters the exact set is in general no longer convex.
 \item The frozen implementations of TS are sound for noise up to $\delta - \sci{4.85}{-13}$\,\degC, not up to
-  $\delta$; the revised C state closes the gap, the Python template does not yet (Sections~\ref{sec:mcu}
+  $\delta$; the revised C state closes the gap but is not validated on fresh seeds, and the Python template does not
+  close it yet (Sections~\ref{sec:mcu}
   and~\ref{sec:wrong}).
 \item The ambient box (c) carries the detection of slow drift. A wider box delays the exact detector itself, and the
   monitors with it (Section~\ref{sec:ambient}); a wrong box can make a healthy record inconsistent.
@@ -1088,7 +1093,7 @@ work.
 \section*{Declarations}
 
 Funding: none. Competing interests: none. Use of AI tools: see the section on the use of AI assistants above. Every
-claim is traced to a dated record in the repository.
+reported experimental result is traced to a dated record in the repository.
 
 \appendix
 
