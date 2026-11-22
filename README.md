@@ -29,6 +29,11 @@ The numbers are from the paper; each one is traced to a dated record in `experim
   weak-duality certificate, and an LP the solver cannot solve falls back to an analytic outer bound. On a second fresh
   block of 9,600 runs it removed 99.5 % of the interval monitor's lag with no missed certified event, and all 7,258
   alarms were certified.
+
+![One development run: the upper edge of each monitor's test band near the alarm, and the width of each monitor's range over the whole run; WM alarms at sample 695, IM and TS at 3575](paper/figures/fig-trace.png)
+
+*Example development run (430010, Figure 3 of the paper): the fault starts at sample 496; WM alarms at the exact oracle time, t\* = 695, while IM and TS alarm at 3575. One run, not a validation.*
+
 - **Baselines.** Five baselines, given the same prior and tuned before the run, all lagged at their memory budget. The
   best set-based one, a constrained zonotope storing 203 reals, had 1.8 times the interval monitor's lag.
 - **A limit no monitor can beat.** No memory budget can certify the error of a sensor drift that an admissible ambient
@@ -46,6 +51,24 @@ The failures are part of the result, and the paper has a section on them. Two th
 
 Reproductions that disagree with a reported number are welcome; please write (address below).
 
+## How the window monitor works
+
+![Schematic of the window between two folds: the fold LP and the alarm LPs share the base at tau and the kept measurements; the fold targets tau + 16, the alarm tests sample t](paper/figures/fig-window.png)
+
+*The window of WM between two folds (Figure 1 of the paper; schematic, not to scale).*
+
+On development runs, 95 % of what the template monitor loses remains even for the tightest template hull of the exact
+set, so the loss lies in the template's geometry. WM keeps the measurements themselves instead, over a window:
+
+- Between samples it keeps a base at a past sample τ (the 42 supports of the template monitor), the measurements kept
+  since τ and τ itself. A measurement that adds nothing when it arrives is dropped; above 64 kept measurements, the
+  one inactive longest is evicted. Both only remove constraints.
+- At each sample t it solves LPs over the samples τ, …, t: the alarm LPs at t and, once the window is full, every
+  16 samples a fold LP that moves the base forward to τ + 16 using all the measurements kept up to t (the smoothing step).
+- Between the kept measurements the steps are exact, and a window spans at most W + B + 1 = 273 transitions
+  (W = 256, B = 16).
+- Every alarm carries a weak-duality certificate; an LP the solver cannot solve falls back to an analytic outer bound.
+
 ## Check it yourself
 
 Each validation is fixed by a freeze document, a manifest and an approval commit. The runners check every file of the
@@ -59,7 +82,7 @@ the healthy-record witness.
 | Path | Contents |
 |---|---|
 | `paper/preprint/` | the paper (`main.tex`, `refs.bib`, figures) and `make_arxiv.sh`, which builds the upload archive |
-| `paper/figures/` | the script that makes the figures' data, and the README's figure with the script that builds it |
+| `paper/figures/` | the script that makes the figures' data, and the README's figures with the script that builds them |
 | `experiments/v3/` | the monitors, the three freeze documents, the run and scoring scripts, the dated records (`RECORD-*.md`) and `REPRODUCE.md` |
 | `experiments/v3/diag/` | diagnostic studies and checks that the records cite |
 | `results/v3/` | the stored rows, manifests and summaries of each run |

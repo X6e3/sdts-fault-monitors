@@ -1,12 +1,14 @@
-% Figure 2 of the paper (fig_memory.tex) as a standalone page for the README; the y label is spelled out.
-% Built by make_readme_figure.sh; the figure source and its data are the paper's, unchanged.
+% One of the paper's figures as a standalone page for the README (FIGNAME is replaced by make_readme_figure.sh).
+% The figure source and its data are the paper's, unchanged; only Figure 2's y label is spelled out (\Dp below).
 \documentclass[border=10pt]{standalone}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage{amsmath}
 \usepackage{xcolor}
 \usepackage{pgfplots}
-\usetikzlibrary{arrows.meta}
+\usepackage{amssymb}
+\usepgfplotslibrary{groupplots}
+\usetikzlibrary{arrows.meta,decorations.pathreplacing,shapes.geometric}
 \pgfplotsset{compat=1.18}
 \definecolor{cIM}{HTML}{2A78D6}
 \definecolor{cTS}{HTML}{EB6834}
@@ -20,7 +22,11 @@
   legend style={font=\footnotesize, draw=none, fill=white, fill opacity=0.85, text opacity=1}}}
 \tikzset{lab/.style={font=\scriptsize, text=muted, inner sep=1.5pt}}
 \newcommand{\Dp}{\text{share of IM's lag removed } (D_{\mathrm{paired}})}
+\newcommand{\degC}{\ensuremath{{}^\circ}C}
+\newcommand{\sci}[2]{\ensuremath{#1\times10^{#2}}}
+\newcommand{\tstar}{t^{\ast}}
+\newcommand{\R}{\mathbb{R}}
 \begin{document}
 \setlength{\linewidth}{150mm}% the width the plot is drawn for; the page is cropped to the plot
-\input{fig_memory}
+\input{FIGNAME}
 \end{document}
