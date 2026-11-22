@@ -442,8 +442,10 @@ and $B = 16$; the first fold comes when $t-\tau > W+B$. Figure~\ref{fig:window} 
 \centering
 \input{fig_window}
 \caption{The window of WM between two folds (schematic, not to scale). The states $(a_c, a_s)$ appear at the nodes
-only: in the LPs of the alarm at $t$, the base at $\tau$, the kept measurements and $t$; in the fold LP, the base, the
-measurements kept up to $t$ and the target $\tau+16$. $T_A$ appears at every sample.}
+only, and the two kinds of LP have different nodes: the alarm LPs at $t$ the base at $\tau$ (box), the kept
+measurements (filled circles, at most $K_{\mathrm{cap}} = 64$) and $t$ (star); the fold LP the base, the measurements
+kept up to $t$ and the target $\tau+16$ (square). A measurement redundant at arrival (crossed circle) is not kept and
+is a node of neither. $T_A$ appears at every sample.}
 \label{fig:window}
 \end{figure}
 
