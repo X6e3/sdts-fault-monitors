@@ -1,8 +1,9 @@
 # SDTS: bounded-memory sound fault monitors, measured against the exact oracle
 
-**SDTS is the current research in this repository.** DMREDA and MGDE are the author's earlier research lines on
-temporal state in embedded fault handling; both are closed, and the repository keeps the earlier name. The repository
-was reset to SDTS on 16 August 2026. DMREDA's material from before the reset is kept byte for byte in
+**SDTS (Software-Defined Temporal Sensing) is the current research in this repository.** It is unrelated to the USGS
+Spatial Data Transfer Standard, which has the same acronym. DMREDA and MGDE are the author's earlier research lines on
+temporal state in embedded fault handling; both are closed. Until 22 November 2026 this repository was named
+`dmreda-sdts-research`. It was reset to SDTS on 16 August 2026. DMREDA's material from before the reset is kept byte for byte in
 `archive/pre-reset-2026-08-16/`, negative results included. MGDE is not in this repository.
 
 Code, frozen plans, dated records and results for the preprint
