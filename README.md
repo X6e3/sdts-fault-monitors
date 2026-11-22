@@ -15,6 +15,10 @@ sensor, a known heat input and an unknown ambient temperature.
 
 ## Results
 
+![Share of the interval monitor's detection lag removed against memory: IM at 0, the template monitor TS near 0.39, windows of 64 to 256 samples rising towards 1, the window monitor WM at about 1](paper/figures/fig-memory.png)
+
+*Each monitor's share of the interval monitor's detection lag removed, against the reals it keeps between samples (Figure 2 of the paper; filled markers: development data, open markers: fresh validation blocks).*
+
 The numbers are from the paper; each one is traced to a dated record in `experiments/v3/`.
 
 - **Template monitor.** A template polyhedron with 42 supports whose LP bases are computed offline, so it needs no
@@ -55,6 +59,7 @@ the healthy-record witness.
 | Path | Contents |
 |---|---|
 | `paper/preprint/` | the paper (`main.tex`, `refs.bib`, figures) and `make_arxiv.sh`, which builds the upload archive |
+| `paper/figures/` | the script that makes the figures' data, and the README's figure with the script that builds it |
 | `experiments/v3/` | the monitors, the three freeze documents, the run and scoring scripts, the dated records (`RECORD-*.md`) and `REPRODUCE.md` |
 | `experiments/v3/diag/` | diagnostic studies and checks that the records cite |
 | `results/v3/` | the stored rows, manifests and summaries of each run |
