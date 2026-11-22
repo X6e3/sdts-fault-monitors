@@ -73,6 +73,9 @@ gate, not of the allowance. The paper says this in sections 1 and 7.4 and narrow
   the call ended the run. Sections 5.4 and A.1 now state the six types and what happens otherwise.
 - **Appendix A wording:** "adds pads" (it said "subtracts"); 28 vertices of C and 14 more from the two cuts (it said
   "42 vertices of C"); the extension of explanations past r; the condition on a removed node; the largest box end.
+  *Added later the same day:* the vertex count and the invariance are now checked here too, by
+  `diag/widebox_vertices.py` (`a196fd68`, written for `WIDEBOX-PLAN.md`). It found 28 + 14 vertices and no step above
+  a clamp.
 - **The window description, Figure 3's primal edge and centred median, Figure 4's drift share, section 8's "sound but
   incomplete", section 9's iteration cap** were reworded as the review asked.
 

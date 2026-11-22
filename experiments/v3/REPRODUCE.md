@@ -87,6 +87,17 @@ The file is the two scripts that scored the validations (`RECORD-2026-11-19-vali
 recorded output in every field but the task name (288 fields for validation 2, whose recorded output has sha256
 `2811e6326c2746b40a7ff4127fd618b670b4deae3f1c17af13df6eb053acd631`, and 247 for validation 3, `02b5e909…`).
 
+## The vertex check of Appendix A.5 (seconds)
+
+```
+REPO/.venv/bin/python -B experiments/v3/diag/widebox_vertices.py /tmp/vertices.json
+```
+
+In rational arithmetic, it checks that the clamp set of the frozen tables is invariant under one step of the exact
+recurrence: 28 vertices of C and 14 more from the two cuts, both ends of w, every direction. Checked on 2026-11-22: no
+step above a clamp, and both ends of the start segment lie in C. It does the same for the wider boxes of
+`WIDEBOX-PLAN.md`.
+
 ## Not in this repository
 
 - The oracle's per-attempt solver logs of each block (`solver_attempts/`, 9 to 30 MB per block); the records give the
