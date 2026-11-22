@@ -418,7 +418,7 @@ like the frozen C state (Section~\ref{sec:mcu}) it computes the command part $S$
 rounding. A constructed healthy record with noise $\sci{4.6}{-15}$\,\degC\ inside the bound makes it flag
 (Section~\ref{sec:wrong}). Two rate pads are also \sci{2.1}{-21}\,\degC\ below their exact value (open), and two start
 supports \sci{1.1}{-16}\,\degC\ short, which the first step absorbs.
-% src: the a_s-range condition = outside review 2026-11-22 (a constructed looser basis; RECORD-2026-11-22-review-checks.md);
+% src: the a_s-range condition = internal review 2026-11-22 (a constructed looser basis; RECORD-2026-11-22-review-checks.md);
 % rate pads and start supports = MCU-NOTES 2g (P4, P5, P5', K6: same eps); witness = RECORD-2026-11-22-review2.md
 
 \subsection{The frozen template}\label{sec:frozen}
@@ -897,7 +897,7 @@ B2, strip zonotope & 21 & none & $-46.8$ & 3,293 & 22 & 0.08\\
 \end{table}
 % src: RECORD-2026-11-22-baselines-block.md; results/v3/baselines/block-9438dffa/scores.json; WM ms/sample = sum of
 % F3 seconds / processed samples on validation 3's rows; B1 LP bound from baselines_cz.py (predict, then range(P2));
-% observed (5x12, 8x33) on 440400 jump_0.5 and (8x15, 11x36) on DEV (second blind review, RECORD-2026-11-22-review2.md)
+% observed (5x12, 8x33) on 440400 jump_0.5 and (8x15, 11x36) on DEV (internal review, RECORD-2026-11-22-review2.md)
 
 \subsection{How much the results lean on the ambient box}\label{sec:ambient}
 
