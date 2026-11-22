@@ -842,7 +842,9 @@ comparison was H-B2: the filtering window B5 lost 2,518\,s more than WM, interva
 fold removes two thirds of B5's paired lag, and the forward window alone already reaches $\Dp = 0.986$. No method raised
 an alarm on an admissible run or before $\tstar$. B1 to B4 run in plain binary64, so for them this is an observation on
 these runs, not a guarantee. B1 at 203 reals had one failed LP, after which it falls back to the unconstrained hull. B5's
-7,254 alarms were all certified. \pending{the independent scorer's verdicts.}
+7,254 alarms were all certified. A second scorer, written from the plan alone with its own random seed and percentile
+rule and fixed before the block's rows existed, reproduced every number of Table~\ref{tab:baselines} and gave the
+same three verdicts at 2,000 and at 20,000 draws (H-B2: $[-5{,}346, -410]$ and $[-5{,}350, -402]$).
 
 \begin{table}[ht]
 \centering\small

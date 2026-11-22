@@ -55,7 +55,7 @@ the baseline's paired lag):
 
 ## OBSERVED
 
-- All three hypotheses are supported. H-B2's interval is the closest to 0: the smoothing fold removes 2,518 of the
+- All three hypotheses are supported, by both scorers (below). H-B2's interval is the closest to 0: the smoothing fold removes 2,518 of the
   forward window's 3,782 s of paired lag, and the forward window alone already reaches D_paired 0.986.
 - The order of the methods is the one DEV gave. The nearest set method, B1 at 203 reals, has 1.8 times IM's paired
   lag (2.1 on DEV); with 32 reals, 7.6 times.
@@ -72,8 +72,17 @@ The paper uses 32 and 203.
 ## The independent scorer
 
 Written from the plan alone, outside this repository, with the Python standard library and no project imports. On
-DEV it reproduced `report.json` in 189 checks and `tune.json` in 1,496 with no difference. Its own RNG seed and
-percentile rule differ from the repository's (the plan fixes neither). **Its verdicts on the block: pending.**
+DEV it reproduced `report.json` in 189 checks and `tune.json` in 1,496 with no difference. Its scoring script
+(sha256 `330d8af8…823b`) was last changed at 01:54, before the block's rows existed (05:32); only its report writer
+was changed afterwards. Its report and outputs are kept with the project's notes, outside this repository.
+
+- **Every number of the results table** came out the same: D_paired, paired lag, misses, detections at t\*,
+  admissible and early alarms, time per sample and memory, for all nine monitors.
+- **The verdicts** are the same, with its own RNG (seed 20261118) and linear-interpolation percentiles, at 2,000 and
+  at 20,000 draws: all supported. H-B2's interval: [−5,346, −410] at 2,000 draws, [−5,350, −402] at 20,000.
+- **Completeness:** all 9,600 runs with seven methods each (67,200 results), no missing, extra or duplicated key; the
+  reference rows' sha256 equals the one in `meta.json`. `meta.json` holds no sha256 of the baseline rows themselves;
+  the scorer computed `77d05365…ca6e`, the value above.
 
 ## What this does not show
 
