@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use this code or its results, please cite the paper below."
+title: "SDTS: bounded-memory sound fault monitors, measured against the exact oracle"
+type: software
+authors:
+  - family-names: "Koç"
+    given-names: "Can"
+    email: "cankoc.dev@proton.me"
+repository-code: "https://github.com/X6e3/dmreda-sdts-research"
+license: Apache-2.0
+keywords:
+  - fault detection
+  - set-membership estimation
+  - sensor faults
+  - linear programming
+  - embedded systems
+preferred-citation:
+  type: article
+  title: "How much of the record does a sound fault monitor need? Bounded-memory set-membership detection of sensor faults, measured against the exact oracle"
+  authors:
+    - family-names: "Koç"
+      given-names: "Can"
+  year: 2026
+  status: preprint
+  notes: "The arXiv identifier will be added after submission."
