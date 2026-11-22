@@ -9,7 +9,7 @@ temporal state in embedded fault handling; both are closed. Until 22 November 20
 Code, frozen plans, dated records and results for the preprint
 
 > Can Koç, *How much of the record does a sound fault monitor need? Bounded-memory set-membership detection of sensor
-> faults, measured against the exact oracle*, preprint, 2026. The arXiv link will be added here.
+> faults, measured against the exact oracle*, preprint, 2026. The preprint link will be added here.
 
 A set-membership fault detector raises an alarm when no admissible explanation of the sensor record exists. The exact
 detector keeps a set whose description grows with the record; a monitor on a microcontroller keeps a bounded outer

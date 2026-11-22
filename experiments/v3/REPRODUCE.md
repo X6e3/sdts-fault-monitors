@@ -39,6 +39,7 @@ The dated records (`RECORD-2026-11-18-validation.md`, `RECORD-2026-11-19-validat
 For validation 3, from the root of a clone of this repository (`REPO`):
 
 ```
+mkdir -p /tmp/v3-948b46b0
 git archive 948b46b0 experiments env | tar -x -C /tmp/v3-948b46b0
 cd /tmp/v3-948b46b0/experiments/v3
 REPO/.venv/bin/python -B score_validation_v3.py \
@@ -115,7 +116,8 @@ box's t\*. Record: `RECORD-2026-11-22-widebox.md`.
 ## The healthy record on which freeze 1's Python template flags (seconds)
 
 ```
-REPO/.venv/bin/python -B experiments/v3/diag/s_gap_witness.py results/v3/review2
+REPO/.venv/bin/python -B experiments/v3/diag/s_gap_witness.py /tmp/review2
+shasum -a 256 /tmp/review2/witness-42W.txt results/v3/review2/witness-42W.txt
 ```
 
 Prints the first alarm (sample 309) and writes `witness-42W.txt`, the input of `experiments/v3/c/harness.c` for the C
