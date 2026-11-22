@@ -972,8 +972,8 @@ The records keep every failure. These changed the method:
 \item The C state had two gaps, of order $10^{-13}$ and $10^{-16}$ (Section~\ref{sec:mcu}), found by a check written
   after the microcontroller runs.
 \item The Python template's guarantee was stated without its noise restriction. Our records gave it for
-  $|v|\le\delta-\varepsilon$, as for the C state, but a draft of this paper named only the open rate pads. A second
-  blind review constructed a healthy record on which the validated template flags: the ambient held at 27\,\degC, 42\,W
+  $|v|\le\delta-\varepsilon$, as for the C state, but a draft of this paper named only the open rate pads. During
+  internal review, a healthy record was constructed on which the validated template flags: the ambient held at 27\,\degC, 42\,W
   from the steady state of 20\,W, and each measurement the largest binary64 number not above the true temperature plus
   $\delta$, checked in rational arithmetic. At sample 309 the noise is \sci{4.6}{-15}\,\degC\ inside the bound and the
   template's $S$ is \sci{1.6}{-14}\,\degC\ below the exact one, and the template flags. The frozen and revised C builds
@@ -1095,7 +1095,7 @@ claim is traced to a dated record in the repository.
 \section{Soundness of the window monitor}\label{app:proof}
 
 This appendix proves Proposition~\ref{prop:wm} for the frozen candidate: $W = 256$, $B = 16$, $K_{\mathrm{cap}} = 64$,
-and the 42 directions and clamps of TS. An independent review traced each step below to the frozen code, line by line;
+and the 42 directions and clamps of TS. Each step below was traced to the frozen code, line by line;
 the code references are left out here. Detection delay, completeness, any comparison with IM and run time are outside
 the proof.
 % src: FREEZE-V2.md section 1 "What is a theorem" (the invariant chain); FREEZE-V3.md section 1 (fallbacks, memory
