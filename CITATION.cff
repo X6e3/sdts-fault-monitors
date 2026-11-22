@@ -6,6 +6,7 @@ authors:
   - family-names: "Koç"
     given-names: "Can"
     email: "cankoc.dev@proton.me"
+    orcid: "https://orcid.org/0009-0007-7386-3295"
 repository-code: "https://github.com/X6e3/dmreda-sdts-research"
 license: Apache-2.0
 keywords:
@@ -20,6 +21,7 @@ preferred-citation:
   authors:
     - family-names: "Koç"
       given-names: "Can"
+      orcid: "https://orcid.org/0009-0007-7386-3295"
   year: 2026
   status: preprint
   notes: "The arXiv identifier will be added after submission."

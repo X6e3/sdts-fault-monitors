@@ -1,5 +1,10 @@
 # SDTS: bounded-memory sound fault monitors, measured against the exact oracle
 
+**SDTS is the current research in this repository.** DMREDA and MGDE are the author's earlier research lines on
+temporal state in embedded fault handling; both are closed, and the repository keeps the earlier name. The repository
+was reset to SDTS on 16 August 2026. DMREDA's material from before the reset is kept byte for byte in
+`archive/pre-reset-2026-08-16/`, negative results included. MGDE is not in this repository.
+
 Code, frozen plans, dated records and results for the preprint
 
 > Can Koç, *How much of the record does a sound fault monitor need? Bounded-memory set-membership detection of sensor
@@ -20,9 +25,9 @@ ambient temperature.
 | `experiments/v3/` | the monitors, the three freeze documents, the run and scoring scripts, the dated records (`RECORD-*.md`) and `REPRODUCE.md` |
 | `experiments/v3/diag/` | diagnostic studies and checks that the records cite |
 | `results/v3/` | the stored rows, manifests and summaries of each run |
-| `experiments/generators/`, `machine/`, `oracle/`, `baselines/`, `specs/`, `final/`, `records/` | the simulator, the oracle and the earlier thermal line (v2) that v3 builds on |
+| `experiments/generators/`, `machine/`, `oracle/`, `baselines/`, `specs/`, `final/`, `records/` | the simulator, the oracle and SDTS's first thermal study (v2), which v3 builds on |
 | `tests/`, `env/` | tests; the environment lock and its check |
-| `archive/pre-reset-2026-08-16/` | the earlier line of this project, kept byte for byte, negative results included |
+| `archive/pre-reset-2026-08-16/` | DMREDA, the closed earlier line, as it stood at the reset, negative results included |
 | `docs/` | the research charter and validation rules written when the project was reset on 16 August 2026 |
 
 ## Reproducing
