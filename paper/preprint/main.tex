@@ -56,7 +56,7 @@
 \large Bounded-memory set-membership detection of sensor faults, measured against the exact oracle}
 \author{Can Ko\c{c}\\ Independent researcher\\ \small \href{mailto:cankoc.dev@proton.me}{\texttt{cankoc.dev@proton.me}}\\
 \small ORCID \href{https://orcid.org/0009-0007-7386-3295}{0009-0007-7386-3295}}
-\date{\small Preprint draft v0.2, 21 November 2026. Not for circulation.}
+\date{\small Preprint draft v0.3, 22 November 2026. Not for circulation.}
 
 \begin{document}
 \maketitle
@@ -68,12 +68,13 @@ description is not bounded in advance, so an embedded detector keeps a bounded o
 We measure that loss directly. On a two-node thermal plant with one temperature sensor, a known heat input, an unknown
 ambient temperature and ten classes of sensor fault, a certified linear program over the full history gives the exact
 detection time of every run it certifies. Bounded monitors are compared with it under the same assumptions and the same decision
-rule, so every difference is information that the representation discarded, apart from a floating-point allowance of
-$10^{-9}$\,\degC. We study two tiers. The first is a
+rule, so a difference is what a bounded monitor loses against the full history: the information its representation
+discards, and what its conservative arithmetic gives up (for the window, a noise allowance of $10^{-9}$\,\degC\ and
+outward rounding). We study two tiers. The first is a
 template polyhedron whose support computations are replaced by LP bases computed offline and bounded by clamps from
 the reachable set. It needs no solver, is proved sound and never later than the interval monitor it extends, and its C
-implementation on an ESP32 matches the PC build bit for bit, by a hash of the full state after every sample, on 5.04
-million development samples. On 9,600 fresh,
+implementation on an ESP32 gives the PC build's alarm flag and a 16-byte hash of its full state after every one of
+5.04 million development samples. On 9,600 fresh,
 preregistered runs it removed 38.7\,\% of the interval monitor's paired detection lag. The second is a window LP over
 256 samples whose base is updated by a smoothing rule, with a weak-duality certificate on every alarm and every base
 update it solves; an LP that fails falls back to an analytic outer bound. On a second fresh block of 9,600 runs it removed 99.5\,\% of the lag with no missed certified event (the interval monitor
@@ -108,11 +109,13 @@ exact reference cannot say how much is left to gain.
 This paper measures the loss in detection time against the exact detector, run by run. The exact detection time
 $\tstar$ of each run comes from an LP over the full history whose verdicts carry certificates in both directions
 (Section~\ref{sec:oracle}). The bounded monitors use the same assumptions and the same decision as that LP: the first
-sample at which no admissible explanation exists. So a sound monitor can only be later than $\tstar$, and every sample
-of delay is information its representation discarded (Corollary~\ref{cor:im}), apart from a floating-point allowance:
-the window monitor widens the noise bound by $\eta = 10^{-9}$\,\degC\ (Section~\ref{sec:cert}), so a record that
-exceeds the bound by less than that at $\tstar$ can be flagged later for that reason alone. On the window's validation
-block this accounts for none of its delays (Section~\ref{sec:val3}). We report the delay as the share of a
+sample at which no admissible explanation exists. So a sound monitor can only be later than $\tstar$. Its delay is
+what it loses against the full history: for the ideal interval monitor, information its representation discarded
+(Corollary~\ref{cor:im}); for an implementation, also what its conservative arithmetic gives up. The window monitor
+widens the noise bound by $\eta = 10^{-9}$\,\degC\ (Section~\ref{sec:cert}), rounds its box test outward and pads
+its supports, so a record that exceeds the bound by less than that margin at $\tstar$ can be flagged later for that
+reason alone. On the window's validation block $\eta$ and the model gap account for none of its delays
+(Section~\ref{sec:val3}). We report the delay as the share of a
 reference monitor's lag that a candidate removes, on preregistered validation blocks of fresh seeds.
 
 The plant is a lumped thermal model with two nodes, core and surface, and a known heat input. One sensor reads the
@@ -123,14 +126,17 @@ simulated over records of 3,600 samples.
 The contributions are these.
 \begin{enumerate}
 \item For this problem class the information state is a polytope in three dimensions
-  (Proposition~\ref{prop:info}), and a certified LP over the full history decides consistency for every run. Every
+  (Proposition~\ref{prop:info}), and a certified LP over the full history decides consistency for every run it can certify; the others are
+  reported as undetermined. Every
   bounded monitor below is scored against it under identical semantics.
 \item A template polyhedron with 42 directions that needs no solver. Its support computations are replaced by LP bases
   enumerated offline, and clamps from the reachable error set bound its growth. It is sound
-  (Theorem~\ref{thm:sound}) and never later than the interval monitor (Theorem~\ref{thm:dom}). On 9,600 fresh runs it
+  (Theorem~\ref{thm:sound}) and never later than the interval monitor (Theorem~\ref{thm:dom}); its frozen
+  implementations meet the theorem's rounding conditions only for noise at least \sci{4.85}{-13}\,\degC\ inside the
+  bound (Section~\ref{sec:mcu}). On 9,600 fresh runs it
   removed 38.7\,\% of the interval monitor's paired lag and missed 16 certified events against the interval monitor's
-  24. Its C implementation with the validated float64 tables matches the PC build bit for bit on an ESP32, at 3.6\,ms
-  per sample. A build with float32 tables fits an 8-bit AVR (602 bytes of SRAM, 75\,ms per sample), but it is not the
+  24. Its C implementation with the validated float64 tables gives the PC build's alarm flag and state hash after every
+  sample on an ESP32, at 3.6\,ms per sample. A build with float32 tables fits an 8-bit AVR (602 bytes of SRAM, 75\,ms per sample), but it is not the
   validated monitor: scored on the PC on validation 1, it reached $\Dp = 0.212$ against the target 0.25
   (Section~\ref{sec:mcu}).
 \item A window LP over 256 samples whose base is updated by a smoothing rule, with at most 65 kept measurements, a
@@ -407,10 +413,13 @@ The condition on the $a_s$-range is needed: with a looser valid basis for the ta
 $h(e_2)$, the proof's first step fails, and the template can miss an alarm that IM raises. The frozen tables keep both
 unit bases. Theorem~\ref{thm:dom} holds in the arithmetic of the proof. Section~\ref{sec:mcu} shows that a float32
 build, sound by Theorem~\ref{thm:sound}, is later than IM on some runs. The frozen Python template meets the rounding
-conditions of Theorem~\ref{thm:sound} except two rate pads, \sci{2.1}{-21}\,\degC\ below their exact value (open,
-Section~\ref{sec:mcu}), and two start supports \sci{1.1}{-16}\,\degC\ short, which the first step absorbs.
+conditions of Theorem~\ref{thm:sound} only for noise $|v|\le\delta-\varepsilon$, $\varepsilon = \sci{4.85}{-13}$\,\degC:
+like the frozen C state (Section~\ref{sec:mcu}) it computes the command part $S$ in binary64, and no pad covers its
+rounding. A constructed healthy record with noise $\sci{4.6}{-15}$\,\degC\ inside the bound makes it flag
+(Section~\ref{sec:wrong}). Two rate pads are also \sci{2.1}{-21}\,\degC\ below their exact value (open), and two start
+supports \sci{1.1}{-16}\,\degC\ short, which the first step absorbs.
 % src: the a_s-range condition = outside review 2026-11-22 (a constructed looser basis; RECORD-2026-11-22-review-checks.md);
-% rate pads and start supports = MCU-NOTES 2g (P4, P5, P5')
+% rate pads and start supports = MCU-NOTES 2g (P4, P5, P5', K6: same eps); witness = RECORD-2026-11-22-review2.md
 
 \subsection{The frozen template}\label{sec:frozen}
 
@@ -453,7 +462,7 @@ and $B = 16$; the first fold comes when $t-\tau > W+B$. Figure~\ref{fig:window} 
 \caption{The window of WM between two folds (schematic, not to scale). The states $(a_c, a_s)$ appear at the nodes
 only, and the two kinds of LP have different nodes: the alarm LPs at $t$ the base at $\tau$ (box), the kept
 measurements (filled circles, at most $K_{\mathrm{cap}} = 64$) and $t$ (star); the fold LP the base, the measurements
-kept up to $t$ and the target $\tau+16$ (square). A measurement redundant at arrival (crossed circle) is not kept and
+kept up to $t$, the target $\tau+16$ (square) and a node at $t$. A measurement redundant at arrival (crossed circle) is not kept and
 is a node of neither. $T_A$ appears at every sample.}
 \label{fig:window}
 \end{figure}
@@ -521,8 +530,8 @@ Every LP of WM has two outcomes: \emph{solved} (status optimal, after at most th
 presolve, interior point without presolve, dual simplex with presolve) or \emph{failed} (any other status; an exception
 of one of six types from the solver call: \texttt{RuntimeError}, \texttt{ValueError}, \texttt{IndexError},
 \texttt{OverflowError}, \texttt{ZeroDivisionError} or \texttt{FloatingPointError}; or an answer that is not finite).
-Any other exception stops the run without an alarm. An error raised inside a fold outside the solver call is recorded
-as an uncertified alarm, which the scoring rules count as a soundness failure. Neither happened in validation 3. WM never uses a value from a failed LP. A solver's
+Any other exception stops the run without an alarm. A \texttt{RuntimeError} raised inside a fold outside the solver
+call is recorded as an uncertified alarm, and any other exception there stops the run; which the scoring rules count as a soundness failure. Neither happened in validation 3. WM never uses a value from a failed LP. A solver's
 ``infeasible'' is one more failure, not a proof: an alarm needs a certified separation. The fallbacks are outer bounds
 (Table~\ref{tab:fallback}).
 
@@ -596,7 +605,7 @@ the four diagnosis runs and their control.}\label{tab:dev}
 monitor & state & $\Dp$ & misses & at $\tstar$ & $\Dp$ without diagnosis rows\\
 \midrule
 template TS only & 42 numbers & 0.386 & 4 & 897 & 0.512\\
-window $W = 64$ & $\le18$ kept & 0.643 & 0 & 1037 & 0.904\\
+window $W = 64$ & $\le18$ kept & 0.643 & 0 & 1037 & 0.905\\
 window $W = 128$ & $\le28$ kept & 0.815 & 0 & 1063 & 0.980\\
 window $W = 192$ & $\le35$ kept & 0.824 & 0 & 1073 & 0.986\\
 window $W = 256$ & $\le45$ kept & 0.9992 & 0 & 1079 & 0.9987\\
@@ -813,8 +822,9 @@ the shortfall. A revised C state closes both by construction, with the slab $\de
 it is sound for $|v|\le\delta$. Preregistered checks accepted it: the same first flag as the frozen C state on all
 1,400 development rows, equality bit for bit with its PC build on the ESP32 over 5,040,000 samples, and the same first
 flag as its PC build on the AVR on 30 rows. On development data the fix cost no detection. It is not validated on
-fresh seeds. The same check of the validated Python template is open at the $10^{-21}$ level (two rate pads
-\sci{2.1}{-21}\,\degC\ below their exact value).
+fresh seeds. The validated Python template has the same $S$ recursion and the same $\varepsilon$; a record with noise
+within $\varepsilon$ of the bound makes it flag (Section~\ref{sec:wrong}). Its two rate pads are also open, at
+\sci{2.1}{-21}\,\degC.
 % src: MCU-NOTES 2g, 2h; C1-PLAN.md
 
 \subsection{Baselines}\label{sec:baselines}
@@ -849,9 +859,12 @@ paired lag of 262,482\,s. All three hypotheses were supported. At M1, TS's paire
 B4, by 1.9 to 12.4 million seconds over the block, and the nearest of them, B1 at 32 reals, had 7.6 times IM's paired
 lag. At M2, WM's paired lag was 474,074\,s below B1's (95\,\% interval $[-517{,}380, -431{,}128]$). The closest
 comparison was H-B2: the filtering window B5 lost 2,518\,s more than WM, interval $[-5{,}378, -414]$; the smoothing
-fold removes two thirds of B5's paired lag, and the forward window alone already reaches $\Dp = 0.986$. No method raised
+fold removes two thirds of B5's paired lag, and the forward window alone already reaches $\Dp = 0.986$. The two
+windows flag at the same sample on 7,237 of the 7,255 events; WM is earlier on 18, in 7 of the 200 seeds, and never
+later, and it costs 34.5\,ms per sample against B5's 20.4. No method raised
 an alarm on an admissible run or before $\tstar$. B1 to B4 run in plain binary64, so for them this is an observation on
-these runs, not a guarantee. B1 at 203 reals had one failed LP, after which it falls back to the unconstrained hull. B5's
+these runs, not a guarantee. B1 at 203 reals had one failed LP, after which it falls back to the unconstrained hull. B1's interval rescaling
+treats coefficients below $10^{-12}$ as zero, which can lose the outer property in constructed cases. B5's
 7,254 alarms were all certified. A second scorer, written from the plan alone with its own random seed and percentile
 rule and fixed before the block's rows existed, reproduced every number of Table~\ref{tab:baselines} and gave the
 same three verdicts at 2,000 and at 20,000 draws (H-B2: $[-5{,}346, -410]$ and $[-5{,}350, -402]$).
@@ -859,7 +872,8 @@ same three verdicts at 2,000 and at 20,000 draws (H-B2: $[-5{,}346, -410]$ and $
 \begin{table}[ht]
 \centering\small
 \caption{The frozen comparison on validation 3's block. Memory: reals stored between samples. Largest LP: rows
-$\times$ variables (B5's sizes were not recorded). Time: wall time per processed sample of one worker, 14 workers on
+$\times$ variables; for B1 the bound of its code, $n_c+7$ equality rows and $3o+n_c+8$ generators (the decision LP comes
+after one new generator and up to seven prior strips), which development data reach; B5's sizes were not recorded. Time: wall time per processed sample of one worker, 14 workers on
 8 cores; it compares the methods with each other, not with a dedicated core. WM's and IM's rows are validation 3's.}
 \label{tab:baselines}
 \begin{tabular}{lrlrrrr}
@@ -870,8 +884,8 @@ WM & 107 & $445\times679$ & 0.995 & 0 & 7,243 & 34.5\\
 B5, filtering window & 107 & & 0.986 & 4 & 7,227 & 20.4\\
 TS & 42 & none & 0.442 & 11 & 5,967 & 0.06\\
 IM & 2 & none & 0 & 27 & 5,257 & \\
-B1, constrained zonotope & 203 & $4\times28$ & $-0.81$ & 52 & 5,030 & 2.9\\
-B1, constrained zonotope & 32 & $1\times7$ & $-6.63$ & 300 & 3,521 & 2.9\\
+B1, constrained zonotope & 203 & $\le11\times36$ & $-0.81$ & 52 & 5,030 & 2.9\\
+B1, constrained zonotope & 32 & $\le8\times15$ & $-6.63$ & 300 & 3,521 & 2.9\\
 B4, interval observer & 6 & none & $-27.6$ & 1,799 & 790 & 0.01\\
 B3, zonotopic observer & 21 & none & $-37.0$ & 2,463 & 204 & 0.08\\
 B2, strip zonotope & 21 & none & $-46.8$ & 3,293 & 22 & 0.08\\
@@ -879,7 +893,8 @@ B2, strip zonotope & 21 & none & $-46.8$ & 3,293 & 22 & 0.08\\
 \end{tabular}
 \end{table}
 % src: RECORD-2026-11-22-baselines-block.md; results/v3/baselines/block-9438dffa/scores.json; WM ms/sample = sum of
-% F3 seconds / processed samples on validation 3's rows; B1 LP = n_c equality rows x (3o + n_c) generators
+% F3 seconds / processed samples on validation 3's rows; B1 LP bound from baselines_cz.py (predict, then range(P2));
+% observed (5x12, 8x33) on 440400 jump_0.5 and (8x15, 11x36) on DEV (second blind review, RECORD-2026-11-22-review2.md)
 
 \subsection{How much the results lean on the ambient box}\label{sec:ambient}
 
@@ -896,8 +911,7 @@ earlier. Scored against the frozen $\tstar$, with a miss counted as $N-\tstar$, 
 Against the oracle of their own box the monitors lose little more than at the frozen box: IM's lag goes from
 44,363\,s to 48,129\,s and 47,991\,s, TS's from 26,680\,s to 30,518\,s and 30,786\,s, and WM's stays at 26\,s, on the
 same two runs. A monitor's lag against the frozen $\tstar$ is the sum of the two, so 62 to 69\,\% of IM's and 72 to
-78\,\% of TS's is the assumption's own cost, and with a wider box WM loses what the exact detector loses and nothing
-more. TS's $\Dp$ falls from 0.386 to 0.345 and 0.334, because IM's own lag grows while the paired gap between them stays
+78\,\% of TS's is the assumption's own cost, and with a wider box WM's own lag stays at the same 26\,s. TS's $\Dp$ falls from 0.386 to 0.345 and 0.334, because IM's own lag grows while the paired gap between them stays
 between 12,200 and 12,700\,s. WM with a wider box is a development variant: its clamps were rebuilt for each box and
 pass the vertex check of Lemma~\ref{lem:clamp} at both, and all its alarms were certified. No monitor flagged an
 admissible row or flagged before the $\tstar$ of its box.
@@ -907,18 +921,19 @@ admissible row or flagged before the $\tstar$ of its box.
 \begin{table}[ht]
 \centering\small
 \caption{The assumed box widened on the 1,320 development rows (true ambient within $[23, 27]$). Events: certified by
-the oracle of that box. Lost, later: of the 1,081 events of the frozen box, those the oracle of the wider box no longer
-detects within the record, or detects later. Oracle's delay: that oracle scored against the frozen $\tstar$. IM, TS,
+the oracle of that box. New: certified at that box but undetermined at the frozen box (one run, 430003, drift
+0.001\,\degC/s, E1, rw); it is outside the split, and IM detects it 50\,s after its $\tstar$. Lost, later: of the 1,081
+events of the frozen box, those the oracle of the wider box no longer detects within the record, or detects later. Oracle's delay: that oracle scored against the frozen $\tstar$. IM, TS,
 WM: lag against the oracle of the same box, over the 1,081 events. Lags in seconds, a miss counted as $N-\tstar$; a
 monitor's lag against the frozen $\tstar$ is the oracle's delay plus its own.}
 \label{tab:widebox}
-\begin{tabular}{lrrrrrrr}
+\begin{tabular}{lrrrrrrrr}
 \toprule
-box & events & lost & later & oracle's delay & IM & TS & WM\\
+box & events & new & lost & later & oracle's delay & IM & TS & WM\\
 \midrule
-$[23, 27]$ & 1,081 & & & 0 & 44,363 & 26,680 & 26\\
-$[22, 28]$ & 1,056 & 26 & 55 & 78,477 & 48,129 & 30,518 & 26\\
-$[21, 29]$ & 1,032 & 49 & 32 & 106,732 & 47,991 & 30,786 & 26\\
+$[23, 27]$ & 1,081 & & & & 0 & 44,363 & 26,680 & 26\\
+$[22, 28]$ & 1,056 & 1 & 26 & 55 & 78,477 & 48,129 & 30,518 & 26\\
+$[21, 29]$ & 1,032 & 0 & 49 & 32 & 106,732 & 47,991 & 30,786 & 26\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -952,7 +967,15 @@ The records keep every failure. These changed the method:
   for the data. Before that revision the template state came within \sci{1.9}{-14} to \sci{3.0}{-14}\,\degC\ of a
   false alarm on 48 of the 80 development runs with edge noise: observed, not proved impossible.
 \item The C state had two gaps, of order $10^{-13}$ and $10^{-16}$ (Section~\ref{sec:mcu}), found by a check written
-  after the microcontroller runs. One more, at \sci{2.1}{-21} in the Python template, is still open.
+  after the microcontroller runs.
+\item The Python template's guarantee was stated without its noise restriction. Our records gave it for
+  $|v|\le\delta-\varepsilon$, as for the C state, but a draft of this paper named only the open rate pads. A second
+  blind review constructed a healthy record on which the validated template flags: the ambient held at 27\,\degC, 42\,W
+  from the steady state of 20\,W, and each measurement the largest binary64 number not above the true temperature plus
+  $\delta$, checked in rational arithmetic. At sample 309 the noise is \sci{4.6}{-15}\,\degC\ inside the bound and the
+  template's $S$ is \sci{1.6}{-14}\,\degC\ below the exact one, and the template flags. The frozen and revised C builds
+  do not flag on this record; only the revised one is sound for $|v|\le\delta$ by construction. The validated scores
+  do not change. The fix, the revised C state's slab in the Python template, is for a later version.
 \item In float32 the template loses its dominance over IM (Section~\ref{sec:mcu}). The development rehearsal before
   the first validation already showed it: the float32 build of the 16-number template detected 430098 (drift
   0.002\,\degC/s, rw) at 906, 240\,s after IM. The validation was then written to claim Theorem~\ref{thm:dom} for
@@ -1010,13 +1033,17 @@ kept, and with them the later windows. Its worst-case time is not shown either.
 
 \begin{itemize}
 \item One plant with known parameters, in simulation, under assumed laws of noise and ambient. With uncertain
-  parameters the exact set is no longer convex.
+  parameters the exact set is in general no longer convex.
+\item The frozen implementations of TS are sound for noise up to $\delta - \sci{4.85}{-13}$\,\degC, not up to
+  $\delta$; the revised C state closes the gap, the Python template does not yet (Sections~\ref{sec:mcu}
+  and~\ref{sec:wrong}).
 \item The ambient box (c) carries the detection of slow drift. A wider box delays the exact detector itself, and the
   monitors with it (Section~\ref{sec:ambient}); a wrong box can make a healthy record inconsistent.
 \item WM runs on a desktop with HiGHS. An embedded LP solver with a bounded iteration count is the open step; the
   certificate makes early stopping safe but not free.
 \item No worst-case execution time for either tier; the microcontroller times are maxima over the runs shown. On
-  the desktop, in runs with 14 workers, WM's median step took 14\,ms, but on 5 of the 9,600 runs of validation 3 a fold
+  the desktop, in runs with 14 workers, WM's median step without a fold took 14\,ms (34.5\,ms per sample on average with
+  the folds, Table~\ref{tab:baselines}), but on 5 of the 9,600 runs of validation 3 a fold
   took longer than the sampling period of 1\,s (the longest 34\,s). A deadline is not met by construction.
 \item WM's fallback path was never exercised on validation seeds; it rests on its proof and on injected failures.
 \item The facet count of $X_k$, and a principled minimal template, are open.
@@ -1075,8 +1102,8 @@ $|\epsilon_2|\le2^{-1075}$. Sums and differences have no absolute error term. \t
 the proof allows it a relative error of $4u$.
 
 \paragraph{Execution.} The inputs are finite. A solver call either returns or raises one of the
-six exception types of Section~\ref{sec:fallback}. Any other exception stops the run without an alarm, and an error
-raised inside a fold outside the solver call is recorded as an uncertified alarm; Theorem~\ref{thm:wm} covers neither,
+six exception types of Section~\ref{sec:fallback}. Any other exception stops the run without an alarm, and a
+\texttt{RuntimeError} raised inside a fold outside the solver call is recorded as an uncertified alarm; Theorem~\ref{thm:wm} covers neither,
 and the scoring rules count the second as a failure. Each LP of WM is
 either \emph{solved} (status optimal, with a finite value, finite multipliers and a finite certified bound) or
 \emph{failed}, and WM uses no value from a failed LP (Section~\ref{sec:fallback}). A process that ends inside the solver

@@ -112,6 +112,15 @@ The first three are the run of `WIDEBOX-PLAN.md` (3 h 20 min with 14 workers on 
 monitor's lag against the frozen t\* into the oracle's own delay at the wider box and the monitor's lag against that
 box's t\*. Record: `RECORD-2026-11-22-widebox.md`.
 
+## The healthy record on which freeze 1's Python template flags (seconds)
+
+```
+REPO/.venv/bin/python -B experiments/v3/diag/s_gap_witness.py results/v3/review2
+```
+
+Prints the first alarm (sample 309) and writes `witness-42W.txt`, the input of `experiments/v3/c/harness.c` for the C
+builds. Record: `RECORD-2026-11-22-review2.md`.
+
 ## Not in this repository
 
 - The oracle's per-attempt solver logs of each block (`solver_attempts/`, 9 to 30 MB per block); the records give the
