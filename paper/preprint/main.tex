@@ -1,6 +1,3 @@
-% Preprint source (draft v0.2, 2026-11-21), from paper/DRAFT.md v0.1 with an editing pass for wording.
-% Rules: every number carries its source in a "% src:" comment (a dated record in experiments/v3/ or a results file).
-% \pending{} marks results not yet in; \tocheck{} marks a claim to verify against a primary text before submission.
 % No "first", no claims beyond the records. Failures are told in the text.
 % Build: tectonic -X compile main.tex   (standard LaTeX; also builds with pdflatex + bibtex)
 \documentclass[11pt,a4paper]{article}
@@ -43,8 +40,6 @@
 \newtheorem{atheorem}[alemma]{Theorem}
 \newtheorem{acorollary}[alemma]{Corollary}
 
-\newcommand{\pending}[1]{\textcolor{red!70!black}{[PENDING: #1]}}
-\newcommand{\tocheck}[1]{\textcolor{orange!80!black}{[CHECK: #1]}}
 \newcommand{\degC}{\ensuremath{{}^\circ}C}
 \newcommand{\sci}[2]{\ensuremath{#1\times10^{#2}}}
 \newcommand{\Dp}{D_{\mathrm{paired}}}
@@ -56,7 +51,7 @@
 \large Bounded-memory set-membership detection of sensor faults, measured against the exact oracle}
 \author{Can Ko\c{c}\\ Independent researcher\\ \small \href{mailto:cankoc.dev@proton.me}{\texttt{cankoc.dev@proton.me}}\\
 \small ORCID \href{https://orcid.org/0009-0007-7386-3295}{0009-0007-7386-3295}}
-\date{\small Preprint draft v0.3, 22 November 2026. Not for circulation.}
+\date{22 November 2026}
 
 \begin{document}
 \maketitle
@@ -1072,15 +1067,16 @@ again; scoring the recorded rows at each approval commit gives the recorded \tex
 
 \section*{Use of AI assistants}
 
-The research question, its direction, the experimental protocol and the evaluation of the results are the author's.
-The question grew out of the author's earlier research on temporal state in embedded fault handling, a line the
-author closed when its results did not meet the author's criteria. The author chose the hypotheses, froze each
-validation and its failure criteria before it ran, chose to report the validation that failed, and ran the tests on
-the ESP32 and Arduino boards. Anthropic's Claude, under the author's direction, wrote most of the code, worked out the
-proofs, ran the simulated experiments, kept the records and drafted the text. OpenAI's ChatGPT and Google's Gemini
-models reviewed the mathematics and parts of the work; OpenAI's Codex wrote the second scorer from the frozen plan
-alone and carried out the blind reviews. Every reported number comes from the scripts and certified LPs described
-here; the author is responsible for every claim.
+The author formulated the research question, defined the experimental protocols and validation criteria, evaluated
+the results, and conducted the hardware experiments.
+
+Anthropic's Claude contributed to the code, mathematical proofs, simulations, and manuscript drafting. OpenAI's Codex
+contributed to the formal soundness proofs, independent verification, and critical review. OpenAI's ChatGPT and
+Google's Gemini helped review the mathematics and manuscript. The work also underwent separate blind reviews
+conducted with AI models.
+
+All AI contributions were made under the author's direction. The author takes responsibility for the work and its
+conclusions.
 
 \section*{Acknowledgements}
 
