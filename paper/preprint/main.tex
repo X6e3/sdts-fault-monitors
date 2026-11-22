@@ -883,16 +883,45 @@ B2, strip zonotope & 21 & none & $-46.8$ & 3,293 & 22 & 0.08\\
 
 \subsection{How much the results lean on the ambient box}\label{sec:ambient}
 
-A descriptive study on development seeds, preregistered without pass or fail, asked two questions.
+Two descriptive studies on development seeds, each fixed before its run and without pass or fail, asked how the
+results depend on the assumed box and what happens when the assumptions break.
 
-\paragraph{A wider assumed box.} On the 1,320 development rows (true ambient within $[23, 27]$), widening the assumed box
-to $[22, 28]$ multiplied IM's lag against the $\tstar$ of the frozen box by 2.9 and TS's by 4.1; to $[21, 29]$, by 3.5
-and 5.2. Misses rose from 8 to 32 and 55 (IM) and from 4 to 28 and 51 (TS). The whole increase is in the three slowest
-drift cells; jumps, faster drifts, gain, noise and stuck faults do not depend on the box. TS stays about 17,500\,s of
-lag ahead of IM at every box, so its relative gain falls from 40\,\% to 14\,\% and 11\,\%. No monitor flagged an
-admissible row or flagged before $\tstar$, at any box. These lags mix two losses: what a monitor discards, and what the
-weaker assumption no longer gives (the exact detector is later too; its $\tstar$ for the wider boxes was not computed).
-WM was not run with a wider box, since the box enters its LP, certificates and fallbacks.
+\paragraph{A wider assumed box.} On the 1,320 development rows (true ambient within $[23, 27]$) the box assumed by the
+oracle and by every monitor was widened to $[22, 28]$ and $[21, 29]$, with $\tstar$ computed again for each box
+(Table~\ref{tab:widebox}). Against the $\tstar$ of the frozen box, widening multiplied IM's lag by 2.9 and 3.5 and
+TS's by 4.1 and 5.2, and misses rose from 8 to 32 and 55 (IM) and from 4 to 28 and 51 (TS). Most of this is not lost
+by the monitors. The exact detector itself is weaker with a wider box: of the 1,081 events certified at the frozen box
+it no longer detects 26 and 49 within the record and detects 55 and 32 later, all in drift cells, and it is never
+earlier. Scored against the frozen $\tstar$, with a miss counted as $N-\tstar$, that costs 78,477\,s and 106,732\,s.
+Against the oracle of their own box the monitors lose little more than at the frozen box: IM's lag goes from
+44,363\,s to 48,129\,s and 47,991\,s, TS's from 26,680\,s to 30,518\,s and 30,786\,s, and WM's stays at 26\,s, on the
+same two runs. A monitor's lag against the frozen $\tstar$ is the sum of the two, so 62 to 69\,\% of IM's and 72 to
+78\,\% of TS's is the assumption's own cost, and with a wider box WM loses what the exact detector loses and nothing
+more. TS's $\Dp$ falls from 0.386 to 0.345 and 0.334, because IM's own lag grows while the paired gap between them stays
+between 12,200 and 12,700\,s. WM with a wider box is a development variant: its clamps were rebuilt for each box and
+pass the vertex check of Lemma~\ref{lem:clamp} at both, and all its alarms were certified. No monitor flagged an
+admissible row or flagged before the $\tstar$ of its box.
+% src: RECORD-2026-11-22-widebox.md; results/v3/widebox-a196fd68/ (summary.json, split.json, check.json);
+% RECORD-2026-11-21-ambient.md part (b) for the lags against the frozen t*
+
+\begin{table}[ht]
+\centering\small
+\caption{The assumed box widened on the 1,320 development rows (true ambient within $[23, 27]$). Events: certified by
+the oracle of that box. Lost, later: of the 1,081 events of the frozen box, those the oracle of the wider box no longer
+detects within the record, or detects later. Oracle's delay: that oracle scored against the frozen $\tstar$. IM, TS,
+WM: lag against the oracle of the same box, over the 1,081 events. Lags in seconds, a miss counted as $N-\tstar$; a
+monitor's lag against the frozen $\tstar$ is the oracle's delay plus its own.}
+\label{tab:widebox}
+\begin{tabular}{lrrrrrrr}
+\toprule
+box & events & lost & later & oracle's delay & IM & TS & WM\\
+\midrule
+$[23, 27]$ & 1,081 & & & 0 & 44,363 & 26,680 & 26\\
+$[22, 28]$ & 1,056 & 26 & 55 & 78,477 & 48,129 & 30,518 & 26\\
+$[21, 29]$ & 1,032 & 49 & 32 & 106,732 & 47,991 & 30,786 & 26\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \paragraph{Broken assumptions, healthy sensor.} With the frozen assumptions and healthy sensors, an ambient rate twice
 the bound caused no alarm in any monitor on 60 runs. A rate five times the bound caused certified alarms of WM on 4 of
@@ -982,8 +1011,8 @@ kept, and with them the later windows. Its worst-case time is not shown either.
 \begin{itemize}
 \item One plant with known parameters, in simulation, under assumed laws of noise and ambient. With uncertain
   parameters the exact set is no longer convex.
-\item The ambient box (c) carries the detection of slow drift (Section~\ref{sec:ambient}). A wrong box can make a
-  healthy record inconsistent.
+\item The ambient box (c) carries the detection of slow drift. A wider box delays the exact detector itself, and the
+  monitors with it (Section~\ref{sec:ambient}); a wrong box can make a healthy record inconsistent.
 \item WM runs on a desktop with HiGHS. An embedded LP solver with a bounded iteration count is the open step; the
   certificate makes early stopping safe but not free.
 \item No worst-case execution time for either tier; the microcontroller times are maxima over the runs shown. On
@@ -1156,7 +1185,8 @@ $d_i\cdot x'$ takes $w = \min(\rho, 2 - T_A)$ or $w = \max(-\rho, -2 - T_A)$, by
 $x$ on each piece cut by $T_A = 2-\rho$ and $T_A = -2+\rho$, so the vertices of the pieces suffice. The 28 vertices of
 $\mathcal{C}$ and the 14 more that the two cuts add, each the intersection of three planes, were checked in exact
 rational arithmetic, with both ends
-of $w$ and every direction: no step exceeds a clamp. Every base is clamped, so it lies in $\mathcal{C}$, and a feasible
+of $w$ and every direction: no step exceeds a clamp. The same check passes with the clamps rebuilt for the wider
+boxes of Section~\ref{sec:ambient}. Every base is clamped, so it lies in $\mathcal{C}$, and a feasible
 point of the window LP extends by the exact recurrence to every sample between its nodes.
 \end{proof}
 

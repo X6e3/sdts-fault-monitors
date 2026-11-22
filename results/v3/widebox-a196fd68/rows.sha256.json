@@ -1,0 +1,14 @@
+{
+ "21-29": {
+  "rows": 1400,
+  "sha256_plain": "640496c7d6244af50b4552ddf939753a2da7b3b33f6d6f1e4e816a2f3498068f"
+ },
+ "22-28": {
+  "rows": 1400,
+  "sha256_plain": "00282250caf1fcef149bed5e40458975ec2ca032d7735da13c9f807a8c64ef94"
+ },
+ "check-23-27": {
+  "rows": 48,
+  "sha256_plain": "b403564dc1954630e62b1d1374c800aba18f75c138b9db90d0e9df69913eeece"
+ }
+}

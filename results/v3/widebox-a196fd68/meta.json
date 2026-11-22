@@ -1,0 +1,26 @@
+{
+ "git_head": "a196fd68d31d77cd5fcea42a8205aed2e05ba1d3",
+ "git_dirty_tracked": false,
+ "platform": "Linux-7.3.4-arch1-2-x86_64-with-glibc2.44",
+ "env": {
+  "python": "3.12.13",
+  "implementation": "CPython",
+  "numpy": "2.5.5",
+  "scipy": "1.18.1",
+  "highs": "1.12.0",
+  "platform": "Linux-7.3.4-arch1-2-x86_64-with-glibc2.44",
+  "machine": "x86_64",
+  "executable": "/home/x6e3/Research/sdts-v3-a10-0ce80072/.venv/bin/python",
+  "numpy_record_sha256": "ff1cee041784df714b5a5521619920dbfd4ff462e1108a82d45606eca277a524",
+  "scipy_record_sha256": "cda958e21648ffe0b8528473532ef59f89db82bf1fa7d4a9a47161785046e979"
+ },
+ "workers": 14,
+ "started": "2026-11-22T05:47:47+0300",
+ "stage": "run",
+ "boxes": [
+  "21-29",
+  "22-28"
+ ],
+ "rows": 1400,
+ "finished": "2026-11-22T09:07:10+0300"
+}

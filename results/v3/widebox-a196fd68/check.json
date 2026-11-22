@@ -1,0 +1,92 @@
+{
+ "meta": {
+  "git_head": "a196fd68d31d77cd5fcea42a8205aed2e05ba1d3",
+  "git_dirty_tracked": false,
+  "platform": "Linux-7.3.4-arch1-2-x86_64-with-glibc2.44",
+  "env": {
+   "python": "3.12.13",
+   "implementation": "CPython",
+   "numpy": "2.5.5",
+   "scipy": "1.18.1",
+   "highs": "1.12.0",
+   "platform": "Linux-7.3.4-arch1-2-x86_64-with-glibc2.44",
+   "machine": "x86_64",
+   "executable": "/home/x6e3/Research/sdts-v3-a10-0ce80072/.venv/bin/python",
+   "numpy_record_sha256": "ff1cee041784df714b5a5521619920dbfd4ff462e1108a82d45606eca277a524",
+   "scipy_record_sha256": "cda958e21648ffe0b8528473532ef59f89db82bf1fa7d4a9a47161785046e979"
+  },
+  "workers": 14,
+  "started": "2026-11-22T05:41:08+0300",
+  "finished": "2026-11-22T05:47:46+0300"
+ },
+ "n_rows": 48,
+ "imts_rows": 1320,
+ "differences": [],
+ "vertices": {
+  "23-27": {
+   "box": [
+    23.0,
+    27.0
+   ],
+   "directions": 42,
+   "vertices_C": 28,
+   "vertices_cuts": 14,
+   "checked": 3528,
+   "steps_above_a_clamp": 0,
+   "largest_step_minus_clamp": 0.0,
+   "start_segment_ends_in_C": true,
+   "box_on_axes": [
+    2.0,
+    2.0,
+    2.0,
+    -2.0,
+    -2.0,
+    -2.0
+   ]
+  },
+  "22-28": {
+   "box": [
+    22.0,
+    28.0
+   ],
+   "directions": 42,
+   "vertices_C": 28,
+   "vertices_cuts": 14,
+   "checked": 3528,
+   "steps_above_a_clamp": 0,
+   "largest_step_minus_clamp": 0.0,
+   "start_segment_ends_in_C": true,
+   "box_on_axes": [
+    3.0,
+    3.0,
+    3.0,
+    -3.0,
+    -3.0,
+    -3.0
+   ]
+  },
+  "21-29": {
+   "box": [
+    21.0,
+    29.0
+   ],
+   "directions": 42,
+   "vertices_C": 28,
+   "vertices_cuts": 14,
+   "checked": 3528,
+   "steps_above_a_clamp": 0,
+   "largest_step_minus_clamp": 0.0,
+   "start_segment_ends_in_C": true,
+   "box_on_axes": [
+    4.0,
+    4.0,
+    4.0,
+    -4.0,
+    -4.0,
+    -4.0
+   ]
+  }
+ },
+ "F3_largest_certified_margin_difference_mC": 0.0,
+ "pass": true
+}

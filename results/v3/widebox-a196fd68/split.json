@@ -1,0 +1,82 @@
+{
+ "events_frozen": 1081,
+ "N": 3600,
+ "frozen": {
+  "v2": {
+   "lag": 44363,
+   "misses": 8
+  },
+  "cyl16p": {
+   "lag": 26680,
+   "misses": 4
+  },
+  "F3": {
+   "lag": 26,
+   "misses": 0
+  }
+ },
+ "boxes": {
+  "22-28": {
+   "oracle": {
+    "own_delay_s": 78477,
+    "events_lost": 26,
+    "events_later": 55,
+    "delay_on_events_kept_s": 59625
+   },
+   "monitors": {
+    "v2": {
+     "against_frozen_t_star": 126606,
+     "assumption": 78477,
+     "against_t_star_b": 48129,
+     "assumption_share": 0.6199,
+     "misses_against_t_star_b": 6
+    },
+    "cyl16p": {
+     "against_frozen_t_star": 108995,
+     "assumption": 78477,
+     "against_t_star_b": 30518,
+     "assumption_share": 0.72,
+     "misses_against_t_star_b": 2
+    },
+    "F3": {
+     "against_frozen_t_star": 78503,
+     "assumption": 78477,
+     "against_t_star_b": 26,
+     "assumption_share": 0.9997,
+     "misses_against_t_star_b": 0
+    }
+   }
+  },
+  "21-29": {
+   "oracle": {
+    "own_delay_s": 106732,
+    "events_lost": 49,
+    "events_later": 32,
+    "delay_on_events_kept_s": 40830
+   },
+   "monitors": {
+    "v2": {
+     "against_frozen_t_star": 154723,
+     "assumption": 106732,
+     "against_t_star_b": 47991,
+     "assumption_share": 0.6898,
+     "misses_against_t_star_b": 6
+    },
+    "cyl16p": {
+     "against_frozen_t_star": 137518,
+     "assumption": 106732,
+     "against_t_star_b": 30786,
+     "assumption_share": 0.7761,
+     "misses_against_t_star_b": 2
+    },
+    "F3": {
+     "against_frozen_t_star": 106758,
+     "assumption": 106732,
+     "against_t_star_b": 26,
+     "assumption_share": 0.9998,
+     "misses_against_t_star_b": 0
+    }
+   }
+  }
+ }
+}

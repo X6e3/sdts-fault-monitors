@@ -98,10 +98,25 @@ recurrence: 28 vertices of C and 14 more from the two cuts, both ends of w, ever
 step above a clamp, and both ends of the start segment lie in C. It does the same for the wider boxes of
 `WIDEBOX-PLAN.md`.
 
+## The wider assumed box (the paper's "How much the results lean on the ambient box"; DEV rows, hours)
+
+```
+REPO/.venv/bin/python -B experiments/v3/diag/widebox.py check OUT --workers 14
+REPO/.venv/bin/python -B experiments/v3/diag/widebox.py run OUT --workers 14
+REPO/.venv/bin/python -B experiments/v3/diag/widebox.py summary OUT
+REPO/.venv/bin/python -B experiments/v3/diag/widebox_split.py results/v3/widebox-a196fd68
+```
+
+The first three are the run of `WIDEBOX-PLAN.md` (3 h 20 min with 14 workers on Arch); `run` refuses without a passing
+`check` at the same commit. The last reads the stored rows only (seconds) and writes `split.json`, the split of each
+monitor's lag against the frozen t\* into the oracle's own delay at the wider box and the monitor's lag against that
+box's t\*. Record: `RECORD-2026-11-22-widebox.md`.
+
 ## Not in this repository
 
 - The oracle's per-attempt solver logs of each block (`solver_attempts/`, 9 to 30 MB per block); the records give the
-  sha256 of each archive.
+  sha256 of each archive. The wider-box run's attempts (260 MB) are kept the same way, with a sha256 manifest of the
+  whole run.
 
 ## Development results
 
