@@ -191,8 +191,9 @@ from fixed laws. Assumption (e) gives no absolute temperature.
 \subsection{Reduction to the ambient part}\label{sec:reduce}
 
 The plant is linear and $P$ is known, so $y = S + a_s + v$, where $S$ is the response to the command from the steady
-state at zero ambient and $a_s$ is the surface's response to the ambient. The monitor sees $z = y - S$. Shift
-temperatures by $-25$\,\degC, so that the box (c) is $[-2,2]$, and write the ambient part as $s = (a_c, a_s, T_A)$:
+state at zero ambient and $a_s$ is the surface's response to the ambient. The monitor sees $y - S$. Shift
+temperatures by $-25$\,\degC, so that the box (c) is $[-2,2]$; from here on $z = y - S - 25$ is the shifted
+measurement. Write the ambient part as $s = (a_c, a_s, T_A)$:
 \begin{align*}
 s_{k+1} &= M s_k + e_3 w_k, & |w_k|&\le\rho, & -2 &\le (s_k)_3\le 2,\\
 z_k &= (s_k)_2 + v_k, & |v_k|&\le\delta, & s_0 &= t\,(1,1,1)^\top,\ t\in[-2,2],
@@ -251,7 +252,10 @@ Development seeds and validation seeds use separate string namespaces of the sam
   and 0.02\,\degC/s; a gain error of 1\,\%; noise doubled; a stuck sensor.
 \end{itemize}
 A validation block of 200 seeds has 48 runs per seed: 40 fault runs (10 faults $\times$ 2 arms $\times$ 2 ambient laws,
-uniform noise) and 8 healthy runs (2 arms $\times$ 2 ambient laws $\times$ 2 noise laws), 9,600 runs in all.
+uniform noise) and 8 healthy runs (2 arms $\times$ 2 ambient laws $\times$ 2 noise laws), 9,600 runs in all. The two
+arms are not independent: for the additive faults (jumps, drifts, doubled noise) the monitor sees the same $z$ in both
+arms up to rounding, since $S$ is known and removed, and on validation 3 IM and WM flagged at the same sample in all
+3,200 such pairs. Every interval in this paper therefore resamples seeds, with all runs of a seed together.
 % src: experiments/v3/dev_scenarios.py; RECORD-2026-11-21-validation.md "Data" and per-cell table
 
 \subsection{Metric}
@@ -306,7 +310,8 @@ paper.
 
 \begin{corollary}\label{cor:im}
 IM and the exact detector use the same assumptions and the same decision. $X_k\subseteq\{s : s_2\in I_k\}$, so IM can
-only be later than $\tstar$, and every sample of its delay is information its representation discarded.
+only be later than $\tstar$, and in exact arithmetic every sample of its delay is information its representation
+discarded.
 \end{corollary}
 
 What IM discards is the error state $e = (a_c - T_A,\ a_s - T_A)$. In particular the velocity of $a_s$,
@@ -587,8 +592,9 @@ Table~\ref{tab:dev} gives development results only (1,081 certified detection ev
 \begin{figure}[t]
 \centering
 \input{fig_memory}
-\caption{$\Dp$ against the numbers a monitor keeps between samples. Filled markers: development (1,081 certified
-events); open markers: validation (inv4p and TS on validation 1, WM on validation 3). For a window the count is the 42
+\caption{$\Dp$ against the reals a monitor keeps between samples. Filled markers: development (1,081 certified
+events); open markers: validation (inv4p and TS on validation 1, WM on validation 3). TS's two markers coincide
+(0.386 on development, 0.387 on validation 1). For a window the count is the 42
 supports of its base plus the largest number of measurements it kept on that data; their sample indices, $\tau$ and
 the LP workspace are not counted. IM is the reference, with $\Dp = 0$ by definition. The development points of the windows come from the
 compressed window of the records (version E), which WM equals at $W = 256$ on these rows.}
@@ -698,14 +704,16 @@ Figure~\ref{fig:cells} shows where the lag of each monitor lies.
 \centering
 \input{fig_cells}
 \caption{Validation 3: the lag of IM and WM in each fault cell, summed over the cell's certified events, with a miss
-counted as $N-\tstar$ (log scale). WM's lag is 0 in seven cells (open diamonds at the left edge). IM's 27 misses are
-in the three labelled cells.}
+counted as $N-\tstar$ (log scale). Drift rates in \degC/s. WM's lag is 0 in seven cells (open diamonds at the left
+edge). IM's 27 misses are in the three labelled cells.}
 \label{fig:cells}
 \end{figure}
 
 \begin{itemize}
 \item Of the 8,000 fault runs, 7,255 are certified events, 742 are certified consistent (the fault never contradicts
-  the model within the record, so the run is admissible) and 3 are undetermined. Neither IM nor WM alarmed on any of
+  the model within the record, so the run is admissible) and 3 are undetermined. Of the 742, 400 are the stuck sensor
+  under E0: with a constant command the frozen reading, which the simulator keeps adding fresh noise to, stays
+  explainable. The other 342 are drifts of 0.0005 and 0.001\,\degC/s; under E1 every stuck run is an event. Neither IM nor WM alarmed on any of
   the 2,342 admissible runs: the 1,600 healthy runs and these 742.
 % src: RECORD-2026-11-21-validation.md lines 84-92
 \item No soundness finding. 7,255 certified events; 7,243 detected exactly at $\tstar$ (IM: 5,257). Lag p90 0\,s and
@@ -974,7 +982,8 @@ The records keep every failure. These changed the method:
   from the steady state of 20\,W, and each measurement the largest binary64 number not above the true temperature plus
   $\delta$, checked in rational arithmetic. At sample 309 the noise is \sci{4.6}{-15}\,\degC\ inside the bound and the
   template's $S$ is \sci{1.6}{-14}\,\degC\ below the exact one, and the template flags. The frozen and revised C builds
-  do not flag on this record; only the revised one is sound for $|v|\le\delta$ by construction. The validated scores
+  do not flag on this record, the frozen one because its pads happen to be larger there; only the revised one is
+  sound for $|v|\le\delta$ by construction. The validated scores
   do not change. The fix, the revised C state's slab in the Python template, is for a later version.
 \item In float32 the template loses its dominance over IM (Section~\ref{sec:mcu}). The development rehearsal before
   the first validation already showed it: the float32 build of the 16-number template detected 430098 (drift

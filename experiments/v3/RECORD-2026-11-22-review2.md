@@ -4,8 +4,8 @@
 to an outside reviewer with no internet access, a fixed Python environment (CPython 3.12.13, numpy 2.5.5, scipy 1.18.1)
 and the instruction to reproduce numbers with its own scripts. The reviewer wrote its report before reading the first
 review's report, and sealed it by its sha256 (`03320308…12de`). The report and its working files are kept with the
-project's notes, outside this repository. Its verdict: major revision. Part B of the task (checking the first review's
-findings one by one) is not part of this record.
+project's notes, outside this repository. Its verdict: major revision. Part B of the task, checking the first review's
+findings one by one against `984e8dea`, was done by a second outside reviewer on another machine (section at the end).
 
 ## Reproduced by the reviewer, with its own scripts from the stored rows
 
@@ -58,3 +58,22 @@ findings one by one) is not part of this record.
 5. **Not done here:** a second plant, a measured set-up, a worst-case time (the reviewer's main reasons for a major
    revision at Automatica or TCST; it named Control Engineering Practice or IFAC SAFEPROCESS as realistic now and
    eess.SY with math.OC for arXiv); archiving the certificates' LP data; the B1 rescaling fix.
+
+## Part B: the first review's findings against `984e8dea`
+
+A second outside reviewer, given the same package and both reports, judged the first review's 11 findings: 4 resolved,
+7 partly resolved, none unresolved or wrong. It ran the healthy-record witness again on Arch (the same alarm at sample
+309) and read the mechanism in the code: the frozen C state passes that record because its pad for the group of the
+unit basis is the group's largest (7.6e-14 °C), not because the S gap is closed. Points it raised that were still open
+in `984e8dea`, and what was done (checked from the stored rows where a number is involved):
+
+- Corollary 1 said every sample of IM's delay is discarded information: now "in exact arithmetic".
+- The same symbol z for y − S and for the shifted measurement: z is now defined as y − S − 25 once.
+- The two arms are not independent for the additive faults: on validation 3, IM and WM flag at the same sample in all
+  3,200 additive E0/E1 pairs. The protocol now says so and that every interval resamples whole seeds.
+- The 742 certified-consistent fault runs: 400 are the stuck sensor under E0 (the simulator keeps adding fresh noise
+  to the frozen reading; with a constant command it stays explainable), 342 are drifts of 0.0005 and 0.001 °C/s; every
+  stuck run under E1 is an event. Now in the validation 3 results.
+- Figure 2: TS's development and validation markers coincide (caption); Figure 4: drift rates in °C/s (caption).
+- Still open: detection delay from the fault onset t_f; byte-level RAM and step-time distributions; the B1 rescaling
+  fix; archiving the certificates' LP data; a second plant.
