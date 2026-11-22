@@ -5,7 +5,7 @@
 - **Authors:** Can Koç
 - **Primary category:** eess.SY (Systems and Control); cross-list: math.OC
 - **License:** CC BY 4.0
-- **Comments:** 27 pages, 4 figures, 7 tables. Code, frozen plans and records: https://github.com/X6e3/dmreda-sdts-research
+- **Comments:** 26 pages, 4 figures, 7 tables. Code, frozen plans and records: https://github.com/X6e3/dmreda-sdts-research
 - **Upload:** `sh make_arxiv.sh OUT` builds `OUT/sdts-arxiv.tar.gz` (main.tex, main.bbl, fig_*.tex, figdata/*.dat);
   refs.bib is left out because the .bbl is included. TeX comments stay in the upload: the paper's AI statement says
   they name the dated record behind each result.
