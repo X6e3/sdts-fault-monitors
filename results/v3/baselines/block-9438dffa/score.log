@@ -1,0 +1,144 @@
+{
+ "methods": {
+  "B1:{\"n_c\": 1, \"order\": 2, \"policy\": \"fifo\", \"prior\": \"box+err\"}": {
+   "paired_lag": 2002324,
+   "D_paired": -6.62842404431542,
+   "misses": 300,
+   "at_t_star": 3521,
+   "memory": 32,
+   "ms_per_sample": 2.8973,
+   "lp_fail": 0,
+   "admissible_alarms": 0,
+   "early": 0
+  },
+  "B1:{\"n_c\": 4, \"order\": 8, \"policy\": \"fifo\", \"prior\": \"box+err\"}": {
+   "paired_lag": 475338,
+   "D_paired": -0.8109356070130522,
+   "misses": 52,
+   "at_t_star": 5030,
+   "memory": 203,
+   "ms_per_sample": 2.8803,
+   "lp_fail": 1,
+   "admissible_alarms": 0,
+   "early": 0
+  },
+  "B2:{\"order\": 2, \"prior\": \"box\"}": {
+   "paired_lag": 12544024,
+   "D_paired": -46.79003512621818,
+   "misses": 3293,
+   "at_t_star": 22,
+   "memory": 21,
+   "ms_per_sample": 0.0761,
+   "lp_fail": 0,
+   "admissible_alarms": 0,
+   "early": 0
+  },
+  "B3:{\"order\": 2, \"prior\": \"box\", \"q\": 0.01}": {
+   "paired_lag": 9978043,
+   "D_paired": -37.01419906888853,
+   "misses": 2463,
+   "at_t_star": 204,
+   "memory": 21,
+   "ms_per_sample": 0.075,
+   "lp_fail": 0,
+   "admissible_alarms": 0,
+   "early": 0
+  },
+  "B4:{\"L\": [0.06666666666666667, 0.7666666666666666, -0.01]}": {
+   "paired_lag": 7500988,
+   "D_paired": -27.57715195708658,
+   "misses": 1799,
+   "at_t_star": 790,
+   "memory": 6,
+   "ms_per_sample": 0.0107,
+   "lp_fail": 0,
+   "admissible_alarms": 0,
+   "early": 0
+  },
+  "B5": {
+   "paired_lag": 3782,
+   "D_paired": 0.9855913929336106,
+   "misses": 4,
+   "at_t_star": 7227,
+   "memory": null,
+   "ms_per_sample": 20.3956,
+   "lp_fail": null,
+   "uncertified_alarms": 0,
+   "admissible_alarms": 0,
+   "early": 0
+  },
+  "cyl16p": {
+   "paired_lag": 146415,
+   "D_paired": 0.44219032162205407,
+   "misses": 11,
+   "at_t_star": 5967,
+   "memory": 42,
+   "ms_per_sample": 0.0614,
+   "lp_fail": 0,
+   "admissible_alarms": 0,
+   "early": 0
+  },
+  "F3": {
+   "paired_lag": 1264,
+   "D_paired": 0.9951844316943638,
+   "misses": 0,
+   "at_t_star": 7243,
+   "memory": null,
+   "ms_per_sample": null,
+   "lp_fail": null,
+   "admissible_alarms": 0,
+   "early": 0
+  }
+ },
+ "hypotheses": {
+  "H-B1 cyl16p vs B1@M1": {
+   "point": -1855909,
+   "ci95": [
+    -1994089,
+    -1712180
+   ],
+   "verdict": "supported"
+  },
+  "H-B1 cyl16p vs B2@M1": {
+   "point": -12397609,
+   "ci95": [
+    -12546101,
+    -12246833
+   ],
+   "verdict": "supported"
+  },
+  "H-B1 cyl16p vs B3@M1": {
+   "point": -9831628,
+   "ci95": [
+    -10185855,
+    -9449888
+   ],
+   "verdict": "supported"
+  },
+  "H-B1 cyl16p vs B4@M1": {
+   "point": -7354573,
+   "ci95": [
+    -7700748,
+    -6983045
+   ],
+   "verdict": "supported"
+  },
+  "H-B2 F3 vs B5": {
+   "point": -2518,
+   "ci95": [
+    -5378,
+    -414
+   ],
+   "verdict": "supported"
+  },
+  "H-B3 F3 vs B1@M2": {
+   "point": -474074,
+   "ci95": [
+    -517380,
+    -431128
+   ],
+   "verdict": "supported"
+  }
+ }
+}
+SCORE_EXIT=0
