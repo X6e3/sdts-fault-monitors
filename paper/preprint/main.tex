@@ -80,7 +80,10 @@ update it solves; an LP that fails falls back to an analytic outer bound. On a s
 missed 27), and all 7,258 alarms were certified. A previous freeze of the same window failed its validation, because a
 single LP the solver could not solve became an uncertified alarm; we report that failure, the sound fallback that
 replaced it, and its tests under injected solver failures. We also show that no memory budget can certify the error of
-a sensor drift that an admissible ambient path reproduces. \pending{one sentence on baselines B1--B5.}
+a sensor drift that an admissible ambient path reproduces. On the second block, five baselines given the same prior
+and tuned before the run all lagged our monitor at their memory budget: the best set-based one, a constrained
+zonotope storing 203 reals, had 1.8 times the interval monitor's lag, and the window with a filtering base update had
+three times the window's.
 \end{abstract}
 % src: 38.7 % = D_paired 0.387, RECORD-2026-11-18-validation.md; 99.5 %, 27, 7,258 = RECORD-2026-11-21-validation.md;
 % 5.04 M samples = MCU-NOTES 2e; freeze 2 failure = RECORD-2026-11-19-validation.md
@@ -138,7 +141,11 @@ The contributions are these.
   found in our own implementations and how they were closed (Section~\ref{sec:wrong}).
 \item When an admissible ambient path reproduces a sensor drift, no state of any size can certify the drift's error
   (Proposition~\ref{prop:twin}). We give development runs where this happens.
-\item \pending{baselines B1--B5 on the window's validation block.}
+\item A comparison fixed before it ran, on the window's validation block, with five baselines given the same prior:
+  constrained zonotopes, zonotopes with strip intersection, a zonotopic observer, an interval observer, and the
+  window with a filtering base update. At about 42 stored reals TS's paired lag was below each of the first four's;
+  the window's was below the constrained zonotope's at 203 reals (1.8 times IM's lag) and below the filtering
+  window's (1,264\,s against 3,782\,s). No baseline flagged an admissible run (Section~\ref{sec:baselines}).
 \end{enumerate}
 % src: 16 vs 24 = RECORD-2026-11-18-validation.md Verdicts; 3.6 ms = MCU-NOTES 2e; 75 ms = MCU-NOTES 2c/2f;
 % curve = DIAG-3-RESULTS.md "size-loss curve" (DEV); 65 kept = FREEZE-V3 section 1 memory bound
@@ -605,8 +612,9 @@ $\tstar = 695$; its two arms give 5,508 of the 5,768 samples of paired lag that 
 
 \paragraph{Smoothing against filtering.} On the four diagnosis runs, the filtering fold never recovers run 430027 at
 any $W$ (it stays at 1,429 against $\tstar = 579$), and recovers 430010 only to 3,449 at $W = 256$ ($\tstar = 695$). The
-smoothing fold detects both at $\tstar$ (at $W = 128$ and $W = 256$). \pending{B5, the forward window, on the validation
-block.}
+smoothing fold detects both at $\tstar$ (at $W = 128$ and $W = 256$). On validation 3's block the window with the
+filtering fold (B5, Section~\ref{sec:baselines}) had a paired lag of 3,782\,s against WM's 1,264\,s and missed 4
+events against none.
 % src: DIAG-3-RESULTS.md phase 1 tables
 
 \begin{figure}[t]
@@ -826,9 +834,40 @@ of B1 to B4. H-B2: WM's paired lag is below B5's. H-B3: at M2, WM's paired lag i
 every configuration of every family was behind IM; the nearest, B1 at 203 reals, had 2.1 times IM's paired lag.
 % src: BASELINE-PLAN.md sections 3, 4, 6 and 9 (approved 9438dffa); RECORD-2026-11-21-baselines-dev.md (DEV, the M2 note)
 
-\pending{the block's results: per method memory, largest LP, $\Dp$, misses, detections at $\tstar$, soundness
-findings and time per sample; the verdicts of H-B1 to H-B3, from the repository's scorer and from an independent
-scorer written from the plan alone.}
+\paragraph{Results.} Table~\ref{tab:baselines}. The block has 7,255 certified events; IM detects 7,228 of them, with a
+paired lag of 262,482\,s. All three hypotheses were supported. At M1, TS's paired lag was below that of each of B1 to
+B4, by 1.9 to 12.4 million seconds over the block, and the nearest of them, B1 at 32 reals, had 7.6 times IM's paired
+lag. At M2, WM's paired lag was 474,074\,s below B1's (95\,\% interval $[-517{,}380, -431{,}128]$). The closest
+comparison was H-B2: the filtering window B5 lost 2,518\,s more than WM, interval $[-5{,}378, -414]$; the smoothing
+fold removes two thirds of B5's paired lag, and the forward window alone already reaches $\Dp = 0.986$. No method raised
+an alarm on an admissible run or before $\tstar$. B1 to B4 run in plain binary64, so for them this is an observation on
+these runs, not a guarantee. B1 at 203 reals had one failed LP, after which it falls back to the unconstrained hull. B5's
+7,254 alarms were all certified. \pending{the independent scorer's verdicts.}
+
+\begin{table}[ht]
+\centering\small
+\caption{The frozen comparison on validation 3's block. Memory: reals stored between samples. Largest LP: rows
+$\times$ variables (B5's sizes were not recorded). Time: wall time per processed sample of one worker, 14 workers on
+8 cores; it compares the methods with each other, not with a dedicated core. WM's and IM's rows are validation 3's.}
+\label{tab:baselines}
+\begin{tabular}{lrlrrrr}
+\toprule
+monitor & memory & largest LP & $\Dp$ & misses & at $\tstar$ & ms/sample\\
+\midrule
+WM & 107 & $445\times679$ & 0.995 & 0 & 7,243 & 34.5\\
+B5, filtering window & 107 & & 0.986 & 4 & 7,227 & 20.4\\
+TS & 42 & none & 0.442 & 11 & 5,967 & 0.06\\
+IM & 2 & none & 0 & 27 & 5,257 & \\
+B1, constrained zonotope & 203 & $4\times28$ & $-0.81$ & 52 & 5,030 & 2.9\\
+B1, constrained zonotope & 32 & $1\times7$ & $-6.63$ & 300 & 3,521 & 2.9\\
+B4, interval observer & 6 & none & $-27.6$ & 1,799 & 790 & 0.01\\
+B3, zonotopic observer & 21 & none & $-37.0$ & 2,463 & 204 & 0.08\\
+B2, strip zonotope & 21 & none & $-46.8$ & 3,293 & 22 & 0.08\\
+\bottomrule
+\end{tabular}
+\end{table}
+% src: RECORD-2026-11-22-baselines-block.md; results/v3/baselines/block-9438dffa/scores.json; WM ms/sample = sum of
+% F3 seconds / processed samples on validation 3's rows; B1 LP = n_c equality rows x (3o + n_c) generators
 
 \subsection{How much the results lean on the ambient box}\label{sec:ambient}
 
