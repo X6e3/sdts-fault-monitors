@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this code or its results, please cite the paper below."
-title: "SDTS: bounded-memory sound fault monitors, measured against the exact oracle"
+title: "SDTS: bounded-memory fault monitors, measured against an exact oracle"
 type: software
 authors:
   - family-names: "Koç"
