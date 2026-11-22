@@ -10,6 +10,6 @@ mkdir "$work"/figdata && cp "$here"/figdata/*.dat "$work"/figdata/
 (cd "$work" && tectonic -X compile --keep-intermediates main.tex > build.log 2>&1)
 mkdir -p "$out"
 cp "$work"/main.pdf "$out"/main.pdf
-(cd "$work" && tar czf "$out"/sdts-arxiv.tar.gz main.tex main.bbl fig_*.tex figdata/*.dat)
+(cd "$work" && COPYFILE_DISABLE=1 tar --no-xattrs --no-mac-metadata -czf "$out"/sdts-arxiv.tar.gz main.tex main.bbl fig_*.tex figdata/*.dat)
 tar tzf "$out"/sdts-arxiv.tar.gz
 rm -rf "$work"
