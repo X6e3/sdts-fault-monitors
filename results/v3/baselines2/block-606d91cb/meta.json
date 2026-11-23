@@ -1,0 +1,17 @@
+{
+ "stage": "block2",
+ "git_head": "606d91cb1dc7413499fe3c257df864403e8ada54",
+ "chosen": {
+  "B1s@M1": "B1s:{\"n_c\": 1, \"order\": 2, \"policy\": \"fifo\", \"prior\": \"box+err\"}",
+  "B1s@M2": "B1s:{\"n_c\": 64, \"order\": 8, \"policy\": \"fifo\", \"prior\": \"box+err\"}",
+  "B4s@M1": "B4s:{\"L\": [0.0, 0.0, 0.0]}",
+  "B4s@M2": "B4s:{\"L\": [0.0, 0.0, 0.0]}"
+ },
+ "chosen_sha256": "f7e48016ba8b5168cecddc5aa8c1efcc3a86aa390706a31fb66f2863ef68f836",
+ "val3_sha256": "d9b90cef1c9b932468888fa375ff11c8373520ce0d972337b5631cbee3f6988f",
+ "block1_sha256": "be3ffc160ee34e2d86079a98fb866c1ec360e7f10cab15f9d70b66675106bcb5",
+ "rows": 9600,
+ "identity_rows": 48,
+ "started": "2026-11-23T20:12:17+0300",
+ "finished": "2026-11-24T00:29:58+0300"
+}

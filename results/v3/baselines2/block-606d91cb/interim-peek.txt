@@ -1,0 +1,16 @@
+Interim look, 2026-11-23 about 23:15 (+0300), Arch, read-only, on the 6,762 rows finished at that time; nothing in the
+block, the plan or the chosen configurations was changed. Command:
+  cd ~/Research/sdts-v3-c8c4971c && nice -n 19 .venv/bin/python -B ~/Research/sdts-runs/interim-peek-606d91cb.py
+Output:
+rows 6762/9600, seeds 141, events 5123, paired 5104, admissible 1636
+IM       paired_lag    180690  D_paired +0.0000  misses  19  adm_alarms 0  early 0
+WM       paired_lag       472  D_paired +0.9974  misses   0  adm_alarms 0  early 0
+TS       paired_lag    104574  D_paired +0.4213  misses   9  adm_alarms 0  early 0
+B1s@M1   paired_lag   1960054  D_paired -9.8476  misses 330  adm_alarms 0  early 0
+B1s@M2   paired_lag    599409  D_paired -2.3173  misses  71  adm_alarms 0  early 0
+B4s@M1   paired_lag    166391  D_paired +0.0791  misses  15  adm_alarms 0  early 0
+B4s@M2   paired_lag    166391  D_paired +0.0791  misses  15  adm_alarms 0  early 0
+lp_fail {'B1s@M1': 0, 'B1s@M2': 24, 'B4s@M1': 0, 'B4s@M2': 0}
+WM < B1s@M2: {"point": -598937, "ci95": [-661077, -539026], "verdict": "supported"}
+TS < B1s@M1: {"point": -1855480, "ci95": [-1991773, -1705898], "verdict": "supported"}
+TS < B4s@M1: {"point": -61817, "ci95": [-80441, -46696], "verdict": "supported"}

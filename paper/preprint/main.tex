@@ -857,6 +857,19 @@ within $\varepsilon$ of the bound makes it flag (Section~\ref{sec:wrong}). Its t
 \sci{2.1}{-21}\,\degC.
 % src: MCU-NOTES 2g, 2h; C1-PLAN.md
 
+\paragraph{Several sensors.} The tables depend on the model, the template and the assumptions, not on the data, and
+the C state of one sensor is one structure, so sensors of the same model share one set of tables: 37,036 bytes in
+float64, with 360 bytes of state per sensor (the 42 supports, the command part, the flag and the sample counter). Each
+added sensor adds its state and its step, 3.63\,ms median on the ESP32; no run had more than one sensor on a board.
+Soundness holds record by record: if every sensor's record meets the assumptions, a sound monitor flags none of them,
+however many there are (for the frozen implementations of TS, with noise within $\delta-\varepsilon$). A detector tuned
+to a false-alarm rate $\alpha$ per sensor flags at least one of $N$ independent healthy sensors with probability
+$1-(1-\alpha)^N$, 0.049 for $\alpha = 0.01$ and $N = 5$, unless its threshold is raised, which delays detection. For a
+bank of set-membership monitors, what grows with $N$ is the chance that the assumptions fail on some sensor, a question
+about the model rather than about a threshold.
+% src: experiments/v3/c/v3_state.h; sizeof on the PC build (clang, arm64), 2026-11-23: the arrays of
+% frozen/c/tables_cyl16p_double.h 37,036 bytes, v3_state 360 bytes (float build: 20,540 and 192); 3.63 ms = MCU-NOTES 2e
+
 \subsection{Baselines}\label{sec:baselines}
 
 The comparison was planned, and its configurations frozen, before it ran (approval commit \texttt{9438dffa}). It runs
@@ -1084,6 +1097,9 @@ kept, and with them the later windows. Its worst-case time is not shown either.
   larger states.
 \item WM's fallback path was never exercised on validation seeds; it rests on its proof and on injected failures.
 \item The facet count of $X_k$, and a principled minimal template, are open.
+\item Plants that share one ambient constrain it jointly: a twin of one sensor's fault
+  (Proposition~\ref{prop:twin}) must then explain the other sensors' records too. A joint monitor, with a bound on how
+  far the ambients differ, and the isolation of the faulty sensor are open.
 \item The oracle leaves some runs undetermined: in validation 3, 389 of the 800 healthy runs with noise exactly at
   $\pm\delta$, one healthy run with uniform noise (440582, E1, ramp) and 3 fault runs. Healthy runs are admissible by
   construction and are judged as such, not by the oracle.
