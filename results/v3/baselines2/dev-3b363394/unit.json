@@ -1,0 +1,26 @@
+{
+ "records": 16800,
+ "duplicates_differ": [],
+ "B4s_later_than_IM": [],
+ "soundness_findings": [],
+ "stability": {
+  "B1:{\"n_c\": 4, \"order\": 8, \"policy\": \"fifo\", \"prior\": \"box+err\"}": 24,
+  "B1s:{\"n_c\": 1, \"order\": 2, \"policy\": \"fifo\", \"prior\": \"box+err\"}": 0,
+  "B1s:{\"n_c\": 1, \"order\": 2, \"policy\": \"greedy\", \"prior\": \"box+err\"}": 0,
+  "B1s:{\"n_c\": 3, \"order\": 1, \"policy\": \"fifo\", \"prior\": \"box+err\"}": 0,
+  "B1s:{\"n_c\": 3, \"order\": 1, \"policy\": \"greedy\", \"prior\": \"box+err\"}": 0,
+  "B1s:{\"n_c\": 4, \"order\": 8, \"policy\": \"fifo\", \"prior\": \"box+err\"}": 0,
+  "B1s:{\"n_c\": 4, \"order\": 8, \"policy\": \"greedy\", \"prior\": \"box+err\"}": 0,
+  "B1s:{\"n_c\": 16, \"order\": 8, \"policy\": \"fifo\", \"prior\": \"box+err\"}": 1,
+  "B1s:{\"n_c\": 16, \"order\": 8, \"policy\": \"greedy\", \"prior\": \"box+err\"}": 0,
+  "B1s:{\"n_c\": 64, \"order\": 8, \"policy\": \"fifo\", \"prior\": \"box+err\"}": 1,
+  "B1s:{\"n_c\": 64, \"order\": 8, \"policy\": \"greedy\", \"prior\": \"box+err\"}": 1,
+  "rows": 100,
+  "shifts": [
+   0.0,
+   1e-15,
+   -1e-15,
+   2e-15
+  ]
+ }
+}

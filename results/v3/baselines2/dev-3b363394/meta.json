@@ -1,0 +1,89 @@
+{
+ "stage": "dev",
+ "git_head": "3b36339444fd269768b812bee9ac26f3141d5e76",
+ "git_dirty_tracked": false,
+ "grid": {
+  "B1s": [
+   {
+    "n_c": 1,
+    "order": 2,
+    "policy": "fifo",
+    "prior": "box+err"
+   },
+   {
+    "n_c": 1,
+    "order": 2,
+    "policy": "greedy",
+    "prior": "box+err"
+   },
+   {
+    "n_c": 3,
+    "order": 1,
+    "policy": "fifo",
+    "prior": "box+err"
+   },
+   {
+    "n_c": 3,
+    "order": 1,
+    "policy": "greedy",
+    "prior": "box+err"
+   },
+   {
+    "n_c": 4,
+    "order": 8,
+    "policy": "fifo",
+    "prior": "box+err"
+   },
+   {
+    "n_c": 4,
+    "order": 8,
+    "policy": "greedy",
+    "prior": "box+err"
+   },
+   {
+    "n_c": 16,
+    "order": 8,
+    "policy": "fifo",
+    "prior": "box+err"
+   },
+   {
+    "n_c": 16,
+    "order": 8,
+    "policy": "greedy",
+    "prior": "box+err"
+   },
+   {
+    "n_c": 64,
+    "order": 8,
+    "policy": "fifo",
+    "prior": "box+err"
+   },
+   {
+    "n_c": 64,
+    "order": 8,
+    "policy": "greedy",
+    "prior": "box+err"
+   }
+  ],
+  "B4s": [
+   {
+    "L": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "L": [
+     0.06666666666666667,
+     0.7666666666666666,
+     -0.01
+    ]
+   }
+  ]
+ },
+ "machine": "x86_64",
+ "platform": "Linux-7.3.4-arch1-2-x86_64-with-glibc2.44",
+ "started": "2026-11-23T16:59:03+0300",
+ "finished": "2026-11-23T19:22:46+0300"
+}

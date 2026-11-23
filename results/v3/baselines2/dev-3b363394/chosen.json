@@ -1,0 +1,6 @@
+{
+ "B1s@M1": "B1s:{\"n_c\": 1, \"order\": 2, \"policy\": \"fifo\", \"prior\": \"box+err\"}",
+ "B1s@M2": "B1s:{\"n_c\": 64, \"order\": 8, \"policy\": \"fifo\", \"prior\": \"box+err\"}",
+ "B4s@M1": "B4s:{\"L\": [0.0, 0.0, 0.0]}",
+ "B4s@M2": "B4s:{\"L\": [0.0, 0.0, 0.0]}"
+}

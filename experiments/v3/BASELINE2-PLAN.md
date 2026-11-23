@@ -1,6 +1,27 @@
 # BASELINE2: two strengthened baselines on validation 3's block (plan v3.1, 2026-11-23)
 
-Status: APPROVED v3.1 by Can Koç on 2026-11-23. v3 was approved for the DEV grid, unit checks and tuning ("kontrol
+Status: FROZEN on 2026-11-23 at 20:11, after the DEV grid, the unit checks and the tuning of section 3 (Arch, commit
+3b363394, 16:59 to 20:04; outputs in `results/v3/baselines2/dev-3b363394/`), which gave no finding; Can's approval
+below lets the freeze and the block follow. The block runs with
+`results/v3/baselines2/dev-3b363394/chosen.json`, sha256
+f7e48016ba8b5168cecddc5aa8c1efcc3a86aa390706a31fb66f2863ef68f836; validation 3's rows
+`results/v3/freeze3/validation-440400-440599-948b46b0/rows.jsonl`, sha256
+d9b90cef1c9b932468888fa375ff11c8373520ce0d972337b5631cbee3f6988f; the first comparison's block rows
+`results/v3/baselines/block-9438dffa/rows.jsonl.gz`, sha256
+be3ffc160ee34e2d86079a98fb866c1ec360e7f10cab15f9d70b66675106bcb5.
+- Chosen: B1s@M1 n_c 1, order 2, fifo (32 reals); B1s@M2 n_c 64, order 8, fifo (5,963 reals); B4s@M1 and B4s@M2
+  L = 0 (6 reals).
+- DEV, paired lag over 1,073 paired events (IM 32,925 s): B1s@M1 447,173 s, B1s@M2 146,563 s, B4s with L = 0
+  31,315 s. B4s with L = 0 is earlier than IM on 64 of the 1,400 rows (all drifts) and later on none; section 1's
+  "on DEV runs it equals IM" held for the five pre-check runs only (its box+err prior is information IM does not
+  use). B4s with the first comparison's gain has IM's paired lag and is never later than IM.
+- Unit checks: 16,800 records, complete; duplicates that differ 0; B4s later than IM 0; alarms on admissible rows or
+  before a certified t* 0, for every configuration.
+- Stability on 100 DEV rows (reported, not a finding): the first comparison's B1@M2 changes its detection on 24;
+  B1s on none, except n_c 16 fifo, n_c 64 fifo and n_c 64 greedy, on 1 each.
+- LP failures on DEV: 7, all in B1s n_c 64 fifo (B1's code then uses the unconstrained hull, which is outer).
+
+Approval: v3.1 by Can Koç on 2026-11-23. v3 was approved for the DEV grid, unit checks and tuning ("kontrol
 sende run için onaylıyorum run yapabilirsin"); its grid started on Arch at 582f798f at 16:36:22 and was stopped at
 16:38:52, before any row was written, to apply review r4's findings (section 8). Can then approved the steps that
 follow ("kontrol sende ben çıkıyorum adamım. onay veriyorum diğer işlemlerin için."): if the unit checks have no
