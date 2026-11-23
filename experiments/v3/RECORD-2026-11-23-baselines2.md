@@ -133,7 +133,8 @@ as r7's; with 20261121 it reproduces `scores.json` exactly) and found the B4s co
 construction") were closed in 785213e8. Its other findings and what was done:
 - ε is 4.852840351978194e-13 °C (`results/v3/c-state/c1-b68f865d/y123.json`, K6_data); the paper and README said
   4.85e-13, which is below it, so "sound for |v| ≤ δ − 4.85e-13" claimed 2.8e-16 °C too much. Both now say 4.86e-13,
-  rounded up. The AVR's 9.9e-13 is above twice ε and stands.
+  rounded up. [Corrected by review r9: the AVR's ε is not 2ε; its start error also grows, and
+  `check-1c4cb409.json` gives 9.944e-13 °C, above the stated 9.9e-13. The paper now says 9.95e-13.]
 - The 12 late events of validation 3: the margins show that the full history is inconsistent at t* under WM's own
   slab and matrix, not that η plays no part in what the window keeps. The paper now says the delays are losses of
   the compressed state and that η's effect on them was not isolated.
@@ -151,7 +152,7 @@ construction") were closed in 785213e8. Its other findings and what was done:
 
 `diag/b1s_factorial.py`, committed at f5f690eb before its run; Arch, clean clone at f5f690eb, 14 workers, nice 19,
 01:01:19 to 01:26:40 (+0300), exit 0. Results in `results/v3/baselines2/b1s-factorial-f5f690eb/` (`summary.json`,
-`rows.jsonl`, `run.log`). The 100 DEV rows of the stability check (85 paired events, IM's paired lag 6,401 s), each
+`rows.jsonl.gz`, `run.log`). The 100 DEV rows of the stability check (85 paired events, IM's paired lag 6,401 s), each
 with the shifts 0, ±1e-15 and 2e-15. The copy of B1s with (EXACT_TOL 1e-12, pad on) gave B1s's first alarm on all
 100 rows at both configurations. Descriptive; development seeds only.
 
@@ -173,6 +174,31 @@ No variant alarmed on an admissible row or before t*. What it shows, on these ro
 - With EXACT_TOL = 0 the instability returns (4 and 15 rows at (1, 2), 27 and 29 at (4, 8); B1: 16 and 24) and so do
   most of B1's detections: at (1, 2) the paired lag falls to B1's (33,051 and 33,413 against 33,445); at (4, 8) the pad
   then matters (25,128 on, 17,503 off), and B1s's other changes keep 5,080 s of the 17,876 s gap to B1.
-- EXACT_TOL = 1e-12 raises the slack eliminations and lowers the state eliminations, as reviews r7 and r8 traced.
+- EXACT_TOL = 1e-12 raises the slack eliminations and their share of all eliminations (in every pair; the state
+  eliminations themselves can rise, as at (4, 8) with the pad off, since later runs process more samples), as reviews
+  r7 and r8 traced. "Pad off" sets the pad to 0 but keeps `_bounds`'s one-ulp outward rounding of the quotients.
 So the tolerance that makes B1s stable costs most of its detections; B1's extra detections and its instability come
 from the same last-bit decisions. The block's own gap (B1s later than B1 at both budgets) is not decomposed here.
+
+## Review r9 (2026-11-24, the changes 37e20c2d..b286c025)
+
+Review r9 recomputed `summary.json` from the factorial's rows and `score.json` from the c1 check's rows (no
+difference; 9,600 distinct keys per block, no c1 alarm before t*), compared `B1sVar` with `ConZonoStrong` line by line
+(only the two parameters and the counters differ), and found:
+1. A `% src:` comment in section 7.6 had taken the start of the next sentence onto its line, so the PDF read "… not
+   that it is validated. within ε of the bound makes it flag". Fixed; every comment line added since 04016dc5 was
+   checked.
+2. The AVR's ε is 9.944e-13 °C (`check-1c4cb409.json`, faithful_binary64), above the stated 9.9e-13; now 9.95e-13,
+   rounded up (also corrected above).
+3. The introduction still said η and the model gap "account for none" of WM's delays; it now says what section 7.3
+   says, and 7.3 names the fold bounds too.
+4. The factorial sentence said "traces most of this to one change": with the tolerance alone the (4, 8) gap closes by
+   29 %, and by 72 % only with the pad off as well; the sentence now names both changes and says that the factorial
+   does not cover B1s at (64, 8) or the block.
+5. "The two validation blocks" (there are three; validation 2 failed) is now "validations 1 and 3", the check is of
+   the PC build, and "the validated scores carry over" is now "its PC build reproduces the template's recorded scores"
+   (TS was validated on validation 1 only).
+6. `paper/preprint/ARXIV.md` still had 4.85e-13, the old baselines sentence and 26 pages; updated.
+7. This record: `rows.jsonl.gz`, the elimination sentence above, and the pad-off note.
+8. The common-mode twin: the admissible object is the ambient path T_A', not the change T_A' − T_A; reworded.
+

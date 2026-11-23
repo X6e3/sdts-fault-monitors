@@ -25,9 +25,10 @@ only: no new seeds, no oracle runs.
 | IM's paired lag (s) | 233,441 | 262,482 |
 | c1's paired lag (s), D_paired, misses | 143,205, 0.3865, 16 | 146,415, 0.4422, 11 |
 
-**Verdict: SAME ALARMS.** On every one of the 19,200 runs, c1 flags at the frozen C state's sample, which is the
-Python template's, so the template's scores on both blocks (validation 1: D_paired 0.387, 16 misses; the first
-comparison on validation 3: 0.442, 11 misses) are c1's as well. U4 shows that the regenerated data and this build
+**Verdict: SAME ALARMS.** On every one of the 19,200 runs, c1's PC build flags at the frozen C state's sample, which is
+the Python template's, so it reproduces the template's recorded scores (validation 1, where the template was
+validated: D_paired 0.387, 16 misses; validation 3, a used block for TS, scored in the first comparison: 0.442, 11
+misses). The boards were not part of this check. U4 shows that the regenerated data and this build
 reproduce validation 1's own C detections.
 
 ## What this is not
