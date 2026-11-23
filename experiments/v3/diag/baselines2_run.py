@@ -59,15 +59,26 @@ def dev_records(out):
     return recs, differ
 
 
+def complete(recs, rows):
+    """plan v3.1 (review r4): every configuration of the grid on every DEV row, and nothing else"""
+    expected = {R.cfg_id(m, c) for m in R.GRID for c in R.GRID[m]}
+    by_id = {}
+    for j in recs:
+        by_id.setdefault(j["id"], []).append(j)
+    keys = {R.key(r) for r in rows}
+    if set(by_id) != expected or any({j["key"] for j in v} != keys for v in by_id.values()):
+        raise SystemExit(f"DEV records incomplete or off the grid ({len(recs)} records, "
+                         f"{len(expected)} x {len(keys)} expected)")
+    return by_id
+
+
 def tune(out):
     """baselines_run.tune (same rule, same scoring) on one record per (row, configuration)"""
     recs, differ = dev_records(out)
     if differ:
         raise SystemExit(f"duplicate DEV records disagree on {len(differ)} rows: not tuned")
     rows = R.dev_rows()
-    by_id = {}
-    for j in recs:
-        by_id.setdefault(j["id"], []).append(j)
+    by_id = complete(recs, rows)
     table = {i: R.score(v, rows) for i, v in by_id.items()}
     chosen = {}
     for method in R.GRID:
@@ -87,11 +98,14 @@ def unit(out):
     admissible row or before t*"""
     rows = {R.key(r): r for r in R.dev_rows()}
     recs, differ = dev_records(out)
+    complete(recs, list(rows.values()))
     later, findings = [], []
     for j in recs:
         r = rows[j["key"]]
         adm = r["cell"] == "healthy" or (r["status"] == "certified" and r["t_star"] is None)
-        if j["detect"] is not None and (adm or (r["t_star"] is not None and j["detect"] < r["t_star"])):
+        early = r["status"] == "certified" and r["t_star"] is not None and j["detect"] is not None \
+            and j["detect"] < r["t_star"]             # v3.1 (r4): as baselines_run.score, certified events only
+        if j["detect"] is not None and (adm or early):
             findings.append([j["id"], j["key"], j["detect"]])
         if j["method"] == "B4s" and r["v2"] is not None and (j["detect"] is None or j["detect"] > r["v2"]):
             later.append([j["id"], j["key"], j["detect"], r["v2"]])

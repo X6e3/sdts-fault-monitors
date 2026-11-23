@@ -1,8 +1,11 @@
-# BASELINE2: two strengthened baselines on validation 3's block (plan v3, 2026-11-23)
+# BASELINE2: two strengthened baselines on validation 3's block (plan v3.1, 2026-11-23)
 
-Status: APPROVED v3 by Can Koç on 2026-11-23 for the DEV grid, unit checks and tuning ("kontrol sende run için
-onaylıyorum run yapabilirsin"), before review r4 of the v3 code has answered; a finding of r4 can send the DEV grid
-back. v2 was approved by Can
+Status: APPROVED v3.1 by Can Koç on 2026-11-23. v3 was approved for the DEV grid, unit checks and tuning ("kontrol
+sende run için onaylıyorum run yapabilirsin"); its grid started on Arch at 582f798f at 16:36:22 and was stopped at
+16:38:52, before any row was written, to apply review r4's findings (section 8). Can then approved the steps that
+follow ("kontrol sende ben çıkıyorum adamım. onay veriyorum diğer işlemlerin için."): if the unit checks have no
+finding, the freeze and the block follow without a further approval; any finding stops there until Can decides.
+v2 was approved by Can
 Koç on 2026-11-23 ("onaylıyorum.") and its DEV grid ran on Arch at e068e81f from 15:27:10; it was stopped at 16:08:52 at
 Can's request ("durdur adamım düzeltelim") after 393 of the 1,400 DEV rows, because B1s alarmed on admissible rows
 (section 7). Its partial rows are kept on Arch (`~/Research/sdts-runs/baselines2-dev-e068e81f/`) and are not used. v1 was
@@ -27,10 +30,11 @@ The first comparison stays as it is (plan, code, rows, verdicts); the paper repo
 - **B1s**: B1 with stable discrete choices and its own fixes: rows scaled before the lifted reduction; exact
   elimination up to 1e-12; scores rounded to 1e-10 before sorting (near-ties by index); a prior strip only beyond
   1e-9; an interval rescaling whose propagation is outer in binary64 (v3: every coefficient in the row sums, an
-  outward rounding pad, tightening only through coefficients above 1e-9, quotients rounded outward). Every choice is
-  still an outer approximation, except B1's own dropping of a xi whose range is at most 1e-12 wide.
-  Pre-check of v3 on 14 DEV rows (section 7): no alarm while admissible or before t*; under the shifts one
-  detection of 560 moved, on Arch only (552 → 558).
+  outward rounding pad, tightening only through coefficients above 1e-9, quotients rounded outward); v3.1 (section 8):
+  a near-zero row empties the set only if |b_i| exceeds the sum of its |a_ij|, underflow and overflow handled, only an
+  exactly fixed xi loses its column. Every choice is an outer approximation; the exact operations (prediction,
+  intersection, elimination) run in plain binary64, as in B1.
+  Pre-checks on 14 DEV rows (sections 7, 8): no alarm while admissible or before t*.
 - **B4s**: B4 with three outer tightenings: the as-range intersected with the measurement slab; the box+err prior by
   interval propagation; IM's rate rule. By construction it is never later than IM; on DEV runs it equals IM. It is a
   check that the interval-observer family reaches IM, not a rival expected to pass it. (r3 computed that the
@@ -50,8 +54,9 @@ The first comparison stays as it is (plan, code, rows, verdicts); the paper repo
   prior box+err. 10 configurations.
 - B4s: two gains: L = 0 and the first comparison's chosen gain, which is (M12, M22, −0.01) = (0.0667, 0.7667, −0.01).
   (v2 listed (M12, M22, −0.01) as a third gain; it is the second one, and v2's grid ran it twice per row.)
-- Unit checks before tuning (reported, any finding stops the freeze until Can decides): B4s never later than IM on
-  any DEV row; no configuration flags an admissible row or before t*; stability: the first comparison's B1@M2 and
+- Unit checks before tuning (reported, any finding stops the freeze until Can decides): the DEV records are complete
+  (every configuration on every row, one record each; v3.1); B4s never later than IM on any DEV row; no configuration
+  flags an admissible row or before a certified t*; stability: the first comparison's B1@M2 and
   every B1s configuration on 100 DEV rows (smallest sha256 keys) with the data shifted by 0, ±1e-15 and 2e-15, the
   number of rows whose detection changes.
 - Tuning rule as in the first comparison: per family and budget, the smallest paired lag on DEV among configurations
@@ -75,7 +80,7 @@ lagged; the abstract and highlights follow the result.
 
 ## 6. Order and cost
 
-1. Can approves v3. 2. DEV grid, unit checks, tuning on Arch (14 workers). 3. Freeze: status FROZEN with the three
+1. Can approves v3.1. 2. DEV grid, unit checks, tuning on Arch (14 workers). 3. Freeze: status FROZEN with the three
 sha256, committed. 4. Identity check and block on Arch. 5. Score; a dated record.
 Times from v2's 393 DEV rows (seconds per run on Arch: B1s 5 to 15, n_c 64 the slowest; B4s 0.5): the DEV grid about
 2.4 h, the stability check about 0.7 h; the block 2.6 to 4.2 h, depending on the configuration chosen for B1s@M2. v2
@@ -103,3 +108,29 @@ said "about 2 h" for each; that was an underestimate.
   shifts; on Arch one did (430021 jump_0.2 E0 rw, n_c 16, order 8, fifo: 552 at three shifts, 558 at 2e-15), so 1 of
   560 values differs between the machines. B1s is far steadier than B1 (section 0), but not bit-stable; the
   stability count of section 3 reports this on 100 rows.
+
+## 8. v3 → v3.1 (2026-11-23, review r4 of the v3 code)
+
+Review r4 read the v3 draft (read-only copy on Arch) and ran DEV-only checks. Its findings and what was done:
+- **A near-zero row emptied the set** (`_eliminate_one`, inherited from B1): a row whose coefficients are all at
+  most 1e-9 set the set empty when |b_i| > 1e-9, although a point with |xi| ≤ 1 can satisfy it (r4's example:
+  A = [6e-10, 6e-10, 6e-10], b = 1.5e-9, xi = 5/6 each). v3.1: empty only if |b_i| > Σ|a_ij| + 1e-9; otherwise the row
+  is dropped (outer).
+- **The unit check counted an uncertified t\*** (one DEV row, 430003 drift_0.001 E1 rw, status undetermined, t* 1956):
+  v3.1 counts alarms before t* on certified events only, as the scoring does; and the unit checks and the tuning
+  refuse incomplete records or configurations off the grid.
+- **Overflow and underflow in `_bounds`** (r4's constructed examples; not reachable in this plant, whose rows are
+  scaled to unit norm): an overflowing row gave NaN bounds and wiped the generators; 25 copies of a row with
+  coefficients 2^-1074 cut a feasible point. v3.1: the pad has an absolute term for underflow, a row with a non-finite
+  sum tightens nothing, and crossed or non-finite bounds leave the set to the LP (B1: crossed by more than 1e-9).
+- **A xi up to 1e-12 wide lost its column** (B1's rule; r4 measured 16 such drops on 3 DEV runs, the widest
+  2.55e-15): v3.1 drops only an exactly fixed xi, so no step of the reduction leaves the outer approximation.
+- **Portability** (r4: the DEV grid would fail on macOS's spawn start method): not confirmed; the DEV command ran one
+  row with all 12 configurations on the Mac (spawn), because the child process imports the main script.
+r4 found `_bounds` outer in binary64 in the finite range (its pad covers the rounding about twice over) and the other
+B1s changes outer. B4s's propagation is unchanged (plain binary64; r4 found no false alarm on the 80 healthy DEV runs
+with edge noise, both gains). All of r4's examples were rerun: v3 fails each, v3.1 passes each; on the 9 rows of
+section 7 the outer probe gives the same detections and cuts as under v3.
+- **Pre-check of v3.1** (same rows, shifts and machines as section 7; sha256 of `baselines_strong.py` beginning
+  34c7ff6a): all 560 detections on each machine equal v3's; no alarm on an admissible row or before t*; the same
+  single difference (Arch, 430021 jump_0.2 E0 rw, n_c 16, order 8, fifo, 558 at 2e-15).

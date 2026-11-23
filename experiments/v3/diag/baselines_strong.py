@@ -10,8 +10,13 @@ B1s: B1 (constrained zonotopes, Scott et al. 2016) made stable and given its own
      - Girard scores and elimination scores are rounded to SCORE_TOL before sorting, so near-ties go by index;
      - a prior strip is added only when the hull sticks out by more than PRIOR_TOL;
      - the interval rescaling's propagation is outer in binary64 (`_bounds`, plan v3): every coefficient in the row
-       sums, an outward rounding pad, tightening only through coefficients above TIGHT_TOL.
-     Every choice it makes is still an outer approximation. The grid has the greedy policy as well as fifo.
+       sums, an outward rounding pad, tightening only through coefficients above TIGHT_TOL;
+     - plan v3.1 (review r4): a row whose coefficients are all below 1e-9 empties the set only if |b_i| exceeds the
+       sum of their absolute values (B1: if |b_i| > 1e-9); the pad covers underflow, a row that overflows tightens
+       nothing, crossed bounds leave the set to the LP, and only an exactly fixed xi loses its column (B1: up to
+       1e-12 wide).
+     Every choice it makes is still an outer approximation; the exact operations run in plain binary64, as in B1.
+     The grid has the greedy policy as well as fifo.
      Plan v2's rescaling (every nonzero coefficient, no pad) was not outer: on DEV run 430021 healthy E0 rw it cut the
      exact range of a xi (by LP) by 1 at t = 175, dividing the rounding error of a row by a coefficient 2.5e-18 times
      the row's largest, and B1s n_c 16, order 8, greedy then alarmed on admissible DEV rows. B1's own propagation
@@ -32,6 +37,7 @@ import baselines_cz as CZ
 ROW_TOL = 1e-9
 TIGHT_TOL = 1e-9
 EPS = float(np.finfo(float).eps)
+TINY = 2.0 ** -1074                                   # the smallest subnormal
 PRIOR_TOL = 1e-9
 EXACT_TOL = 1e-12
 SCORE_TOL = 1e-10
@@ -57,8 +63,8 @@ class ConZonoStrong(CZ.ConZono):
         absA = np.abs(A)
         ok = absA > 1e-9
         zero = ~ok.any(axis=1)
-        if zero.any():
-            if np.any(np.abs(b[zero]) > 1e-9):
+        if zero.any():                                # v3.1 (review r4): empty only if |b_i| > sum_j |a_ij|
+            if np.any(np.abs(b[zero]) > absA[zero].sum(axis=1) + 1e-9):
                 self.empty = True
             keep = ~zero
             self.A, self.b, self.age = A[keep], b[keep], self.age[keep]
@@ -127,7 +133,10 @@ class ConZonoStrong(CZ.ConZono):
                     continue
                 tlo, thi = np.minimum(r * lo[idx], r * hi[idx]), np.maximum(r * lo[idx], r * hi[idx])
                 slo, shi = tlo.sum(), thi.sum()
-                pad = (idx.size + 8) * EPS * (abs(b[i]) + float(np.abs(r) @ np.maximum(np.abs(lo[idx]), np.abs(hi[idx]))))
+                pad = (idx.size + 8) * EPS * (abs(b[i]) + float(np.abs(r) @ np.maximum(np.abs(lo[idx]), np.abs(hi[idx])))) \
+                    + (idx.size + 4) * TINY                   # v3.1 (r4): products that underflow
+                if not (np.isfinite(b[i]) and np.isfinite(slo) and np.isfinite(shi) and np.isfinite(pad)):
+                    continue                                  # v3.1 (r4): an overflowing row tightens nothing
                 rb, j = r[big], idx[big]
                 rest_lo, rest_hi = slo - tlo[big] - pad, shi - thi[big] + pad
                 a1, a2 = (b[i] - rest_hi) / rb, (b[i] - rest_lo) / rb
@@ -140,15 +149,14 @@ class ConZonoStrong(CZ.ConZono):
         if self.rescale != "interval":
             return super()._rescale(sweeps)
         lo, hi = self._bounds(sweeps)
-        if np.any(lo > hi + 1e-9):                    # as B1: numerically empty, the LP decides
-            return
-        hi = np.maximum(hi, lo)
+        if not (np.all(np.isfinite(lo)) and np.all(np.isfinite(hi))) or np.any(lo > hi):
+            return                                    # v3.1 (r4): outer bounds crossed = empty; the LP decides
         m, r = (hi + lo) / 2, (hi - lo) / 2
         self.c = self.c + self.G @ m
         self.b = self.b - self.A @ m
         self.G = self.G * r
         self.A = self.A * r
-        keep = r > CZ.TOL                             # as B1: a fixed xi (half-width up to 1e-12) has no column left
+        keep = r > 0.0                                # v3.1 (r4): only an exactly fixed xi loses its column (B1: 1e-12)
         self.G, self.A = self.G[:, keep], self.A[:, keep]
 
 
