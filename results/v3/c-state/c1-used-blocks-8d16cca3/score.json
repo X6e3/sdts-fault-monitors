@@ -1,0 +1,53 @@
+{
+ "old_sha256": "aa581fb2d783409352cbeec59409e27f656a9a9cc90d667954b40b66103d89cf",
+ "new_sha256": "5d4fddeea11b3aa842e4101d16e843bf7a730443b99158ad3022ce12d9afff95",
+ "seconds": 226.5,
+ "validation1": {
+  "manifest_sha256": "e8dd60f134252c1855aca040a46836281db57c1ee19da9713f4c7a25d6e18a96",
+  "runs": 9600,
+  "expected": 9600,
+  "complete": true,
+  "c1_earlier": [],
+  "first_differs": [],
+  "frozen_vs_recorded_c_differs": [],
+  "c1_admissible_alarms": [],
+  "c1_vs_python_differs": [],
+  "events": 7201,
+  "paired": 7177,
+  "IM_paired_lag": 233441,
+  "c1_paired_lag": 143205,
+  "c1_D_paired": 0.3865473502940786,
+  "c1_misses": 16,
+  "U_hold": {
+   "U1": true,
+   "U2": true,
+   "U3": true,
+   "U4": true,
+   "U5": true
+  }
+ },
+ "validation3": {
+  "manifest_sha256": "0a40cbdf863da6eb046a1c76726d53bf2e967bfa3e0056b1ac15b87cbc7b85c7",
+  "runs": 9600,
+  "expected": 9600,
+  "complete": true,
+  "c1_earlier": [],
+  "first_differs": [],
+  "c1_admissible_alarms": [],
+  "c1_vs_python_differs": [],
+  "events": 7255,
+  "paired": 7228,
+  "IM_paired_lag": 262482,
+  "c1_paired_lag": 146415,
+  "c1_D_paired": 0.44219032162205407,
+  "c1_misses": 11,
+  "U_hold": {
+   "U1": true,
+   "U2": true,
+   "U3": true,
+   "U4": null,
+   "U5": true
+  }
+ },
+ "verdict": "SAME ALARMS"
+}
