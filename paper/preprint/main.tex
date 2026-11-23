@@ -421,9 +421,13 @@ conditions of Theorem~\ref{thm:sound} only for noise $|v|\le\delta-\varepsilon$,
 like the frozen C state (Section~\ref{sec:mcu}) it computes the command part $S$ in binary64, and no pad covers its
 rounding. A constructed healthy record with noise $\sci{4.6}{-15}$\,\degC\ inside the bound makes it flag
 (Section~\ref{sec:wrong}). Two rate pads are also \sci{2.1}{-21}\,\degC\ below their exact value (open), and two start
-supports \sci{1.1}{-16}\,\degC\ short, which the first step absorbs.
+supports \sci{1.1}{-16}\,\degC\ short, which the first step absorbs. The implemented IM has the same gap: it pads the
+rounding of $z$ and of $z\pm\delta$ by one ulp each, but computes $S$ in binary64 with no pad, and on the same record it
+flags at sample 309. The statements about IM in exact arithmetic are unaffected; on validation 3, IM flagged none of the
+2,342 admissible runs.
 % src: the a_s-range condition = internal review 2026-11-22 (a constructed looser basis; RECORD-2026-11-22-review-checks.md);
-% rate pads and start supports = MCU-NOTES 2g (P4, P5, P5', K6: same eps); witness = RECORD-2026-11-22-review2.md
+% rate pads and start supports = MCU-NOTES 2g (P4, P5, P5', K6: same eps); witness = RECORD-2026-11-22-review2.md;
+% IM on the witness = RECORD-2026-11-23-review3-checks.md; admissible runs = RECORD-2026-11-21-validation.md line 92
 
 \subsection{The frozen template}\label{sec:frozen}
 
@@ -716,15 +720,25 @@ edge). IM's 27 misses are in the three labelled cells.}
   the 2,342 admissible runs: the 1,600 healthy runs and these 742.
 % src: RECORD-2026-11-21-validation.md lines 84-92
 \item No soundness finding. 7,255 certified events; 7,243 detected exactly at $\tstar$ (IM: 5,257). Lag p90 0\,s and
-  maximum 212\,s (IM: 55\,s and 2,215\,s). No run was later than IM.
-\item 7,258 alarms, each recorded with its certificate flag and a finite negative certified margin (the largest
-  $-0.0147$\,m\degC); three of them on fault runs the oracle left undetermined. The LP data behind the certificates
-  are not archived.
+  maximum 212\,s (IM: 55\,s and 2,215\,s; the scorer's percentile is the order statistic at the nearest index). No run
+  was later than IM.
+\item 7,258 alarms, each recorded with its certificate flag and a finite negative certified margin, the signed
+  distance from WM's certified bounds on $a_s$ to the slab of radius $\delta+\eta$ around the measurement, rounded
+  outward (the largest $-0.0147$\,m\degC); three of them on fault runs the oracle left undetermined. The LP data
+  behind the certificates are not archived.
+\item On all 7,997 certified fault runs the oracle's own bounds leave room on both sides of $\delta$: at least
+  \sci{1.07}{-7}\,\degC\ on the inconsistent side at $\tstar$ (the 7,255 events), at least \sci{2.90}{-6}\,\degC\ on
+  the consistent side before $\tstar$, and at least \sci{5.15}{-4}\,\degC\ on the 742 certified-consistent runs, more
+  than $2\times10^5$ times the model gap of Corollary~\ref{cor:wm}. Under the oracle's binary64 certificates, its
+  certified $\tstar$ on this block is therefore the exact model's, and the 742 certified-consistent fault runs are
+  consistent under the exact model.
+% src (room): RECORD-2026-11-23-oracle-margin.md (plan ORACLE-MARGIN-PLAN.md, e2772d92); 742 runs' room from its
+% margins.jsonl (RECORD-2026-11-23-review3-checks.md)
 \item The remaining lag sits in three cells: drift 0.0005 and 0.001\,\degC/s with ramp ambient, and drift
   0.002\,\degC/s with rw ambient. Drifts carry 99.8\,\% of IM's paired lag; over all certified events with
   a miss counted as $N-\tstar$, as in Figure~\ref{fig:cells}, 91.8\,\%.
 \item WM detected 12 events after $\tstar$, all in slow drift cells. At each of them the oracle's lower bound on $d^\ast$
-  at $\tstar$ exceeds $\delta$ by at least \sci{1.06}{-7}\,\degC, more than 100 times $\eta$ plus the model gap of
+  at $\tstar$ exceeds $\delta$ by at least \sci{1.07}{-7}\,\degC, more than 100 times $\eta$ plus the model gap of
   Corollary~\ref{cor:wm}. So none of these delays comes from WM's wider slab or its exact matrix: with WM's own
   semantics the full history is already inconsistent at $\tstar$.
 \item The fallback path never ran on this block. WM solved 53,968,652 LPs with 722 retries (on 320 runs), and every LP was solved
@@ -733,7 +747,8 @@ edge). IM's 27 misses are in the three labelled cells.}
 \item At most 65 measurements kept, at most 445 LP rows and 679 variables.
 \end{itemize}
 % src: RECORD-2026-11-21-validation.md
-% src (12 late events): RECORD-2026-11-22-review-checks.md, diag/eta_check.py
+% src (12 late events): RECORD-2026-11-22-review-checks.md, diag/eta_check.py (1.06e-7 on the Mac with other
+% multipliers; both are lower bounds); 1.07e-7 = RECORD-2026-11-23-oracle-margin.md, which covers these 12
 
 \paragraph{Other metrics.} $\Dp$ weighs large lags heavily: on validation 3 the three slowest drift cells carry
 97.9\,\% of IM's paired lag. Table~\ref{tab:metrics} scores the validated monitors over all certified events, with
@@ -745,7 +760,8 @@ descriptive and are not part of the decision rule.
 \centering\small
 \caption{The validated monitors under other metrics. ``All events'': the ratio $1-L_m/L_{\mathrm{IM}}$ over every
 certified event, a miss counted as $N-\tstar$; ``capped'': the same with every lag capped at 30\,s. Percentiles over
-the detected events, with linear interpolation.}\label{tab:metrics}
+the detected events, with linear interpolation (the scorer of Section~\ref{sec:val3} takes the nearest index;
+for IM's p90 both give 55\,s).}\label{tab:metrics}
 \begin{tabular}{llllll}
 \toprule
 monitor (block) & $\Dp$ & all events & capped & lag p90 / p99 (s) & misses / events\\
@@ -1053,7 +1069,12 @@ kept, and with them the later windows. Its worst-case time is not shown either.
 \item No worst-case execution time for either tier; the microcontroller times are maxima over the runs shown. On
   the desktop, in runs with 14 workers, WM's median step without a fold took 14\,ms (34.5\,ms per sample on average with
   the folds, Table~\ref{tab:baselines}), but on 5 of the 9,600 runs of validation 3 a fold
-  took longer than the sampling period of 1\,s (the longest 34\,s). A deadline is not met by construction.
+  took longer than the sampling period of 1\,s (the longest 34\,s). A deadline is not met by construction. In the
+  validated runs WM's LPs run in its own process, so a solver that ends the process ends the run before any fallback
+  (Section~\ref{sec:inject}).
+\item TS's tables are built offline from every triple of template directions; their number grows like
+  $\binom{|D|}{n}$ (11,480 for the 42 directions here, $n = 3$), which is practical for this plant and not for much
+  larger states.
 \item WM's fallback path was never exercised on validation seeds; it rests on its proof and on injected failures.
 \item The facet count of $X_k$, and a principled minimal template, are open.
 \item The oracle leaves some runs undetermined: in validation 3, 389 of the 800 healthy runs with noise exactly at
@@ -1130,7 +1151,10 @@ six exception types of Section~\ref{sec:fallback}. Any other exception stops the
 and the scoring rules count the second as a failure. Each LP of WM is
 either \emph{solved} (status optimal, with a finite value, finite multipliers and a finite certified bound) or
 \emph{failed}, and WM uses no value from a failed LP (Section~\ref{sec:fallback}). A process that ends inside the solver
-is outside this proof; Section~\ref{sec:inject} tests that case.
+is outside this proof; Section~\ref{sec:inject} tests that case. The code is run single-threaded: the LP data of the
+last call are kept in one shared slot (\texttt{Rec.last}) until the certificate reads them. Every sum and inner
+product, in SciPy's sparse products as elsewhere, is evaluated in binary64 with rounding to nearest at each operation
+(or as a binary64 fused multiply-add), in any order; extended precision and flush-to-zero modes are outside the proof.
 
 \subsection{The certified bound}
 
@@ -1161,8 +1185,11 @@ $\hat T_j\ge(1-\gamma)T_j - e_j$, where $e_j$ collects the absolute errors of th
 Lipschitz in $s_j$ with constant $q_j = \max(|\ell_j|, |h_j|)$. The pads $(2\gamma\hat T_j + 2u(\hat T_j - |c_j|))\,q_j$
 cover both relative errors with room $\gamma(1-2\gamma-2u)\,T_j q_j$, since $\gamma<1/4$ for these LP sizes. The terms
 are summed with \texttt{math.fsum}; a final pad $4(\gamma_4\,\mathrm{fsum}(|p|) + u\,|\mathrm{tot}|)$ covers the
-rounding of each term, which takes at most three roundings, and of the sum. Last, an absolute term $5N\cdot2^{-1074}$
+rounding of each term, which takes at most four roundings, and of the sum. Last, an absolute term $5N\cdot2^{-1074}$
 covers the $e_j$ and the underflow of the final pad's own two products, where $N$ counts the products that can underflow.
+Per counted product it allows $(1+2\cdot2)\,2^{-1074}$, twice what a loss of $2^{-1075}$ can cost where it occurs
+and through $s_j$ and $T_j$, which reach the bound scaled by at most $q_j\le2$; the later sums and the final pad scale
+that cost by at most $(1+\gamma)(1+4\gamma_4)<2$, so it stays covered.
 In the candidate the largest box end is exactly 2,
 and $b$, $f$, $c$ and the boxes are taken as stored. Every LP of the candidate has at most 1,095 variables, 821 equality rows with 3,553 nonzeros and 42 template rows, with
 every box within $\pm2$, so $N\le14{,}795$, $5N<2^{52}$, and the term is computed exactly. A value that is not finite at
@@ -1288,14 +1315,20 @@ alarm at $t$ needs the separation of Lemma~\ref{lem:alarm}, which shows that $z_
 \end{proof}
 
 \begin{acorollary}\label{cor:wm}
-WM never flags a healthy run of the simulator, and never flags before the oracle's $\tstar$.
+On records of 3,600 samples, as in every block, WM never flags a healthy run of the simulator, and never flags before
+the oracle's $\tstar$.
 \end{acorollary}
 \begin{proof}
-A healthy run: each simulated step makes at most ten roundings per state on values below 250 in magnitude, so it errs
+A healthy run: the plant is a positive linear system ($F\ge0$, nonnegative input coefficients, $P\in[0,42]$\,W,
+$T_A\in[23,27]$\,\degC) started at a steady state, so its states stay between 0 and the largest steady state
+($t_s\le 27+42/H = 79.5$\,\degC, $t_c\le 100.5$\,\degC). Each simulated step makes at most ten roundings per state on
+values below 250 in magnitude, so it errs
 by at most $10u\cdot250\approx\sci{2.8}{-13}$\,\degC. The error propagates through the exact recurrence, whose
 $(a_c, a_s)$ block $F$ is nonnegative with $(I-F)^{-1}$ row sums 67.5 and 52.5, so each of the two simulations stays
-within \sci{1.9}{-11}\,\degC\ of the exact one at every length. Forming $z$ adds three operations, and moving the ambient
-path onto the exact rate bound changes $a_s$ by at most \sci{6.4}{-12}\,\degC. So an admissible run of the exact model
+within \sci{1.9}{-11}\,\degC\ of the exact one at every length. The float start (the steady state, three operations)
+adds a few ulps, which the recurrence does not amplify ($\|F^k\|_\infty\le1$). Forming $z$ adds three operations, and moving the ambient
+path onto the exact rate bound changes $a_s$ by at most $3599\cdot2^{-49}\approx\sci{6.4}{-12}$\,\degC; this term grows
+with the length of the record. So an admissible run of the exact model
 explains the data with radius $\delta + \sci{5}{-11} < d$, and Theorem~\ref{thm:wm} applies at every sample.
 
 Before $\tstar$: the oracle certifies the prefix up to $\tstar-1$ as consistent with an ambient path that is exactly
