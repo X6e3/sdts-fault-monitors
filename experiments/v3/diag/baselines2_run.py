@@ -38,7 +38,7 @@ def block_job(args):
 def block(out, chosen_path, workers):
     plan = PLAN.read_text()
     csha = hashlib.sha256(chosen_path.read_bytes()).hexdigest()
-    if "Status: FROZEN" not in plan or csha not in plan:
+    if not any(l.startswith("Status: FROZEN") for l in plan.splitlines()) or csha not in plan:
         raise SystemExit("BASELINE2-PLAN.md is not FROZEN with this chosen.json: the block is not run")
     chosen = json.loads(chosen_path.read_text())
     ids = []
