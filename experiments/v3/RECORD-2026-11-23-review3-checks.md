@@ -1,7 +1,8 @@
 # Record: checks of review r3's points used in the paper (2026-11-23)
 
 Descriptive checks, no verdict changes. Mac, CPython 3.12.13, numpy 2.5.5, scipy 1.18.1, tree at 3b363394 plus the
-scripts named below. Sections 3–6 were revised after review r5 of the first draft (same day).
+scripts named below. Sections 3–6 were revised after review r5 of the first draft; sections 7 and 8 were written after
+it and read by review r6, and section 9 follows r6's proposal, the same day.
 
 ## 1. IM has the S gap of the frozen template
 
@@ -80,8 +81,90 @@ prefixes is monotone), and those are the prefixes measured here and in RECORD-20
 p/CC and H·ta/CS, nonnegative; P ∈ [0, 42], T_A ∈ [23, 27]. Started at a steady state, the states stay between 0 and
 the largest steady state: t_s ≤ 27 + 42/0.8 = 79.5 °C, t_c ≤ 79.5 + 42/2 = 100.5 °C, below the 250 the proof uses.
 
-## Open from r3 (not done here)
+## 7. `check_c_state.py` K2: the underflow term and |h| ≤ HMAX
 
-- The oracle's upper-certificate pad (32·eps·(m+1)·scale) is used without a written lemma (review r5 sketches one with
-  more than 20 times room for m ≤ 3,600; the paper now says "under the oracle's binary64 certificates").
-- `check_c_state.py` K2: the gradual-underflow term (r2) and the |h| ≤ HMAX induction in the proof.
+K2's need now carries 4 · tiny (tiny = 2^-1075 in binary64, 2^-150 in binary32): the C state's dot product
+(`c/v3_state.c` `support`) has three products, each losing at most tiny beyond the relative model under gradual
+underflow, carried through two additions (3 (1 + u)^2 tiny < 4 tiny). The criterion's docstring records the addition
+and the |h| ≤ HMAX argument: `v3_observe` keeps every h_i ≤ CAP_i (largest 2.9981327522311334 for cyl16p) and the
+start supports are clamped (largest 2.828); while the exact set is nonempty, h_i is at least its support in d_i,
+inside [-2, 2]^3, so at least −2‖d_i‖_1 (2 max‖d_i‖_1 = 3.265986323710904); HMAX = √3 · 2.2 = 3.8105.
+
+Rerun on the Mac (14 s each), outputs in `results/v3/c-state/k2-underflow-20261123/`:
+- `check_c_state.py` (the frozen C state): every field equals `results/v3/c-state/check-1c4cb409.json`, K2 included
+  (no entry uncovered in either precision; smallest slack 87.3 % of the pad in binary64, 74.8 % in binary32);
+  verdict OPEN as before (K5, the start supports, MCU-NOTES).
+- `check_c1.py` (the revised C state): every field equals `results/v3/c-state/c1-b68f865d/y123.json`; Y1–Y3 hold.
+
+## 8. The oracle's upper certificate (the paper's lemma `lem:ocert`)
+
+Read in `experiments/oracle/thermal_oracle.py`:
+- `_project`: each step clips to [nextafter(fl(p − ρ), p), nextafter(fl(p + ρ), p)], inside [p − ρ, p + ρ] exactly,
+  then to the box, which contains p; so the projected path meets (b) and (c) in exact arithmetic. The start is
+  (T_A0, T_A0).
+- The matrix (A11, A12; A21, A22, B2) is nonnegative; read as rationals its rows sum to 1 + 2^-56 and 1 + 3·2^-56
+  (checked with `fractions`).
+- `_residual_range`: per step a_c from two products and one addition, a_s from three products and two additions;
+  the residual z − a_s one subtraction; pad = 32·EPS·(m + 1)·scale, scale = max(1, max|T_A|, max|z|), one rounding;
+  `_forward` rounds the final distance up by one ulp.
+The lemma's bound: the computed a_s is within 3.01·m·u·σ of the exact a_s of the binary64 matrix along the projected
+path, and the residual and the pad add 4.2·u·σ, against a pad of 64·(m + 1)·u·σ. The prefixes are shifted exactly
+(section 5).
+
+Review r6 read the lemma: correct; the statement now names d_up (the oracle calls `_forward` with offset 0.0,
+line 370) and the induction covers the computed states as well as the exact ones; "shifted exactly" is not needed for
+the lemma (it is about the prefix as the oracle reads it).
+
+A numerical sanity check, not part of the proof: `experiments/v3/diag/ocert_check.py TYPE 1` (Mac, about 65 s each)
+calls the oracle's `_project`, `_residual_range` and `_forward` on five path types of 3,600 samples and compares with
+the binary64 matrix in exact arithmetic along the projected path:
+
+```
+walk seed 1: admissible True, exact residuals inside [low, high] True, max|exact| <= d_up True, worst |err| / (u sigma) 7.413, bound 10840.2, pad / (u sigma) 230464, sigma 1.7840731044807883, 64.3 s
+top seed 1: admissible True, exact residuals inside [low, high] True, max|exact| <= d_up True, worst |err| / (u sigma) 8.967, bound 10840.2, pad / (u sigma) 230464, sigma 2.3, 64.6 s
+bottom seed 1: admissible True, exact residuals inside [low, high] True, max|exact| <= d_up True, worst |err| / (u sigma) 8.967, bound 10840.2, pad / (u sigma) 230464, sigma 2.3, 65.3 s
+fault seed 1: admissible True, exact residuals inside [low, high] True, max|exact| <= d_up True, worst |err| / (u sigma) 0.059, bound 10840.2, pad / (u sigma) 230464, sigma 350.0, 63.1 s
+ramp seed 1: admissible True, exact residuals inside [low, high] True, max|exact| <= d_up True, worst |err| / (u sigma) 32.068, bound 10840.2, pad / (u sigma) 230464, sigma 2.0, 64.6 s
+```
+
+(A first version of the script, with the walk only and its own copy of the loop, gave 7.396 for a walk drawn from
+another random stream.)
+
+## 9. The oracle's lower certificate (the paper's lemma `lem:olow`)
+
+Review r6 proposed a lemma for `_dual_bound` without a code change; the paper's version keeps its argument with
+constants checked here. Read in `experiments/oracle/thermal_oracle.py` (margin LP, box and rate):
+- `_build`: n_v = 3m + 2 variables; A_eq has 2m rows and 7m − 3 nonzeros, at most 3 per column; A_ub has 4m − 2 rows
+  and 10m − 4 nonzeros, at most 2m per column (the offset and d columns); c has a single 1 at d. `terms` has
+  (4m − 2) + 2m + 2 (3m + 2) = 12m + 2 entries.
+- `_optimum_caps`: T_A 2, states 2 (1 + 8 eps (m + 1)), offset 0 (fixed in margin mode), d max|z|, all times 1 + 8 eps;
+  the zero shifted ambient path is admissible and gives a_s = 0, so d* ≤ max|z|.
+- `_dual_bound` forms about 52m products (A_ub^T y and A_eq^T y twice, the 12m + 2 terms, the scale and correction
+  products), below the lemma's 60m.
+- `_adjacent_rate_bound`: 2 d ≥ |z_k − z_{k−1}| − ρ − pad, pad = 64 eps (m + 1) max(1, max caps). The differences of the
+  states follow the same nonnegative recurrence driven by the increments of T_A, starting from (row sum − 1) T_A0, so
+  |Δa_s| ≤ ρ (1 + 3·2^-56)^m.
+
+A numerical sanity check, not part of the proof: `experiments/v3/diag/olow_check.py` (Mac) regenerated the two events
+with the smallest inconsistent room (440402 drift_0.0005 E0/E1 ramp, t* 1414), solved the oracle's LP on z[0:1415]
+with each of its attempts, and compared `_dual_bound` with the same weak-duality bound in exact arithmetic:
+
+```
+440402 drift_0.0005 E0 ramp m=1415 highs-ds presolve=False: d_lo 0.30000010616821116, exact bound 0.3000001164070187, d_lo - delta 1.061682e-07, exact - d_lo 1.024e-08, float <= exact True
+440402 drift_0.0005 E0 ramp m=1415 highs-ipm presolve=False: d_lo 0.3000000474834482, exact bound 0.3000000577222559, d_lo - delta 4.748345e-08, exact - d_lo 1.024e-08, float <= exact True
+440402 drift_0.0005 E0 ramp m=1415 highs-ds presolve=True: d_lo 0.3000000894620707, exact bound 0.30000009970087865, d_lo - delta 8.946207e-08, exact - d_lo 1.024e-08, float <= exact True
+440402 drift_0.0005 E0 ramp highs-ipm True no solution
+440402 drift_0.0005 E1 ramp m=1415 highs-ds presolve=False: d_lo 0.30000010749145467, exact bound 0.30000011773026247, d_lo - delta 1.074915e-07, exact - d_lo 1.024e-08, float <= exact True
+440402 drift_0.0005 E1 ramp m=1415 highs-ipm presolve=False: d_lo 0.3000001180621246, exact bound 0.3000001283009321, d_lo - delta 1.180621e-07, exact - d_lo 1.024e-08, float <= exact True
+440402 drift_0.0005 E1 ramp m=1415 highs-ds presolve=True: d_lo 0.3000001039569913, exact bound 0.3000001141957989, d_lo - delta 1.039570e-07, exact - d_lo 1.024e-08, float <= exact True
+440402 drift_0.0005 E1 ramp m=1415 highs-ipm presolve=True: d_lo 0.29999999245066883, exact bound 0.3000000026894764, d_lo - delta -7.549331e-09, exact - d_lo 1.024e-08, float <= exact True
+```
+
+Every float value is below the exact bound, by 1.024e-8 (the code's relative pad). The first attempt on the Mac gives
+1.0617e-7 for E0, as `eta_check.py` did (1.06e-7); Arch's run gave 1.0749e-7 (the solvers' multipliers differ between
+the machines); all are lower bounds on the same d*.
+
+## Open from r3
+
+- None. (The lower certificate's lemma covers d_lo ≥ 2^-900, so every inconsistent verdict; `_dual_bound` itself has
+  no explicit underflow term.)

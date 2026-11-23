@@ -396,9 +396,15 @@ both sides with the slab keeps the inclusion. A minimum over fewer bases is at l
 support of $M(\mathcal{P}\cap\text{slab})\oplus(\text{the $w$ segment})$ in direction $d_i$ is
 $\operatorname{supp}(M^\top d_i)+\rho\,|(d_i)_3|$; a polytope given by upper bounds on the supports of a superset is a
 superset. The clamps hold for every reachable state (Lemma~\ref{lem:err} and (c)). Every computed support is an upper
-bound after the pads, which cover the dot product's rounding, the stored residual of each basis, and the rounding of
-$\lambda$ to the stored precision.
+bound after the pads, which cover the dot product's rounding, including the underflow of its three products, the
+stored residual of each basis, and the rounding of $\lambda$ to the stored precision. The Python template scales the
+dot product's pad by the current $\max_i|h_i|$; the frozen C tables' pads take $|h_i|\le\sqrt3\cdot2.2$. For cyl16p
+the clamps keep every $h_i$ at most 3.0, the measurement slab only lowers $h_{\pm e_2}$, and while $X_k$ is nonempty,
+$h_i$ bounds the support of $X_k\subseteq[-2,2]^3$ in direction $d_i$, before and after that cut, which is at least
+$-2\|d_i\|_1\ge-3.27$.
 \end{proof}
+% src: HMAX = codegen_c.py; 3.0 and -3.27 measured on cyl16p (max CAP 2.998, 2 max|d_i|_1 3.266) and the underflow
+% term in K2 = RECORD-2026-11-23-review3-checks.md section 7
 
 \begin{theorem}[never later than IM]\label{thm:dom}
 Suppose $\pm e_2$ and $\pm\hat\psi\in D$, with $\hat\psi = \psi/|\psi|$, the clamps are applied, for the targets
@@ -729,8 +735,9 @@ edge). IM's 27 misses are in the three labelled cells.}
 \item On all 7,997 certified fault runs the oracle's own bounds leave room on both sides of $\delta$: at least
   \sci{1.07}{-7}\,\degC\ on the inconsistent side at $\tstar$ (the 7,255 events), at least \sci{2.90}{-6}\,\degC\ on
   the consistent side before $\tstar$, and at least \sci{5.15}{-4}\,\degC\ on the 742 certified-consistent runs, more
-  than $2\times10^5$ times the model gap of Corollary~\ref{cor:wm}. Under the oracle's binary64 certificates, its
-  certified $\tstar$ on this block is therefore the exact model's, and the 742 certified-consistent fault runs are
+  than $2\times10^5$ times the model gap of Corollary~\ref{cor:wm}. The certificates are sound
+  (Lemmas~\ref{lem:ocert} and~\ref{lem:olow}) and the shift by 25\,\degC\ is exact on these prefixes, so the
+  oracle's certified $\tstar$ on this block is the exact model's, and the 742 certified-consistent fault runs are
   consistent under the exact model.
 % src (room): RECORD-2026-11-23-oracle-margin.md (plan ORACLE-MARGIN-PLAN.md, e2772d92); 742 runs' room from its
 % margins.jsonl (RECORD-2026-11-23-review3-checks.md)
@@ -1314,6 +1321,56 @@ $\mathfrak{X}^{(r+1)}_\tau\subseteq\mathfrak{X}^{(r)}_\tau$. Dropping and evicti
 alarm at $t$ needs the separation of Lemma~\ref{lem:alarm}, which shows that $z_0,\dots,z_t$ has no explanation.
 \end{proof}
 
+\begin{alemma}[the oracle's upper certificate]\label{lem:ocert}
+Let $z_0,\dots,z_{m-1}$ be a prefix as the oracle reads it (shifted by 25\,\degC), $m\le3{,}600$, and let
+$\sigma = \max(1, \max_k|T_{A,k}|, \max_k|z_k|)$ for the oracle's projected ambient path $T_A$. The path satisfies (b)
+and (c) exactly, the recurrence starts at $(T_{A,0}, T_{A,0})$ as (e) requires, and the oracle's residual interval,
+widened by $\pi = 32\,\mathrm{eps}\,(m+1)\,\sigma$, contains every $z_k - (a_s)_k$ of the binary64 matrix, taken
+exactly, along that path. Hence its upper certificate $d_{\mathrm{up}}$ is at least $\max_{k<m}|z_k-(a_s)_k|$, and
+$d_{\mathrm{up}}\le\delta$ certifies that $T_A$ explains the prefix with radius $\delta$ under the binary64 matrix.
+\end{alemma}
+\begin{proof}
+Each step of the projection clips to $[\mathrm{fl}(p-\rho), \mathrm{fl}(p+\rho)]$ with both ends moved one ulp toward
+the previous value $p$, which keeps them inside $[p-\rho, p+\rho]$, and then to the box, which contains $p$. The matrix
+is nonnegative, and its rows, the input column included, sum to $1+2^{-56}$ and $1+3\cdot2^{-56}$. By induction on the
+step, the exact and the computed states both stay within $1.000001\,\sigma$, since
+$(1+3\cdot2^{-56})^m + 3.01\,m\,u < 1.000001$. A step computes each state from at most three products and two
+additions, an error of at most $\gamma_3(1+3\cdot2^{-56})\cdot1.000001\,\sigma + 4\cdot2^{-1075}$, and carries the
+earlier error with a factor of at most $1+3\cdot2^{-56}$. After $m$ steps the computed $a_s$ is within
+$3.01\,m\,u\,\sigma$ of the exact one. Forming $z_k - (a_s)_k$ and applying $\pi$ add at most $4.2\,u\,\sigma$, and
+$(3.01\,m + 4.2)\,u\,\sigma$ is below $\pi = 64(m+1)\,u\,\sigma$, which is computed with one rounding. The distance to
+the offset, zero here, is then rounded up by one ulp.
+\end{proof}
+% src: experiments/oracle/thermal_oracle.py _project, _residual_range, _forward (called with offset 0.0, line 370);
+% row sums = RECORD-2026-11-23-review3-checks.md section 8
+
+\begin{alemma}[the oracle's lower certificate]\label{lem:olow}
+For the oracle's LP on a prefix of $m\le3{,}600$ samples as it reads them, every finite value $d_{\mathrm{lo}}\ge2^{-900}$
+of its lower certificate, in particular every one above $\delta$, is at most $d^\ast$, the LP's optimum with the binary64
+matrix taken exactly. So is the adjacent-rate bound it uses when the LP leaves the prefix undetermined.
+\end{alemma}
+\begin{proof}
+The zero shifted ambient path is admissible and gives $a_s = 0$, so $d^\ast\le\max_k|z_k|$. At an optimum $|T_{A,k}|\le2$,
+the states are within $2(1+3\cdot2^{-56})^{m}$ and the offset is 0, all inside the stored caps. For multipliers with
+the signs corrected, weak duality over the caps gives $d^\ast\ge\sum_t\tau_t - |r|^\top\mathrm{caps}$, where the $\tau_t$
+are the $L = 12m+2$ products of right-hand sides and bounds with multipliers and $r$ is the exact stationarity residual;
+the LP's coefficients are the stored ones, so no coefficient rounding enters. The code pads with
+$\rho_0 = 8\,\mathrm{eps}\,(L+1) = 16(L+1)u$, exactly: on the sum of the $\tau_t$ by $\rho_0\sum_t|\tau_t|$, and on $r$
+by $\rho_0$ times the column scale, which is at least 1 in the column of $d$, and on the correction itself. The relative
+errors these pads cover are at most $\gamma_{L+3}$ for the sum with the final line, $\gamma_{2m+4}$ of the column scale
+for each residual, and $\gamma_{3m+4}$ for the correction, so at least $14Lu\sum_t|\tau_t|$ and
+$14Lu\,\mathrm{caps}_d$ remain. Fewer than $60m$ products are formed, each losing at most $2^{-1075}$ to underflow, and
+each loss reaches the bound times a cap: at most 2.01 for every variable but $d$. The losses through $\mathrm{caps}_d$ fit
+in $14Lu\,\mathrm{caps}_d$; the others, below $121m\cdot2^{-1075}$, fit in $14Lu\sum_t|\tau_t|$ once
+$d_{\mathrm{lo}}\ge2^{-900}$, since then $\sum_t|\tau_t|>2^{-901}$. A value that is not finite is discarded, and the
+result is rounded down by one ulp. The differences of the states follow the same nonnegative recurrence, driven by
+the increments of $T_A$, so $a_s$ moves by at most $\rho(1+3\cdot2^{-56})^m$ per step and
+$2d^\ast\ge|z_k-z_{k-1}|-\rho(1+3\cdot2^{-56})^m$; the adjacent-rate bound's pad, $64\,\mathrm{eps}\,(m+1)$ times the
+largest cap, covers the excess over $\rho$ and the rounding.
+\end{proof}
+% src: thermal_oracle.py _build (L, nnz: A_ub 10m-4 with at most 2m per column, A_eq 7m-3 with at most 3), _optimum_caps,
+% _dual_bound (about 52m products), _adjacent_rate_bound; RECORD-2026-11-23-review3-checks.md section 9
+
 \begin{acorollary}\label{cor:wm}
 On records of 3,600 samples, as in every block, WM never flags a healthy run of the simulator, and never flags before
 the oracle's $\tstar$.
@@ -1333,7 +1390,7 @@ explains the data with radius $\delta + \sci{5}{-11} < d$, and Theorem~\ref{thm:
 
 Before $\tstar$: the oracle certifies the prefix up to $\tstar-1$ as consistent with an ambient path that is exactly
 admissible and explains it with radius $\delta$ under the binary64 matrix; its upper certificate encloses its own
-rounding. For every admissible ambient path, $a_s$ under the exact recurrence and under the binary64 matrix differ by
+rounding (Lemma~\ref{lem:ocert}). For every admissible ambient path, $a_s$ under the exact recurrence and under the binary64 matrix differ by
 at most \sci{5.0}{-13}\,\degC\ over 3,600 steps, as checked in exact rational arithmetic. So the prefix has an
 explanation with radius $\delta + \sci{5.0}{-13} < d$, and WM does not flag before $\tstar$.
 \end{proof}

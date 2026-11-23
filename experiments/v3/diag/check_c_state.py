@@ -14,6 +14,12 @@ Criteria (fixed before the first run of this script):
         gamma3 * sum_j lam_e,j * HMAX + |g_true - sum_j lam_e,j d_idx(e,j)|_1 * CAP <= PAD_g,
      gamma3 = 3u/(1-3u) for the header's precision (a 3-term dot product), HMAX and CAP as in codegen_c.py,
      g_true = MX^T d_i for the prediction groups and +-e2 for the two as-range groups.
+     Added 2026-11-23 (reviews r2, r3; RECORD-2026-11-23-review3-checks.md): the left side also carries 4 * tiny,
+     tiny = 2^-1075 (binary64) or 2^-150 (binary32), a product's absolute loss under gradual underflow: three products,
+     carried through two additions, lose at most 3 (1 + u)^2 tiny < 4 tiny. |h_i| <= HMAX holds while the exact set is
+     nonempty: v3_observe keeps h_i <= CAP_i (at most 2.998 for cyl16p) and the start supports are clamped, and the
+     measurement slab only lowers h_+-e2; and h_i, before and after that cut, is at least the support of the exact set,
+     inside [-2, 2]^3, so at least -2 |d_i|_1 (at least -3.266 for cyl16p).
   K3 clamps: every header CAP_i >= the exact supremum of d_i . s over the reachable set of the exact recurrence
      (check_model.clamps_exact's bound, and the box [-2, 2] for the six axis directions).
   K4 rate pads: every header RHOPAD_i >= RHO_A |d_i3|.
@@ -79,13 +85,14 @@ def pads(h):
     targets += [[Fr(0), Fr(1), Fr(0)], [Fr(0), Fr(-1), Fr(0)]]                                 # +e2, -e2
     u = h["u"]
     g3 = 3 * u / (1 - 3 * u)
+    tiny = Fr(1, 2 ** 1075) if u == Fr(1, 2 ** 53) else Fr(1, 2 ** 150)      # 2026-11-23: gradual underflow
     worst, neg, bad = None, 0, []
     for g, tgt in enumerate(targets):
         for e in range(h["starts"][g], h["starts"][g + 1]):
             lam, ix = h["lam"][e], h["idx"][e]
             neg += sum(1 for x in lam if x < 0)
             res = sum(abs(tgt[c] - sum(lam[j] * Dq[ix[j]][c] for j in range(3))) for c in range(3))
-            need = g3 * sum(lam) * h["hmax"] + res * h["cap_const"]
+            need = g3 * sum(lam) * h["hmax"] + res * h["cap_const"] + 4 * tiny
             sl = h["pad"][g] - need
             if worst is None or sl / h["pad"][g] < worst[0]:
                 worst = (sl / h["pad"][g], g, e, float(need), float(h["pad"][g]))
