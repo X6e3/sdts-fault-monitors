@@ -32,7 +32,7 @@ def main(raw, out_csv, fig_dat):
     raw = Path(raw)
     rows = {rec: read(raw / (rec + ".csv")) for rec in RECORDS}
     with open(out_csv, "w", newline="") as f:
-        w = csv.writer(f)
+        w = csv.writer(f, lineterminator="\n")
         w.writerow(["record", "clock_s", "signal", "value"])
         for rec in RECORDS:
             for t, sig, v in rows[rec]:
