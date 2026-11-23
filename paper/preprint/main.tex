@@ -987,12 +987,18 @@ supported. WM's paired lag was 889,162\,s below B1s's at M2 (95\,\% interval $[-
 was earlier on 506 of the 7,255 events, which the bounds of Lemma~\ref{lem:err} allow: IM does not use them. It
 removed 8.8\,\% of IM's paired lag; TS removed 44.2\,\%. B1s was later than B1 at both budgets. In B1's own
 configuration at M1 it was later on 1,765 events and earlier on 147; at M2, with 5,963 reals against B1's 203, later on
-1,879 and earlier on 283. Which of its changes costs these detections was not isolated. B1s at M2 had 34 failed LPs
+1,879 and earlier on 283. A factorial on the 100 development rows of the stability check traces this to one
+change: B1s counts an elimination as exact when its excess is at most $10^{-12}$, where B1 requires 0. With that
+tolerance at 0, B1s's instability returns (4 to 29 rows of 100 move under the shifts; B1: 16 and 24) and so do most
+of B1's detections (paired lag at $(1,2)$ 33,051 to 33,413\,s against B1's 33,445 and B1s's 38,806; at $(4,8)$
+17,503 to 25,128\,s against 12,423 and 30,299). B1's extra detections and its instability come from the same
+last-bit decisions. B1s at M2 had 34 failed LPs
 in 28.1 million, after which it uses the unconstrained hull, as B1 does. No configuration of either comparison raised
 an alarm on an admissible run or before $\tstar$; B1s and B4s run in binary64 without a proof, so for them, too, this
 is an observation. The second plan was written after the first comparison's results were known and runs on the same
 block: it is a second look at the same data, not a new test.
-% src: RECORD-2026-11-23-baselines2.md (scores, hypotheses, B4s against IM, B1s against B1, LP failures)
+% src: RECORD-2026-11-23-baselines2.md (scores, hypotheses, B4s against IM, B1s against B1, LP failures; the
+% factorial: results/v3/baselines2/b1s-factorial-f5f690eb/summary.json, DEV rows, diag/b1s_factorial.py)
 
 \subsection{How much the results lean on the ambient box}\label{sec:ambient}
 

@@ -146,3 +146,33 @@ construction") were closed in 785213e8. Its other findings and what was done:
 - J713 step 3 (not this record): 0.205 °C is the largest absolute residual of the least-squares trajectory, so an
   upper bound on the smallest uniform error bound for that run, not that bound itself; to be worded so when the
   J713 run enters the paper.
+
+## The B1s factorial (development rows, 2026-11-24)
+
+`diag/b1s_factorial.py`, committed at f5f690eb before its run; Arch, clean clone at f5f690eb, 14 workers, nice 19,
+01:01:19 to 01:26:40 (+0300), exit 0. Results in `results/v3/baselines2/b1s-factorial-f5f690eb/` (`summary.json`,
+`rows.jsonl`, `run.log`). The 100 DEV rows of the stability check (85 paired events, IM's paired lag 6,401 s), each
+with the shifts 0, ±1e-15 and 2e-15. The copy of B1s with (EXACT_TOL 1e-12, pad on) gave B1s's first alarm on all
+100 rows at both configurations. Descriptive; development seeds only.
+
+| (n_c, o) | variant | paired lag (s) | misses | rows unstable | slack / state eliminations |
+|---|---|---|---|---|---|
+| (1, 2) | B1 | 33,445 | 5 | 16 | |
+| (1, 2) | B1s: EXACT_TOL 1e-12, pad on | 38,806 | 6 | 0 | 260,870 / 402,882 |
+| (1, 2) | EXACT_TOL 1e-12, pad off | 38,806 | 6 | 0 | 260,872 / 402,880 |
+| (1, 2) | EXACT_TOL 0, pad on | 33,051 | 5 | 4 | 227,440 / 428,256 |
+| (1, 2) | EXACT_TOL 0, pad off | 33,413 | 5 | 15 | 214,813 / 433,542 |
+| (4, 8) | B1 | 12,423 | 1 | 24 | |
+| (4, 8) | B1s: EXACT_TOL 1e-12, pad on | 30,299 | 5 | 0 | 223,147 / 148,768 |
+| (4, 8) | EXACT_TOL 1e-12, pad off | 30,299 | 5 | 0 | 223,211 / 148,714 |
+| (4, 8) | EXACT_TOL 0, pad on | 25,128 | 3 | 27 | 204,141 / 172,801 |
+| (4, 8) | EXACT_TOL 0, pad off | 17,503 | 3 | 29 | 160,308 / 145,696 |
+
+No variant alarmed on an admissible row or before t*. What it shows, on these rows:
+- With EXACT_TOL = 1e-12 the pad changes nothing, and no row is unstable.
+- With EXACT_TOL = 0 the instability returns (4 and 15 rows at (1, 2), 27 and 29 at (4, 8); B1: 16 and 24) and so do
+  most of B1's detections: at (1, 2) the paired lag falls to B1's (33,051 and 33,413 against 33,445); at (4, 8) the pad
+  then matters (25,128 on, 17,503 off), and B1s's other changes keep 5,080 s of the 17,876 s gap to B1.
+- EXACT_TOL = 1e-12 raises the slack eliminations and lowers the state eliminations, as reviews r7 and r8 traced.
+So the tolerance that makes B1s stable costs most of its detections; B1's extra detections and its instability come
+from the same last-bit decisions. The block's own gap (B1s later than B1 at both budgets) is not decomposed here.
