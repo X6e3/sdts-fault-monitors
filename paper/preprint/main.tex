@@ -79,10 +79,11 @@ update it solves; an LP that fails falls back to an analytic outer bound. On a s
 missed 27 of 7,255), and all 7,258 alarms were certified. A previous freeze of the same window failed its validation, because a
 single LP the solver could not solve became an uncertified alarm; we report that failure, the sound fallback that
 replaced it, and its tests under injected solver failures. We also show that no memory budget can certify the error of
-a sensor drift that an admissible ambient path reproduces. On the second block, five baselines given the same prior
-and tuned before the run all lagged our monitor at their memory budget: the best set-based one, a constrained
-zonotope storing 203 reals, had 1.8 times the interval monitor's lag, and the window with a filtering base update had
-three times the window's.
+a sensor drift that an admissible ambient path reproduces. On the second block, two comparisons fixed before they ran,
+with seven baselines given the same assumptions and tuned on development data, found every baseline behind our
+monitor at its memory budget. The nearest set-based one, an interval observer given the measurement, the
+reachable-set bounds and the interval monitor's rate rule, removed 8.8\,\% of the interval monitor's lag where the
+template removed 44.2\,\% on that block; the window with a filtering base update had three times the window's lag.
 \end{abstract}
 % src: 38.7 % = D_paired 0.387, RECORD-2026-11-18-validation.md; 99.5 %, 27, 7,258 = RECORD-2026-11-21-validation.md;
 % 5.04 M samples = MCU-NOTES 2e; freeze 2 failure = RECORD-2026-11-19-validation.md
@@ -152,7 +153,11 @@ The contributions are these.
   constrained zonotopes, zonotopes with strip intersection, a zonotopic observer, an interval observer, and the
   window with a filtering base update. At about 42 stored reals TS's paired lag was below each of the first four's;
   the window's was below the constrained zonotope's at 203 reals (1.8 times IM's lag) and below the filtering
-  window's (1,264\,s against 3,782\,s). No baseline flagged an admissible run (Section~\ref{sec:baselines}).
+  window's (1,264\,s against 3,782\,s). A second comparison, after reviews of our baseline code, made the constrained
+  zonotope's discrete choices stable and its rescaling outer, and gave the interval observer the measurement, the
+  reachable-set bounds and IM's rate rule. The interval observer then removed 8.8\,\% of IM's lag (TS 44.2\,\%), the
+  stable constrained zonotope was later than the original at both budgets, and all three hypotheses were again
+  supported. No baseline flagged an admissible run (Section~\ref{sec:baselines}).
 \end{enumerate}
 % src: 16 vs 24 = RECORD-2026-11-18-validation.md Verdicts; 3.6 ms = MCU-NOTES 2e; 75 ms = MCU-NOTES 2c/2f;
 % curve = DIAG-3-RESULTS.md "size-loss curve" (DEV); 65 kept = FREEZE-V3 section 1 memory bound
@@ -858,37 +863,44 @@ within $\varepsilon$ of the bound makes it flag (Section~\ref{sec:wrong}). Its t
 % src: MCU-NOTES 2g, 2h; C1-PLAN.md
 
 \paragraph{Several sensors.} The tables depend on the model, the template and the assumptions, not on the data, and
-the C state of one sensor is one structure, so sensors of the same model share one set of tables: 37,036 bytes in
+the C state of one sensor is one structure, so sensors with the same model and assumptions share one set of tables: 37,036 bytes in
 float64, with 360 bytes of state per sensor (the 42 supports, the command part, the flag and the sample counter). Each
 added sensor adds its state and its step, 3.63\,ms median on the ESP32; no run had more than one sensor on a board.
 Soundness holds record by record: if every sensor's record meets the assumptions, a sound monitor flags none of them,
-however many there are (for the frozen implementations of TS, with noise within $\delta-\varepsilon$). A detector tuned
-to a false-alarm rate $\alpha$ per sensor flags at least one of $N$ independent healthy sensors with probability
+however many there are (for the frozen implementations of TS, within the restrictions of the previous paragraph). A
+detector tuned to a false-alarm probability $\alpha$ per sensor over a record flags at least one of $N$ independent
+healthy sensors with probability
 $1-(1-\alpha)^N$, 0.049 for $\alpha = 0.01$ and $N = 5$, unless its threshold is raised, which delays detection. For a
 bank of set-membership monitors, what grows with $N$ is the chance that the assumptions fail on some sensor, a question
 about the model rather than about a threshold.
 % src: experiments/v3/c/v3_state.h; sizeof on the PC build (clang, arm64), 2026-11-23: the arrays of
-% frozen/c/tables_cyl16p_double.h 37,036 bytes, v3_state 360 bytes (float build: 20,540 and 192); 3.63 ms = MCU-NOTES 2e
+% frozen/c/tables_cyl16p_double.h 37,036 bytes, v3_state 360 bytes (float build: 20,540 and 192; 189 on the AVR with
+% -mdouble=64); the same on the ESP32 (xtensa-esp32-elf-gcc static asserts, review r7); 3.63 ms = MCU-NOTES 2e
 
 \subsection{Baselines}\label{sec:baselines}
 
 The comparison was planned, and its configurations frozen, before it ran (approval commit \texttt{9438dffa}). It runs
 on the block of validation 3, whose results for WM and IM were already known, so it is a fixed comparison on a used
 block and not a new validation. Five families get the same prior as ours, the box of $T_A$ and the boxes of $a_c$ and
-$a_s$ it implies, at every sample: B1 constrained zonotopes \citep{scott2016}; B2 zonotopes with strip intersection
+$a_s$ it implies, at every sample, and B1 to B3, as a tuning option, the bounds of Lemma~\ref{lem:err} in four
+directions of the error plane: B1 constrained zonotopes \citep{scott2016}; B2 zonotopes with strip intersection
 \citep{alamo2005}; B3 a zonotopic observer with constant gain \citep{combastel2015}; B4 an interval observer in
-cooperative form; B5 WM with the smoothing fold turned off, a forward window in the style of \citet{kesavan2001}. B1
+cooperative form; B5 WM with the smoothing fold turned off, a forward window in the style of \citet{kesavan2001}. All
+five are our implementations, and a result for one holds for its reduction and rescaling choices, not for its family
+as a whole. B1
 to B4 run in plain binary64 as published, without outward rounding; an alarm they raise on an admissible run or
 before $\tstar$ would be reported as a soundness finding of that implementation. Each family was tuned on development
 rows: at each memory budget, the configuration with the smallest paired lag among those with no such alarm.
+% src: BASELINE-PLAN.md section 2 (box or box+err for B1-B3; B4 the boxes only); diag/baselines.py ERR_DIRS
 
 \paragraph{Memory.} A monitor's memory is the number of reals it stores between samples, tables and code excluded:
 TS 42 supports; WM the 42 supports of its base and at most 65 measurements, 107 in all (their sample indices are not
-counted); B1 the centre, generators and constraints of its set; B2 and B3 the centre and generators; B4 six bounds. The
-workspace of an LP within a sample is not counted for any method; for the methods that solve LPs (B1, B5 and WM) the
-largest LP is given. The budget M1 is about 42 reals, TS's. The plan named WM's memory as the budget M2, but the
-tuning set no upper limit there, and the configuration it chose for B1 stores 203 reals, nearly twice WM's 107. The
-comparison at M2 therefore favours B1.
+counted); B1 and B1s the centre, generators and constraints of their set; B2 and B3 the centre and generators; B4 and
+B4s six bounds. The workspace of an LP within a sample is not counted for any method; for the methods that solve LPs
+(B1, B1s, B5 and WM) the largest LP is given. The budget M1 is about 42 reals, TS's. The plan named WM's memory as the budget M2, but the
+tuning set no upper limit there, and the configuration it chose for B1 stores 203 reals, nearly twice WM's 107; in the
+second comparison below, B1s at M2 stores 5,963. In stored reals the comparison at M2 therefore favours B1 and B1s; it
+says nothing about bytes, time or the workspace of an LP.
 
 \paragraph{Hypotheses.} Fixed before the run, each judged by a seed bootstrap (2,000 draws over the 200 seeds) of the
 difference of paired lags, ours minus the baseline's: \emph{supported} if its 95\,\% interval lies below 0,
@@ -914,10 +926,11 @@ same three verdicts at 2,000 and at 20,000 draws (H-B2: $[-5{,}346, -410]$ and $
 
 \begin{table}[ht]
 \centering\small
-\caption{The frozen comparison on validation 3's block. Memory: reals stored between samples. Largest LP: rows
-$\times$ variables; for B1 the bound of its code, $n_c+7$ equality rows and $3o+n_c+8$ generators (the decision LP comes
+\caption{The two frozen comparisons on validation 3's block. Memory: reals stored between samples. Largest LP: rows
+$\times$ variables; for B1 and B1s the bound of their code, $n_c+7$ equality rows and $3o+n_c+8$ generators (the decision LP comes
 after one new generator and up to seven prior strips), which development data reach; B5's sizes were not recorded. Time: wall time per processed sample of one worker, 14 workers on
-8 cores; it compares the methods with each other, not with a dedicated core. WM's and IM's rows are validation 3's.}
+8 cores; it compares the methods with each other, not with a dedicated core. WM's and IM's rows are validation 3's;
+TS's, B1's and B4's are the first comparison's, scored again with the second.}
 \label{tab:baselines}
 \begin{tabular}{lrlrrrr}
 \toprule
@@ -932,12 +945,53 @@ B1, constrained zonotope & 32 & $\le8\times15$ & $-6.63$ & 300 & 3,521 & 2.9\\
 B4, interval observer & 6 & none & $-27.6$ & 1,799 & 790 & 0.01\\
 B3, zonotopic observer & 21 & none & $-37.0$ & 2,463 & 204 & 0.08\\
 B2, strip zonotope & 21 & none & $-46.8$ & 3,293 & 22 & 0.08\\
+\midrule
+\multicolumn{7}{l}{\emph{second comparison}}\\
+B4s, interval observer & 6 & none & 0.088 & 21 & 5,593 & 0.28\\
+B1s, constrained zonotope & 5,963 & $\le71\times96$ & $-2.39$ & 120 & 4,201 & 11.5\\
+B1s, constrained zonotope & 32 & $\le8\times15$ & $-9.64$ & 484 & 2,848 & 3.2\\
 \bottomrule
 \end{tabular}
 \end{table}
 % src: RECORD-2026-11-22-baselines-block.md; results/v3/baselines/block-9438dffa/scores.json; WM ms/sample = sum of
 % F3 seconds / processed samples on validation 3's rows; B1 LP bound from baselines_cz.py (predict, then range(P2));
 % observed (5x12, 8x33) on 440400 jump_0.5 and (8x15, 11x36) on DEV (internal review, RECORD-2026-11-22-review2.md)
+% second comparison: RECORD-2026-11-23-baselines2.md; results/v3/baselines2/block-606d91cb/scores.json; B1s LP bound
+% reached on DEV 430000-430001 healthy and drift_0.0005 E0 rw (71x96 and 8x15; Mac, 2026-11-24, scratch diagnostic)
+
+\paragraph{A second comparison.} Reviews of our baseline code after the first comparison found two problems. B4 never
+intersects its range with the measurement, which IM does, so IM used information B4 did not. B1's discrete choices
+(exact elimination, near-ties in its reduction, prior strips) switch on the last bits of the data: on development run
+430010 (drift 0.002\,\degC/s, E0, rw) a shift of the data by $10^{-15}$\,\degC\ moves its first detection among
+samples 635, 1,101, 2,247 and 2,258, and the first comparison's own records of that run differ between two machines.
+The first comparison stands as it ran. A second one, planned and frozen in the same way (commit \texttt{606d91cb}),
+adds two versions. B4s is B4 with the measurement slab, the bounds of Lemma~\ref{lem:err} propagated by intervals, and
+IM's rate rule. With IM's slab it could not be later than IM in exact arithmetic; like every baseline it uses
+$\delta+\eta$ where IM uses $\delta$, so that it was never later on the block is an observation, not a guarantee. B1s is B1 with stable discrete choices and an interval
+rescaling that is outer in binary64; its other steps are B1's, in plain binary64. Both were tuned on the same
+development rows by the same rule, M1 again at most 42 reals and M2 again without an upper limit (B1s: $(n_c, o)$ from
+$(1, 2)$ to $(64, 8)$, fifo or greedy, prior with the error bounds; B4s: $L = 0$ and B4's chosen gain), after checks
+that no configuration flags an admissible development row or before $\tstar$ and that B4s is never later than IM.
+The tuning chose B1s with $n_c = 1$, $o = 2$ at M1 (32 reals), B1s with $n_c = 64$, $o = 8$ at M2 (5,963 reals), and
+B4s with $L = 0$ at both (6 reals). On 100 development rows with the data shifted by 0, $\pm10^{-15}$ and
+$2\cdot10^{-15}$\,\degC, B1 at M2 changed its detection on 24 and no B1s configuration on more than one. The plan went
+through three versions before the frozen one; one was stopped after 393 development rows, when B1s's first
+rescaling, which was not outer, flagged 7 admissible rows. Hypotheses, judged as before: H-S1, WM's paired lag is
+below B1s's at M2; H-S2, at M1 TS's paired lag is below B1s's (a) and below B4s's (b).
+% src: BASELINE2-PLAN.md sections 0, 1, 3, 4, 7, 8 and its status block (DEV, unit and stability results)
+
+\paragraph{Results of the second comparison.} Table~\ref{tab:baselines}, lower part. All three hypotheses were
+supported. WM's paired lag was 889,162\,s below B1s's at M2 (95\,\% interval $[-981{,}119, -805{,}505]$); TS's was
+2,645,818\,s below B1s's at M1 and 92,984\,s below B4s's ($[-116{,}210, -73{,}654]$). B4s was never later than IM and
+was earlier on 506 of the 7,255 events, which the bounds of Lemma~\ref{lem:err} allow: IM does not use them. It
+removed 8.8\,\% of IM's paired lag; TS removed 44.2\,\%. B1s was later than B1 at both budgets. In B1's own
+configuration at M1 it was later on 1,765 events and earlier on 147; at M2, with 5,963 reals against B1's 203, later on
+1,879 and earlier on 283. Which of its changes costs these detections was not isolated. B1s at M2 had 34 failed LPs
+in 28.1 million, after which it uses the unconstrained hull, as B1 does. No configuration of either comparison raised
+an alarm on an admissible run or before $\tstar$; B1s and B4s run in binary64 without a proof, so for them, too, this
+is an observation. The second plan was written after the first comparison's results were known and runs on the same
+block: it is a second look at the same data, not a new test.
+% src: RECORD-2026-11-23-baselines2.md (scores, hypotheses, B4s against IM, B1s against B1, LP failures)
 
 \subsection{How much the results lean on the ambient box}\label{sec:ambient}
 
@@ -1029,12 +1083,18 @@ The records keep every failure. These changed the method:
   alarm'' means an admissible explanation exists; that holds for the exact test only, not for an outer approximation.
   ``A measurement redundant at arrival stays redundant'' is false once the base is folded: a looser base can make it
   active again, so dropping it is sound and only empirically lossless.
+\item Our first baseline code had two flaws, found in review after its block: the interval observer B4 never cut its
+  range with the measurement, and B1's detections moved with the last bits of the data. The second comparison of
+  Section~\ref{sec:baselines} addresses both. Its plan went through three versions; one was stopped after 393
+  development rows, when B1s's first interval rescaling, which was not outer, flagged 7 admissible rows (on one
+  traced row it divided a rounding error by a coefficient $2.5\cdot10^{-18}$ times its row's largest).
 \item When the compressed window was first checked against the dense window LP, the two disagreed by
   \sci{2.8}{-6}\,\degC\ on one support. The error was in the reference: the dense LP had been solved loosely (equality
   residual \sci{6.2}{-5}), and the compressed window was exact to $10^{-11}$.
 \end{enumerate}
 % src: RECORD-2026-11-19-validation.md; FREEZE-V2.md section 1; RECORD-2026-11-18-validation.md addendum; MCU-NOTES 2g;
-% V3_NOTES sections 4, 8; DIAG-3-RESULTS.md (amendment 3, C0); item 5 = FREEZE-V1.md section 8 rehearsal
+% V3_NOTES sections 4, 8; DIAG-3-RESULTS.md (amendment 3, C0); item 5 = FREEZE-V1.md section 8 rehearsal;
+% baseline item = BASELINE2-PLAN.md sections 0 and 7 and its approval block (v1-v3, v2 stopped after 393 DEV rows)
 
 \section{Related work}\label{sec:related}
 
@@ -1079,9 +1139,11 @@ kept, and with them the later windows. Its worst-case time is not shown either.
 \item One plant with known parameters, in simulation, under assumed laws of noise and ambient. With uncertain
   parameters the exact set is in general no longer convex.
 \item The frozen implementations of TS are sound for noise up to $\delta - \sci{4.85}{-13}$\,\degC, not up to
-  $\delta$; the revised C state closes the gap but is not validated on fresh seeds, and the Python template does not
-  close it yet (Sections~\ref{sec:mcu}
-  and~\ref{sec:wrong}).
+  $\delta$ (on the AVR $\delta - \sci{9.9}{-13}$\,\degC, under two assumptions on its arithmetic and port that were
+  tested, not proved), and the Python template's two rate pads are also open, at \sci{2.1}{-21}\,\degC; the revised C
+  state closes the gaps of the C state but is not validated on fresh seeds, and the Python template does not close its
+  gaps yet (Sections~\ref{sec:mcu} and~\ref{sec:wrong}).
+% src: MCU-NOTES 2g (K6, Uno: two assumptions; Python template P4 open); review r7 finding 3
 \item The ambient box (c) carries the detection of slow drift. A wider box delays the exact detector itself, and the
   monitors with it (Section~\ref{sec:ambient}); a wrong box can make a healthy record inconsistent.
 \item WM runs on a desktop with HiGHS. An embedded LP solver with a bounded iteration count is the open step; the
@@ -1097,9 +1159,9 @@ kept, and with them the later windows. Its worst-case time is not shown either.
   larger states.
 \item WM's fallback path was never exercised on validation seeds; it rests on its proof and on injected failures.
 \item The facet count of $X_k$, and a principled minimal template, are open.
-\item Plants that share one ambient constrain it jointly: a twin of one sensor's fault
-  (Proposition~\ref{prop:twin}) must then explain the other sensors' records too. A joint monitor, with a bound on how
-  far the ambients differ, and the isolation of the faulty sensor are open.
+\item Plants that share one ambient constrain it jointly: to leave the joint record consistent, a twin of one
+  sensor's fault (Proposition~\ref{prop:twin}) must explain the other sensors' records too. A joint monitor, for one
+  shared ambient or with a bound on how far the ambients differ, and the isolation of the faulty sensor are open.
 \item The oracle leaves some runs undetermined: in validation 3, 389 of the 800 healthy runs with noise exactly at
   $\pm\delta$, one healthy run with uniform noise (440582, E1, ramp) and 3 fault runs. Healthy runs are admissible by
   construction and are judged as such, not by the oracle.
