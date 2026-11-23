@@ -9,9 +9,13 @@ B1s: B1 (constrained zonotopes, Scott et al. 2016) made stable and given its own
      - an elimination counts as exact when its over-approximation is at most EXACT_TOL (B1: exactly 0);
      - Girard scores and elimination scores are rounded to SCORE_TOL before sorting, so near-ties go by index;
      - a prior strip is added only when the hull sticks out by more than PRIOR_TOL;
-     - the interval rescaling uses every nonzero coefficient (B1 ignores those below 1e-12, which can lose the
-       outer property).
+     - the interval rescaling's propagation is outer in binary64 (`_bounds`, plan v3): every coefficient in the row
+       sums, an outward rounding pad, tightening only through coefficients above TIGHT_TOL.
      Every choice it makes is still an outer approximation. The grid has the greedy policy as well as fifo.
+     Plan v2's rescaling (every nonzero coefficient, no pad) was not outer: on DEV run 430021 healthy E0 rw it cut the
+     exact range of a xi (by LP) by 1 at t = 175, dividing the rounding error of a row by a coefficient 2.5e-18 times
+     the row's largest, and B1s n_c 16, order 8, greedy then alarmed on admissible DEV rows. B1's own propagation
+     (coefficients up to 1e-12 left out of the sums) is not outer either, by a margin of that order.
 B4s: B4 (interval observer in cooperative form) with three outer tightenings after every step:
      - its as-range is intersected with the measurement slab [z - SIG, z + SIG], as IM does;
      - the prior (boxes, and the reachable-set bounds of Lemma 1 including the as-velocity plane) is applied by
@@ -26,14 +30,16 @@ import baselines as BL
 import baselines_cz as CZ
 
 ROW_TOL = 1e-9
+TIGHT_TOL = 1e-9
+EPS = float(np.finfo(float).eps)
 PRIOR_TOL = 1e-9
 EXACT_TOL = 1e-12
 SCORE_TOL = 1e-10
 
 
 class ConZonoStrong(CZ.ConZono):
-    """B1 with row scaling, every nonzero coefficient in the rescaling, and tolerances that keep 1-ulp differences
-    from switching its discrete choices (review r3: B1 flips between 635, 1101, 2247 and 2258 under a 1e-15 shift)."""
+    """B1 with row scaling and tolerances that keep 1-ulp differences from switching its discrete choices (review r3:
+    B1 flips between 635, 1101, 2247 and 2258 under a 1e-15 shift)."""
 
     def predict(self):                                # B1's predict, with a prior strip only beyond PRIOR_TOL
         self.t += 1
@@ -104,12 +110,46 @@ class ConZonoStrong(CZ.ConZono):
         L = np.hstack([L[:, idx[k:]], np.diag(np.abs(L[:, idx[:k]]).sum(axis=1))])
         self.G, self.A = L[:3], L[3:3 + nc]
 
+    def _bounds(self, sweeps=3):
+        """the bounds of xi implied by A xi = b, |xi| <= 1, by interval propagation that is outer in binary64 (plan v3):
+        every coefficient enters the row sums; each bound carries an outward pad for the rounding of the products,
+        the sums and the subtraction; a xi is tightened only through a coefficient above TIGHT_TOL, so no rounding
+        error is divided by a near-zero coefficient; the quotients are rounded outward by one ulp"""
+        A, b = self.A, self.b
+        ng = self.G.shape[1]
+        lo, hi = -np.ones(ng), np.ones(ng)
+        for _ in range(sweeps):
+            for i in range(A.shape[0]):
+                idx = np.nonzero(A[i])[0]
+                r = A[i, idx]
+                big = np.abs(r) > TIGHT_TOL
+                if not big.any():
+                    continue
+                tlo, thi = np.minimum(r * lo[idx], r * hi[idx]), np.maximum(r * lo[idx], r * hi[idx])
+                slo, shi = tlo.sum(), thi.sum()
+                pad = (idx.size + 8) * EPS * (abs(b[i]) + float(np.abs(r) @ np.maximum(np.abs(lo[idx]), np.abs(hi[idx]))))
+                rb, j = r[big], idx[big]
+                rest_lo, rest_hi = slo - tlo[big] - pad, shi - thi[big] + pad
+                a1, a2 = (b[i] - rest_hi) / rb, (b[i] - rest_lo) / rb
+                lo[j] = np.maximum(lo[j], np.nextafter(np.minimum(a1, a2), -np.inf))
+                hi[j] = np.minimum(hi[j], np.nextafter(np.maximum(a1, a2), np.inf))
+        return lo, hi
+
     def _rescale(self, sweeps=3):
-        tol, CZ.TOL = CZ.TOL, 0.0                     # every nonzero coefficient enters the propagation
-        try:
-            super()._rescale(sweeps)
-        finally:
-            CZ.TOL = tol
+        """B1's rescaling (xi reparametrized to its bounds) with the outer bounds of _bounds"""
+        if self.rescale != "interval":
+            return super()._rescale(sweeps)
+        lo, hi = self._bounds(sweeps)
+        if np.any(lo > hi + 1e-9):                    # as B1: numerically empty, the LP decides
+            return
+        hi = np.maximum(hi, lo)
+        m, r = (hi + lo) / 2, (hi - lo) / 2
+        self.c = self.c + self.G @ m
+        self.b = self.b - self.A @ m
+        self.G = self.G * r
+        self.A = self.A * r
+        keep = r > CZ.TOL                             # as B1: a fixed xi (half-width up to 1e-12) has no column left
+        self.G, self.A = self.G[:, keep], self.A[:, keep]
 
 
 def _quantize(x):

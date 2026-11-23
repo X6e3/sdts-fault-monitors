@@ -25,9 +25,10 @@ FIRST_B4 = 'B4:{"L": [0.06666666666666667, 0.7666666666666666, -0.01]}'
 R.GRID = {
     "B1s": [{"n_c": n, "order": o, "policy": p, "prior": "box+err"}
             for n, o in ((1, 2), (3, 1), (4, 8), (16, 8), (64, 8)) for p in ("fifo", "greedy")],
-    "B4s": [{"L": [0.0, 0.0, 0.0]}, {"L": [0.06666666666666667, 0.7666666666666666, -0.01]},
-            {"L": [float(BL.MX[0, 1]), float(BL.MX[1, 1]), -0.01]}],
+    "B4s": [{"L": [0.0, 0.0, 0.0]}, {"L": [0.06666666666666667, 0.7666666666666666, -0.01]}],
 }
+# plan v3: v2 listed a third gain (M12, M22, -0.01); it is the second one (M12 = 0.0667, M22 = 0.7667)
+assert R.GRID["B4s"][1]["L"] == [float(BL.MX[0, 1]), float(BL.MX[1, 1]), -0.01]
 R.PLAN = PLAN
 
 
@@ -39,11 +40,53 @@ def first_block():
     return {j["key"]: j for j in map(json.loads, gzip.decompress(BLOCK1.read_bytes()).decode().splitlines()) if j}
 
 
+def dev_records(out):
+    """the DEV records, one per (row, configuration). The plan's third B4s gain (M12, M22, -0.01) equals the first
+    comparison's chosen gain, so the DEV grid ran that configuration twice per row (plan section 3, correction);
+    the duplicate is dropped, and a duplicate with a different detection or memory is returned as a finding"""
+    seen, recs, differ = {}, [], []
+    for line in (out / "rows.jsonl").read_text().splitlines():
+        if not line.strip():
+            continue
+        j = json.loads(line)
+        k = (j["key"], j["id"])
+        if k in seen:
+            if (seen[k]["detect"], seen[k]["memory"]) != (j["detect"], j["memory"]):
+                differ.append([j["id"], j["key"], seen[k]["detect"], j["detect"]])
+            continue
+        seen[k] = j
+        recs.append(j)
+    return recs, differ
+
+
+def tune(out):
+    """baselines_run.tune (same rule, same scoring) on one record per (row, configuration)"""
+    recs, differ = dev_records(out)
+    if differ:
+        raise SystemExit(f"duplicate DEV records disagree on {len(differ)} rows: not tuned")
+    rows = R.dev_rows()
+    by_id = {}
+    for j in recs:
+        by_id.setdefault(j["id"], []).append(j)
+    table = {i: R.score(v, rows) for i, v in by_id.items()}
+    chosen = {}
+    for method in R.GRID:
+        for budget, limit in (("M1", 42), ("M2", None)):
+            ok = [(t["paired_lag"], i) for i, t in table.items() if i.startswith(method + ":") and t["complete"]
+                  and not t["admissible_alarms"] and not t["early"] and (limit is None or t["memory"] <= limit)]
+            chosen[f"{method}@{budget}"] = min(ok)[1] if ok else None
+    head, dirty = R.git_state()
+    (out / "tune.json").write_text(json.dumps({"git_head": head, "git_dirty_tracked": dirty, "table": table,
+                                               "chosen": chosen}, indent=1, default=str) + "\n")
+    (out / "chosen.json").write_text(json.dumps(chosen, indent=1) + "\n")
+    print(json.dumps(chosen, indent=1))
+
+
 def unit(out):
     """plan section 3: on the DEV grid's rows, B4s is never later than IM (v2) and no configuration flags an
     admissible row or before t*"""
     rows = {R.key(r): r for r in R.dev_rows()}
-    recs = [json.loads(l) for l in (out / "rows.jsonl").read_text().splitlines() if l.strip()]
+    recs, differ = dev_records(out)
     later, findings = [], []
     for j in recs:
         r = rows[j["key"]]
@@ -53,7 +96,8 @@ def unit(out):
         if j["method"] == "B4s" and r["v2"] is not None and (j["detect"] is None or j["detect"] > r["v2"]):
             later.append([j["id"], j["key"], j["detect"], r["v2"]])
     stab = stability(out)
-    res = {"records": len(recs), "B4s_later_than_IM": later, "soundness_findings": findings, "stability": stab}
+    res = {"records": len(recs), "duplicates_differ": differ, "B4s_later_than_IM": later,
+           "soundness_findings": findings, "stability": stab}
     (out / "unit.json").write_text(json.dumps(res, indent=1) + "\n")
     print(json.dumps({k: (len(v) if isinstance(v, list) else v) for k, v in res.items()}))
 
@@ -186,7 +230,7 @@ def main():
     elif a.cmd == "unit":
         unit(a.out)
     elif a.cmd == "tune":
-        R.tune(a.out)
+        tune(a.out)
     elif a.cmd == "block":
         block(a.out, a.chosen, a.workers)
     else:
