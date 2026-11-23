@@ -45,8 +45,8 @@ The failures are part of the result, and the paper has a section on them. Two th
 
 - The first validation of the window monitor failed: one LP the solver could not solve became an uncertified alarm.
   The failure, its diagnosis and the sound fallback that replaced it are in the paper and in `experiments/v3/`.
-- The frozen Python template is sound only for noise at least 4.85e-13 °C inside the bound. A constructed healthy
-  record makes it flag (`experiments/v3/RECORD-2026-11-22-review2.md`, `experiments/v3/diag/s_gap_witness.py`). The
+- The frozen Python template meets its soundness conditions only for noise at least 4.86e-13 °C inside the bound,
+  and two of its rate pads are open by 2.1e-21 °C. A constructed healthy record makes it flag (`experiments/v3/RECORD-2026-11-22-review2.md`, `experiments/v3/diag/s_gap_witness.py`). The
   fix is not in the frozen code.
 
 Reproductions that disagree with a reported number are welcome; please write (address below).

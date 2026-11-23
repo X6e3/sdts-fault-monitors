@@ -124,3 +124,25 @@ bootstrap intervals with its own seed at 2,000 and 20,000 draws (all three suppo
    list its 48 rows: they are `baselines_run.identity_rows` of validation 3's rows, per design cell the run with the
    smallest sha256 of its key (40 fault cells, 8 healthy); the B1s cause sentence above was replaced by r7's diagnosis.
 
+
+## Review r8 (2026-11-24, a second reader of the same package at 04016dc5)
+
+Review r8 recomputed the table and the three intervals with its own code (its seed 20261124 gives the same intervals
+as r7's; with 20261121 it reproduces `scores.json` exactly) and found the B4s counterexample independently
+(y = 52.3000000005 °C at P0, the same as r7's z0). Its two "high" findings (BASELINE2 not yet in the paper, B4s "by
+construction") were closed in 785213e8. Its other findings and what was done:
+- ε is 4.852840351978194e-13 °C (`results/v3/c-state/c1-b68f865d/y123.json`, K6_data); the paper and README said
+  4.85e-13, which is below it, so "sound for |v| ≤ δ − 4.85e-13" claimed 2.8e-16 °C too much. Both now say 4.86e-13,
+  rounded up. The AVR's 9.9e-13 is above twice ε and stands.
+- The 12 late events of validation 3: the margins show that the full history is inconsistent at t* under WM's own
+  slab and matrix, not that η plays no part in what the window keeps. The paper now says the delays are losses of
+  the compressed state and that η's effect on them was not isolated.
+- The shared-ambient open problem: a fault common to all sensors that the plants' response to an admissible ambient
+  change reproduces still has a twin; added.
+- B1s: on two DEV runs (430027 jump_0.2 E0 ramp at (1, 2): B1 360, B1s 1,145; 430011 drift_0.002 E0 rw at (4, 8):
+  B1 704, B1s 1,555), B1 with only its exact-elimination test relaxed to over ≤ 1e-12 gave B1s's first alarm; on the
+  second run the rescaling alone also gave 1,555. Consistent with r7's diagnosis; the factorial of
+  `diag/b1s_factorial.py` (committed f5f690eb before its run) measures it on 100 DEV rows.
+- J713 step 3 (not this record): 0.205 °C is the largest absolute residual of the least-squares trajectory, so an
+  upper bound on the smallest uniform error bound for that run, not that bound itself; to be worded so when the
+  J713 run enters the paper.

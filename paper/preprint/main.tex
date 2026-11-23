@@ -70,7 +70,7 @@ template polyhedron whose support computations are replaced by LP bases computed
 the reachable set. It needs no solver, is proved sound under explicit rounding conditions and, in exact arithmetic,
 never later than the interval monitor it extends. Its frozen float64 implementations, in Python and C, meet those
 conditions only
-for noise at least $4.85\times10^{-13}$\,\degC\ inside the bound; a revised C state meets them in full but has not
+for noise at least $4.86\times10^{-13}$\,\degC\ inside the bound; a revised C state meets them in full but has not
 been validated on fresh seeds. The frozen C implementation on an ESP32 gives the PC build's alarm flag and a 16-byte
 hash of its full state after every one of 5.04 million development samples. On 9,600 fresh,
 preregistered runs the template removed 38.7\,\% of the interval monitor's paired detection lag. The second is a window LP over
@@ -132,7 +132,7 @@ The contributions are these.
   enumerated offline, and clamps from the reachable error set bound its growth. It is sound
   under explicit rounding conditions (Theorem~\ref{thm:sound}) and, in exact arithmetic, never later than the interval
   monitor (Theorem~\ref{thm:dom}); its frozen float64 implementations meet the rounding conditions only for noise at least
-  \sci{4.85}{-13}\,\degC\ inside the bound, and a revised C state that meets them in full is not validated on fresh
+  \sci{4.86}{-13}\,\degC\ inside the bound, and a revised C state that meets them in full is not validated on fresh
   seeds (Section~\ref{sec:mcu}). On 9,600 fresh runs it
   removed 38.7\,\% of the interval monitor's paired lag and missed 16 certified events against the interval monitor's
   24. Its frozen C implementation with the validated float64 tables gives the PC build's alarm flag and state hash after every
@@ -428,7 +428,7 @@ The condition on the $a_s$-range is needed: with a looser valid basis for the ta
 $h(e_2)$, the proof's first step fails, and the template can miss an alarm that IM raises. The frozen tables keep both
 unit bases. Theorem~\ref{thm:dom} holds in the arithmetic of the proof. Section~\ref{sec:mcu} shows that a float32
 build, sound by Theorem~\ref{thm:sound}, is later than IM on some runs. The frozen Python template meets the rounding
-conditions of Theorem~\ref{thm:sound} only for noise $|v|\le\delta-\varepsilon$, $\varepsilon = \sci{4.85}{-13}$\,\degC:
+conditions of Theorem~\ref{thm:sound} only for noise $|v|\le\delta-\varepsilon$, $\varepsilon = \sci{4.86}{-13}$\,\degC\ (the computed \sci{4.853}{-13}, rounded up):
 like the frozen C state (Section~\ref{sec:mcu}) it computes the command part $S$ in binary64, and no pad covers its
 rounding. A constructed healthy record with noise $\sci{4.6}{-15}$\,\degC\ inside the bound makes it flag
 (Section~\ref{sec:wrong}). Two rate pads are also \sci{2.1}{-21}\,\degC\ below their exact value (open), and two start
@@ -751,8 +751,9 @@ edge). IM's 27 misses are in the three labelled cells.}
   a miss counted as $N-\tstar$, as in Figure~\ref{fig:cells}, 91.8\,\%.
 \item WM detected 12 events after $\tstar$, all in slow drift cells. At each of them the oracle's lower bound on $d^\ast$
   at $\tstar$ exceeds $\delta$ by at least \sci{1.07}{-7}\,\degC, more than 100 times $\eta$ plus the model gap of
-  Corollary~\ref{cor:wm}. So none of these delays comes from WM's wider slab or its exact matrix: with WM's own
-  semantics the full history is already inconsistent at $\tstar$.
+  Corollary~\ref{cor:wm}. So with WM's own semantics, its slab $\delta+\eta$ and its matrix, the full history is
+  already inconsistent at $\tstar$, and these delays are losses of its compressed state. Whether $\eta$ changes which
+  measurements the window keeps, and so where it loses, was not isolated.
 \item The fallback path never ran on this block. WM solved 53,968,652 LPs with 722 retries (on 320 runs), and every LP was solved
   within its three attempts. The validation supports the window's accuracy and the soundness of its normal path; the
   fallback path rests on its proof and on Section~\ref{sec:inject}.
@@ -851,7 +852,7 @@ is far below the margins at which the test changes its answer, but the pads do n
 
 \paragraph{The C state against the exact model.} A check in exact rational arithmetic found two gaps in the frozen C
 state. (i) The command part $S$ is computed in binary64 and no pad covers its rounding: the frozen C state is sound
-against the exact model for $|v|\le\delta-\varepsilon$, with $\varepsilon = \sci{4.85}{-13}$\,\degC\
+against the exact model for $|v|\le\delta-\varepsilon$, with $\varepsilon = \sci{4.86}{-13}$\,\degC\
 (\sci{9.9}{-13}\,\degC\ on the AVR). (ii) Two start supports were \sci{1.11}{-16}\,\degC\ short; the first step absorbs
 the shortfall. A revised C state closes both by construction, with the slab $\delta+\eta$ and exact start sums, so that
 it is sound for $|v|\le\delta$. Preregistered checks accepted it: the same first flag as the frozen C state on all
@@ -1138,12 +1139,13 @@ kept, and with them the later windows. Its worst-case time is not shown either.
 \begin{itemize}
 \item One plant with known parameters, in simulation, under assumed laws of noise and ambient. With uncertain
   parameters the exact set is in general no longer convex.
-\item The frozen implementations of TS are sound for noise up to $\delta - \sci{4.85}{-13}$\,\degC, not up to
+\item The frozen implementations of TS are sound for noise up to $\delta - \sci{4.86}{-13}$\,\degC, not up to
   $\delta$ (on the AVR $\delta - \sci{9.9}{-13}$\,\degC, under two assumptions on its arithmetic and port that were
   tested, not proved), and the Python template's two rate pads are also open, at \sci{2.1}{-21}\,\degC; the revised C
   state closes the gaps of the C state but is not validated on fresh seeds, and the Python template does not close its
   gaps yet (Sections~\ref{sec:mcu} and~\ref{sec:wrong}).
-% src: MCU-NOTES 2g (K6, Uno: two assumptions; Python template P4 open); review r7 finding 3
+% src: MCU-NOTES 2g (K6, Uno: two assumptions; Python template P4 open); review r7 finding 3; eps =
+% 4.852840351978194e-13 in results/v3/c-state/c1-b68f865d/y123.json K6_data, stated rounded up (review r8)
 \item The ambient box (c) carries the detection of slow drift. A wider box delays the exact detector itself, and the
   monitors with it (Section~\ref{sec:ambient}); a wrong box can make a healthy record inconsistent.
 \item WM runs on a desktop with HiGHS. An embedded LP solver with a bounded iteration count is the open step; the
@@ -1160,8 +1162,10 @@ kept, and with them the later windows. Its worst-case time is not shown either.
 \item WM's fallback path was never exercised on validation seeds; it rests on its proof and on injected failures.
 \item The facet count of $X_k$, and a principled minimal template, are open.
 \item Plants that share one ambient constrain it jointly: to leave the joint record consistent, a twin of one
-  sensor's fault (Proposition~\ref{prop:twin}) must explain the other sensors' records too. A joint monitor, for one
-  shared ambient or with a bound on how far the ambients differ, and the isolation of the faulty sensor are open.
+  sensor's fault (Proposition~\ref{prop:twin}) must explain the other sensors' records too. A fault common to all
+  sensors that the plants' response to an admissible ambient change reproduces on every channel still has a twin. A
+  joint monitor, for one shared ambient or with a bound on how far the ambients differ, and the isolation of the
+  faulty sensor are open.
 \item The oracle leaves some runs undetermined: in validation 3, 389 of the 800 healthy runs with noise exactly at
   $\pm\delta$, one healthy run with uniform noise (440582, E1, ramp) and 3 fault runs. Healthy runs are admissible by
   construction and are judged as such, not by the oracle.
