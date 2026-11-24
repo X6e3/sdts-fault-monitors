@@ -143,8 +143,7 @@ The contributions are these.
   validated monitor: scored on the PC on validation 1, it reached $\Dp = 0.212$ against the target 0.25
   (Section~\ref{sec:mcu}).
 \item A window LP over 256 samples whose base is updated by a smoothing rule, with at most 65 kept measurements, a
-  certified weak-duality bound on every alarm and on every base update it solves, and analytic outer bounds when an
-  LP fails. On another 9,600 fresh runs it removed
+  certified weak-duality bound on every alarm and on every base update it solves, and outer bounds, certified or analytic, when an LP fails. On another 9,600 fresh runs it removed
   99.5\,\% of the paired lag with no missed certified event, and every alarm was certified. On development data $\Dp$ runs from
   0.386 (template only) through 0.643, 0.815 and 0.824 to 0.9992 for windows of 0, 64, 128, 192 and 256 samples.
 \item The first validation of the window failed on one unsolved LP. We report the failure, its diagnosis, the sound
@@ -532,7 +531,8 @@ were audited with no violation; the smallest slack was \sci{8.2}{-16}\,\degC. Un
 % (3,548,402, 8.2e-16) and amendment 10 R3 table (a, b 4,319,122 each, e 3,933,928; implied 39,033 + 386,724)
 
 \begin{proposition}[soundness of WM]\label{prop:wm}
-Under the model, WM never flags an admissible record and never flags before $\tstar$, and every flag carries a
+Under the model and the arithmetic and execution assumptions of Appendix~\ref{app:proof}, WM never flags an
+admissible record and never flags before $\tstar$, and every flag it raises through its alarm test carries a
 certificate.
 \end{proposition}
 \begin{proof}[Proof sketch]

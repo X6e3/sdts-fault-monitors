@@ -43,8 +43,12 @@ python3 -I -B experiments/j713/reproduce_step3.py
 ```
 
 fits the model on step 1, freezes its four rate parameters, refits only the ambient TA and the initial core state c0
-on step 3, and checks that every number equals the frozen evaluation's output `experiments/j713/step3-eval.json`
-(numpy and scipy as in the repository's environment). With `--figdata FILE` it also writes the measured and fitted
-Ts0P of step 3 and their difference.
+on step 3, and compares the result with the frozen evaluation's output `experiments/j713/step3-eval.json` (numpy and
+scipy as in the repository's environment). The core is not measured, so the six fitted quantities are identifiable
+only up to a one-parameter family that leaves TA and the fitted Ts0P unchanged; the individual rates and c0 depend on
+where the optimizer stops, which differs slightly between platforms. The script therefore checks TA, the residual
+statistics and the invariants of the step-1 fit (within 1e-4 degC and 1e-3 relative), and also refits step 3 with the
+frozen step-1 rates of `step3-eval.json`. With `--figdata FILE` it also writes the measured and fitted Ts0P of step 3
+and their difference.
 
 License: CC BY 4.0. Cite the paper and this repository.

@@ -49,13 +49,18 @@ are to this supplement.
 
 \section{Rounding in the template state}\label{sup:round}
 
-This section completes the proof of Theorem~\ref{thm:sound} of the paper. Every computed support is an upper
-bound after the pads, which cover the dot product's rounding, including the underflow of its three products, the
-stored residual of each basis, and the rounding of $\lambda$ to the stored precision. The Python template scales the
-dot product's pad by the current $\max_i|h_i|$; the frozen C tables' pads take $|h_i|\le\sqrt3\cdot2.2$. For cyl16p
-the clamps keep every $h_i$ at most 3.0, the measurement slab only lowers $h_{\pm e_2}$, and while $X_k$ is nonempty,
-$h_i$ bounds the support of $X_k\subseteq[-2,2]^3$ in direction $d_i$, before and after that cut, which is at least
-$-2\|d_i\|_1\ge-3.27$.
+Theorem~\ref{thm:sound} of the paper assumes that every computed support is rounded outward. This section gives the
+pads with which the Python and C implementations of the template state do so. In the notation of Section~\ref{sec:tmpl}, the
+state $h\in\R^n$ represents $\mathcal{P} = \{s : Ds\le h\}$ with unit directions $d_1,\dots,d_n$, and each support is
+the minimum, over the stored bases (triples of directions with multipliers $\lambda\ge0$), of the dot product
+$\lambda\cdot h$ of three terms. Each such value is raised by a pad that covers the rounding of the dot product,
+including the underflow of its three products, the stored residual of the basis, and the rounding of $\lambda$ to the
+stored precision; so every computed support is an upper bound on the exact one. The pad of the dot product's
+rounding scales with $\max_i|h_i|$. The Python template takes the current $\max_i|h_i|$; the frozen C tables take the
+fixed bound $|h_i|\le\sqrt3\cdot2.2\approx3.81$, which holds for the frozen template cyl16p (Section~\ref{sec:frozen}): its clamps
+keep every $h_i$ at most 3.0, the measurement slab only lowers $h_{\pm e_2}$, and while the exact set $X_k$ is
+nonempty, $h_i$ bounds the support of $X_k\subseteq[-2,2]^3$ in direction $d_i$, before and after that cut, which is
+at least $-2\|d_i\|_1\ge-3.27$. Hence $|h_i|\le3.27<3.81$ throughout.
 % src: HMAX = codegen_c.py; 3.0 and -3.27 measured on cyl16p (max CAP 2.998, 2 max|d_i|_1 3.266) and the underflow
 % term in K2 = RECORD-2026-11-23-review3-checks.md section 7
 
@@ -336,7 +341,6 @@ solver library can return one is not known. The released code rejects the first 
 second as a failed attempt; on development rows it gives the same records as the frozen code, run times aside. The exact audit of Section~\ref{sec:cert} measures the bounds on its rows
 and is not part of the proof.
 
-\bibliographystyle{plainnat}
-\bibliography{refs}
+
 
 \end{document}

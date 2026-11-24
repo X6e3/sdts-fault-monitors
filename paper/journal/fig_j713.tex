@@ -15,10 +15,10 @@
 \addlegendentry{fitted model}
 \foreach \x in {9.999, 25.125, 40.257} {\edef\tmp{\noexpand\draw[muted, dashed, line width=0.4pt]
   (axis cs:\x,25) -- (axis cs:\x,30.2);}\tmp}
-\node[lab, anchor=north] at (axis cs:5,30.15) {idle};
-\node[lab, anchor=north] at (axis cs:17.56,30.15) {6 thr.};
-\node[lab, anchor=north] at (axis cs:32.69,30.15) {1 thr.};
-\node[lab, anchor=north] at (axis cs:52.7,30.15) {idle};
+\node[lab, fill=white, anchor=north] at (axis cs:5,30.15) {idle};
+\node[lab, fill=white, anchor=north] at (axis cs:17.56,30.15) {6 thr.};
+\node[lab, fill=white, anchor=north] at (axis cs:32.69,30.15) {1 thr.};
+\node[lab, fill=white, anchor=north] at (axis cs:52.7,30.15) {idle};
 % (b) residual
 \nextgroupplot[height=3.8cm, ymin=-0.25, ymax=0.25, ytick={-0.2,-0.1,0,0.1,0.2},
   yticklabels={$-0.2$,$-0.1$,0,0.1,0.2}, ylabel={residual (\degC)}, xlabel={minutes from the start of the run},

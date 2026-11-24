@@ -30,7 +30,7 @@ $\tstar$ of each run comes from an LP over the full history whose verdicts carry
 sample at which no admissible explanation exists. So a sound monitor can only be later than $\tstar$. Its delay is
 what it loses against the full history: for the ideal interval monitor, information its representation discarded
 (Corollary~\ref{cor:im}); for an implementation, also what its conservative arithmetic gives up. The window monitor
-widens the noise bound by $\eta = 10^{-9}$\,\degC\ (Section~\ref{sec:cert}), rounds its box test outward and pads
+widens the noise bound by $\eta = 10^{-9}$\,\degC\ (Section~\ref{sec:window}), rounds its box test outward and pads
 its supports, so a record that exceeds the bound by less than that margin at $\tstar$ can be flagged later for that
 reason alone; Section~\ref{sec:val3} checks the late detections of the validation block against this margin. We
 report the delay as the share of a
@@ -48,14 +48,15 @@ certify, so every bounded monitor is scored against the exact detection time und
 template polyhedron that needs no solver, sound under explicit rounding conditions and, in exact arithmetic, never
 later than the interval monitor (Theorems~\ref{thm:sound} and~\ref{thm:dom}), with C implementations checked on an
 ESP32 and an 8-bit AVR (Section~\ref{sec:mcu}); and a window LP with a smoothing base update, whose every alarm carries
-a weak-duality certificate and whose failed LPs fall back to analytic outer bounds (Section~\ref{sec:cert}). The first
+a weak-duality certificate (Section~\ref{sec:cert}) and whose failed LPs fall back to outer bounds, certified or
+analytic (Section~\ref{sec:fallback}). The first
 validation of the window failed on one unsolved LP; the failure, the fallback that replaced it and the precision gaps
 found in our own implementations are reported (Section~\ref{sec:wrong}). When an admissible ambient path reproduces
 a sensor drift, no state of any size can certify the drift's error (Proposition~\ref{prop:twin}). The monitors are
 compared with seven baselines in two comparisons fixed before they ran (Section~\ref{sec:baselines}), and the
 plant's model class is fitted to a physical device (Section~\ref{sec:device}).
 
-\paragraph{What is not claimed.} One plant, with known parameters, in simulation. The ambient box is an assumption the
+\paragraph{What is not claimed.} Fault detection is evaluated on one plant, with known parameters, in simulation. The ambient box is an assumption the
 results lean on (Section~\ref{sec:ambient}). The window needs an LP solver and runs on a desktop; no worst-case
 execution time is shown for either tier. None of the ingredients is new on its own (Section~\ref{sec:related}).
 
@@ -258,7 +259,7 @@ interval of constant offsets consistent with the whole record is $[-0.70, 0.12]$
 
 \section{Tier 1: a template state without a solver}
 
-\subsection{Template polyhedra with offline bases}
+\subsection{Template polyhedra with offline bases}\label{sec:tmpl}
 
 Fix unit directions $D = \{d_1,\dots,d_n\}$ that include $\pm e_1$, $\pm e_2$, $\pm e_3$. The state is a vector
 $h\in\R^n$ representing $\mathcal{P} = \{s : Ds\le h\}$. The support of $\mathcal{P}$ in a direction $g$ is, by LP
@@ -297,8 +298,9 @@ By induction. $\mathcal{P}_0\supseteq X_0$, because the start supports are those
 both sides with the slab keeps the inclusion. A minimum over fewer bases is at least the exact support, and the exact
 support of $M(\mathcal{P}\cap\text{slab})\oplus(\text{the $w$ segment})$ in direction $d_i$ is
 $\operatorname{supp}(M^\top d_i)+\rho\,|(d_i)_3|$; a polytope given by upper bounds on the supports of a superset is a
-superset. The clamps hold for every reachable state (Lemma~\ref{lem:err} and (c)). The pads make every computed support
-an upper bound; the rounding analysis behind them is in Supplementary Section~\ref{sup:round}.
+superset. The clamps hold for every reachable state (Lemma~\ref{lem:err} and (c)). Rounding every computed support outward, as
+assumed, keeps it an upper bound; Supplementary Section~\ref{sup:round} gives the pads with which the Python and C
+implementations round their supports outward.
 \end{proof}
 
 \begin{theorem}[never later than IM]\label{thm:dom}
@@ -358,7 +360,7 @@ larger direction families (72 and 94 directions) recovered little of it and fail
 Keeping the measurements themselves, over a window, avoids the hull.
 % src: DIAG-1-RESULTS.md; DIAG-2-RESULTS.md (T1: 556.5 of 582.9, 95 %; families B1/B2 FAIL)
 
-\subsection{The window}
+\subsection{The window}\label{sec:window}
 
 The window monitor WM (\emph{F3} in the records) keeps, between samples, a base at time $\tau$ (the 42 supports of the
 template TS, with its clamps), the measurements kept since $\tau$ (at most $K_{\mathrm{cap}} = 64$), and $\tau$ itself.
@@ -419,20 +421,26 @@ were audited with no violation; the smallest slack was \sci{8.2}{-16}\,\degC. Un
 % (3,548,402, 8.2e-16) and amendment 10 R3 table (a, b 4,319,122 each, e 3,933,928; implied 39,033 + 386,724)
 
 \begin{proposition}[soundness of WM]\label{prop:wm}
-Under the model, WM never flags an admissible record and never flags before $\tstar$, and every flag carries a
+Under the model and the arithmetic and execution assumptions of Supplementary Section~\ref{app:proof}, WM never flags
+an admissible record and never flags before $\tstar$, and every flag it raises through its alarm test carries a
 certificate.
 \end{proposition}
 \begin{proof}[Proof of the alarm certificate]
-Write a window LP with exact coefficients as $\max\{-c^\top x : Ax\le b,\ Ex = f,\ \ell\le x\le h\}$. For any $y\ge0$
-and any $\nu$, put $s = c + A^\top y + E^\top\nu$; every feasible $x$ satisfies $-c^\top x = y^\top Ax + \nu^\top Ex -
-s^\top x \le y^\top b + \nu^\top f - \sum_j\min(s_j\ell_j,\ s_jh_j)$, because every variable is boxed. The certified bound
-is this right side for the solver's multipliers, evaluated with its rounding bounded outward, so it bounds the maximum
-of $a_s$, and of $-a_s$, over the window whatever the solver returns. Every explanation of $z_0,\dots,z_{t-1}$ is a
-feasible point of the window, so its $a_s$ at $t$ lies in the certified range. An alarm requires the slab of radius
-$\delta+\eta$ around $z_t$, rounded outward, to miss that range; then $z_0,\dots,z_t$ has no explanation, and the
-alarm comes at or after $\tstar$ and never on an admissible record. That the window contains the explanations
-through its folds, drops and evictions, the rounding analysis of the bound, and the oracle's certificates are proved
-in Supplementary Section~\ref{app:proof}.
+Write a window LP with exact coefficients as $\max\{-c^\top x : A_\ast x\le b,\ E_\ast x = f,\ \ell\le x\le h\}$. For
+any $y\ge0$ and any $\nu$, put $s = c + A_\ast^\top y + E_\ast^\top\nu$; every feasible $x$ satisfies $-c^\top x =
+y^\top A_\ast x + \nu^\top E_\ast x - s^\top x \le y^\top b + \nu^\top f - \sum_j\min(s_j\ell_j,\ s_jh_j)$, because
+every variable is boxed. The certified bound is this right side for the solver's multipliers, the inequality
+multipliers clipped at zero, evaluated from the stored coefficients with their rounding and the evaluation's own
+rounding bounded outward (Lemma~\ref{lem:L1}). So it bounds the maximum of $a_s$, and of $-a_s$, over the window with
+exact coefficients whatever the solver returns; a side whose LP failed takes the box end 2 instead, and at $t = 0$ the
+test runs against the box. By the window's invariant (Lemmas~\ref{lem:embed}, \ref{lem:drop} and~\ref{lem:fold}),
+every explanation of $z_0,\dots,z_{t-1}$ with slab radius $d = \mathrm{fl}(\delta+\eta)\ge\delta+\eta$ is a feasible
+point of the window, so its $a_s$ at $t$ lies in the certified range. An alarm requires the slab of radius $d$ around
+$z_t$, rounded outward, to miss that range; then $z_0,\dots,z_t$ has no explanation of radius $d$, hence none of
+radius $\delta$, so the alarm comes at or after $\tstar$ and never on an admissible record (Lemma~\ref{lem:alarm} and
+Theorem~\ref{thm:wm}). These lemmas, the rounding analysis of the bound and the oracle's certificates are proved in
+Supplementary Section~\ref{app:proof}; Corollary~\ref{cor:wm} carries the result to the simulator's records and the
+oracle's computed $\tstar$, whose rounding stays below $\eta$.
 \end{proof}
 
 \subsection{When the solver does not solve}\label{sec:fallback}
@@ -1007,10 +1015,10 @@ The records keep every failure. These changed the method:
 
 \paragraph{Why the window matters on slow drift.} A slow drift changes the measurement no faster than the ambient may
 change it, so at any one sample it can be read as a change of $T_A$. What separates it from a healthy record is the
-plant's lag, which ties measurements far apart in time, and when an admissible ambient path reproduces the drift
-nothing separates them (Proposition~\ref{prop:twin}). The evidence is therefore spread over many samples. A template
-state must carry it as a few support values, and the diagnosis of Section~\ref{sec:whywindow} found that almost all of
-its loss comes from that geometry: the lower bound on $T_A$ is wrapped outward at every measurement cut. A window
+plant's lag, which ties measurements far apart in time, together with the ambient box (next paragraph); when an
+admissible ambient path reproduces the drift nothing separates them (Proposition~\ref{prop:twin}). The evidence is therefore spread over many samples. A template
+state must carry it as a few support values, and the diagnosis of Section~\ref{sec:whywindow}, on five development runs, found that
+almost all of its loss there comes from that geometry: the lower bound on $T_A$ is wrapped outward at every measurement cut. A window
 keeps the measurements themselves, so the coupling between distant samples survives until the fold, and the
 smoothing fold tightens the new base with measurements taken after it. This is where the window gains over the
 template: the window's remaining lag, like almost all of the interval monitor's, sits in the slow drift cells
@@ -1021,21 +1029,21 @@ the execution time.
 \paragraph{What the exact detector loses when the ambient assumptions relax.} The ambient box carries the detection
 of slow drift: in those cells the alarm often comes when the measurement passes the top of the box plus $\delta$, so
 that every healthy explanation has to hold $T_A$ against the wall (Section~\ref{sec:ambient}). A wider box therefore
-weakens the exact detector itself. It detects some events later and some not at all within the record, and most of
-what the monitors lose against the frozen $\tstar$ under a wider box is this loss of the assumption, not of their
+weakens the exact detector itself. It detects some events later and some not at all within the record, and on the development rows most of what the monitors lose against the frozen $\tstar$ under a wider box is this
+loss of the assumption, not of their
 representation; the window's lag against the exact detector of its own box did not change
 (Table~\ref{tab:widebox}). The bounds are part of the detector. A box that is too narrow makes healthy records
-inconsistent, and the alarms then report a broken assumption (Section~\ref{sec:ambient}); a box that is too wide
-makes slow faults invisible to every monitor, the exact one included. Measuring the ambient instead of bounding it
+inconsistent, and the alarms then report a broken assumption (Section~\ref{sec:ambient}); a box that is too wide makes slow faults invisible within the record to every monitor, the exact one included. Measuring the ambient instead of bounding it
 would remove this dependence; that is not studied here.
 
 \paragraph{What the device study shows.} Section~\ref{sec:device} tested the model class, not the monitors. With rate
 parameters taken from one run, the two-node class described a laptop's palm-rest sensor on another run, under a load
 profile it had not seen, within a largest residual below the paper's $\delta$; a second sensor's residual was above
 it. Two things follow for a deployment. The structure the monitors assume, a hidden core heated by a measured input
-and a measured surface losing heat to an unknown ambient, fits a real device. And the bound a monitor would need
-there has to cover the model's error, the sensor's quantization and the ambient's departure from a constant, not the
-sensor's noise alone; on this device it is of the order of the paper's $\delta$. Detection on the device, an ambient
+and a measured surface losing heat to an unknown ambient, fits a real device. And the bound a monitor would need there has to cover the model's error and the sensor's quantization, not the
+sensor's noise alone. On this run the largest residual was of the order of the paper's $\delta$; it is an upper bound
+on the smallest uniform error bound of a constant-ambient fit, and part of it, the ambient's departure from a constant,
+a monitor whose $T_A$ may vary would absorb. Detection on the device, an ambient
 box for it and its behaviour under faults were not tested.
 
 \section{Related work}\label{sec:related}
@@ -1078,7 +1086,7 @@ kept, and with them the later windows. Its worst-case time is not shown either.
 \section{Limitations and open problems}
 
 \begin{itemize}
-\item One plant with known parameters, in simulation, under assumed laws of noise and ambient. With uncertain
+\item Fault detection is evaluated on one plant with known parameters, in simulation, under assumed laws of noise and ambient. With uncertain
   parameters the exact set is in general no longer convex.
 \item The frozen implementations of TS are sound for noise up to $\delta - \sci{4.86}{-13}$\,\degC, not up to
   $\delta$ (on the AVR $\delta - \sci{9.95}{-13}$\,\degC, under two assumptions on its arithmetic and port that were

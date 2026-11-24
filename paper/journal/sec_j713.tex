@@ -1,6 +1,6 @@
 % CEP manuscript: the model class on a physical device (J713 step tests). Draft, 2026-11-24.
 % To be \input after the plant section of the CEP version. Every number is from the dated records named in the
-% % src: lines; the records are in the author's J713 folder (sdts-runs/j713-thermal) until the data release.
+% % src: lines; the data, plan, records and scripts are in data/j713/ and experiments/j713/ of the repository.
 
 \section{The model class on a physical device}\label{sec:device}
 
@@ -24,18 +24,27 @@ the structure of Section~\ref{sec:plant} with $k_c = K/C_c$, $b_c = 1/C_c$, $k_s
 device's values are its own; they are not the simulated plant's.
 
 \paragraph{Protocol.} The plan, its criterion and its scripts were frozen, and their hashes submitted to
-OpenTimestamps calendars, two minutes before the test run began; the Bitcoin attestation dates them no later than
-twelve minutes into the 65-minute run (two minutes after its first load began) and before the evaluation. Six quantities enter the model: the four rate parameters
+OpenTimestamps calendars, two minutes before the test run began. Their Bitcoin attestation (block 977177) precedes
+that of the result manifest (block 977184); its block time, accurate only to about two hours, falls twelve minutes
+into the 65-minute run. Six quantities enter the model: the four rate parameters
 $k_c$, $b_c$, $k_s$, $h_s$, the ambient $T_A$ and the initial core state $c_0$.
 \begin{itemize}
 \item \emph{Step 1} (development; idle, 2 threads, 4 threads, idle; 3,131 samples): all six were fitted by output
   error, simulating the model open loop from the first sample. The four rate parameters were then frozen at
-  $k_c = \sci{2.20}{-3}$, $b_c = \sci{9.80}{-3}$\,\degC/(W\,s), $k_s = \sci{1.87}{-4}$ and $h_s = \sci{2.06}{-3}$ per
-  sample.
+  $k_c = \sci{2.20}{-3}$, $k_s = \sci{1.87}{-4}$ and $h_s = \sci{2.06}{-3}$ per sample, and
+  $b_c = \sci{9.80}{-3}$\,\degC/(W\,s).
 \item \emph{Step 3} (the test run; idle 600\,s, 6 threads 900\,s, 1 thread 900\,s, idle 1,500\,s; 3,900 samples, 65
   minutes; a load profile not used in development): only $T_A$ and $c_0$ were fitted, giving $T_A = 23.08$\,\degC\ and
   $c_0 = 52.5$\,\degC.
 \end{itemize}
+The core is not measured, so the six quantities are identifiable from $P$ and $s$ only up to a one-parameter family:
+the output depends on them only through $k_c+k_s+h_s$, $k_ch_s$, $k_sb_c$, $T_A$ and $k_s(c_0-s_0)+h_s(T_A-s_0)$, with
+$s_0$ the first measurement. The rate values above and $c_0$ are the point of that family at which the fit stopped;
+$T_A$, the fitted $s$ and so every residual are the same at every point of it.
+% src: invariants derived from the model (transfer function and free response); checked numerically 2026-11-24
+% (review r10): moving k_c by -10 to +20 % along the family changes the step-1 fit by at most 1.1e-13 degC and leaves
+% the step-3 TA and residuals unchanged; on Linux x86_64 the fit stops at another point (rates within 1 %, c0 52.58)
+% with the same TA and residuals within 3e-5 degC (experiments/j713/reproduce_step3.py).
 The criterion, fixed before the test run, was an rms residual of at most 0.25\,\degC\ and a largest absolute residual
 of at most 0.60\,\degC\ for \texttt{Ts0P}. It was chosen after a rehearsal on development data only (rate parameters
 from step~1, a second development run as the test: rms 0.160\,\degC, largest residual 0.347\,\degC).
@@ -48,15 +57,14 @@ from step~1, a second development run as the test: rms 0.160\,\degC, largest res
 \centering
 \input{fig_j713.tex}
 \caption{The test run: \texttt{Ts0P} measured (in steps of 1/16\,\degC) and fitted (a), and the residual (b). The
-rate parameters come from step~1; only $T_A$ and $c_0$ were fitted to this run. Dashed lines: phase changes (idle, 6 threads, 1 thread, idle); dotted line: the largest absolute residual,
-0.205\,\degC.}
+rate parameters come from step~1; only $T_A$ and $c_0$ were fitted to this run. Dashed lines: phase changes (idle, 6 threads, 1 thread, idle); dotted line: $-0.205$\,\degC, the largest residual in magnitude.}
 \label{fig:device}
 \end{figure}
 
 \begin{table*}[t]
 \centering\small
 \caption{Residuals on the test run, with the rate parameters frozen from step~1 and only $T_A$ and $c_0$ fitted.
-Each sensor has its own fit; \texttt{Ts0P} carries the criterion.}
+Each sensor has its own fit; \texttt{Ts0P} carries the criterion. $c_0$ is one point of a family (see text).}
 \label{tab:device}
 \begin{tabular}{lrrrrrr}
 \toprule
@@ -84,8 +92,8 @@ thermal device.
 
 \paragraph{Data.} The columns used (time, \texttt{PSTR}, \texttt{Ts0P}, \texttt{Ts1P}, \texttt{TB0T}) of the three
 runs, with their phase times, are released under CC BY 4.0 in the repository (\texttt{data/j713/}), with the plan,
-its time stamps, the record and the scripts (\texttt{experiments/j713/}); \texttt{reproduce\_step3.py} recomputes
-Table~\ref{tab:device} from the released columns alone.
+its time stamps, the record and the scripts (\texttt{experiments/j713/}); \texttt{reproduce\_step3.py} recomputes $T_A$ and the
+residuals of Table~\ref{tab:device} from the released columns alone.
 % src: sdts-runs/j713-thermal/PLAN-step3.md (model, protocol, criterion; manifest d84cacf4, stamped 11:59 +0300 on
 % 2026-11-23, run started 12:01:50); RECORD-2026-11-23-step3.md (verdict PASS, ranges, phases); step3-eval.json
 % (sha256 00ef0d4b...; dev_fit params, val_refit, val_rms/p99/max); dev-rehearsal-step1-step2.json (0.160, 0.347);
