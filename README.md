@@ -106,10 +106,13 @@ the healthy-record witness.
 
 - **The name.** SDTS stands for Software-Defined Temporal Sensing. It is unrelated to the USGS Spatial Data Transfer
   Standard, which has the same acronym. Until 22 November 2026 this repository was named `dmreda-sdts-research`.
-- **Earlier lines.** DMREDA and MGDE are the author's earlier research lines on temporal state in embedded fault
-  handling; both are closed. The repository was reset to SDTS on 16 August 2026. DMREDA's material from before the
-  reset is kept byte for byte in `archive/pre-reset-2026-08-16/`, negative results included. MGDE is not in this
-  repository.
+- **An earlier line.** DMREDA is the author's earlier research line on temporal state in embedded fault handling; it
+  is closed. The repository was reset to SDTS on 16 August 2026, and DMREDA's material from before the reset is kept
+  byte for byte in `archive/pre-reset-2026-08-16/`, negative results included. SDTS's first thermal study (v2,
+  18 November 2026) ran DMREDA as a baseline against the exact oracle: it raised no false alarm on 230 healthy runs,
+  but with a constant command it flagged only jumps of 1 °C or more, the largest drift and changes of noise or gain,
+  and with a varying command it was nearly blind
+  (`experiments/records/thermal_v2_cal_review/RECORD-2026-11-18-FINAL-results.md`).
 - **A removed file.** `HANDOFF.md`, a working handoff of 17 November 2026 cited by
   `experiments/records/thermal_v2_cal_review/RECORD-2026-11-17.md`, is no longer at the tip; it is in the history at
   commit `7cad493e`.
