@@ -3,21 +3,11 @@
 % declarations are in main.tex), with the J713 section after the problem section. Edits for CEP follow.
 \section{Introduction}
 
-On 30 July 2026 the author's family car, a Ford Fiesta 1.4, lost its cylinder-head gasket on the road, and its engine
-stayed off for 80 minutes (Fig.~\ref{fig:fiesta}). With no heat input, its only coolant sensor rose from 74 to
-113\,\degC, and after cold coolant was added it rose again, from 62 to 84\,\degC\ in under five minutes. The heat came
-from the engine block, which no sensor measured. The present reading did not say how much heat the block still held;
-that hidden state, and what one sensor's history can prove about it, is the subject of this paper.
-
-\begin{figure}[t]
-\centering
-\input{fig_fiesta.tex}
-\caption{Coolant temperature of a Ford Fiesta 1.4 (petrol) on 30 July 2026, recorded over OBD after a cylinder-head
-gasket failure. The engine stopped at about 20:45 and stayed off (grey) until 22:04:59. At 21:10--21:12 water was
-poured on the radiator; at 21:57 the ballooned hose was cut and refitted and coolant was added. The 113--114\,\degC\
-plateau is not explained by the record; no boiling was observed. A motivating observation, not a test of the method.}
-\label{fig:fiesta}
-\end{figure}
+When does the history of a single sensor rule out the healthy model? A monitor that watches one sensor must decide,
+sample by sample, whether the record so far still has an explanation by the healthy plant under its assumptions.
+Under bounded noise and bounded unknown inputs the question has an exact answer, the first sample at which no
+admissible healthy explanation remains; but the exact answer keeps a state whose size is not bounded in advance.
+This paper asks how much later a monitor with bounded memory answers, and why.
 
 A set-membership fault detector treats the noise and the unknown inputs as unknown but bounded. It declares a fault
 when the measured record has no explanation that respects the model and the bounds. Within those bounds it cannot
