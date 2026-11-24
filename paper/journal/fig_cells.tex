@@ -1,0 +1,28 @@
+% Figure: validation 3, lag per fault cell, IM against WM. Data: figdata/fig4_cells.dat (make_data.py, fig4).
+% Rows (i): jump 0.5, jump 0.2, stuck, noise x2, gain 0.01, drift 0.02, 0.005, 0.002, 0.001, 0.0005 (C/s).
+\begin{tikzpicture}
+\begin{semilogxaxis}[paperaxis,
+  width=0.62\linewidth, height=7.2cm,
+  xmin=0.5, xmax=1e6, ymin=-0.6, ymax=9.6, y dir=reverse,
+  ytick={0,...,9},
+  yticklabels={jump 0.5\,$^\circ$C, jump 0.2\,$^\circ$C, stuck, noise $\times2$, gain 1\,\%, drift 0.02, drift 0.005,
+               drift 0.002, drift 0.001, drift 0.0005},
+  xtick={1,10,100,1000,10000,100000,1000000},
+  xlabel={lag summed over the cell's certified events (s; misses count $N-t^\ast$)},
+  ymajorgrids=true, xmajorgrids=true,
+  legend style={at={(0.08,0.03)}, anchor=south west}, legend cell align=left]
+\addplot[only marks, mark=*, mark size=2.4pt, cIM] table[x=im, y=i] {figdata/fig4_cells.dat};
+\addlegendentry{IM}
+\addplot[only marks, mark=diamond*, mark size=3pt, cWM,
+  restrict expr to domain={\thisrow{wm}}{1:1e9}] table[x=wm, y=i] {figdata/fig4_cells.dat};
+\addlegendentry{WM}
+% WM's lag is 0 in seven cells: open diamonds at the left edge
+\addplot[only marks, mark=diamond, mark size=3pt, cWM, line width=0.7pt,
+  restrict expr to domain={\thisrow{wm}}{-1:0.5}] table[x expr=0.7, y=i] {figdata/fig4_cells.dat};
+\addlegendentry{WM, lag 0 (left edge)}
+% IM's misses (selective labels)
+\node[lab, anchor=west] at (axis cs:40000,1) {8 missed};
+\node[lab, anchor=west] at (axis cs:75000,8) {2 missed};
+\node[lab, anchor=west] at (axis cs:125000,9) {17 missed};
+\end{semilogxaxis}
+\end{tikzpicture}

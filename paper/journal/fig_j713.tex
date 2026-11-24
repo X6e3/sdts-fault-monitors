@@ -4,10 +4,10 @@
 % boundaries from data/j713/step3-phases.csv: 9.999, 25.125 and 40.257 min; the run ends at 65.1 min.
 \begin{tikzpicture}
 \begin{groupplot}[group style={group size=1 by 2, vertical sep=1.5cm},
-  paperaxis, width=0.92\linewidth, xmin=0, xmax=65.2, xtick={0,10,20,30,40,50,60}]
+  paperaxis, width=0.80\linewidth, xmin=0, xmax=65.2, xtick={0,10,20,30,40,50,60}]
 % (a) measured and fitted
 \nextgroupplot[height=5.0cm, ymin=25, ymax=30.2, ylabel={\texttt{Ts0P} (\degC)},
-  title={(a) measured and fitted (rate parameters from step 1; $T_A$ and $c_0$ fitted)},
+  title={(a) measured and fitted},
   legend style={at={(0.02,0.56)}, anchor=north west}, legend cell align=left, clip=false]
 \addplot[const plot, muted!65, line width=0.6pt] table[x=t_min, y=Ts0P_meas] {figdata/j713-step3.dat};
 \addlegendentry{measured}
@@ -16,8 +16,8 @@
 \foreach \x in {9.999, 25.125, 40.257} {\edef\tmp{\noexpand\draw[muted, dashed, line width=0.4pt]
   (axis cs:\x,25) -- (axis cs:\x,30.2);}\tmp}
 \node[lab, anchor=north] at (axis cs:5,30.15) {idle};
-\node[lab, anchor=north] at (axis cs:17.56,30.15) {6 threads};
-\node[lab, anchor=north] at (axis cs:32.69,30.15) {1 thread};
+\node[lab, anchor=north] at (axis cs:17.56,30.15) {6 thr.};
+\node[lab, anchor=north] at (axis cs:32.69,30.15) {1 thr.};
 \node[lab, anchor=north] at (axis cs:52.7,30.15) {idle};
 % (b) residual
 \nextgroupplot[height=3.8cm, ymin=-0.25, ymax=0.25, ytick={-0.2,-0.1,0,0.1,0.2},
@@ -25,7 +25,6 @@
   title={(b) measured minus fitted}]
 \draw[ink, line width=0.4pt] (axis cs:0,0) -- (axis cs:65.2,0);
 \draw[muted, dotted, line width=0.6pt] (axis cs:0,-0.2055) -- (axis cs:65.2,-0.2055);
-\node[lab, anchor=south east] at (axis cs:64.7,-0.2055) {largest $|$residual$|$: 0.205\,\degC};
 \addplot[cIM, line width=0.5pt] table[x=t_min, y=resid_meas_minus_fit] {figdata/j713-step3.dat};
 \foreach \x in {9.999, 25.125, 40.257} {\edef\tmp{\noexpand\draw[muted, dashed, line width=0.4pt]
   (axis cs:\x,-0.25) -- (axis cs:\x,0.25);}\tmp}

@@ -16,9 +16,10 @@ it; both report in steps of 1/16\,\degC. The core state is not measured. The roo
 $T_A$.
 
 \paragraph{Model.} With 1\,s steps,
-\[
-c[k+1] = c[k] + k_c\,(s[k]-c[k]) + b_c\,P[k],\qquad s[k+1] = s[k] + k_s\,(c[k]-s[k]) + h_s\,(T_A-s[k]),
-\]
+\begin{align*}
+c[k+1] &= c[k] + k_c\,(s[k]-c[k]) + b_c\,P[k],\\
+s[k+1] &= s[k] + k_s\,(c[k]-s[k]) + h_s\,(T_A-s[k]),
+\end{align*}
 the structure of Section~\ref{sec:plant} with $k_c = K/C_c$, $b_c = 1/C_c$, $k_s = K/C_s$ and $h_s = H/C_s$. The
 device's values are its own; they are not the simulated plant's.
 
@@ -47,11 +48,12 @@ from step~1, a second development run as the test: rms 0.160\,\degC, largest res
 \centering
 \input{fig_j713.tex}
 \caption{The test run: \texttt{Ts0P} measured (in steps of 1/16\,\degC) and fitted (a), and the residual (b). The
-rate parameters come from step~1; only $T_A$ and $c_0$ were fitted to this run. Dashed lines: phase changes.}
+rate parameters come from step~1; only $T_A$ and $c_0$ were fitted to this run. Dashed lines: phase changes (idle, 6 threads, 1 thread, idle); dotted line: the largest absolute residual,
+0.205\,\degC.}
 \label{fig:device}
 \end{figure}
 
-\begin{table}[ht]
+\begin{table*}[t]
 \centering\small
 \caption{Residuals on the test run, with the rate parameters frozen from step~1 and only $T_A$ and $c_0$ fitted.
 Each sensor has its own fit; \texttt{Ts0P} carries the criterion.}
@@ -65,7 +67,7 @@ sensor & rms & 99th percentile & largest & fitted $T_A$ & fitted $c_0$ & samples
 \texttt{Ts1P} (reported) & 0.101 & 0.236 & 0.319 & 21.92 & 66.5 & 3,900\\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
 
 \paragraph{What it shows.} With rate parameters taken from one run, the two-node model class describes another run
 of a physical device, under a load profile it had not seen, within these residuals. The largest residual holds the

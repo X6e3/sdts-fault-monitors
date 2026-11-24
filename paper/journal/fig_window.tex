@@ -1,0 +1,46 @@
+% Figure: the window of WM between two folds (schematic; not to scale). Two lanes: the nodes of the alarm LPs at t
+% and the nodes of the fold LP. Markers: base (rounded box), kept measurement (filled circle), dropped measurement
+% (crossed circle, on the axis), fold target (square), current sample (star).
+\begin{tikzpicture}[x=0.47cm, y=1cm, font=\footnotesize]
+\def\yA{0.6}  % lane: the alarm LPs at t
+\def\yF{1.3}  % lane: the fold LP
+% sample axis and T_A at every sample
+\draw[muted, line width=0.4pt] (0,0) -- (26.5,0);
+\foreach \i in {0,...,26} \draw[muted!60] (\i,-0.06) -- (\i,0.06);
+\foreach \i in {0,...,26} \fill[muted!70] (\i,-0.7) circle (1.3pt);
+\node[anchor=east, muted, align=right] at (-0.5,-0.7) {$T_A$ at\\every sample};
+% the two lanes
+\foreach \y/\lab in {\yA/{alarm LPs\\at $t$}, \yF/{fold LP}} {
+  \draw[muted!45, line width=0.8pt] (0,\y) -- (26,\y);
+  \node[anchor=east, align=right] at (-0.5,\y) {\lab};
+}
+% guides from the axis to the nodes
+\foreach \i in {0,3,7,12,19,22} \draw[muted!50, line width=0.3pt, densely dotted] (\i,0) -- (\i,\yF);
+\draw[muted!50, line width=0.3pt, densely dotted] (16,0) -- (16,\yF);
+\draw[muted!50, line width=0.3pt, densely dotted] (26,0) -- (26,\yA);
+% base at tau, in both lanes
+\foreach \y in {\yA,\yF} \node[draw=ink, fill=cWM!18, rounded corners=1pt, minimum width=0.42cm, minimum height=0.3cm,
+  inner sep=0pt] at (0,\y) {};
+% kept measurements, in both lanes
+\foreach \y in {\yA,\yF} \foreach \i in {3,7,12,19,22} \fill[cWM] (\i,\y) circle (2.6pt);
+% a measurement redundant at arrival: not kept, in neither lane
+\draw[muted, line width=0.6pt] (9,0.0) circle (2.6pt);
+\draw[muted, line width=0.6pt] (8.8,-0.18) -- (9.2,0.18) (8.8,0.18) -- (9.2,-0.18);
+% the fold target, in the fold lane only
+\node[draw=ink, fill=white, line width=0.6pt, minimum size=6.5pt, inner sep=0pt] (target) at (16,\yF) {};
+\node[anchor=south, align=center, font=\scriptsize] (foldtxt) at (12.5,1.75)
+  {fold every $B=16$ samples: new supports at $\tau+16$,\\from all the measurements kept up to $t$ (smoothing)};
+\draw[-{Stealth[length=4pt]}, ink, line width=0.5pt] (16,1.75) -- (target.north);
+% the current sample, in the alarm lane only
+\node[star, star points=5, star point ratio=2.2, fill=ink, inner sep=1.1pt] at (26,\yA) {};
+\node[anchor=south east, align=right, font=\scriptsize] at (26.3,2.55)
+  {alarm test at $t$: the $a_s$-range\\given $z$ up to $t-1$, against $z_t\pm(\delta+\eta)$};
+\draw[ink, line width=0.4pt] (26,\yA+0.17) -- (26,2.55);
+% sample labels
+\node[anchor=north west, font=\scriptsize] at (-0.35,-0.9) {$\tau$: base, 42 supports};
+\node[anchor=north, font=\scriptsize] at (16,-0.9) {$\tau+16$};
+\node[anchor=north, font=\scriptsize] at (26,-0.9) {$t$};
+% the window length
+\draw[decorate, decoration={brace, mirror, amplitude=4pt}, muted] (0,-1.45) -- (26,-1.45)
+  node[midway, below=4pt, muted, font=\scriptsize] {exact steps between nodes; at most $W+B+1 = 273$ transitions};
+\end{tikzpicture}

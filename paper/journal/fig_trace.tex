@@ -1,0 +1,39 @@
+% Figure: development run 430010 (drift 0.0005 C/s, E0, ramp). Data: figdata/fig2_trace.dat (make_data.py, fig2).
+% Columns: k, z (shifted), and the a_s-range each monitor tests z_k against (lo, hi). delta = 0.3.
+\begin{tikzpicture}
+\begin{groupplot}[group style={group size=1 by 2, vertical sep=1.6cm},
+  paperaxis, width=0.86\linewidth, unbounded coords=jump]
+% (a) the upper edge of the acceptance band, hi + delta, near t*
+\nextgroupplot[height=5.2cm, xmin=670, xmax=700, ymin=-0.80, ymax=-0.69, restrict x to domain=660:710,
+  restrict y to domain=-1.2:-0.4, ylabel={$^\circ$C (shifted)}, xlabel={sample $k$},
+  title={(a) upper edge $\bar a_s+\delta$ of the band each $z_k$ is tested against},
+  legend style={at={(0.98,0.03)}, anchor=south east}, legend cell align=left]
+\addplot[only marks, mark=*, mark size=1pt, muted!70] table[x=k, y=z] {figdata/fig2_trace.dat};
+\addlegendentry{measurement $z_k$}
+\addplot[cIM, densely dashed, line width=0.9pt] table[x=k, y=imtop] {figdata/fig2_trace.dat};
+\addlegendentry{IM}
+\addplot[cTS, dotted, line width=1.1pt] table[x=k, y=tstop] {figdata/fig2_trace.dat};
+\addlegendentry{TS}
+\addplot[cWM, line width=0.9pt] table[x=k, y=wmtop] {figdata/fig2_trace.dat};
+\addlegendentry{WM}
+\addplot[only marks, mark=o, mark size=3.2pt, ink, line width=0.6pt, forget plot,
+  restrict expr to domain={\thisrow{k}}{695:695}] table[x=k, y=z] {figdata/fig2_trace.dat};
+\node[lab, anchor=south east] at (axis cs:694.4,-0.7) {$z_{695}$: above WM's edge only};
+% (b) the width of the range over the whole record, as a running median
+\nextgroupplot[height=5.2cm, ymode=log, xmin=0, xmax=3600, ymin=0.02, ymax=0.3,
+  ylabel={width ($^\circ$C)}, xlabel={sample $k$},
+  title={(b) width of the $a_s$-range, median over 61 samples},
+  ytick={0.02,0.05,0.1,0.2}, yticklabels={0.02,0.05,0.1,0.2}]
+\addplot[cIM, densely dashed, line width=0.8pt] table[x=k, y=immed] {figdata/fig2_trace.dat};
+\addplot[cTS, dotted, line width=1pt] table[x=k, y=tsmed] {figdata/fig2_trace.dat};
+\addplot[cWM, line width=0.8pt] table[x=k, y=wmmed] {figdata/fig2_trace.dat};
+\draw[muted, line width=0.4pt, dashed] (axis cs:496,0.02) -- (axis cs:496,0.3);
+\draw[muted, line width=0.4pt, dashed] (axis cs:695,0.02) -- (axis cs:695,0.3);
+\draw[muted, line width=0.4pt, dashed] (axis cs:3575,0.02) -- (axis cs:3575,0.3);
+\node[lab, anchor=north east, align=right] at (axis cs:490,0.29) {fault\\onset 496};
+\node[lab, anchor=north west, align=left] at (axis cs:700,0.29) {WM flags\\at $t^\ast=695$};
+\node[lab, anchor=north east, align=right] at (axis cs:3565,0.29) {IM and TS\\flag at 3575};
+\node[lab, anchor=south] at (axis cs:2300,0.125) {IM (dashed), TS (dotted)};
+\node[lab, anchor=north] at (axis cs:130,0.029) {WM};
+\end{groupplot}
+\end{tikzpicture}
