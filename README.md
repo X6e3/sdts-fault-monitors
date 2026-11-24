@@ -11,7 +11,10 @@ scored against that time under the same assumptions. The plant is a two-node the
 sensor, a known heat input and an unknown ambient temperature.
 
 > Can Koç, *How much of the record does a sound fault monitor need? Bounded-memory set-membership detection of sensor
-> faults, measured against the exact oracle*, preprint, 2026. The preprint link will be added here.
+> faults, measured against the exact oracle*, preprint, Zenodo, 2026.
+> [doi:10.5281/zenodo.24506000](https://doi.org/10.5281/zenodo.24506000)
+
+Code, plans, records and data, archived with each release: [doi:10.5281/zenodo.24505622](https://doi.org/10.5281/zenodo.24505622) (all versions; v1.0.0 is [10.5281/zenodo.24505623](https://doi.org/10.5281/zenodo.24505623)).
 
 ## Results
 

@@ -3,6 +3,7 @@ message: "If you use this code or its results, please cite the paper below."
 title: "SDTS: bounded-memory fault monitors, measured against an exact oracle"
 type: software
 version: "1.0.0"
+doi: "10.5281/zenodo.24505622"
 date-released: "2026-11-24"
 abstract: "Code, frozen plans, dated records and data behind the paper below. A certified linear program over the full history gives the exact detection time of every run it can certify on a two-node thermal plant with one sensor; bounded-memory set-membership monitors (an interval monitor, a solver-free template polyhedron and a window LP with certified alarms) are scored against it. Includes the journal version of the paper and the released columns of a laptop model-fit study. Code: Apache-2.0; paper, plans, records and data: CC BY 4.0; Elsevier template files: LPPL."
 authors:
@@ -28,4 +29,6 @@ preferred-citation:
       orcid: "https://orcid.org/0009-0007-7386-3295"
   year: 2026
   status: preprint
-  notes: "The preprint DOI will be added after posting."
+  doi: "10.5281/zenodo.24506000"
+  publisher:
+    name: "Zenodo"
