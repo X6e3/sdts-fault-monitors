@@ -39,6 +39,10 @@ The numbers are from the paper; each one is traced to a dated record in `experim
   development data, all lagged our monitors at their memory budgets. In the first, the best set-based one, a
   constrained zonotope storing 203 reals, had 1.8 times the interval monitor's lag; the second, after reviews of our
   baseline code, revised the constrained zonotope and the interval observer.
+- **The model class on a real device.** With the rate parameters fixed on an earlier run, fitting only the ambient
+  temperature and the initial core state to a fresh 65-minute run of a fanless laptop left a largest residual of
+  0.205 °C on its palm-rest sensor (journal version; `data/j713/`, `experiments/j713/`). This tests the model's fit,
+  not detection on the device.
 - **A limit no monitor can beat.** No memory budget can certify the error of a sensor drift that an admissible ambient
   path reproduces.
 
