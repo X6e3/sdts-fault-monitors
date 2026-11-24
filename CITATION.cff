@@ -2,11 +2,15 @@ cff-version: 1.2.0
 message: "If you use this code or its results, please cite the paper below."
 title: "SDTS: bounded-memory fault monitors, measured against an exact oracle"
 type: software
+version: "1.0.0"
+date-released: "2026-11-24"
+abstract: "Code, frozen plans, dated records and data behind the paper below. A certified linear program over the full history gives the exact detection time of every run it can certify on a two-node thermal plant with one sensor; bounded-memory set-membership monitors (an interval monitor, a solver-free template polyhedron and a window LP with certified alarms) are scored against it. Includes the journal version of the paper and the released columns of a laptop model-fit study. Code: Apache-2.0; paper, plans, records and data: CC BY 4.0; Elsevier template files: LPPL."
 authors:
   - family-names: "Koç"
     given-names: "Can"
     email: "cankoc.dev@proton.me"
     orcid: "https://orcid.org/0009-0007-7386-3295"
+    affiliation: "Independent Researcher"
 repository-code: "https://github.com/X6e3/sdts-fault-monitors"
 license: Apache-2.0
 keywords:
