@@ -1,0 +1,7 @@
+J713 step3 result manifest (2026-11-23)
+9b9079f8cdfa1918ca1b972d18bd9ca2bf3b563db8eb77efacf108dc2bfac235  RECORD-2026-11-23-step3.md
+00ef0d4b4a8ecbf186d6a2e750eb330ba4dd4448c453c4a1e5a1a746233d3c51  step3-eval.json
+a9159b62314fe447b8cd2184519ced79ebe5853f9eb5ae9f90328bef778fa574  step3/log.csv
+f02f48bbbd1467b7600427ed38b94cb086ac13e45accfdd18d0389d37a2322d4  step3/phases.csv
+9fd757c2b7499ec4bbf3a03cb25b2d09a454412d274d9ca139a88a5f0f5c61ef  step3/machine.txt
+33566bcfce001038d79ccdead08a2a05af2a3ea18a5e53dded3ccaba58b5afb1  step3-arch/transistors-step3-partial.csv

@@ -12,7 +12,7 @@ measured only on the simulated blocks.
 \paragraph{Device and signals.} A fanless laptop (MacBook Air, Apple M4) under macOS, on mains power with its battery
 full, was logged read-only at 1\,Hz. The input $P$ is the measured system power (SMC key \texttt{PSTR}); the output
 $s$ is a palm-rest temperature sensor (\texttt{Ts0P}), and a second surface sensor (\texttt{Ts1P}) is reported beside
-it. The core state is not measured. The room's temperature was not controlled and enters as an unknown constant
+it; both report in steps of 1/16\,\degC. The core state is not measured. The room's temperature was not controlled and enters as an unknown constant
 $T_A$.
 
 \paragraph{Model.} With 1\,s steps,
@@ -23,7 +23,8 @@ the structure of Section~\ref{sec:plant} with $k_c = K/C_c$, $b_c = 1/C_c$, $k_s
 device's values are its own; they are not the simulated plant's.
 
 \paragraph{Protocol.} The plan, its criterion and its scripts were frozen, and their hashes submitted to
-OpenTimestamps calendars, before the test run began. Six quantities enter the model: the four rate parameters
+OpenTimestamps calendars, two minutes before the test run began; the Bitcoin attestation dates them no later than
+twelve minutes into the 65-minute run (two minutes after its first load began) and before the evaluation. Six quantities enter the model: the four rate parameters
 $k_c$, $b_c$, $k_s$, $h_s$, the ambient $T_A$ and the initial core state $c_0$.
 \begin{itemize}
 \item \emph{Step 1} (development; idle, 2 threads, 4 threads, idle; 3,131 samples): all six were fitted by output
@@ -38,8 +39,17 @@ The criterion, fixed before the test run, was an rms residual of at most 0.25\,\
 of at most 0.60\,\degC\ for \texttt{Ts0P}. It was chosen after a rehearsal on development data only (rate parameters
 from step~1, a second development run as the test: rms 0.160\,\degC, largest residual 0.347\,\degC).
 
-\paragraph{Result.} The criterion was met (Table~\ref{tab:device}). Over the test run \texttt{Ts0P} moved by
-4.25\,\degC\ (25.44 to 29.69\,\degC) while $P$ ranged from 5.0 to 33.9\,W, above the 25.9\,W of step~1.
+\paragraph{Result.} The criterion was met (Table~\ref{tab:device}, Figure~\ref{fig:device}). Over the test run
+\texttt{Ts0P} moved by 4.25\,\degC\ (25.44 to 29.69\,\degC) while $P$ ranged from 5.0 to 33.9\,W, above the
+25.9\,W of step~1.
+
+\begin{figure}[ht]
+\centering
+\input{fig_j713.tex}
+\caption{The test run: \texttt{Ts0P} measured (in steps of 1/16\,\degC) and fitted (a), and the residual (b). The
+rate parameters come from step~1; only $T_A$ and $c_0$ were fitted to this run. Dashed lines: phase changes.}
+\label{fig:device}
+\end{figure}
 
 \begin{table}[ht]
 \centering\small
@@ -69,10 +79,16 @@ simulated plant's parameter values, and the device's behaviour under faults. The
 with measured bounds, which is future work. The simulated blocks of Sections~\ref{sec:val1} to~\ref{sec:baselines}
 remain the evidence for detection performance; this section is evidence that their model class fits a real
 thermal device.
+
+\paragraph{Data.} The columns used (time, \texttt{PSTR}, \texttt{Ts0P}, \texttt{Ts1P}, \texttt{TB0T}) of the three
+runs, with their phase times, are released under CC BY 4.0 in the repository (\texttt{data/j713/}), with the plan,
+its time stamps, the record and the scripts (\texttt{experiments/j713/}); \texttt{reproduce\_step3.py} recomputes
+Table~\ref{tab:device} from the released columns alone.
 % src: sdts-runs/j713-thermal/PLAN-step3.md (model, protocol, criterion; manifest d84cacf4, stamped 11:59 +0300 on
 % 2026-11-23, run started 12:01:50); RECORD-2026-11-23-step3.md (verdict PASS, ranges, phases); step3-eval.json
 % (sha256 00ef0d4b...; dev_fit params, val_refit, val_rms/p99/max); dev-rehearsal-step1-step2.json (0.160, 0.347);
 % step1 3,131 samples and 25.9 W, step3 power 5.0-33.9 W = RECORD-2026-11-23-step3.md; residual wording =
 % NOTE-2026-11-24-wording.md. Device: step3/machine.txt (Mac16,12); fanless = PLAN-step3.md section 1.
-% TODO before submission: the data release (PLAN-step3.md section 5) and a figure of measured and fitted Ts0P with
-% the residual; section labels sec:plant, sec:val1 to be matched to the CEP manuscript.
+% Data: data/j713/README.md; reproduction from the released columns equals step3-eval.json (checked 2026-11-24).
+% Time stamps: RECORD-2026-11-23-step3-NOTE-ots.md (calendars 11:59, run 12:01:50, first load 12:11:50, Bitcoin
+% block 977177 at 12:13:39, evaluation 13:07:18); 1/16 degC steps measured on the released columns.
