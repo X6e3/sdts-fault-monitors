@@ -63,7 +63,7 @@ show three things:
 **CAL check** (`validate_ablations_cal.py`; 5 seeds × 38 cell-arms; 347 s):
 - 0 undetermined in any variant;
 - 0 violations of the relaxation relations;
-- full verdicts equal to Sol's CAL map.
+- full verdicts equal to reviewer B's CAL map.
 
 **CAL pattern** (reported, not predicted; 5 seeds):
 - Without (d), stuck/E1 becomes consistent (5/5).

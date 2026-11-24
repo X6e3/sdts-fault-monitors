@@ -2,10 +2,10 @@
 
 **Plan:** `DIAG-1-PLAN.md`, with amendment 1 written before any arm result.
 
-**Revised the same day after review round 1** (GPT R1, Hydrogen H1, Sol T2b). What changed, and why, is listed in
+**Revised the same day after review round 1** (reviewer A R1, reviewer C H1, reviewer B T2b). What changed, and why, is listed in
 the last section. The main correction is about how the loss happens. The slack builds up beforehand, in other
 directions. It becomes visible in TA in single steps, at measurement cuts. It is not a steady drift. (Wording
-sharpened in round 2, after GPT and Sol.)
+sharpened in round 2, after reviewers A and B.)
 
 **Run:**
 - `diag1.py` at `6fe3b54` on Arch, clean tree.
@@ -24,14 +24,14 @@ sharpened in round 2, after GPT and Sol.)
 - arm D reproduces the frozen cyl16p's detection;
 - the nesting of the supports holds (A ≤ B ≤ C ≤ D, B ≤ E ≤ D, C_full ≤ C, within 1e-9 °C).
 
-**Independent check (Sol, DIAG1-T2):** the vertex enumeration of arm A was compared with Sol's full-history LP (HiGHS)
-at 12 points of 430007, 430010 and 430019. Sol's files are in `results/v3/diag1/codex-T2/` and their hashes match its
+**Independent check (reviewer B, DIAG1-T2):** the vertex enumeration of arm A was compared with reviewer B's full-history LP (HiGHS)
+at 12 points of 430007, 430010 and 430019. Reviewer B's files are in `results/v3/diag1/codex-T2/` and their hashes match its
 `DONE.txt`.
 - Per point the comparison covers as[k+1] min/max and TA[k] min/max.
 - The largest difference is **8.4e-9 °C** (threshold 1e-6).
 - The LP's margins at t* are −4.186, −4.509 and −0.389 mC; arm A gives the same values.
 
-**Independent check, part 2 (Sol, DIAG1-T2b):** in `results/v3/diag1/codex-T2b/`; all 18 hashes match its
+**Independent check, part 2 (reviewer B, DIAG1-T2b):** in `results/v3/diag1/codex-T2b/`; all 18 hashes match its
 `DONE.txt`. My values for it are `run1-6fe3b54/claims-for-T2b.json` (sha256 `9552927a…`).
 - **Full-history LP for 430027 and 430000**, at k0 for L = 16, 64, 256 and at t* − 1: as[k+1] and TA[k] agree with
   arm A within 1.4e-11 °C.
@@ -46,7 +46,7 @@ at 12 points of 430007, 430010 and 430019. Sol's files are in `results/v3/diag1/
 ## Detection times (OBSERVED)
 
 "—" means no detection before t* + 300, the cap of the exact arms. Those times are right-censored, so the delay of
-such a row cannot be split into pieces. The margin split in the next section is complete in every row (GPT R1).
+such a row cannot be split into pieces. The margin split in the next section is complete in every row (reviewer A R1).
 
 | run | L | t* | A | B | E | C | C_full | D | F |
 |---|---|---|---|---|---|---|---|---|---|
@@ -82,9 +82,9 @@ At every start, F (P with the exact TA lower bound restored) gives the same marg
 
 - **One side decides throughout.** At t*, every arm of every run is decided by the upper side (+e2). The lower-side
   margins are 627–705 mC (`review1/steps.txt`). Each split above is therefore the split of one support; the deciding
-  side never switches (GPT R1 asked).
+  side never switches (reviewer A R1 asked).
 - **Zero delay is not zero loss.** In the control 430019 at L = 256, C loses 4.27 mC of margin and still detects at t*
-  (GPT R1).
+  (reviewer A R1).
 
 ## Where cyl16p's state is loose (OBSERVED, `base-*.pkl`, at k0)
 
@@ -106,7 +106,7 @@ residual ≤ 3e-17:
 
 Both have n·e3 = 0 and coincide with directions of D (largest |n·d| = 0.9998–1.0000).
 
-**Their ages are 0 or ∞, not intermediate (corrected after GPT R1; Hydrogen's amendment-1 caveat applies here).**
+**Their ages are 0 or ∞, not intermediate (corrected after reviewer A R1; reviewer C's amendment-1 caveat applies here).**
 `review1/ages.txt` has the numbers.
 - **The as − ac facet** has |n·(1,1,1)|/√3 = 0.001–0.017 in four runs (0.143 in 430019). Its normal lies in both
   the age-0 plane and the age-∞ plane, so "age 0" alone was the wrong label.
@@ -119,11 +119,11 @@ Both have n·e3 = 0 and coincide with directions of D (largest |n·d| = 0.9998�
 
 | explanation (plan, section 4) | outcome |
 |---|---|
-| direction loss | **Not at L = 16 or 64:** B = A in all 4 hard runs. **At L = 256, in 2 of 4:** in 430027 it is the largest piece (4.48 of 6.08 mC); in 430010 it is 0.43 mC, enough on its own to undo a 0.39 mC margin. Confirmed by Sol's LP (T2b). |
+| direction loss | **Not at L = 16 or 64:** B = A in all 4 hard runs. **At L = 256, in 2 of 4:** in 430027 it is the largest piece (4.48 of 6.08 mC); in 430010 it is 0.43 mC, enough on its own to undo a 0.39 mC margin. Confirmed by reviewer B's LP (T2b). |
 | wrapping (the online update) | **Supported as the main mechanism.** Starting from the tightest hull, the online update keeps the decision through the last 64 steps (C = A at L ≤ 64). It loses it when the window reaches back 256 steps (C ≈ D in 430007, 430000, 430010). The loss arrives in single steps at measurement cuts (next section), not as a drift. |
 | slack accumulated before k0 | The same mechanism seen from a later start. For L ≤ 64 all the loss is D − C, i.e. already in P_k0. At L = 256 it is nearly 0 in 430007 and 430000, where E = A: cyl16p's state at t* − 256 still holds the information, and the update after it loses it. |
 | only the ambient's lower bound | **Refuted:** F = D everywhere. The upper TA bound and the error-plane directions are as loose. |
-| intermediate-age directions | **Refuted in its simple form:** the separating facets at t* are template directions, at age 0 (the as − ac facet equally at age ∞), and neither fits an intermediate age. The information missing at t* is in the values of existing directions (fed by the TA bounds), not in missing directions. Whether other directions would keep those values tighter over time is not tested by this (GPT R1). |
+| intermediate-age directions | **Refuted in its simple form:** the separating facets at t* are template directions, at age 0 (the as − ac facet equally at age ∞), and neither fits an intermediate age. The information missing at t* is in the values of existing directions (fed by the TA bounds), not in missing directions. Whether other directions would keep those values tighter over time is not tested by this (reviewer A R1). |
 | pruned bases | **No effect:** C_full = C everywhere. |
 
 **The mechanism (INFERRED, 5 runs; plausible, not proven in general; revised after review round 1).**
@@ -152,7 +152,7 @@ Both have n·e3 = 0 and coincide with directions of D (largest |n·d| = 0.9998�
 
 ## When the loss happens (OBSERVED, `review1/steps.txt`; read from the T1 npz, no new run)
 
-Hydrogen's H1 found this first in 430007. It is reproduced here from the npz and extended to all five runs.
+Reviewer C's H1 found this first in 430007. It is reproduced here from the npz and extended to all five runs.
 
 **Every TA step follows an active cut.** In the 256 steps before t* (L = 256), the measurement's slab cuts arm C's
 predicted as-range at 27–33 steps.
@@ -174,7 +174,7 @@ as-range top (−0.5290).
 
 **The same pattern in 430010:** at k = 446, C's TA minimum is 18.06 mC looser than A's, and B's is 7.14 mC looser.
 
-## The slack of H_k0 outside D (OBSERVED, `review1/k0gaps.txt`; Hydrogen's H1 numbers, reproduced on Arch)
+## The slack of H_k0 outside D (OBSERVED, `review1/k0gaps.txt`; reviewer C's H1 numbers, reproduced on Arch)
 
 The largest gaps hull_D(X_k0) − X_k0 over the facet normals of X_k0, at k0 = t* − 256, are 5.5–8.2 mC. They fall
 into two groups:
@@ -189,14 +189,14 @@ into two groups:
 - So (M^T)^j e2, which is row 2 of M^j, lies in the positive octant for every j.
 - It runs from e2 towards e3: row 2 of M^256 is (0.011, 0.003, 0.986).
 
-Hydrogen's "51–60° from the arc" holds for the first group only. For the second group the arc is no closer than D
+Reviewer C's "51–60° from the arc" holds for the first group only. For the second group the arc is no closer than D
 already is.
 
 ## What this suggests next (HYPOTHESIS; nothing built; revised after review round 1)
 
 1. **Forward orbits of e2 alone (weakened).** The orbit lies on the positive-octant arc, and it covers none of the
-   slack directions above better than D does. It stays only as a control (Hydrogen's proposal A).
-2. **Directions that close the cut steps (Hydrogen's proposal B):**
+   slack directions above better than D does. It stays only as a control (reviewer C's proposal A).
+2. **Directions that close the cut steps (reviewer C's proposal B):**
    - the forward images (M^T)^j d, j ∈ {1, 2, 4}, of the directions active at cuts (such as d[36] and the as − ac
      face);
    - mid-latitude rings (|d_3| about 0.2–0.6, both TA signs).
@@ -208,18 +208,18 @@ already is.
      pay their own worst-case ambient step, which is why the `window` family failed (`RESULTS.md`).
    - **Cost (corrected in round 2):** "paid per cut, not per step" was not shown. It is withdrawn.
      - Keeping K cuts does not bound memory by K. The common ambient path between two cuts has one variable per
-       sample (GPT, Sol).
+       sample (reviewers A, B).
      - A prototype needs two budgets: at most K cuts and at most W samples. The transitions between cuts also need a
        compressed summary that keeps the ambient path common.
      - Whether a cheap per-sample bound check makes the LP rare is to be measured. Cortex-M timing is open.
-   - **Dropping the oldest cut is sound (GPT, Sol; MATH):**
+   - **Dropping the oldest cut is sound (reviewers A, B; MATH):**
      - Project the LP's feasible set onto the state at the time of the oldest cut.
      - Wrap that projection outward in the template directions, and restart from it.
      - The true state stays inside at every step. How much detection power this keeps is a separate measurement.
    - This is the bounded online adaptive state (with v2 in parallel), narrowed to cut events.
 4. **An update that re-templates less often** (a block of steps with offline bases): unchanged. The limit to work out
    first is that the measurement slabs inside a block cannot all be applied offline-exactly.
-5. **The decision rule Hydrogen proposes (not adopted; Can decides):** if a family like 2 still leaves C ≈ D at
+5. **The decision rule reviewer C proposes (not adopted; Can decides):** if a family like 2 still leaves C ≈ D at
    L = 256, go to 3 instead of searching more fixed families.
 
 ## Data for the reviewers
@@ -228,8 +228,8 @@ already is.
 - Supports of every arm's predicted set in all 42 directions: `sup_<arm>`, with `ks_<arm>`.
 - Gaps against A at k0+1 and at t*: `gaps_vs_A` in each JSON.
 - Separating facets, weights, normals and ages: `separating_at_t_star` in each JSON.
-- Claude's values for the T2b check: `run1-6fe3b54/claims-for-T2b.json` (sha256 `9552927a…`).
-- Sol's T2b outputs: `codex-T2b/`.
+- The values given to the T2b check: `run1-6fe3b54/claims-for-T2b.json` (sha256 `9552927a…`).
+- Reviewer B's T2b outputs: `codex-T2b/`.
 - The review-round readings: `review1/steps.txt`, `ages.txt`, `k0gaps.txt`, all from `diag1_review.py` (sha256
   `f74c1cfe…`, stamped in each file). They are read-only analyses of the T1 outputs; `k0gaps` needs the base pickles,
   which are on Arch.
@@ -238,19 +238,19 @@ already is.
 
 | what | before | after | from |
 |---|---|---|---|
-| independent check of B and E | pending | done; both direction-loss findings confirmed | Sol T2b |
-| how the online update loses TA | "steadily loosens, over about 256 steps" | single steps at active cuts; slack builds unseen in directions not closed under the dynamics | Hydrogen H1 (reproduced); GPT R1 asked for the step profile |
-| ages of the separating facets | "age 0" | age 0 or ∞ for the as − ac facet; neither is intermediate | GPT R1 |
-| censored delays, deciding side | not stated | stated (delays of "—" rows cannot be split; +e2 decides throughout) | GPT R1 |
-| forward orbits of e2 as next family | first suggestion | weakened to a control (MATH: the orbit stays in the positive octant) | Hydrogen H1 |
+| independent check of B and E | pending | done; both direction-loss findings confirmed | reviewer B T2b |
+| how the online update loses TA | "steadily loosens, over about 256 steps" | single steps at active cuts; slack builds unseen in directions not closed under the dynamics | reviewer C H1 (reproduced); reviewer A R1 asked for the step profile |
+| ages of the separating facets | "age 0" | age 0 or ∞ for the as − ac facet; neither is intermediate | reviewer A R1 |
+| censored delays, deciding side | not stated | stated (delays of "—" rows cannot be split; +e2 decides throughout) | reviewer A R1 |
+| forward orbits of e2 as next family | first suggestion | weakened to a control (MATH: the orbit stays in the positive octant) | reviewer C H1 |
 
 ## Changes in review round 2 (2026-11-18)
 
 | what | before | after | from |
 |---|---|---|---|
-| where the loss arises | "arrives in single steps at cuts" | the slack builds up beforehand in other directions; it becomes visible in TA at cuts | GPT R2, Sol |
-| cost of keeping K cuts | "paid per cut, not per step" | withdrawn; it needs K and W budgets and compressed transitions | GPT R2, Sol |
-| dropping the oldest cut | open question | sound by projection and outward wrapping; its tightness is to be measured | GPT R2, Sol |
+| where the loss arises | "arrives in single steps at cuts" | the slack builds up beforehand in other directions; it becomes visible in TA at cuts | reviewer A R2, reviewer B |
+| cost of keeping K cuts | "paid per cut, not per step" | withdrawn; it needs K and W budgets and compressed transitions | reviewer A R2, reviewer B |
+| dropping the oldest cut | open question | sound by projection and outward wrapping; its tightness is to be measured | reviewer A R2, reviewer B |
 
 The next step is `DIAG-2-PLAN.md`.
 

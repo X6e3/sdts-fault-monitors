@@ -1,7 +1,7 @@
 # Diagnosis 1: where does the bounded state lose what the oracle knows? (plan, not run)
 
 Status: PLAN. Nothing in it has been run. Written 2026-11-18, after freeze 1 passed (`RECORD-2026-11-18-validation.md`),
-from the team's review (ChatGPT, Codex/Sol, Hydrogen) and Claude's notes.
+from the reviews (reviewers A, B and C) and the working notes.
 
 **Scope:**
 - DEV seeds only.
@@ -29,7 +29,7 @@ The quantity compared is what decides the next sample. The same physical step (M
 the reachable-set clamps) is applied to each set, and then the as-range of the result is taken **before measurement
 k+1**: its two supports in +e2 and −e2.
 
-**The trap (ChatGPT, Codex):** if a set were wrapped in D after the prediction, its ±e2 supports would be exact,
+**The trap (reviewers A and B):** if a set were wrapped in D after the prediction, its ±e2 supports would be exact,
 because ±e2 is in D, and it would reproduce the oracle's decision by construction. My earlier "t_H, H rebuilt every
 step" test did exactly that. It is withdrawn; it is not a ceiling for any online method.
 
@@ -52,9 +52,9 @@ until its first inconsistency or the end of the record. The arms:
 | B | H_k0 | exact recursion, no templating after k0 | what the directions lost at k0 alone |
 | E | P_k0 | exact recursion | what cyl16p had already lost before k0, with no new wrapping |
 | C | H_k0 | cyl16p's online update (pruned table) | B to C: new wrapping after k0 |
-| C_full | H_k0 | online update with the full cyl16 table (38966 entries) | C_full to C: the cost of pruning the bases (Codex) |
+| C_full | H_k0 | online update with the full cyl16 table (38966 entries) | C_full to C: the cost of pruning the bases (reviewer B) |
 | D | P_k0 | cyl16p's online update | the real cyl16p from k0 |
-| F | P_k0, with h(−e3) set to the exact −min TA of X_k0 | cyl16p's online update | the narrow hypothesis that only the ambient's lower bound is missing (Sol) |
+| F | P_k0, with h(−e3) set to the exact −min TA of X_k0 | cyl16p's online update | the narrow hypothesis that only the ambient's lower bound is missing (reviewer B) |
 
 **The arms are nested, so the delays telescope exactly.**
 - The exact recursion and the template recursion are both monotone in their start set. The template update is a min
@@ -68,7 +68,7 @@ until its first inconsistency or the end of the record. The arms:
 - H_k0 is built from floating-point vertices of X_k0, so it is not certified to contain X_k0. The arms that start
   from it are diagnostics, like the exact arms.
 
-**The pieces depend on the order of decomposition**, which is ChatGPT's warning, taken precisely. Along A→B→C→D,
+**The pieces depend on the order of decomposition**, which is reviewer A's warning, taken precisely. Along A→B→C→D,
 the delay t_D − t* splits into start geometry, then new wrapping, then earlier slack. Along A→B→E→D it splits into
 start geometry, then earlier slack without wrapping, then wrapping from the worse start. The sum is the same; the
 pieces need not be. Both orders are reported; when the pieces differ, the effects interact, and that is reported as
@@ -78,7 +78,7 @@ such.
 
 Per arm, per step k from k0 until it detects (and in any case up to t* + 1):
 - **The signed margin** of the next measurement against the predicted as-range, in °C: min(z+δ − lower, upper − (z−δ)).
-  Negative means detected (Codex).
+  Negative means detected (reviewer B).
 - **The support gaps** against A (B − A, C − A, D − A, E − A) in every direction of D, and in ±M^T e2.
 - **The detection time.**
 
@@ -86,7 +86,7 @@ At t* − 1, for arm A only:
 - the facets of X that carry the separating support (the dual of the support of ±e2 after the prediction), with their
   weights and normals;
 - each normal's **age**: the j for which it lies closest to the plane orthogonal to M^j e3. Computed with forward
-  powers of M (stable; Hydrogen's warning about (M^-T)^j applies to inverse powers).
+  powers of M (stable; reviewer C's warning about (M^-T)^j applies to inverse powers).
 
 ## 4. What each explanation predicts (written before anything is run)
 
@@ -96,7 +96,7 @@ At t* − 1, for arm A only:
 | **wrapping** (lost during the online update) | t_B ≈ t*, t_C ≫ t_B; C_full ≈ C | t_C ≈ t_B |
 | **slack accumulated before k0** | t_E ≫ t_B, and D ≫ C | t_E ≈ t_B and t_D ≈ t_C |
 | **only the ambient's lower bound** (narrow) | t_F ≈ t_C or better, ≪ t_D | t_F ≈ t_D |
-| **intermediate-age directions** (Hydrogen's M^-T idea; ages 16–256, slow mode τ = 63.5 samples) | the separating facets at t* − 1 have ages in about 16–256 | ages near 0 (cyl) or ∞ (inv), or spread with no cluster |
+| **intermediate-age directions** (reviewer C's M^-T idea; ages 16–256, slow mode τ = 63.5 samples) | the separating facets at t* − 1 have ages in about 16–256 | ages near 0 (cyl) or ∞ (inv), or spread with no cluster |
 
 Three runs (E0, DEV) are enough to choose a mechanism, not to measure its size. A finding is kept as a mechanism
 only if it shows in all three, or the run where it does not is explained.
@@ -125,7 +125,7 @@ Order: 430007 and 430019 first; 430010 is the slowest (its exact set grows to th
 - Every margin or support gap below 1e-6 °C is labelled "too close to call".
 - The deciding supports at t* − 1 and at k0 are recomputed independently by LP (section 6).
 
-## 6. Independent check (a task for Codex/Sol, run on Arch in its own clone, no SSH)
+## 6. Independent check (a task for reviewer B, run on Arch in its own clone, no SSH)
 
 The aim is to verify the exact supports by a method that shares no code with the vertex enumeration.
 
@@ -141,8 +141,8 @@ The aim is to verify the exact supports by a method that shares no code with the
 - **Rules:**
   - No commits.
   - No edits to this repository's files.
-  - Write only under `~/Research/sdts-runs/v3-diag1-codex/`. Claude imports and records the results, with Can as
-    author.
+  - Write only under `~/Research/sdts-runs/v3-diag1-codex/`. The results are imported into this repository and recorded,
+    with Can as author.
   - No validation seeds, no freeze files.
 
 ## 7. Float32 and the rest, kept apart
@@ -182,6 +182,6 @@ with the largest cyl16p lag:
 The diagnosis runs on 5 runs: 430007, 430019 (control), 430010, 430027 and 430000. The LP check (T2) is wanted for
 430027 and 430000 too, at the same points.
 
-**One more output** (Hydrogen, H1): for each separating facet normal n, |n·e3| (age 0) and |n·(1,1,1)|/√3
+**One more output** (reviewer C, H1): for each separating facet normal n, |n·e3| (age 0) and |n·(1,1,1)|/√3
 (age ∞) are reported next to the best-matching age j. Directions orthogonal to both e3 and (1,1,1) match at both
 ends, so argmin_j alone would mislead.

@@ -1,6 +1,6 @@
 # Diagnosis 3: a window LP that folds into a template (plan, phase 1)
 
-**Status:** started on Can's go, 2026-11-18 ("başlayalım"). This plan and the phase-1 criteria were written and
+**Status:** started on Can's go, 2026-11-18. This plan and the phase-1 criteria were written and
 committed before any DIAG-3 result.
 
 **Scope:** DEV seeds only, the five DIAG-1 runs. Freeze 1, its results and seeds 440200+ are not touched. No candidate
@@ -9,9 +9,9 @@ is frozen. This is not yet an MCU design: phase 1 asks whether the architecture 
 **Why this test** (`DIAG-2-RESULTS.md` and the team's round-3 comments):
 - **The loss is mainly geometric.** 95 % of a cut's TA loss happens even for the tightest D-hull of the exact set.
   Fixed families do not close it (B1, B2).
-- **The decisive +e3 losses come early:** 83–250 steps before t* (Hydrogen, checked). TA's eigenvalue is 1, so a loss
+- **The decisive +e3 losses come early:** 83–250 steps before t* (reviewer C, checked). TA's eigenvalue is 1, so a loss
   is carried unchanged to t*.
-- **The start matters (Sol).** Arm E, the exact recursion from cyl16p's own state with every later measurement, misses
+- **The start matters (reviewer B).** Arm E, the exact recursion from cyl16p's own state with every later measurement, misses
   t* in 430027 and 430010 even at L = 256. A window that starts from cyl16p's kind of summary cannot recover those
   runs. The window's own summary has to be tighter.
 
@@ -43,7 +43,7 @@ The fold comes in two variants:
 - **filter (F):** only the measurements up to τ'. This is a B-step block update of the template, the control for the
   value of smoothing.
 
-**Soundness (MATH; GPT and Sol, round 2):**
+**Soundness (MATH; reviewers A and B, round 2):**
 - Every constraint holds for every trajectory consistent with the full history.
 - By induction, the base contains the projection of the full-history set onto x_τ. So the window LP's set at t
   contains X_t, and no run can be detected before t*.
@@ -82,14 +82,14 @@ the oracle, 0 at cyl16p, and negative when worse.
 **What follows:**
 - **If phase 1 passes for some W:** phase 2 is written as an amendment before it runs. It covers:
   - at most K kept cuts;
-  - compressed transitions between them (one common ambient path, GPT's q_Δ summaries);
+  - compressed transitions between them (one common ambient path, reviewer A's q_Δ summaries);
   - the resources (RAM, flash, worst-case time per sample, numerical margins).
 - **If it does not pass:** the result is reported, and Can decides. The options are adaptive directions at cuts,
   larger W, or stopping this line.
 
 ## Amendment 1: phase 2a, the DEV-wide evaluation (2026-11-18, written before any 2a result)
 
-**Status:** run on Can's go. GPT, Sol and Hydrogen all chose 2a before 2b.
+**Status:** run on Can's go. Reviewers A, B and C all chose 2a before 2b.
 
 **Rows:** every row of the DEV evaluation set, `results/v3/dev-45cff1d/rows.jsonl`: seeds 430000–430029, both arms,
 1320 runs. Freeze 1's DEV reference (cyl16p D_paired 0.386) was computed on these same rows.

@@ -2,7 +2,7 @@
 A numerical diagnostic on DEV runs, not certified. Reuses diag1.py's exact sets and template step.
 
 usage:
-  python -B diag2.py families                               B1/B2, checked against Hydrogen's posted list
+  python -B diag2.py families                               B1/B2, checked against reviewer C's posted list
   python -B diag2.py run OUT_DIR --diag1 DIAG1_RUN_DIR      T1 (5 jobs) and T2 (15 jobs); needs the base pickles
   python -B diag2.py summary OUT_DIR --diag1 DIAG1_RUN_DIR  the criteria of the plan, from the outputs
 """
@@ -32,7 +32,7 @@ RUNS = [(430007, "drift_0.002", "rw"), (430027, "drift_0.002", "rw"), (430000, "
 HARD = (430007, 430027, 430000, 430010)
 E3 = (np.array([0, 0, 1.0]), np.array([0, 0, -1.0]))
 
-# Hydrogen's posted list (DIAG1-H1, round 2): the 26 added pairs, +u, 6 decimals
+# Reviewer C's posted list (DIAG1-H1, round 2): the 26 added pairs, +u, 6 decimals
 HYDROGEN_H1 = [
     (0.211667, 0.973668, 0.084667), (0.136692, 0.628782, -0.765473), (0.874064, 0.484378, 0.037270),
     (0.410433, 0.908577, 0.077663), (0.025093, -0.995794, -0.088115), (0.284166, -0.954898, -0.086137),
@@ -48,7 +48,7 @@ HYDROGEN_H1 = [
 # ---- the families --------------------------------------------------------------------------------------------------
 
 def _add(D, cands, min_deg):
-    """add each candidate as a +- pair when it lies more than min_deg from the current set (Hydrogen's rule)"""
+    """add each candidate as a +- pair when it lies more than min_deg from the current set (reviewer C's rule)"""
     out, added = [np.asarray(x, float) for x in D], []
     thr = math.cos(math.radians(min_deg))
     for raw in cands:
@@ -375,7 +375,7 @@ def main():
     meta = {"git_head": head, "git_dirty_tracked": bool(dirty), "diag1": str(a.diag1), "L": L, "cap": CAP,
             "families": check_families(), "started": time.strftime("%Y-%m-%dT%H:%M:%S%z")}
     (a.out / "meta.json").write_text(json.dumps(meta, indent=1) + "\n")
-    assert meta["families"]["matches_hydrogen_list"], "families differ from Hydrogen's posted list"
+    assert meta["families"]["matches_hydrogen_list"], "families differ from reviewer C's posted list"
     jobs1 = [(s, c, m, str(a.diag1), str(a.out)) for s, c, m in RUNS]
     jobs2 = [(s, c, m, f, str(a.diag1), str(a.out)) for f in ("B2", "B1", "D0") for s, c, m in RUNS]
     with ProcessPoolExecutor(a.workers) as pool:

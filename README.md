@@ -22,11 +22,12 @@ sensor, a known heat input and an unknown ambient temperature.
 The numbers are from the paper; each one is traced to a dated record in `experiments/v3/`.
 
 - **Template monitor.** A template polyhedron with 42 supports whose LP bases are computed offline, so it needs no
-  solver at run time. It is proved sound and never later than the interval monitor it extends. On 9,600 fresh,
+  solver at run time. It is proved sound under explicit rounding conditions (see What went wrong) and, in exact
+  arithmetic, never later than the interval monitor it extends. On 9,600 fresh,
   preregistered runs it removed 38.7 % of the interval monitor's paired detection lag. Its C build on an ESP32 gave
   the PC build's alarm flag and a 16-byte hash of its full state after every one of 5.04 million development samples.
 - **Window monitor.** An LP over the last 256 samples whose base is updated by a smoothing rule. Every alarm carries a
-  weak-duality certificate, and an LP the solver cannot solve falls back to an analytic outer bound. On a second fresh
+  weak-duality certificate, and an LP the solver cannot solve falls back to a certified or analytic outer bound. On a second fresh
   block of 9,600 runs it removed 99.5 % of the interval monitor's lag with no missed certified event, and all 7,258
   alarms were certified.
 
@@ -34,8 +35,10 @@ The numbers are from the paper; each one is traced to a dated record in `experim
 
 *Example development run (430010, Figure 3 of the paper): the fault starts at sample 496; WM alarms at the exact oracle time, t\* = 695, while IM and TS alarm at 3575. One run, not a validation.*
 
-- **Baselines.** Five baselines, given the same prior and tuned before the run, all lagged at their memory budget. The
-  best set-based one, a constrained zonotope storing 203 reals, had 1.8 times the interval monitor's lag.
+- **Baselines.** Seven baselines in two comparisons fixed before they ran, given the same prior and tuned on
+  development data, all lagged our monitors at their memory budgets. In the first, the best set-based one, a
+  constrained zonotope storing 203 reals, had 1.8 times the interval monitor's lag; the second, after reviews of our
+  baseline code, revised the constrained zonotope and the interval observer.
 - **A limit no monitor can beat.** No memory budget can certify the error of a sensor drift that an admissible ambient
   path reproduces.
 
@@ -67,7 +70,8 @@ set, so the loss lies in the template's geometry. WM keeps the measurements them
   16 samples a fold LP that moves the base forward to τ + 16 using all the measurements kept up to t (the smoothing step).
 - Between the kept measurements the steps are exact, and a window spans at most W + B + 1 = 273 transitions
   (W = 256, B = 16).
-- Every alarm carries a weak-duality certificate; an LP the solver cannot solve falls back to an analytic outer bound.
+- Every alarm carries a weak-duality certificate; an LP the solver cannot solve falls back to a certified or analytic
+  outer bound.
 
 ## Check it yourself
 
@@ -82,10 +86,13 @@ the healthy-record witness.
 | Path | Contents |
 |---|---|
 | `paper/preprint/` | the paper (`main.tex`, `refs.bib`, figures) and `make_arxiv.sh`, which builds the upload archive |
+| `paper/journal/` | the version for Control Engineering Practice (Elsevier template) and its supplementary material, with a section that fits the model class to a laptop's thermal sensor |
 | `paper/figures/` | the script that makes the figures' data, and the README's figures with the script that builds them |
 | `experiments/v3/` | the monitors, the three freeze documents, the run and scoring scripts, the dated records (`RECORD-*.md`) and `REPRODUCE.md` |
 | `experiments/v3/diag/` | diagnostic studies and checks that the records cite |
 | `results/v3/` | the stored rows, manifests and summaries of each run |
+| `data/` | released data: the laptop runs of the model-fit study (`data/j713/`) and an OBD record kept for a later study (`data/obd/`) |
+| `experiments/j713/`, `results/j713/` | the model-fit study (plan, time stamps, record, scripts) and a monitor pilot on its development runs |
 | `experiments/generators/`, `machine/`, `oracle/`, `baselines/`, `specs/`, `final/`, `records/` | the simulator, the oracle and SDTS's first thermal study (v2), which v3 builds on |
 | `tests/`, `env/` | tests; the environment lock and its check |
 | `archive/pre-reset-2026-08-16/` | DMREDA, the closed earlier line, as it stood at the reset, negative results included |

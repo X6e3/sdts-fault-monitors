@@ -1,6 +1,6 @@
 """Compare a run_final.py --rehearsal output (CAL seeds) with independent earlier CAL evidence.
 
-  oracle full verdict, t*, P4, P7, healthy P6 intervals   vs  Sol's CAL package (cal-4e87cd3, cal-latency-final)
+  oracle full verdict, t*, P4, P7, healthy P6 intervals   vs  reviewer B's CAL package (cal-4e87cd3, cal-latency-final)
   machine first inconsistent and R=1/3 verdicts           vs  cal-machine-complete
   oracle and machine ablations                             vs  the A1.5 CAL check (validate_ablations_cal)
 Read-only; every mismatch is printed.

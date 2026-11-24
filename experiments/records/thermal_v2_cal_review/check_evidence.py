@@ -1,4 +1,4 @@
-"""Independent read-only checks of Sol's CAL evidence (no evidence-supplied code is executed).
+"""Independent read-only checks of reviewer B's CAL evidence (no evidence-supplied code is executed).
 usage: python -I check_evidence.py <review-worktree> <evidence-dir>"""
 import json
 import sys

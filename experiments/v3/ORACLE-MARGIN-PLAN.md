@@ -1,6 +1,6 @@
 # Oracle margins at t*: the bridge from the binary64 LP to the exact model (descriptive, 2026-11-23)
 
-Status: approved by Can Koç on 2026-11-23 ("archta koştur adamım"), before the run. Descriptive: no hypothesis, no
+Status: approved by Can Koç on 2026-11-23, before the run. Descriptive: no hypothesis, no
 pass or fail, no verdict of any validation changes.
 
 ## Question

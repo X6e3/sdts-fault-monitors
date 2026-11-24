@@ -21,14 +21,13 @@ be3ffc160ee34e2d86079a98fb866c1ec360e7f10cab15f9d70b66675106bcb5.
   B1s on none, except n_c 16 fifo, n_c 64 fifo and n_c 64 greedy, on 1 each.
 - LP failures on DEV: 7, all in B1s n_c 64 fifo (B1's code then uses the unconstrained hull, which is outer).
 
-Approval: v3.1 by Can Koç on 2026-11-23. v3 was approved for the DEV grid, unit checks and tuning ("kontrol
-sende run için onaylıyorum run yapabilirsin"); its grid started on Arch at 582f798f at 16:36:22 and was stopped at
+Approval: v3.1 by Can Koç on 2026-11-23. v3 was approved for the DEV grid, unit checks and tuning; its grid started on Arch at 582f798f at 16:36:22 and was stopped at
 16:38:52, before any row was written, to apply review r4's findings (section 8). Can then approved the steps that
-follow ("kontrol sende ben çıkıyorum adamım. onay veriyorum diğer işlemlerin için."): if the unit checks have no
+follow: if the unit checks have no
 finding, the freeze and the block follow without a further approval; any finding stops there until Can decides.
 v2 was approved by Can
-Koç on 2026-11-23 ("onaylıyorum.") and its DEV grid ran on Arch at e068e81f from 15:27:10; it was stopped at 16:08:52 at
-Can's request ("durdur adamım düzeltelim") after 393 of the 1,400 DEV rows, because B1s alarmed on admissible rows
+Koç on 2026-11-23 and its DEV grid ran on Arch at e068e81f from 15:27:10; it was stopped at 16:08:52 at
+Can's request after 393 of the 1,400 DEV rows, because B1s alarmed on admissible rows
 (section 7). Its partial rows are kept on Arch (`~/Research/sdts-runs/baselines2-dev-e068e81f/`) and are not used. v1 was
 approved for its DEV grid at fe738d5e, but nothing ran under it: review r3 found two flaws in its code before the grid
 started (B4s had no effect; B1 is chaotic at the 1e-15 level), and the queued run was stopped. v3 replaces v2. The block

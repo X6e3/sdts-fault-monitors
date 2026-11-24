@@ -76,7 +76,7 @@ the frozen implementations. The frozen C implementation on an ESP32 gives the PC
 hash of its full state after every one of 5.04 million development samples. On 9,600 fresh,
 preregistered runs the template removed 38.7\,\% of the interval monitor's paired detection lag. The second is a window LP over
 256 samples whose base is updated by a smoothing rule, with a weak-duality certificate on every alarm and every base
-update it solves; an LP that fails falls back to an analytic outer bound. On a second fresh block of 9,600 runs it removed 99.5\,\% of the lag with no missed certified event (the interval monitor
+update it solves; an LP that fails falls back to a sound outer bound. On a second fresh block of 9,600 runs it removed 99.5\,\% of the lag with no missed certified event (the interval monitor
 missed 27 of 7,255), and all 7,258 alarms were certified. A previous freeze of the same window failed its validation, because a
 single LP the solver could not solve became an uncertified alarm; we report that failure, the sound fallback that
 replaced it, and its tests under injected solver failures. We also show that no memory budget can certify the error of

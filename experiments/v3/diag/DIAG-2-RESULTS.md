@@ -18,7 +18,7 @@
 
 ## Checks (OBSERVED, all pass)
 
-- **B1 and B2** equal Hydrogen's posted list: 26 pairs, largest difference 4.8e-7.
+- **B1 and B2** equal reviewer C's posted list: 26 pairs, largest difference 4.8e-7.
 - **Arm A,** recomputed, reproduces t* in all 5 runs.
 - **Arm C,** recomputed, matches DIAG-1 within 6e-11 mC.
 - **D_D0** (cyl16p's directions, full table, from k = 0) reproduces cyl16p's detection in all 5 runs.
@@ -42,7 +42,7 @@ Sums over the events of the TA gap against A, both signs (±e3), in mC:
 
 **The columns:**
 - **Rise at the cut:** the TA gap of C against A just after the cut minus just before it. It is the same at k + 1.
-- **Sol's pair:** with z_k skipped, the gap does not rise at all (< 1e-9 mC in total). So the whole rise comes with the
+- **Reviewer B's pair:** with z_k skipped, the gap does not rise at all (< 1e-9 mC in total). So the whole rise comes with the
   cut, now measured rather than inferred.
 - **Geometry:** supp_{hull_F(Q) ∩ S} − supp_{Q ∩ S}, the rise that even the tightest F-hull of A's exact pre-cut set Q
   would have at this cut. Before the cut, that hull has no TA gap, because ±e3 ∈ F.
@@ -54,7 +54,7 @@ Sums over the events of the TA gap against A, both signs (±e3), in mC:
   already has it; it is the exact set's shape that the directions cannot express.
 - **Re-templating:** each step discards that shape. Between cuts this costs nothing in TA or in the as-range. At a cut
   it costs TA.
-- **Hydrogen's d[36] growth is real, but small:** the slack C piles up beyond the tightest hull accounts for 5 % of
+- **Reviewer C's d[36] growth is real, but small:** the slack C piles up beyond the tightest hull accounts for 5 % of
   the rises.
 - **The earlier wording, "the slack builds up beforehand, in other directions":** true only for that 5 %.
 

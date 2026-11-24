@@ -1,7 +1,6 @@
 # C1 on the used validation blocks (plan, 2026-11-24)
 
-Written and committed before any result of it. Approved by Can Koç on 2026-11-24 ("tamam adamım dediğin gibi olsun",
-for option A: the revised C state beside the frozen one on the two used validation blocks, nothing on fresh seeds).
+Written and committed before any result of it. Approved by Can Koç on 2026-11-24 (option A: the revised C state beside the frozen one on the two used validation blocks, nothing on fresh seeds).
 
 ## Why
 

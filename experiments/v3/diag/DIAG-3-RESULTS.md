@@ -66,21 +66,21 @@ the gain on DEV as a whole.
 
 ## What it shows (INFERRED)
 
-- **Smoothing decides the two runs Sol flagged.**
+- **Smoothing decides the two runs reviewer B flagged.**
   - In 430027 and 430010, arm E failed in DIAG-1: the exact recursion from cyl16p's own summary, with every later
     measurement.
   - In those two runs only the smoothing fold recovers t*, at W = 128 for 430027 and at W = 256 for 430010.
   - The filter fold, a B-step block update, never recovers 430027.
   - So the base has to carry what later measurements say about the past, not only what the past measurements said.
 - **The window needed is set by the run.**
-  - 430010 needs W = 256. Its single +e3 event is 227 samples before t* (DIAG-2, Hydrogen).
+  - 430010 needs W = 256. Its single +e3 event is 227 samples before t* (DIAG-2, reviewer C).
   - The others need 64 (430007) or 128.
   - This is consistent with the timing of the decisive +e3 cuts, 83–250 samples before t*. It does not prove that
     timing is the reason.
 - **Close to the boundary, the result is fragile:** S256's margin in 430010 is −0.286 mC, against the oracle's
   −0.389.
 
-## Hydrogen's predictions, written before the results, against the outcome
+## Reviewer C's predictions, written before the results, against the outcome
 
 | prediction | outcome |
 |---|---|
@@ -109,8 +109,8 @@ Two different questions remain open.
 
 **2b. Can it be made MCU-sized?**
 - **Kept measurements:** at most K. Only measurements that are redundant when they arrive may be dropped. This is
-  Hydrogen's warning, and it is exact: a measurement whose slab contains the predicted set adds nothing.
-- **Transitions:** compressed between the kept ones, keeping the ambient path common (GPT's q_Δ summaries).
+  reviewer C's warning, and it is exact: a measurement whose slab contains the predicted set adds nothing.
+- **Transitions:** compressed between the kept ones, keeping the ambient path common (reviewer A's q_Δ summaries).
 - **Resources:** RAM, flash, worst-case time per sample, float32.
 - **Fold:** a cheaper fold, e.g. fewer directions or a longer B.
 

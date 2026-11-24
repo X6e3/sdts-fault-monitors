@@ -1,6 +1,6 @@
 # Diagnosis 2: what happens at a cut, and do the families B1 and B2 close it? (plan)
 
-**Status:** started on Can's go on 2026-11-18 ("direkt başla"). This plan and its criteria were written and committed
+**Status:** started on Can's go on 2026-11-18. This plan and its criteria were written and committed
 before any DIAG-2 result.
 
 **Scope:** DEV seeds only, the five DIAG-1 runs. Freeze 1, its results and seeds 440200+ are not touched. No candidate
@@ -10,7 +10,7 @@ is frozen here.
 gap follows an active measurement cut: 63 events, 565 mC in all. Before a cut, the slack builds in directions the
 dynamics does not map back into the template's directions D.
 
-## T1: the cut steps, split exactly (Sol's suggestion)
+## T1: the cut steps, split exactly (reviewer B's suggestion)
 
 **Events:** the same 63 steps k as in `review1/steps.txt`. A step qualifies when z_k's slab cuts arm C's or arm B's
 predicted as-range at k, and the TA gap C − B (±e3) rises by over 1 mC from k to k + 1.
@@ -32,15 +32,15 @@ right after the cut splits exactly into two non-negative parts:
 Here u = ±e3, and the supports of template sets are computed by LP.
 
 **Also recorded:**
-- **Sol's cut/skip pair:** the TA gap C − A after the next prediction (k + 1), once with z_k applied and once with z_k
+- **Reviewer B's cut/skip pair:** the TA gap C − A after the next prediction (k + 1), once with z_k applied and once with z_k
   skipped.
 - **The geometry part for the other families:** supp_{hull_F(Q) ∩ S}(u) − supp_{Q ∩ S}(u) for F = B1 and B2.
 
 T1 has no pass/fail. It reports the share of each part and how the geometry part changes with F.
 
-## The families B1 and B2 (Hydrogen H1)
+## The families B1 and B2 (reviewer C H1)
 
-The rule is the one in Hydrogen's `propose_directions_b.py`, re-implemented in `diag2.py`.
+The rule is the one in reviewer C's `propose_directions_b.py`, re-implemented in `diag2.py`.
 
 **B1 (72 directions):**
 - Start from D0 = cyl16p's 42 directions.
@@ -52,7 +52,7 @@ from the current set.
 
 **Details of the rule:**
 - Each addition is a ± pair, signed so that its first non-zero component is positive.
-- Before use, the 26 added pairs are checked against Hydrogen's posted list (6 decimals).
+- Before use, the 26 added pairs are checked against reviewer C's posted list (6 decimals).
 
 **The tables:** every family uses its full basis table, `Template(F, invariant=True)`, with no pruning (in DIAG-1,
 pruning made no difference). D0 is used the same way.
@@ -102,8 +102,8 @@ both signs. The reference is C_full(D0) from DIAG-1. The four hard runs are 4300
   - arm A reproduces t* (via the recomputed exact pass);
   - D_D0 reproduces cyl16p's detection;
   - the nesting B_F ⊇ A and C_F ⊆ C_full(D0) holds, within 1e-9 °C;
-  - B1 and B2 match Hydrogen's posted list.
+  - B1 and B2 match reviewer C's posted list.
 
 **Where things run:**
-- On Arch, in Claude's run clone.
+- On Arch, in a separate run clone.
 - Outputs go to `~/Research/sdts-runs/v3-diag2/`, then are imported into `results/v3/diag2/`.
