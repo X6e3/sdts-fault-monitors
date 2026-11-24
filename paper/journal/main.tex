@@ -63,21 +63,18 @@ of sensor faults, measured against the exact oracle}
 
 \begin{abstract}
 Embedded fault monitors keep a bounded state; the exact set-membership detector does not. On a two-node thermal plant
-with one sensor, a known heat input, an unknown bounded ambient and ten sensor fault classes, a certified linear
+with one sensor, a known heat input, an unknown bounded ambient and ten fault classes, a certified linear
 program (LP) over the full history gives each certified run's exact detection time. Bounded monitors are scored
-against it under the same assumptions; their extra delay is their loss. With the rate parameters fixed, fitting only
-ambient temperature and initial state on a fresh 65-minute laptop run yielded a maximum absolute residual of
+against it under the same assumptions; their extra delay is their loss. With the rate parameters fixed on an earlier run, fitting only
+ambient temperature and initial core state on a fresh 65-minute laptop run yielded a palm-rest residual of at most
 0.205\,\degC. A template polyhedron with offline LP bases needs no solver and is proved sound under explicit rounding
 conditions, which its frozen float64 builds meet only for noise at least \sci{4.86}{-13}\,\degC\ inside the bound; a
-revised C state meets them in full and, on a PC, raises the frozen builds' alarms on 19,200 runs of two validation
-blocks. On 9,600 fresh, preregistered runs the template removed 38.7\,\% of an interval monitor's paired lag. A
-256-sample window LP with a smoothing base update certifies every alarm by weak duality, with an analytic fallback for
-failed LPs. On another 9,600 runs it removed 99.5\,\% of the lag, missed no certified event and certified every alarm.
-An earlier freeze failed validation on one unsolved LP; we report it. Seven baselines in two preregistered comparisons
-all lagged our monitors at their memory budgets. No memory budget can certify the error of a sensor drift that an
+revised C state meets them in full and, on a PC, raises the frozen builds' alarms on 19,200 validation runs. On 9,600 fresh, preregistered runs the template removed 38.7\,\% of an interval monitor's paired lag. A
+256-sample window LP with a smoothing base update certifies every alarm by weak duality, with a sound fallback for failed LPs. On another 9,600 runs it removed 99.5\,\% of the lag and missed no certified event.
+An earlier freeze failed validation on one unsolved LP. In two comparisons fixed in advance, seven baselines all lagged our monitors at their memory budgets. No memory budget can certify the error of a sensor drift that an
 admissible ambient path reproduces.
 \end{abstract}
-% src: approved abstract, sdts-runs/journal-cep/ONAYLI-METINLER.md (2026-11-24)
+% src: approved abstract v3 (review r10 wording), sdts-runs/journal-cep/ONAYLI-METINLER.md (2026-11-24)
 
 \begin{highlights}
 \item Bounded-memory sensor-fault monitors are scored against an exact, certified oracle
