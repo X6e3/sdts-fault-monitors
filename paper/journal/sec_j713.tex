@@ -1,0 +1,78 @@
+% CEP manuscript: the model class on a physical device (J713 step tests). Draft, 2026-11-24.
+% To be \input after the plant section of the CEP version. Every number is from the dated records named in the
+% % src: lines; the records are in the author's J713 folder (sdts-runs/j713-thermal) until the data release.
+
+\section{The model class on a physical device}\label{sec:device}
+
+The fault-detection results of this paper come from simulated runs of the plant of Section~\ref{sec:plant}. This
+section asks a narrower question on hardware: does the plant's model class describe the surface sensor of a real
+device? It is a test of model fit. No fault was injected, and no monitor ran on these data; detection performance is
+measured only on the simulated blocks.
+
+\paragraph{Device and signals.} A fanless laptop (MacBook Air, Apple M4) under macOS, on mains power with its battery
+full, was logged read-only at 1\,Hz. The input $P$ is the measured system power (SMC key \texttt{PSTR}); the output
+$s$ is a palm-rest temperature sensor (\texttt{Ts0P}), and a second surface sensor (\texttt{Ts1P}) is reported beside
+it. The core state is not measured. The room's temperature was not controlled and enters as an unknown constant
+$T_A$.
+
+\paragraph{Model.} With 1\,s steps,
+\[
+c[k+1] = c[k] + k_c\,(s[k]-c[k]) + b_c\,P[k],\qquad s[k+1] = s[k] + k_s\,(c[k]-s[k]) + h_s\,(T_A-s[k]),
+\]
+the structure of Section~\ref{sec:plant} with $k_c = K/C_c$, $b_c = 1/C_c$, $k_s = K/C_s$ and $h_s = H/C_s$. The
+device's values are its own; they are not the simulated plant's.
+
+\paragraph{Protocol.} The plan, its criterion and its scripts were frozen, and their hashes submitted to
+OpenTimestamps calendars, before the test run began. Six quantities enter the model: the four rate parameters
+$k_c$, $b_c$, $k_s$, $h_s$, the ambient $T_A$ and the initial core state $c_0$.
+\begin{itemize}
+\item \emph{Step 1} (development; idle, 2 threads, 4 threads, idle; 3,131 samples): all six were fitted by output
+  error, simulating the model open loop from the first sample. The four rate parameters were then frozen at
+  $k_c = \sci{2.20}{-3}$, $b_c = \sci{9.80}{-3}$\,\degC/(W\,s), $k_s = \sci{1.87}{-4}$ and $h_s = \sci{2.06}{-3}$ per
+  sample.
+\item \emph{Step 3} (the test run; idle 600\,s, 6 threads 900\,s, 1 thread 900\,s, idle 1,500\,s; 3,900 samples, 65
+  minutes; a load profile not used in development): only $T_A$ and $c_0$ were fitted, giving $T_A = 23.08$\,\degC\ and
+  $c_0 = 52.5$\,\degC.
+\end{itemize}
+The criterion, fixed before the test run, was an rms residual of at most 0.25\,\degC\ and a largest absolute residual
+of at most 0.60\,\degC\ for \texttt{Ts0P}. It was chosen after a rehearsal on development data only (rate parameters
+from step~1, a second development run as the test: rms 0.160\,\degC, largest residual 0.347\,\degC).
+
+\paragraph{Result.} The criterion was met (Table~\ref{tab:device}). Over the test run \texttt{Ts0P} moved by
+4.25\,\degC\ (25.44 to 29.69\,\degC) while $P$ ranged from 5.0 to 33.9\,W, above the 25.9\,W of step~1.
+
+\begin{table}[ht]
+\centering\small
+\caption{Residuals on the test run, with the rate parameters frozen from step~1 and only $T_A$ and $c_0$ fitted.
+Each sensor has its own fit; \texttt{Ts0P} carries the criterion.}
+\label{tab:device}
+\begin{tabular}{lrrrrrr}
+\toprule
+sensor & rms & 99th percentile & largest & fitted $T_A$ & fitted $c_0$ & samples\\
+ & (\degC) & (\degC) & (\degC) & (\degC) & (\degC) & \\
+\midrule
+\texttt{Ts0P} (criterion) & 0.081 & 0.186 & 0.205 & 23.08 & 52.5 & 3,900\\
+\texttt{Ts1P} (reported) & 0.101 & 0.236 & 0.319 & 21.92 & 66.5 & 3,900\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{What it shows.} With rate parameters taken from one run, the two-node model class describes another run
+of a physical device, under a load profile it had not seen, within these residuals. The largest residual holds the
+model's error, the sensor's quantization and noise, and the ambient's departure from a constant. It comes from a
+least-squares fit, so it is an upper bound on the smallest uniform error bound for this run, not that bound itself.
+The paper's $\delta = 0.3$\,\degC\ bounds measurement noise alone, so the two are compared, not equated: on this run
+the largest residual of \texttt{Ts0P} is below $\delta$, that of \texttt{Ts1P} above it.
+
+\paragraph{What it does not show.} Detection on real data, an ambient box or rate bound for this device, the
+simulated plant's parameter values, and the device's behaviour under faults. These need a monitor run on hardware
+with measured bounds, which is future work. The simulated blocks of Sections~\ref{sec:val1} to~\ref{sec:baselines}
+remain the evidence for detection performance; this section is evidence that their model class fits a real
+thermal device.
+% src: sdts-runs/j713-thermal/PLAN-step3.md (model, protocol, criterion; manifest d84cacf4, stamped 11:59 +0300 on
+% 2026-11-23, run started 12:01:50); RECORD-2026-11-23-step3.md (verdict PASS, ranges, phases); step3-eval.json
+% (sha256 00ef0d4b...; dev_fit params, val_refit, val_rms/p99/max); dev-rehearsal-step1-step2.json (0.160, 0.347);
+% step1 3,131 samples and 25.9 W, step3 power 5.0-33.9 W = RECORD-2026-11-23-step3.md; residual wording =
+% NOTE-2026-11-24-wording.md. Device: step3/machine.txt (Mac16,12); fanless = PLAN-step3.md section 1.
+% TODO before submission: the data release (PLAN-step3.md section 5) and a figure of measured and fitted Ts0P with
+% the residual; section labels sec:plant, sec:val1 to be matched to the CEP manuscript.
