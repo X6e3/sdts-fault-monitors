@@ -141,7 +141,7 @@ The aim is to verify the exact supports by a method that shares no code with the
 - **Rules:**
   - No commits.
   - No edits to this repository's files.
-  - Write only under `~/Research/sdts-runs/v3-diag1-codex/`. The results are imported into this repository and recorded,
+  - Write only under a separate folder under `~/Research/sdts-runs/`. The results are imported into this repository and recorded,
     with Can as author.
   - No validation seeds, no freeze files.
 

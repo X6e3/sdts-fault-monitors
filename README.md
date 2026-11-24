@@ -17,7 +17,7 @@ sensor, a known heat input and an unknown ambient temperature.
 
 ![Share of the interval monitor's detection lag removed against memory: IM at 0, the template monitor TS near 0.39, windows of 64 to 256 samples rising towards 1, the window monitor WM at about 1](paper/figures/fig-memory.png)
 
-*Each monitor's share of the interval monitor's detection lag removed, against the reals it keeps between samples (Figure 2 of the paper; filled markers: development data, open markers: fresh validation blocks).*
+*Each monitor's share of the interval monitor's detection lag removed, against the reals it keeps between samples (Figure 2 of the preprint; filled markers: development data, open markers: fresh validation blocks).*
 
 The numbers are from the paper; each one is traced to a dated record in `experiments/v3/`.
 
@@ -33,7 +33,7 @@ The numbers are from the paper; each one is traced to a dated record in `experim
 
 ![One development run: the upper edge of each monitor's test band near the alarm, and the width of each monitor's range over the whole run; WM alarms at sample 695, IM and TS at 3575](paper/figures/fig-trace.png)
 
-*Example development run (430010, Figure 3 of the paper): the fault starts at sample 496; WM alarms at the exact oracle time, t\* = 695, while IM and TS alarm at 3575. One run, not a validation.*
+*Example development run (430010, Figure 3 of the preprint): the fault starts at sample 496; WM alarms at the exact oracle time, t\* = 695, while IM and TS alarm at 3575. One run, not a validation.*
 
 - **Baselines.** Seven baselines in two comparisons fixed before they ran, given the same prior and tuned on
   development data, all lagged our monitors at their memory budgets. In the first, the best set-based one, a
@@ -58,7 +58,7 @@ Reproductions that disagree with a reported number are welcome; please write (ad
 
 ![Schematic of the window between two folds: the fold LP and the alarm LPs share the base at tau and the kept measurements; the fold targets tau + 16, the alarm tests sample t](paper/figures/fig-window.png)
 
-*The window of WM between two folds (Figure 1 of the paper; schematic, not to scale).*
+*The window of WM between two folds (Figure 1 of the preprint; schematic, not to scale).*
 
 On development runs, 95 % of what the template monitor loses remains even for the tightest template hull of the exact
 set, so the loss lies in the template's geometry. WM keeps the measurements themselves instead, over a window:
@@ -117,6 +117,9 @@ the healthy-record witness.
 - The paper, figures, plans, records, notes and result data: Creative Commons Attribution 4.0 International
   (CC BY 4.0), https://creativecommons.org/licenses/by/4.0/.
 - `archive/pre-reset-2026-08-16/` follows the same split.
+- Third-party files: the Elsevier LaTeX template files in `paper/journal/` (`cas-dc.cls`, `cas-common.sty`,
+  `cas-model2-names.bst`, `thumbnails/`) are redistributed unmodified under the LaTeX Project Public License (LPPL
+  1.2 or later, 1.3c or later), copyright Elsevier Ltd and CV Radhakrishnan, as stated in their headers.
 
 ## Citing
 

@@ -2,13 +2,15 @@
 # H-FB Mac part (FB-PLAN.md section 6, step 4): wait for the Arch oracle, copy oracle.jsonl (sha256 checked), then
 # F3a for settings b and e, and their summaries.
 set -u
+# The Linux machine's user@host was replaced by $ARCH_HOST before publication (2026-11-24).
+ARCH_HOST=${ARCH_HOST:?set ARCH_HOST to user@host of the Linux machine}
 W=$HOME/Downloads/sdts-runs/v3-fb-mac-459e6813/experiments/v3
 O=$HOME/Downloads/sdts-runs/v3-fb-459e6813-mac
 A=/home/x6e3/Research/sdts-runs/v3-fb-459e6813
 P=$HOME/Downloads/sdts-v3/.venv/bin/python
-until ssh -o BatchMode=yes -o ConnectTimeout=15 x6e3@192.168.1.106 "test -e $A.oracle.done" 2>/dev/null; do sleep 120; done
+until ssh -o BatchMode=yes -o ConnectTimeout=15 $ARCH_HOST "test -e $A.oracle.done" 2>/dev/null; do sleep 120; done
 mkdir -p $O
-scp -q x6e3@192.168.1.106:$A/oracle.jsonl x6e3@192.168.1.106:$A/oracle-meta.json $O/
+scp -q $ARCH_HOST:$A/oracle.jsonl $ARCH_HOST:$A/oracle-meta.json $O/
 want=$(python3 -c "import json;print(json.load(open('$O/oracle-meta.json'))['oracle_sha256'])")
 got=$(shasum -a 256 $O/oracle.jsonl | cut -d' ' -f1)
 echo "oracle sha256 want $want got $got"

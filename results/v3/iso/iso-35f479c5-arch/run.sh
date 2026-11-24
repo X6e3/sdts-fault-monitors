@@ -1,5 +1,5 @@
 #!/bin/bash
-# ISOLATION-PLAN.md: waits for the baselines' DEV run to finish (Can, 2026-11-21: "iso testini bitince başlat"),
+# ISOLATION-PLAN.md: waits for the baselines' DEV run to finish (Can Koç, 2026-11-21: start the isolation test when that run ends),
 # then I1 (identity), the 1400 DEV rows with simulated solver failures, and the summary.
 until [ -e /home/x6e3/Research/sdts-runs/v3-bl-dev-58db0897.done ]; do sleep 120; done
 cd /home/x6e3/Research/sdts-v3-iso-35f479c5/experiments/v3

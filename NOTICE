@@ -5,3 +5,7 @@ This product includes software developed by Can Koç.
 
 The paper, figures, plans, records and result data in this repository are licensed under the Creative Commons
 Attribution 4.0 International License (CC BY 4.0), https://creativecommons.org/licenses/by/4.0/. See README.md.
+
+Third-party files: the Elsevier LaTeX template files in paper/journal/ (cas-dc.cls, cas-common.sty,
+cas-model2-names.bst, thumbnails/) are redistributed unmodified under the LaTeX Project Public License (LPPL 1.2 or
+later, 1.3c or later), copyright Elsevier Ltd and CV Radhakrishnan, as stated in their headers.

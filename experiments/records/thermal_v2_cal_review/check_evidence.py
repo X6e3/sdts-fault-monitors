@@ -89,11 +89,11 @@ for R in (1, 3):
             orc = "not_certifiable"
         else:
             orc = "undetermined"
-        sol = P6[(r["seed"], r["arm"])]
-        if sol["rule"] != mine:
-            bad(f"P6 R={R} rule mismatch {r['seed']} {r['arm']} mine={mine} sol={sol['rule']}")
-        if sol["oracle"] != orc:
-            bad(f"P6 R={R} oracle label mismatch {r['seed']} {r['arm']} mine={orc} sol={sol['oracle']}")
+        ref = P6[(r["seed"], r["arm"])]
+        if ref["rule"] != mine:
+            bad(f"P6 R={R} rule mismatch {r['seed']} {r['arm']} mine={mine} ref={ref['rule']}")
+        if ref["oracle"] != orc:
+            bad(f"P6 R={R} oracle label mismatch {r['seed']} {r['arm']} mine={orc} ref={ref['oracle']}")
         tab[(mine, orc)] += 1
     scored = {k: v for k, v in tab.items() if k[0] != 0}
     agree = sum(v for (m, o), v in scored.items() if (m == 1 and o == "certifiable") or (m == -1 and o == "not_certifiable"))
@@ -112,7 +112,7 @@ for r in e1:
     t_f = T.onset(r["seed"])
     k = next(k for k in range(t_f + 1, T.N) if abs(P[k] - P[k - 1]) >= 5.0)
     if (k, t_f) != (r["k_change"], r["t_f"]):
-        bad(f"P7 k/t_f mismatch {r['seed']}: mine {k},{t_f} sol {r['k_change']},{r['t_f']}")
+        bad(f"P7 k/t_f mismatch {r['seed']}: mine {k},{t_f} ref {r['k_change']},{r['t_f']}")
 
 # G. latency
 L = rows("cal-latency-final/latency.jsonl")
